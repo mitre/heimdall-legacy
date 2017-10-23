@@ -1,0 +1,58 @@
+<p id="notice"><%= notice %></p>
+
+<p>
+  <strong>Title:</strong>
+  <%= @control.title %>
+</p>
+
+<p>
+  <strong>Desc:</strong>
+  <%= @control.desc %>
+</p>
+
+<p>
+  <strong>Impact:</strong>
+  <%= @control.impact %>
+</p>
+
+<p>
+  <strong>Refs:</strong>
+  <%= @control.refs_list %>
+</p>
+
+<p>
+  <strong>Tags:</strong>
+  <ul>
+    <li><strong>Severity:</strong> <%= @control.tag_severity %></li>
+    <li><strong>Gtitle:</strong> <%= @control.tag_gtitle %></li>
+    <li><strong>GID:</strong> <%= @control.tag_gid %></li>
+    <li><strong>RID:</strong> <%= @control.tag_rid %></li>
+    <li><strong>Stig ID:</strong> <%= @control.tag_stig_id %></li>
+    <li><strong>CCI:</strong> <%= @control.tag_cci %></li>
+    <li><strong>NIST:</strong> <%= @control.tag_nist_list %></li>
+    <li><strong>Subsystems:</strong> <%= @control.tag_subsystems_list %></li>
+    <li><strong>Check:</strong> <%= @control.tag_check %></li>
+    <li><strong>Fix:</strong> <%= @control.tag_fix %></li>
+  </ul>
+</p>
+
+<p>
+  <strong>Code:</strong>
+  <%= @control.code %>
+</p>
+
+<p>
+  <strong>Source Location:</strong>
+  <ul>
+    <li><strong>Ref:</strong> <%= @control.sl_ref %></li>
+    <li><strong>Line:</strong> <%= @control.sl_line %></li>
+  </ul>
+</p>
+
+<p>
+  <strong>ID:</strong>
+  <%= @control.control_id %>
+</p>
+
+<%= link_to 'Edit', edit_profile_control_path(@profile.id, @control) %> |
+<%= link_to 'Back', profile_path(@profile.id) %>

@@ -1,0 +1,84 @@
+<p id="notice"><%= notice %></p>
+
+<p>
+  <strong>Name:</strong>
+  <%= @profile.name %>
+</p>
+
+<p>
+  <strong>Title:</strong>
+  <%= @profile.title %>
+</p>
+
+<p>
+  <strong>Maintainer:</strong>
+  <%= @profile.maintainer %>
+</p>
+
+<p>
+  <strong>Copyright:</strong>
+  <%= @profile.copyright %>
+</p>
+
+<p>
+  <strong>Copyright email:</strong>
+  <%= @profile.copyright_email %>
+</p>
+
+<p>
+  <strong>License:</strong>
+  <%= @profile.license %>
+</p>
+
+<p>
+  <strong>Summary:</strong>
+  <%= @profile.summary %>
+</p>
+
+<p>
+  <strong>Version:</strong>
+  <%= @profile.version %>
+</p>
+
+<p>
+  <strong>Sha256:</strong>
+  <%= @profile.sha256 %>
+</p>
+
+<p>
+  <strong>Depends:</strong>
+  <%= @profile.depends %>
+</p>
+
+<p>
+  <strong>Supports:</strong>
+  <ul>
+    <% @profile.supports.each do |support| %>
+      <li><%= support.os_family %></li>
+    <% end %>
+  </ul>
+  <%= link_to "Add Support", new_profile_support_path(@profile.id) %>
+</p>
+
+<p>
+  <strong>Controls:</strong>
+  <ul>
+    <% @profile.controls.each do |control| %>
+      <li><%= link_to control.control_id, profile_control_path(@profile.id, control.id) %></li>
+    <% end %>
+  </ul>
+  <%= link_to "Add Control", new_profile_control_path(@profile.id) %>
+</p>
+
+<p>
+  <strong>Groups:</strong>
+  <%= @profile.groups %>
+</p>
+
+<p>
+  <strong>Profile attributes:</strong>
+  <%= @profile.profile_attributes %>
+</p>
+
+<%= link_to 'Edit', edit_profile_path(@profile) %> |
+<%= link_to 'Back', profiles_path %>

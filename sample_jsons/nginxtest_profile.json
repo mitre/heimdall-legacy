@@ -1,0 +1,69 @@
+{
+  "name": "nginxtest-baseline",
+  "title": "DevSec Nginx Baseline 2",
+  "maintainer": "DevSec Hardening Framework Team",
+  "copyright": "DevSec Hardening Framework Team",
+  "copyright_email": "hello@dev-sec.io",
+  "license": "Apache 2 license",
+  "summary": "Test-suite for best-practice nginx hardening",
+  "version": "2.0.2",
+  "supports": [
+    {
+      "os-family": "unix"
+    }
+  ],
+  "controls": [
+    {
+      "title": "The Web site software used with the web server must have all\n  applicable security patches applied and documented.",
+      "desc": "The IAVM process does not address all patches that have been identified\n  for the host operating system or, in this case, the web server software\n  environment. Many vendors have subscription services available to notify\n  users of known security threats. The site needs to be aware of these fixes\n  and make determinations based on local policy and what software features are\n  installed, if these patches need to be applied.\n\n  In some cases, patches also apply to middleware and database systems.\n  Maintaining the security of web servers requires frequent reviews of security\n  notices. Many security notices mandate the installation of a software patch to\n  overcome security vulnerabilities.\n\n  SAs and ISSOs should regularly check the vendor support web site for patches\n  and information related to the web server software. All applicable security\n  patches will be applied to the operating system and to the web server\n  software. Security patches are deemed applicable if the product is installed,\n  even if it is not used or is disabled.",
+      "impact": 0.5,
+      "refs": [],
+      "tags": {
+        "severity": "medium",
+        "gtitle": "WA230",
+        "gid": "V-13613",
+        "rid": "SV-32969r2_rule",
+        "stig_id": "WA230 A22",
+        "nist": [
+          "CM-6",
+          "Rev_4"
+        ],
+        "check": "Query the web administrator to determine if the site has a\n  detailed process as part of its configuration management plan to stay\n  compliant with all security-related patches.\n\n  Proposed Questions: How does the SA stay current with web server vendor\n  patches? How is the SA notified when a new security patch is issued by the\n  vendor? (Exclude the IAVM.) What is the process followed for applying patches\n  to the web server?\n\n  If the site is not in compliance with all applicable security patches, this is\n  a finding.",
+        "fix": "Establish a detailed process as part of the configuration\n  management plan to stay compliant with all web server security-related\n  patches."
+      },
+      "code": "control \"V-13613\" do\n\n  title \"The Web site software used with the web server must have all\n  applicable security patches applied and documented.\"\n\n  desc \"The IAVM process does not address all patches that have been identified\n  for the host operating system or, in this case, the web server software\n  environment. Many vendors have subscription services available to notify\n  users of known security threats. The site needs to be aware of these fixes\n  and make determinations based on local policy and what software features are\n  installed, if these patches need to be applied.\n\n  In some cases, patches also apply to middleware and database systems.\n  Maintaining the security of web servers requires frequent reviews of security\n  notices. Many security notices mandate the installation of a software patch to\n  overcome security vulnerabilities.\n\n  SAs and ISSOs should regularly check the vendor support web site for patches\n  and information related to the web server software. All applicable security\n  patches will be applied to the operating system and to the web server\n  software. Security patches are deemed applicable if the product is installed,\n  even if it is not used or is disabled.  \"\n\n  impact 0.5\n  tag \"severity\": \"medium\"\n  tag \"gtitle\": \"WA230\"\n  tag \"gid\": \"V-13613\"\n  tag \"rid\": \"SV-32969r2_rule\"\n  tag \"stig_id\": \"WA230 A22\"\n  tag \"nist\": [\"CM-6\", \"Rev_4\"]\n\n  tag \"check\": \"Query the web administrator to determine if the site has a\n  detailed process as part of its configuration management plan to stay\n  compliant with all security-related patches.\n\n  Proposed Questions: How does the SA stay current with web server vendor\n  patches? How is the SA notified when a new security patch is issued by the\n  vendor? (Exclude the IAVM.) What is the process followed for applying patches\n  to the web server?\n\n  If the site is not in compliance with all applicable security patches, this is\n  a finding.\"\n\n  tag \"fix\": \"Establish a detailed process as part of the configuration\n  management plan to stay compliant with all web server security-related\n  patches.\"\n\n  begin\n    describe linux_update do\n      it { should be_uptodate }\n    end\n\n    linux_update.updates.each do |update|\n      describe package(update['name']) do\n        its('version') { should eq update['version'] }\n      end\n    end\n  rescue Exception => msg\n    describe \"Exception: #{msg}\" do\n      it { should be_nil}\n    end\n  end\nend\n",
+      "source_location": {
+        "ref": "./controls/V-13613.rb",
+        "line": 29
+      },
+      "id": "V-13613"
+    },
+    {
+      "title": "A private web server’s list of CAs in a trust hierarchy must lead to\n  an authorizedDoD PKI Root CA.",
+      "desc": "A PKI certificate is a digital identifier that establishes the identity\n  of an individual or a platform. A server that has a certificate provides\n  users with third-party confirmation of authenticity. Most web browsers\n  perform server authentication automatically and the user is notified only if\n  the authentication fails. The authentication process between the server and\n  the client is performed using the SSL/TLS protocol. Digital certificates are\n  authenticated, issued, and managed by a trusted Certificate Authority (CA).\n\n  The use of a trusted certificate validation hierarchy is crucial to the\n  ability to control access to a site’s server and to prevent unauthorized\n  access. Only DoD-approved PKIs will be utilized.",
+      "impact": 0.5,
+      "refs": [],
+      "tags": {
+        "severity": "medium",
+        "gtitle": "WG355",
+        "gid": "V-13620",
+        "rid": "SV-32936r1_rule",
+        "stig_id": "WG355 A22",
+        "nist": [
+          "IA-5",
+          "SC-12",
+          "Rev_4"
+        ],
+        "check": "Enter the following command:\n\n  find / -name ssl.conf  note the path of the file.\n\n  grep ssl_client_certificate in conf files in context http,server\n\n  Review the results to determine the path of the ssl_client_certificate.\n\n  more /path/of/ca-bundle.crt\n\n  Examine the contents of this file to determine if the trusted CAs are DoD\n  approved. If the trusted CA that is used to authenticate users to the web site\n  does not lead to an approved DoD CA, this is a finding.\n\n  NOTE: There are non DoD roots that must be on the server in order for it to\n  function. Some applications, such as anti-virus programs, require root CAs to\n  function. DoD approved certificate can include the External Certificate\n  Authorities (ECA), if approved by the DAA. The PKE InstallRoot 3.06 System\n  Administrator Guide (SAG), dated 8 Jul 2008, contains a complete list of DoD,\n  ECA, and IECA CAs.",
+        "fix": "Configure the web server’s trust store to trust only DoD-\n  approved PKIs (e.g., DoD PKI, DoD ECA, and DoD-approved external partners)."
+      },
+      "code": "control \"V-13620\" do\n\n  title \"A private web server’s list of CAs in a trust hierarchy must lead to\n  an authorizedDoD PKI Root CA.\"\n\n  desc \"A PKI certificate is a digital identifier that establishes the identity\n  of an individual or a platform. A server that has a certificate provides\n  users with third-party confirmation of authenticity. Most web browsers\n  perform server authentication automatically and the user is notified only if\n  the authentication fails. The authentication process between the server and\n  the client is performed using the SSL/TLS protocol. Digital certificates are\n  authenticated, issued, and managed by a trusted Certificate Authority (CA).\n\n  The use of a trusted certificate validation hierarchy is crucial to the\n  ability to control access to a site’s server and to prevent unauthorized\n  access. Only DoD-approved PKIs will be utilized. \"\n\n  impact 0.5\n  tag \"severity\": \"medium\"\n  tag \"gtitle\": \"WG355\"\n  tag \"gid\": \"V-13620\"\n  tag \"rid\": \"SV-32936r1_rule\"\n  tag \"stig_id\": \"WG355 A22\"\n  tag \"nist\": [\"IA-5\", \"SC-12\", \"Rev_4\"]\n\n  tag \"check\": \"Enter the following command:\n\n  find / -name ssl.conf  note the path of the file.\n\n  grep \"\"ssl_client_certificate\"\" in conf files in context http,server\n\n  Review the results to determine the path of the ssl_client_certificate.\n\n  more /path/of/ca-bundle.crt\n\n  Examine the contents of this file to determine if the trusted CAs are DoD\n  approved. If the trusted CA that is used to authenticate users to the web site\n  does not lead to an approved DoD CA, this is a finding.\n\n  NOTE: There are non DoD roots that must be on the server in order for it to\n  function. Some applications, such as anti-virus programs, require root CAs to\n  function. DoD approved certificate can include the External Certificate\n  Authorities (ECA), if approved by the DAA. The PKE InstallRoot 3.06 System\n  Administrator Guide (SAG), dated 8 Jul 2008, contains a complete list of DoD,\n  ECA, and IECA CAs.\"\n\n  tag \"fix\": \"Configure the web server’s trust store to trust only DoD-\n  approved PKIs (e.g., DoD PKI, DoD ECA, and DoD-approved external partners).\"\n\n  begin\n    nginx_conf_handle = nginx_conf(NGINX_CONF_FILE)\n\n    nginx_conf_handle.http.entries.each do |http|\n      describe http.params['ssl_client_certificate'] do\n        it { should_not be_nil}\n      end\n      http.params['ssl_client_certificate'].each do |cert|\n        describe x509_certificate(cert.join) do\n          it { should_not be_nil}\n          its('subject.C') { should cmp 'US'}\n          its('subject.O') { should cmp 'U.S. Government'}\n        end\n        describe x509_certificate(cert.join).subject.CN[0..2] do\n          it { should be_in DOD_APPROVED_PKIS}\n        end\n      end unless http.params['ssl_client_certificate'].nil?\n    end\n\n    nginx_conf_handle.servers.entries.each do |server|\n      server.params['ssl_client_certificate'].each do |cert|\n        describe x509_certificate(cert.join) do\n          it { should_not be_nil}\n          its('subject.C') { should cmp 'US'}\n          its('subject.O') { should cmp 'U.S. Government'}\n        end\n        describe x509_certificate(cert.join).subject.CN[0..2] do\n          it { should be_in DOD_APPROVED_PKIS}\n        end\n      end unless server.params['ssl_client_certificate'].nil?\n    end\n\n  rescue Exception => msg\n    describe \"Exception: #{msg}\" do\n      it { should be_nil}\n    end\n  end\nend\n",
+      "source_location": {
+        "ref": "./controls/V-13620.rb",
+        "line": 42
+      },
+      "id": "V-13620"
+    }
+  ],
+  "sha256": "ed78d89ff9606753d05f605f01da65d5db022276d99ac27a982fefd5e4fc22d5"
+}

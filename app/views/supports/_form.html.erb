@@ -1,0 +1,24 @@
+<%= form_with(model: [ @profile, @support ], local: true) do |form| %>
+  <% if support.errors.any? %>
+    <div id="error_explanation">
+      <h2><%= pluralize(support.errors.count, "error") %> prohibited this support from being saved:</h2>
+
+      <ul>
+      <% support.errors.full_messages.each do |message| %>
+        <li><%= message %></li>
+      <% end %>
+      </ul>
+    </div>
+  <% end %>
+
+  <%= form.hidden_field :profile_id, :value => @profile.id, :name =>"profile_id" %>
+
+  <div class="field">
+    <%= form.label "OS Family" %>
+    <%= form.text_field :os_family, id: :support_os_family %>
+  </div>
+
+  <div class="actions">
+    <%= form.submit %>
+  </div>
+<% end %>

@@ -1,0 +1,9 @@
+<p id="notice"><%= notice %></p>
+
+<p>
+  <strong>OS Family:</strong>
+  <%= @support.os_family %>
+</p>
+
+<%= link_to 'Edit', edit_profile_support_path(@profile.id, @support) %> |
+<%= link_to 'Back', profile_path(@profile.id) %>

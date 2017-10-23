@@ -1,0 +1,103 @@
+<%= form_with(model: [ @profile, @control ], local: true) do |form| %>
+  <% if control.errors.any? %>
+    <div id="error_explanation">
+      <h2><%= pluralize(control.errors.count, "error") %> prohibited this control from being saved:</h2>
+
+      <ul>
+      <% control.errors.full_messages.each do |message| %>
+        <li><%= message %></li>
+      <% end %>
+      </ul>
+    </div>
+  <% end %>
+
+  <div class="form-group">
+    <%= form.label :title %>
+    <%= form.text_field :title, id: :control_title, class: "form-control"  %>
+  </div>
+
+  <div class="form-group">
+    <%= form.label :desc %>
+    <%= form.text_field :desc, id: :control_desc, class: "form-control"  %>
+  </div>
+
+  <div class="form-group">
+    <%= form.label :impact %>
+    <%= form.text_field :impact, id: :control_impact, class: "form-control"  %>
+  </div>
+
+  <div class="form-group">
+    <%= form.label :refs %>
+    <%= form.text_field :refs_list, id: :control_refs, class: "form-control"  %>
+  </div>
+
+  <strong>Tags</strong>
+  <div class="form-group input-group">
+      <div class="form-group">
+        <%= form.label :tag_severity %>
+        <%= form.text_field :tag_severity, id: :control_tags_severity, class: "form-control"  %>
+      </div>
+      <div class="form-group">
+        <%= form.label :tag_gtitle %>
+        <%= form.text_field :tag_gtitle, id: :control_tags_gtitle, class: "form-control"  %>
+      </div>
+      <div class="form-group">
+        <%= form.label :tag_gid %>
+        <%= form.text_field :tag_gid, id: :control_tags_gid, class: "form-control"  %>
+      </div>
+      <div class="form-group">
+        <%= form.label :tag_rid %>
+        <%= form.text_field :tag_rid, id: :control_tags_rid, class: "form-control"  %>
+      </div>
+      <div class="form-group">
+        <%= form.label :tag_stig_id %>
+        <%= form.text_field :tag_stig_id, id: :control_tags_stig_id, class: "form-control"  %>
+      </div>
+      <div class="form-group">
+        <%= form.label :tag_cci %>
+        <%= form.text_field :tag_cci, id: :control_tags_cci, class: "form-control"  %>
+      </div>
+      <div class="form-group">
+        <%= form.label :tag_nist %>
+        <%= form.text_field :tag_nist_list, id: :control_tags_nist, class: "form-control"  %>
+      </div>
+      <div class="form-group">
+        <%= form.label :tag_subsystems %>
+        <%= form.text_field :tag_subsystems_list, id: :control_tags_subsystems, class: "form-control"  %>
+      </div>
+      <div class="form-group">
+        <%= form.label :tag_check %>
+        <%= form.text_field :tag_check, id: :control_tags_check, class: "form-control"  %>
+      </div>
+      <div class="form-group">
+        <%= form.label :tag_fix %>
+        <%= form.text_field :tag_fix, id: :control_tags_fix, class: "form-control"  %>
+      </div>
+  </div>
+
+  <div class="form-group">
+    <%= form.label :code %>
+    <%= form.text_area :code, id: :control_code, class: "form-control"  %>
+  </div>
+
+  <strong>Source Location</strong>
+  <div class="form-group input-group">
+    <div class="form-group">
+      <%= form.label :sl_ref %>
+      <%= form.text_field :sl_ref, id: :control_source_location_ref, class: "form-control"  %>
+    </div>
+    <div class="form-group">
+      <%= form.label :sl_line %>
+      <%= form.text_field :sl_line, id: :control_source_location_line, class: "form-control"  %>
+    </div>
+  </div>
+
+  <div class="form-group">
+    <%= form.label :control_id %>
+    <%= form.text_field :control_id, id: :control_control_id, class: "form-control"  %>
+  </div>
+
+  <div class="actions">
+    <%= form.submit %>
+  </div>
+<% end %>
