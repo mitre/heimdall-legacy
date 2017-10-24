@@ -1,0 +1,19 @@
+<p id="notice"><%= notice %></p>
+
+<p>
+  <strong>Name:</strong>
+  <%= @profile_attribute.name %>
+</p>
+
+<p>
+  <strong>Option Description:</strong>
+  <%= @profile_attribute.option_description %>
+</p>
+
+<p>
+  <strong>Option Default:</strong>
+  <%= @profile_attribute.option_default_list %>
+</p>
+
+<%= link_to 'Edit', edit_profile_profile_attribute_path(@profile.id, @profile_attribute) %> |
+<%= link_to 'Back', profile_path(@profile.id) %>

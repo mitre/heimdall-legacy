@@ -1,0 +1,6 @@
+<h1>Editing Profile Attribute</h1>
+
+<%= render 'form', profile_attribute: @profile_attribute %>
+
+<%= link_to 'Show', profile_profile_attribute_path(@profile.id, @profile_attribute) %> |
+<%= link_to 'Back', profile_path(@profile.id) %>

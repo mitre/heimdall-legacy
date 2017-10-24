@@ -72,12 +72,22 @@
 
 <p>
   <strong>Groups:</strong>
-  <%= @profile.groups %>
+  <ul>
+    <% @profile.groups.each do |gr| %>
+      <li><%= link_to gr.control_id, profile_group_path(@profile.id, gr.id) %></li>
+    <% end %>
+  </ul>
+  <%= link_to "Add Group", new_profile_group_path(@profile.id) %>
 </p>
 
 <p>
-  <strong>Profile attributes:</strong>
-  <%= @profile.profile_attributes %>
+  <strong>Attributes:</strong>
+  <ul>
+    <% @profile.profile_attributes.each do |pa| %>
+      <li><%= link_to "#{pa.name}: #{pa.option_description}", profile_profile_attribute_path(@profile.id, pa.id) %></li>
+    <% end %>
+  </ul>
+  <%= link_to "Add Attribute", new_profile_profile_attribute_path(@profile.id) %>
 </p>
 
 <%= link_to 'Edit', edit_profile_path(@profile) %> |

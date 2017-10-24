@@ -81,10 +81,12 @@ class ProfilesController < ApplicationController
 
     #convert parameters with hyphen to parameters with underscore and rename 'attributes'
     def transform hash
-      logger.debug("OLD HASH: #{hash.inspect}")
+      #logger.debug("OLD HASH: #{hash.inspect}")
       hash["controls"].each do |control|
         tags = control.delete('tags')
+        logger.debug("TAGS: #{tags.inspect}")
         tags.each do |key, value|
+          logger.debug("key: #{key}, value:#{value}")
           control["tag_#{key}"] = value
         end
         source_location = control.delete('source_location')
@@ -92,7 +94,21 @@ class ProfilesController < ApplicationController
           control["sl_#{key}"] = value
         end
       end
-      logger.debug("NEW HASH: #{hash.inspect}")
+      hash['attributes'].each do |attr|
+        options = attr.delete('options')
+        options.each do |key, value|
+          if key == "default"
+            unless value.kind_of?(Array)
+              unless value.kind_of?(String)
+                value = "#{value}"
+              end
+              value = [value]
+            end
+          end
+          attr["option_#{key}"] = value
+        end
+      end
+      #logger.debug("NEW HASH: #{hash.inspect}")
       hash.deep_transform_keys{ |key| key.to_s.tr('-', '_').gsub('attributes', 'profile_attributes').gsub(/\bid\b/, 'control_id') }
     end
 end

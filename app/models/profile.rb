@@ -11,10 +11,12 @@ class Profile
   field :version, type: String
   field :sha256, type: String
   field :depends, type: String
-  field :groups, type: String
-  field :profile_attributes, type: String
   embeds_many :supports, cascade_callbacks: true
   embeds_many :controls, cascade_callbacks: true
+  embeds_many :groups, cascade_callbacks: true
+  embeds_many :profile_attributes, cascade_callbacks: true
   accepts_nested_attributes_for :controls
   accepts_nested_attributes_for :supports
+  accepts_nested_attributes_for :groups
+  accepts_nested_attributes_for :profile_attributes
 end

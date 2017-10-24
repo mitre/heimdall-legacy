@@ -1,0 +1,19 @@
+<p id="notice"><%= notice %></p>
+
+<p>
+  <strong>Title:</strong>
+  <%= @group.title %>
+</p>
+
+<p>
+  <strong>Controls:</strong>
+  <%= @group.controls_list %>
+</p>
+
+<p>
+  <strong>Control:</strong>
+  <%= @group.control_id %>
+</p>
+
+<%= link_to 'Edit', edit_profile_group_path(@profile.id, @group) %> |
+<%= link_to 'Back', profile_path(@profile.id) %>
