@@ -44,7 +44,7 @@ class ProfileAttributesController < ApplicationController
   def update
     respond_to do |format|
       if @profile_attribute.update(profile_attribute_params)
-        format.html { redirect_to @profile_attribute, notice: 'Attribute was successfully updated.' }
+        format.html { redirect_to profile_profile_attribute_url(@profile, @profile_attribute), notice: 'Attribute was successfully updated.' }
         format.json { render :show, status: :ok, location: @profile_attribute }
       else
         format.html { render :edit }
@@ -72,6 +72,6 @@ class ProfileAttributesController < ApplicationController
 
     # Never trust parameters from the scary internet, only allow the white list through.
     def profile_attribute_params
-      params.require(:profile_attribute).permit(:name, :option_description, :option_default)
+      params.require(:profile_attribute).permit(:name, :option_description, :option_default, :option_default_list)
     end
 end
