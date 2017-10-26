@@ -33,12 +33,18 @@
     <li><strong>Subsystems:</strong> <%= @control.tag_subsystems_list %></li>
     <li><strong>Check:</strong> <%= @control.tag_check %></li>
     <li><strong>Fix:</strong> <%= @control.tag_fix %></li>
+    <li><strong>Ref:</strong> <%= @control.tag_ref %></li>
+    <li><strong>CIS ID:</strong> <%= @control.tag_cis_id %></li>
+    <li><strong>CIS Control:</strong> <%= @control.tag_cis_control %></li>
+    <li><strong>CIS Level:</strong> <%= @control.tag_cis_level %></li>
+    <li><strong>Audit:</strong> <%= @control.tag_audit %></li>
+    <li><strong>Default Value:</strong> <%= @control['tag_Default Value'] %></li>
   </ul>
 </p>
 
 <p>
   <strong>Code:</strong>
-  <%= @control.code %>
+  <span style="white-space: pre-wrap"><%= @control.code; %></span>
 </p>
 
 <p>
@@ -51,7 +57,7 @@
 
 <p>
   <strong>ID:</strong>
-  <%= @control.control_id %>
+  <%= @control.control_id; %>
 </p>
 
 <%= link_to 'Edit', edit_profile_control_path(@profile.id, @control) %> |

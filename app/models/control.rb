@@ -9,8 +9,14 @@ class Control
   field :control_id, type: String
   field :tag_severity, type: String
   field :tag_gtitle, type: String
+  field :tag_ref, type: String
+  field :tag_cis_id, type: String
+  field :tag_cis_control, type: String
+  field :tag_cis_level, type: String
   field :tag_gid, type: String
   field :tag_rid, type: String
+  field :tag_audit, type: String
+  field 'tag_Default Value', type: String
   field :tag_stig_id, type: String
   field :tag_cci, type: String
   field :tag_nist, type: Array, default: []
