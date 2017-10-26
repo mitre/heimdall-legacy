@@ -39,13 +39,12 @@
     <li><strong>CIS Level:</strong> <%= @control.tag_cis_level %></li>
     <li><strong>Audit:</strong> <%= @control.tag_audit %></li>
     <li><strong>Default Value:</strong> <%= @control['tag_Default Value'] %></li>
-
   </ul>
 </p>
 
 <p>
   <strong>Code:</strong>
-  <%= @control.code %>
+  <span style="white-space: pre-wrap"><%= @control.code; %></span>
 </p>
 
 <p>
@@ -58,7 +57,7 @@
 
 <p>
   <strong>ID:</strong>
-  <%= @control.control_id %>
+  <%= @control.control_id; %>
 </p>
 
 <%= link_to 'Edit', edit_profile_control_path(@profile.id, @control) %> |
