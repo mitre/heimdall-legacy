@@ -59,7 +59,7 @@ class SupportsController < ApplicationController
   def destroy
     @support.destroy
     respond_to do |format|
-      format.html { redirect_to supports_url, notice: 'Support was successfully destroyed.' }
+      format.html { redirect_to @profile, notice: 'Support was successfully destroyed.' }
       format.json { head :no_content }
     end
   end

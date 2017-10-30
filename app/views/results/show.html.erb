@@ -1,0 +1,34 @@
+<p id="notice"><%= notice %></p>
+
+<p>
+  <strong>Status:</strong>
+  <%= @result.status %>
+</p>
+
+<p>
+  <strong>Code desc:</strong>
+  <%= @result.code_desc %>
+</p>
+
+<p>
+  <strong>Skip message:</strong>
+  <%= @result.skip_message %>
+</p>
+
+<p>
+  <strong>Resource:</strong>
+  <%= @result.resource %>
+</p>
+
+<p>
+  <strong>Run time:</strong>
+  <%= @result.run_time %>
+</p>
+
+<p>
+  <strong>Start time:</strong>
+  <%= @result.start_time %>
+</p>
+
+<%= link_to 'Edit', edit_result_path(@result) %> |
+<%= link_to 'Back', results_path %>

@@ -1,0 +1,36 @@
+<p id="notice"><%= notice %></p>
+
+<h1>Results</h1>
+
+<table>
+  <thead>
+    <tr>
+      <th>Status</th>
+      <th>Code desc</th>
+      <th>Skip message</th>
+      <th>Resource</th>
+      <th>Run time</th>
+      <th>Start time</th>
+      <th colspan="3"></th>
+    </tr>
+  </thead>
+
+  <tbody>
+    <% @results.each do |result| %>
+      <tr>
+        <td><%= result.status %></td>
+        <td><%= result.code_desc %></td>
+        <td><%= result.skip_message %></td>
+        <td><%= result.resource %></td>
+        <td><%= result.run_time %></td>
+        <td><%= result.start_time %></td>
+        <td><%= link_to 'Show', result %></td>
+        <td><%= link_to 'Destroy', result, method: :delete, data: { confirm: 'Are you sure?' } %></td>
+      </tr>
+    <% end %>
+  </tbody>
+</table>
+
+<br>
+
+<%= link_to 'New Result', new_result_path %>

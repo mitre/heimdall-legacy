@@ -47,7 +47,12 @@
 
 <p>
   <strong>Depends:</strong>
-  <%= @profile.depends %>
+  <ul>
+    <% @profile.depends.each do |depend| %>
+      <li><%= depend.name %></li>
+    <% end %>
+  </ul>
+  <%= link_to "Add Dependency", new_profile_depend_path(@profile.id) %>
 </p>
 
 <p>

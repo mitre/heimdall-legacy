@@ -10,7 +10,7 @@ class Profile
   field :summary, type: String
   field :version, type: String
   field :sha256, type: String
-  field :depends, type: String
+  embeds_many :depends, cascade_callbacks: true
   embeds_many :supports, cascade_callbacks: true
   embeds_many :controls, cascade_callbacks: true
   embeds_many :groups, cascade_callbacks: true
@@ -19,4 +19,5 @@ class Profile
   accepts_nested_attributes_for :supports
   accepts_nested_attributes_for :groups
   accepts_nested_attributes_for :profile_attributes
+  #has_and_belongs_to_many :evaluations
 end
