@@ -1,6 +1,16 @@
-<h1>Editing Control</h1>
+<!-- Content Header (Page header) -->
+<section class="content-header">
+  <h1>
+    Editing Control
+  </h1>
+</section>
+
+<!-- Main content -->
+<section class="content container-fluid">
 
 <%= render 'form', control: @control %>
 
 <%= link_to 'Show', profile_control_path(@profile.id, @control) %> |
 <%= link_to 'Back', profile_path(@profile.id) %>
+</section>
+<!-- /.content -->

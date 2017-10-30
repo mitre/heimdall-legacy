@@ -1,49 +1,70 @@
-<div class="sidebar-nav navbar-collapse">
-    <ul class="nav" id="side-menu">
-        <li>
-            <a href="\"><i class="fa fa-dashboard fa-fw"></i> Dashboard</a>
-        </li>
-        <li>
-            <a href="#" ><i class="fa fa-sitemap fa-fw"></i> Evaluations<span class="fa arrow"></span></a>
-            <ul id='evaluations_list' class="nav nav-second-level" >
-              <li><%= link_to "Evaluations", evaluations_path %></li>
-              <li>
-                <div class="panel panel-default">
-                    <div class="panel-body">
-                      <%= form_tag(upload_evaluation_path, multipart: true) do %>
-                        <div class="field">
-                          <%= label_tag :file %>
-                          <%= file_field_tag :file %>
-                        </div>
-                        <div class="actions">
-                          <%= submit_tag 'Upload', :class => "col-xs-12 btn btn-info" %>
-                        </div>
-                      <% end %>
-                    </div>
-                </div>
-              </li>
-            </ul>
-        </li>
-        <li  >
-            <a href="#" ><i class="fa fa-sitemap fa-fw"></i> Profiles<span class="fa arrow"></span></a>
-            <ul id='profile_list' class="nav nav-second-level" >
-              <li><%= link_to "Profiles", profiles_path %></li>
-              <li>
-                <div class="panel panel-default">
-                    <div class="panel-body">
-                      <%= form_tag(upload_profile_path, multipart: true) do %>
-                        <div class="field">
-                          <%= label_tag :file %>
-                          <%= file_field_tag :file %>
-                        </div>
-                        <div class="actions">
-                          <%= submit_tag 'Upload', :class => "col-xs-12 btn btn-info" %>
-                        </div>
-                      <% end %>
-                    </div>
-                </div>
-              </li>
-            </ul>
-        </li>
+<aside class="main-sidebar">
+
+  <!-- sidebar: style can be found in sidebar.less -->
+  <section class="sidebar">
+
+    <!-- Sidebar user panel (optional) -->
+
+    <!-- search form (Optional) -->
+    <!-- /.search form -->
+
+    <!-- Sidebar Menu -->
+    <ul class="sidebar-menu" data-widget="tree">
+      <li class="header">Dashboard</li>
+      <!-- Optionally, you can add icons to the links -->
+      <li class="treeview">
+        <a href=""><i class="fa fa-link"></i> <span>Profiles</span>
+          <span class="pull-right-container">
+            <i class="fa fa-angle-left pull-right"></i>
+          </span>
+        </a>
+        <ul class="treeview-menu">
+          <li><%= link_to "All Profiles", profiles_path %></li>
+          <li>
+            <div class="panel panel-default">
+              <div class="panel-body">
+                <%= form_tag(upload_profile_path, multipart: true) do %>
+                  <div class="field">
+                    <%= label_tag :file %>
+                    <%= file_field_tag :file %>
+                  </div>
+                  <div class="actions">
+                    <%= submit_tag 'Upload', :class => "col-xs-12 btn btn-info" %>
+                  </div>
+                <% end %>
+              </div>
+            </div>
+          </li>
+        </ul>
+      </li>
+      <li class="treeview">
+        <a href=""><i class="fa fa-link"></i> <span>Evaluations</span>
+          <span class="pull-right-container">
+            <i class="fa fa-angle-left pull-right"></i>
+          </span>
+        </a>
+        <ul class="treeview-menu">
+          <li><%= link_to "All Evaluations", evaluations_path %></li>
+          <li>
+            <div class="panel panel-default">
+              <div class="panel-body">
+                <%= form_tag(upload_evaluation_path, multipart: true) do %>
+                  <div class="field">
+                    <%= label_tag :file %>
+                    <%= file_field_tag :file %>
+                  </div>
+                  <div class="actions">
+                    <%= submit_tag 'Upload', :class => "col-xs-12 btn btn-info" %>
+                  </div>
+                <% end %>
+              </div>
+            </div>
+          </li>
+        </ul>
+      </li>
     </ul>
-</div>
+    <!-- /.sidebar-menu -->
+  </section>
+  <!-- /.sidebar -->
+</aside>
+<div class="control-sidebar-bg"></div>

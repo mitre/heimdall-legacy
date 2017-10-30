@@ -1,6 +1,16 @@
-<h1>Editing Support</h1>
+<!-- Content Header (Page header) -->
+<section class="content-header">
+  <h1>
+    Editing Supports
+  </h1>
+</section>
+
+<!-- Main content -->
+<section class="content container-fluid">
 
 <%= render 'form', support: @support %>
 
 <%= link_to 'Show', profile_support_path(@profile.id, @support) %> |
 <%= link_to 'Back', profile_path(@profile.id) %>
+</section>
+<!-- /.content -->

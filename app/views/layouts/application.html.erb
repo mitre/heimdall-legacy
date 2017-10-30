@@ -9,20 +9,32 @@
     <%= stylesheet_link_tag    'application', media: 'all', 'data-turbolinks-track': 'reload' %>
     <%= javascript_include_tag 'application', 'data-turbolinks-track': 'reload' %>
   </head>
-  <body>
-    <div id="wrapper">
-        <!-- Navigation -->
-        <%= render :partial => 'layouts/navigation' %>
-        <div id="page-wrapper">
-          <div class="container-fluid">
-            <% flash.each do |key, value| %>
-              <div id="flash" class="alert alert-<%= key %>"><%= value %></div>
-            <% end %>
-            <%= yield %>
-          </div>
+  <body class="skin-blue sidebar-mini">
+    <div class="wrapper">
+
+      <!-- Main Header -->
+      <%= render :partial => 'layouts/header' %>
+      <!-- Left side column. contains the logo and sidebar -->
+      <%= render :partial => 'layouts/sidebar' %>
+      <!-- Content Wrapper. Contains page content -->
+      <div class="content-wrapper">
+        <% flash.each do |key, value| %>
+          <div id="flash" class="alert alert-<%= key %>"><%= value %></div>
+        <% end %>
+        <%= yield %>
+      </div>
+      <!-- /.content-wrapper -->
+
+      <!-- Main Footer -->
+      <footer class="main-footer">
+        <!-- To the right -->
+        <div class="pull-right hidden-xs">
+          Version:
         </div>
-        <!-- /#page-wrapper -->
+        <!-- Default to the left -->
+        <strong>Copyright &copy; 2017 <a href="#">MITRE</a>.</strong> All rights reserved.
+      </footer>
     </div>
-    <!-- /#wrapper -->
+    <!-- ./wrapper -->
   </body>
 </html>

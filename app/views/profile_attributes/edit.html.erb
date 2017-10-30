@@ -1,6 +1,16 @@
-<h1>Editing Profile Attribute</h1>
+<!-- Content Header (Page header) -->
+<section class="content-header">
+  <h1>
+    Editing Attribute
+  </h1>
+</section>
+
+<!-- Main content -->
+<section class="content container-fluid">
 
 <%= render 'form', profile_attribute: @profile_attribute %>
 
 <%= link_to 'Show', profile_profile_attribute_path(@profile.id, @profile_attribute) %> |
 <%= link_to 'Back', profile_path(@profile.id) %>
+</section>
+<!-- /.content -->
