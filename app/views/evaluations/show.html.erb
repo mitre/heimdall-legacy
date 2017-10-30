@@ -1,0 +1,45 @@
+<p id="notice"><%= notice %></p>
+
+<p>
+  <strong>Version:</strong>
+  <%= @evaluation.version %>
+</p>
+
+<p>
+  <strong>Other checks:</strong>
+  <%= @evaluation.other_checks %>
+</p>
+
+<p>
+  <strong>Platform name:</strong>
+  <%= @evaluation.platform_name %>
+</p>
+
+<p>
+  <strong>Platform release:</strong>
+  <%= @evaluation.platform_release %>
+</p>
+
+<p>
+  <strong>Statistics duration:</strong>
+  <%= @evaluation.statistics_duration %>
+</p>
+
+<p>
+  <strong>Results:</strong>
+  <ul>
+    <% @evaluation.results.each do |result| %>
+      <ul>
+        <li>Control ID: <%= result.control_id %></li>
+        <li>Status: <%= result.status %></li>
+        <li>Code desc: <%= result.code_desc %></li>
+        <li>Skip message: <%= result.skip_message %></li>
+        <li>Resource: <%= result.resource %></li>
+        <li>Run time: <%= result.run_time %></li>
+        <li>Start time: <%= result.start_time %></li>
+      </ul>
+    <% end %>
+  </ul>
+</p>
+
+<%= link_to 'Back', evaluations_path %>

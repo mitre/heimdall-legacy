@@ -16,7 +16,7 @@ class Control
   field :tag_gid, type: String
   field :tag_rid, type: String
   field :tag_audit, type: String
-  field 'tag_Default Value', type: String
+  field :tag_default_value, type: String
   field :tag_stig_id, type: String
   field :tag_cci, type: String
   field :tag_nist, type: Array, default: []
@@ -26,6 +26,9 @@ class Control
   field :sl_ref, type: String
   field :sl_line, type: Integer
   embedded_in :profile, :inverse_of => :controls
+  #has_many :results
+  #accepts_nested_attributes_for :results
+
 
   def refs_list=(arg)
     self.refs = arg.split(',').map { |v| v.strip }

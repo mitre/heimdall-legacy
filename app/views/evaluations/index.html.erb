@@ -1,0 +1,35 @@
+<p id="notice"><%= notice %></p>
+
+<h1>Evaluations</h1>
+
+<table>
+  <thead>
+    <tr>
+      <th>Version</th>
+      <th>Other checks</th>
+      <th>Platform name</th>
+      <th>Platform release</th>
+      <th>Statistics duration</th>
+      <th colspan="3"></th>
+    </tr>
+  </thead>
+
+  <tbody>
+    <% @evaluations.each do |evaluation| %>
+      <tr>
+        <td><%= evaluation.version %></td>
+        <td><%= evaluation.other_checks %></td>
+        <td><%= evaluation.platform_name %></td>
+        <td><%= evaluation.platform_release %></td>
+        <td><%= evaluation.statistics_duration %></td>
+        <td><%= link_to 'Show', evaluation %></td>
+        <td><%= link_to 'Edit', edit_evaluation_path(evaluation) %></td>
+        <td><%= link_to 'Destroy', evaluation, method: :delete, data: { confirm: 'Are you sure?' } %></td>
+      </tr>
+    <% end %>
+  </tbody>
+</table>
+
+<br>
+
+<%= link_to 'New Evaluation', new_evaluation_path %>

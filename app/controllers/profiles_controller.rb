@@ -90,7 +90,7 @@ class ProfilesController < ApplicationController
           control["tag_#{key}"] = value
         end
         source_location = control.delete('source_location')
-        sl = source_location.each do |key, value|
+        source_location.each do |key, value|
           control["sl_#{key}"] = value
         end
       end

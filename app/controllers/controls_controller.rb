@@ -58,7 +58,7 @@ class ControlsController < ApplicationController
   def destroy
     @control.destroy
     respond_to do |format|
-      format.html { redirect_to profile_control_url(@profile), notice: 'Control was successfully destroyed.' }
+      format.html { redirect_to @profile, notice: 'Control was successfully destroyed.' }
       format.json { head :no_content }
     end
   end
