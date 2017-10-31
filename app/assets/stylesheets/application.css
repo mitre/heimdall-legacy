@@ -13,3 +13,15 @@
  *= require_tree .
  *= require_self
  */
+
+ .white-text {
+   color: #ffffff;
+ }
+ .menu-text {
+   color: #8aa4af;
+ }
+ .treeview-menu > li > form {
+  padding: 5px 5px 5px 15px;
+  display: block;
+  font-size: 14px;
+}
