@@ -13,12 +13,17 @@
 
   <%= form.hidden_field :profile_id, :value => @profile.id, :name =>"profile_id" %>
 
-  <div class="field">
-    <%= form.label "OS Family" %>
-    <%= form.text_field :os_family, id: :support_os_family %>
+  <div class="form-group">
+    <%= form.label :os_family, "OS Family" %>
+    <%= form.text_field :os_family, id: :support_os_family, class: "form-control" %>
   </div>
 
-  <div class="actions">
-    <%= form.submit %>
+  <div class="form-group">
+    <%= button_tag(type: "submit", class: "btn btn-primary") do %>
+      <i class="fa fa-edit"></i> Save
+    <% end %>
+    <button type="reset" id="support_cancel_btn" class="btn btn-info pull-right">
+      <i class="fa fa-cancel"></i> Cancel
+    </button>
   </div>
 <% end %>

@@ -26,7 +26,7 @@ class DependsController < ApplicationController
   # POST /depends.json
   def create
     @profile = Profile.find(params[:profile_id])
-    @depend = @profile.depends.new(control_params)
+    @depend = @profile.depends.new(depend_params)
     respond_to do |format|
       if @profile.save
         format.html { redirect_to @profile, notice: 'Dependency was successfully created.' }
@@ -42,7 +42,7 @@ class DependsController < ApplicationController
   # PATCH/PUT /depends/1.json
   def update
     respond_to do |format|
-      if @depend.update(control_params)
+      if @depend.update(depend_params)
         format.html { redirect_to profile_depend_url(@profile, @depend), notice: 'Dependency was successfully updated.' }
         format.json { render :show, status: :ok, location: @depend }
       else
@@ -66,7 +66,7 @@ class DependsController < ApplicationController
     # Use callbacks to share common setup or constraints between actions.
     def set_depend
       @profile = Profile.find(params[:profile_id])
-      @control = @profile.depends.find(params[:id])
+      @depend = @profile.depends.find(params[:id])
     end
 
     # Never trust parameters from the scary internet, only allow the white list through.

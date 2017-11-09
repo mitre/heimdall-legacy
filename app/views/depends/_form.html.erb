@@ -1,7 +1,7 @@
 <%= form_with(model: [ @profile, @depend ], local: true) do |form| %>
   <% if depend.errors.any? %>
     <div id="error_explanation">
-      <h2><%= pluralize(depend.errors.count, "error") %> prohibited this depend from being saved:</h2>
+      <h2><%= pluralize(depend.errors.count, "error") %> prohibited this dependency from being saved:</h2>
 
       <ul>
       <% depend.errors.full_messages.each do |message| %>
@@ -11,17 +11,22 @@
     </div>
   <% end %>
 
-  <div class="field">
+  <div class="form-group">
     <%= form.label :name %>
-    <%= form.text_field :name, id: :depend_name %>
+    <%= form.text_field :name, id: :depend_name, class: "form-control" %>
   </div>
 
-  <div class="field">
+  <div class="form-group">
     <%= form.label :path %>
-    <%= form.text_field :path, id: :depend_path %>
+    <%= form.text_field :path, id: :depend_path, class: "form-control" %>
   </div>
 
-  <div class="actions">
-    <%= form.submit %>
+  <div class="form-group">
+    <%= button_tag(type: "submit", class: "btn btn-primary") do %>
+      <i class="fa fa-edit"></i> Save
+    <% end %>
+    <button type="reset" id="depend_cancel_btn" class="btn btn-info pull-right">
+      <i class="fa fa-cancel"></i> Cancel
+    </button>
   </div>
 <% end %>

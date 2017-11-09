@@ -1,64 +1,83 @@
-<p id="notice"><%= notice %></p>
+<!-- Content Header (Page header) -->
+<section class="content-header">
+  <h1>
+    Control
+  </h1>
+  <ol class="breadcrumb">
+    <li><%= link_to ('<i class="fa fa-dashboard"> </i>Dashboard').html_safe, home_path %></li>
+    <li><%= link_to 'Profiles', profiles_path %></li>
+    <li><%= link_to 'Profile', profile_path(@control.profile.id) %></li>
+    <li class="active">Control</li>
+  </ol>
+</section>
 
-<p>
-  <strong>Title:</strong>
-  <%= @control.title %>
-</p>
+<!-- Main content -->
+<section class="content container-fluid">
+  <div class="row">
+    <div class="col-xs-12">
+      <div class="box box-primary">
+        <div class="box-header">
+          <h3 class="box-title">Control Information</h3>
+          <%= link_to 'Destroy', [@profile, @control], :method => :delete, class: "btn btn-danger pull-right", data: { confirm: 'Are you sure?' } %>
+          <%= link_to ('<i class="fa fa-edit"></i> Edit').html_safe, edit_profile_control_path(@profile.id, @control), class: "btn btn-primary pull-right margin-right" %>
+        </div>
+        <!-- /.box-header -->
+        <div class="box-body">
+          <p>
+            <strong>Title:</strong>
+            <%= @control.title %>
+          </p>
 
-<p>
-  <strong>Desc:</strong>
-  <%= @control.desc %>
-</p>
+          <p>
+            <strong>Desc:</strong>
+            <%= @control.desc %>
+          </p>
 
-<p>
-  <strong>Impact:</strong>
-  <%= @control.impact %>
-</p>
+          <p>
+            <strong>Impact:</strong>
+            <%= @control.impact %>
+          </p>
 
-<p>
-  <strong>Refs:</strong>
-  <%= @control.refs_list %>
-</p>
+          <p>
+            <strong>Refs:</strong>
+            <%= @control.refs_list %>
+          </p>
 
-<p>
-  <strong>Tags:</strong>
-  <ul>
-    <li><strong>Severity:</strong> <%= @control.tag_severity %></li>
-    <li><strong>Gtitle:</strong> <%= @control.tag_gtitle %></li>
-    <li><strong>GID:</strong> <%= @control.tag_gid %></li>
-    <li><strong>RID:</strong> <%= @control.tag_rid %></li>
-    <li><strong>Stig ID:</strong> <%= @control.tag_stig_id %></li>
-    <li><strong>CCI:</strong> <%= @control.tag_cci %></li>
-    <li><strong>NIST:</strong> <%= @control.tag_nist_list %></li>
-    <li><strong>Subsystems:</strong> <%= @control.tag_subsystems_list %></li>
-    <li><strong>Check:</strong> <%= @control.tag_check %></li>
-    <li><strong>Fix:</strong> <%= @control.tag_fix %></li>
-    <li><strong>Ref:</strong> <%= @control.tag_ref %></li>
-    <li><strong>CIS ID:</strong> <%= @control.tag_cis_id %></li>
-    <li><strong>CIS Control:</strong> <%= @control.tag_cis_control %></li>
-    <li><strong>CIS Level:</strong> <%= @control.tag_cis_level %></li>
-    <li><strong>Audit:</strong> <%= @control.tag_audit %></li>
-    <li><strong>Default Value:</strong> <%= @control.tag_default_value %></li>
-  </ul>
-</p>
+          <p>
+            <strong>Tags:</strong>
+            <ul>
+              <% @control.tags.each do |tag| %>
+              <li><strong><%= tag.name %>:</strong> <%= tag.value %></li>
+              <% end %>
+            </ul>
+          </p>
 
-<p>
-  <strong>Code:</strong>
-  <span style="white-space: pre-wrap"><%= @control.code; %></span>
-</p>
+          <p>
+            <strong>Source Location:</strong>
+            <ul>
+              <li><strong>Ref:</strong> <%= @control.sl_ref %></li>
+              <li><strong>Line:</strong> <%= @control.sl_line %></li>
+            </ul>
+          </p>
 
-<p>
-  <strong>Source Location:</strong>
-  <ul>
-    <li><strong>Ref:</strong> <%= @control.sl_ref %></li>
-    <li><strong>Line:</strong> <%= @control.sl_line %></li>
-  </ul>
-</p>
+          <p>
+            <strong>ID:</strong>
+            <%= @control.control_id; %>
+          </p>
 
-<p>
-  <strong>ID:</strong>
-  <%= @control.control_id; %>
-</p>
+          <p>
+            <strong>Code:</strong>
+            <pre><code class=”language-ruby”><%= @control.code %></code></pre>
+          </p>
 
-<%= link_to 'Edit', edit_profile_control_path(@profile.id, @control) %> |
-<%= link_to 'Back', profile_path(@profile.id) %>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+<script>
+document.addEventListener("turbolinks:load", function() {
+    console.log('It works on each visit!');
+    Prism.highlightAll();
+});
+</script>

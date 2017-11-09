@@ -15,7 +15,7 @@ class ProfileAttributesController < ApplicationController
   # GET /profile_attributes/:profile_id/new
   def new
     @profile = Profile.find(params[:profile_id])
-    @profile_attribute = ProfileAttribute.new
+    @profile_attribute = @profile.profile_attributes.new
   end
 
   # GET /profile_attributes/1/edit
@@ -58,7 +58,7 @@ class ProfileAttributesController < ApplicationController
   def destroy
     @profile_attribute.destroy
     respond_to do |format|
-      format.html { redirect_to profile_attributes_url, notice: 'Attribute was successfully destroyed.' }
+      format.html { redirect_to @profile, notice: 'Attribute was successfully destroyed.' }
       format.json { head :no_content }
     end
   end
