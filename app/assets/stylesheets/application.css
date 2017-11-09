@@ -14,14 +14,60 @@
  *= require_self
  */
 
- .white-text {
-   color: #ffffff;
- }
- .menu-text {
-   color: #8aa4af;
- }
- .treeview-menu > li > form {
+.white-text {
+  color: #ffffff;
+}
+.menu-text {
+  color: #8aa4af;
+}
+.treeview-menu > li > form {
   padding: 5px 5px 5px 15px;
   display: block;
   font-size: 14px;
+}
+.red {
+  color: #d9534f;
+}
+.blue {
+  color: #337ab7;
+}
+.hidden {
+  display:none;
+}
+.shown {
+  display:block;
+}
+.padded {
+  padding: 5px;
+}
+.column-2 {
+  -webkit-columns: 100px 2; /* Chrome, Safari, Opera */
+  -moz-columns: 100px 2; /* Firefox */
+  columns: 100px 2;
+}
+.column-3 {
+  -webkit-columns: 100px 3; /* Chrome, Safari, Opera */
+  -moz-columns: 100px 3; /* Firefox */
+  columns: 100px 3;
+}
+.column-4 {
+  -webkit-columns: 100px 4; /* Chrome, Safari, Opera */
+  -moz-columns: 100px 4; /* Firefox */
+  columns: 100px 4;
+}
+.column-5 {
+  -webkit-columns: 100px 5; /* Chrome, Safari, Opera */
+  -moz-columns: 100px 5; /* Firefox */
+  columns: 100px 5;
+}
+.column-6 {
+  -webkit-columns: 100px 6; /* Chrome, Safari, Opera */
+  -moz-columns: 100px 6; /* Firefox */
+  columns: 100px 6;
+}
+.margin-right {
+  margin-right: 5px;
+}
+.margin-left {
+  margin-left: 15px;
 }

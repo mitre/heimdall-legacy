@@ -10,6 +10,12 @@ class EvaluationsController < ApplicationController
   # GET /evaluations/1
   # GET /evaluations/1.json
   def show
+    @profiles = @evaluation.profiles
+    @controls = @evaluation.controls
+    respond_to do |format|
+      format.html { render :show }
+      format.json { render json: @evaluation}
+    end
   end
 
   # GET /evaluations/new
@@ -91,7 +97,9 @@ class EvaluationsController < ApplicationController
 
   def upload
     file = params[:file]
-    @evaluation = Evaluation.create(transform(JSON.parse(file.read)))
+    hash = transform(JSON.parse(file.read))
+    logger.debug("HASH: #{hash.inspect}")
+    @evaluation = Evaluation.create(hash)
     logger.debug("New Evaluation: #{@evaluation.inspect}")
     logger.debug("Results: #{@evaluation.results.size}")
     redirect_to evaluations_url
@@ -127,6 +135,7 @@ class EvaluationsController < ApplicationController
           profile_hash['controls'].each do |control_hash|
             if control = profile.controls.find_by(:control_id => control_hash['control_id'])
               control_hash['results'].each do |result|
+                result['profile_name'] = profile.name
                 result['control_id'] = control_hash['control_id']
                 results << result
               end

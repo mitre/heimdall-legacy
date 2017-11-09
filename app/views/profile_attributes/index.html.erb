@@ -1,6 +1,13 @@
-<p id="notice"><%= notice %></p>
+<!-- Content Header (Page header) -->
+<section class="content-header">
+  <p id="notice"><%= notice %></p>
+  <h1>
+    Attributes
+  </h1>
+</section>
 
-<h1>Profile Attributes</h1>
+<!-- Main content -->
+<section class="content container-fluid">
 
 <table>
   <thead>
@@ -26,6 +33,48 @@
   </tbody>
 </table>
 
+<div class="col-xs-12">
+  <div class="box">
+    <div class="box-header">
+      <h3 class="box-title">Profiles</h3>
+
+      <div class="box-tools">
+        <div class="input-group input-group-sm" style="width: 150px;">
+          <input type="text" name="table_search" class="form-control pull-right" placeholder="Search">
+
+          <div class="input-group-btn">
+            <button type="submit" class="btn btn-default"><i class="fa fa-search"></i></button>
+          </div>
+        </div>
+      </div>
+    </div>
+    <!-- /.box-header -->
+    <div class="box-body table-responsive no-padding">
+      <table class="table table-hover">
+        <tr>
+          <th>Name</th>
+          <th>Option description</th>
+          <th>Option default</th>
+          <th colspan="3"></th>
+        </tr>
+        <% @profile_attributes.each do |profile_attribute| %>
+          <tr>
+            <td><%= profile_attribute.name %></td>
+            <td><%= profile_attribute.option_description %></td>
+            <td><%= profile_attribute.option_default %></td>
+            <td><%= link_to 'Show', profile_attribute %></td>
+            <td><%= link_to 'Edit', edit_profile_attribute_path(profile_attribute) %></td>
+            <td><%= link_to 'Destroy', profile_attribute, method: :delete, data: { confirm: 'Are you sure?' } %></td>
+          </tr>
+        <% end %>
+      </table>
+    </div>
+    <!-- /.box-body -->
+  </div>
+  <!-- /.box -->
+</div>
+
 <br>
 
 <%= link_to 'New Profile Attribute', new_profile_attribute_path %>
+</section>

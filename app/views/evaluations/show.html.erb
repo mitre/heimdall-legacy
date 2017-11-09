@@ -1,55 +1,207 @@
 <!-- Content Header (Page header) -->
 <section class="content-header">
-  <p id="notice"><%= notice %></p>
   <h1>
     Evaluation
   </h1>
+  <ol class="breadcrumb">
+    <li><%= link_to ('<i class="fa fa-dashboard"> </i>Dashboard').html_safe, home_path %></li>
+    <li><%= link_to 'Evaluations', evaluations_path %>
+    <li class="active">Evaluation</li>
+  </ol>
 </section>
 
 <!-- Main content -->
 <section class="content container-fluid">
-<p>
-  <strong>Version:</strong>
-  <%= @evaluation.version %>
-</p>
+  <div class="row">
+    <div class="col-md-4">
+      <div class="box box-primary">
+        <div class="box-header">
+          <h3 class="box-title">Evaluation Information</h3>
+        </div>
+        <!-- /.box-header -->
+        <div class="box-body">
+          <p>
+            <strong>Version:</strong>
+            <%= @evaluation.version %>
+          </p>
 
-<p>
-  <strong>Other checks:</strong>
-  <%= @evaluation.other_checks %>
-</p>
+          <p>
+            <strong>Other checks:</strong>
+            <%= @evaluation.other_checks %>
+          </p>
+        </div>
+      </div>
+    </div>
+    <div class="col-md-4">
+      <div class="box box-primary">
+        <div class="box-header">
+          <h3 class="box-title">Platform</h3>
+        </div>
+        <!-- /.box-header -->
+        <div class="box-body">
+          <p>
+            <strong>Name:</strong>
+            <%= @evaluation.platform_name %>
+          </p>
 
-<p>
-  <strong>Platform name:</strong>
-  <%= @evaluation.platform_name %>
-</p>
+          <p>
+            <strong>Release:</strong>
+            <%= @evaluation.platform_release %>
+          </p>
+        </div>
+      </div>
+    </div>
+    <div class="col-md-4">
+      <div class="box box-primary">
+        <div class="box-header">
+          <h3 class="box-title">Statistics</h3>
+        </div>
+        <!-- /.box-header -->
+        <div class="box-body">
+          <p>
+            <strong>Duration:</strong>
+            <%= @evaluation.statistics_duration %>
+          </p>
+        </div>
+      </div>
+    </div>
+  </div>
 
-<p>
-  <strong>Platform release:</strong>
-  <%= @evaluation.platform_release %>
-</p>
+  <!-- Small boxes (Stat box) -->
+  <div class="row">
+    <div class="col-xs-12">
+      <div class="box box-primary">
+        <div class="box-header">
+          <h3 class="box-title">Findings</h3>
+        </div>
+        <!-- /.box-header -->
+        <div class="box-body">
+          <div class="col-lg-3 col-xs-6">
+            <!-- small box -->
+            <div class="small-box bg-aqua">
+              <div class="inner">
+                <h3><%= @evaluation.status_counts[:not_a_finding] %></h3>
+                <p>Not a Finding</p>
+              </div>
+              <div class="icon padded">
+                <i class="glyphicon glyphicon-ok-circle"></i>
+              </div>
+            </div>
+          </div>
+          <!-- ./col -->
+          <div class="col-lg-3 col-xs-6">
+            <!-- small box -->
+            <div class="small-box bg-green">
+              <div class="inner">
+                <h3><%= @evaluation.status_counts[:open] %></h3>
 
-<p>
-  <strong>Statistics duration:</strong>
-  <%= @evaluation.statistics_duration %>
-</p>
+                <p>Open</p>
+              </div>
+              <div class="icon padded">
+                <i class="glyphicon glyphicon-remove-circle"></i>
+              </div>
+            </div>
+          </div>
+          <!-- ./col -->
+          <div class="col-lg-3 col-xs-6">
+            <!-- small box -->
+            <div class="small-box bg-yellow">
+              <div class="inner">
+                <h3><%= @evaluation.status_counts[:not_applicable] %></h3>
 
-<p>
-  <strong>Results:</strong>
-  <ul>
-    <% @evaluation.results.each do |result| %>
-      <ul>
-        <li>Control ID: <%= result.control_id %></li>
-        <li>Status: <%= result.status %></li>
-        <li>Code desc: <%= result.code_desc %></li>
-        <li>Skip message: <%= result.skip_message %></li>
-        <li>Resource: <%= result.resource %></li>
-        <li>Run time: <%= result.run_time %></li>
-        <li>Start time: <%= result.start_time %></li>
-      </ul>
-    <% end %>
-  </ul>
-</p>
+                <p>Not Applicable</p>
+              </div>
+              <div class="icon padded">
+                <i class="glyphicon glyphicon-ban-circle"></i>
+              </div>
+            </div>
+          </div>
+          <!-- ./col -->
+          <div class="col-lg-3 col-xs-6">
+            <!-- small box -->
+            <div class="small-box bg-red">
+              <div class="inner">
+                <h3><%= @evaluation.status_counts[:not_reviewed] %></h3>
 
-<%= link_to 'Back', evaluations_path %>
+                <p>Not Reviewed</p>
+              </div>
+              <div class="icon padded">
+                <i class="glyphicon glyphicon-warning-sign"></i>
+              </div>
+            </div>
+          </div>
+          <!-- ./col -->
+        </div>
+        <!-- /.row -->
+      </div>
+    </div>
+  </div>
+
+  <div class="row">
+    <div class="col-xs-12">
+      <div class="box box-primary">
+        <div class="box-header">
+          <h3 class="box-title">Profile Results</h3>
+        </div>
+        <!-- /.box-header -->
+        <div class="box-body">
+          <table id="results" class="table table-bordered table-striped">
+            <thead>
+            <tr>
+              <th>Profile</th>
+              <th>Control ID</th>
+              <th>Status</th>
+              <th>Code Desc</th>
+              <th>Skip Message</th>
+              <th>Resource</th>
+              <th>Run Time</th>
+              <th>Start time</th>
+            </tr>
+            </thead>
+            <tbody>
+              <% @evaluation.results.each do |result| %>
+              <tr>
+                <td><%= link_to result.profile_name, profile_path(@profiles[result.profile_name].id) %></td>
+                <td><%= link_to result.control_id, profile_control_path(@profiles[result.profile_name].id, @controls[result.control_id].id) %></td>
+                <td><%= result.status %></td>
+                <td><%= result.code_desc %></td>
+                <td><%= result.skip_message %></td>
+                <td><%= result.resource %></td>
+                <td><%= result.run_time %></td>
+                <td><%= result.start_time %></td>
+              </tr>
+              <% end %>
+            </tbody>
+            <tfoot>
+            <tr>
+              <th>Profile</th>
+              <th>Control ID</th>
+              <th>Status</th>
+              <th>Code Desc</th>
+              <th>Skip Message</th>
+              <th>Resource</th>
+              <th>Run Time</th>
+              <th>Start time</th>
+            </tr>
+          </tfoot>
+          </table>
+        </div>
+      </div>
+    </div>
+  </div>
 </section>
 <!-- /.content -->
+<script>
+document.addEventListener("turbolinks:load", function() {
+  if($('[id^=results_wrapper').length == 0) {
+    $('#results').DataTable({
+      'paging'      : true,
+      'lengthChange': false,
+      'searching'   : true,
+      'ordering'    : true,
+      'info'        : true,
+      'autoWidth'   : false
+    });
+  }
+});
+</script>

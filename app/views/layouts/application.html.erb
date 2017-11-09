@@ -18,9 +18,6 @@
       <%= render :partial => 'layouts/sidebar' %>
       <!-- Content Wrapper. Contains page content -->
       <div class="content-wrapper">
-        <% flash.each do |key, value| %>
-          <div id="flash" class="alert alert-<%= key %>"><%= value %></div>
-        <% end %>
         <%= yield %>
       </div>
       <!-- /.content-wrapper -->

@@ -1,16 +1,29 @@
 <!-- Content Header (Page header) -->
 <section class="content-header">
   <h1>
-    Editing Attribute
+    Attribute
   </h1>
+  <ol class="breadcrumb">
+    <li><%= link_to ('<i class="fa fa-dashboard"> </i>Dashboard').html_safe, home_path %></li>
+    <li><%= link_to 'Profiles', profiles_path %></li>
+    <li><%= link_to 'Profile', profile_path(@profile.id) %></li>
+    <li class="active">Attribute</li>
+  </ol>
 </section>
 
 <!-- Main content -->
 <section class="content container-fluid">
-
-<%= render 'form', profile_attribute: @profile_attribute %>
-
-<%= link_to 'Show', profile_profile_attribute_path(@profile.id, @profile_attribute) %> |
-<%= link_to 'Back', profile_path(@profile.id) %>
+  <div class="row">
+    <div class="col-xs-12">
+      <div class="box box-primary">
+        <div class="box-header">
+          <h3 class="box-title">Editing Attribute</h3>
+        </div>
+        <!-- /.box-header -->
+        <div class="box-body">
+          <%= render 'form', profile_attribute: @profile_attribute %>
+        </div>
+      </div>
+    </div>
+  </div>
 </section>
-<!-- /.content -->

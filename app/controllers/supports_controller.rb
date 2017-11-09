@@ -68,7 +68,7 @@ class SupportsController < ApplicationController
     # Use callbacks to share common setup or constraints between actions.
     def set_support
       @profile = Profile.find(params[:profile_id])
-      @support = Support.find(params[:id])
+      @support = @profile.supports.find(params[:id])
     end
 
     # Never trust parameters from the scary internet, only allow the white list through.

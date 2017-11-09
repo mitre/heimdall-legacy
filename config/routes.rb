@@ -1,4 +1,5 @@
 Rails.application.routes.draw do
+  resources :tags
   devise_for :users
   resources :profiles do
     resources :depends
@@ -10,9 +11,10 @@ Rails.application.routes.draw do
   resources :evaluations do
     resources :results
   end
-
+  match 'profiles/:id/vis' => 'profiles#vis', :as => :profile_vis, :via => :get
+  match 'profiles/:id/nist_800_53(/category/:category)' => 'profiles#nist_800_53', :as => :profile_nist_800_53, :via => :get
   match 'profile_upload' => 'profiles#upload', :as => :upload_profile, :via => :post
   match 'evaluation_upload' => 'evaluations#upload', :as => :upload_evaluation, :via => :post
   # Root path (/)
-  root :to => 'dashboard#index'
+  root :to => 'dashboard#index', :as => :home
 end

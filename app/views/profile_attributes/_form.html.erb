@@ -30,6 +30,10 @@
   </div>
 
   <div class="actions">
-    <%= form.submit %>
+    <%= button_tag(type: "submit", class: "btn btn-primary") do %>
+      <i class="fa fa-edit"></i> Save
+    <% end %>
+    <%= link_to ('<i class="fa fa-cancel"></i> Cancel').html_safe, profile_profile_attribute_path(@profile.id, @profile_attribute.id), class: "btn btn-info pull-right" %>
+  </div>
   </div>
 <% end %>

@@ -31,80 +31,6 @@
     <%= form.text_field :refs_list, id: :control_refs, class: "form-control"  %>
   </div>
 
-  <strong>Tags</strong>
-  <div class="form-group input-group">
-      <div class="form-group">
-        <%= form.label :tag_severity %>
-        <%= form.text_field :tag_severity, id: :control_tags_severity, class: "form-control"  %>
-      </div>
-      <div class="form-group">
-        <%= form.label :tag_gtitle %>
-        <%= form.text_field :tag_gtitle, id: :control_tags_gtitle, class: "form-control"  %>
-      </div>
-      <div class="form-group">
-        <%= form.label :tag_gid %>
-        <%= form.text_field :tag_gid, id: :control_tags_gid, class: "form-control"  %>
-      </div>
-      <div class="form-group">
-        <%= form.label :tag_rid %>
-        <%= form.text_field :tag_rid, id: :control_tags_rid, class: "form-control"  %>
-      </div>
-      <div class="form-group">
-        <%= form.label :tag_stig_id %>
-        <%= form.text_field :tag_stig_id, id: :control_tags_stig_id, class: "form-control"  %>
-      </div>
-      <div class="form-group">
-        <%= form.label :tag_cci %>
-        <%= form.text_field :tag_cci, id: :control_tags_cci, class: "form-control"  %>
-      </div>
-      <div class="form-group">
-        <%= form.label :tag_nist %>
-        <%= form.text_field :tag_nist_list, id: :control_tags_nist, class: "form-control"  %>
-      </div>
-      <div class="form-group">
-        <%= form.label :tag_subsystems %>
-        <%= form.text_field :tag_subsystems_list, id: :control_tags_subsystems, class: "form-control"  %>
-      </div>
-      <div class="form-group">
-        <%= form.label :tag_check %>
-        <%= form.text_field :tag_check, id: :control_tags_check, class: "form-control"  %>
-      </div>
-      <div class="form-group">
-        <%= form.label :tag_fix %>
-        <%= form.text_field :tag_fix, id: :control_tags_fix, class: "form-control"  %>
-      </div>
-
-      <div class="form-group">
-        <%= form.label :tag_ref %>
-        <%= form.text_field :tag_ref, id: :control_tags_fix, class: "form-control"  %>
-      </div>
-
-      <div class="form-group">
-        <%= form.label :tag_cis_id %>
-        <%= form.text_field :tag_cis_id, id: :control_tag_cis_id, class: "form-control"  %>
-      </div>
-
-      <div class="form-group">
-        <%= form.label :tag_cis_control %>
-        <%= form.text_field :tag_cis_control, id: :control_tag_cis_control, class: "form-control"  %>
-      </div>
-
-      <div class="form-group">
-        <%= form.label :tag_cis_level %>
-        <%= form.text_field :tag_cis_level, id: :control_tag_cis_level, class: "form-control"  %>
-      </div>
-
-      <div class="form-group">
-        <%= form.label :tag_audit %>
-        <%= form.text_field :tag_audit, id: :control_tag_audit, class: "form-control"  %>
-      </div>
-
-      <div class="form-group">
-        <%= form.label :tag_default_value %>
-        <%= form.text_field :tag_default_value, id: :control_tag_default_value, class: "form-control"  %>
-      </div>
-  </div>
-
   <div class="form-group">
     <%= form.label :code %>
     <%= form.text_area :code, id: :control_code, class: "form-control"  %>
@@ -113,21 +39,25 @@
   <strong>Source Location</strong>
   <div class="form-group input-group">
     <div class="form-group">
-      <%= form.label :sl_ref %>
+      <%= form.label :sl_ref, "Ref" %>
       <%= form.text_field :sl_ref, id: :control_source_location_ref, class: "form-control"  %>
     </div>
     <div class="form-group">
-      <%= form.label :sl_line %>
+      <%= form.label :sl_line, "Line" %>
       <%= form.text_field :sl_line, id: :control_source_location_line, class: "form-control"  %>
     </div>
   </div>
 
   <div class="form-group">
-    <%= form.label :control_id %>
+    <%= form.label :control_id, "Control ID" %>
     <%= form.text_field :control_id, id: :control_control_id, class: "form-control"  %>
   </div>
 
   <div class="actions">
-    <%= form.submit %>
+    <%= button_tag(type: "submit", class: "btn btn-primary") do %>
+      <i class="fa fa-edit"></i> Save
+    <% end %>
+    <%= link_to ('<i class="fa fa-cancel"></i> Cancel').html_safe, profile_control_path(@profile.id, @control.id), class: "btn btn-info pull-right" %>
+  </div>
   </div>
 <% end %>

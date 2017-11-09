@@ -11,5 +11,14 @@
 // about supported directives.
 //
 //= require rails-ujs
+//= require jquery.min
+//= require jquery.dataTables.min
 //= require turbolinks
+//= require prism
 //= require_tree .
+
+function toggleSections(on, off) {
+    document.getElementById(on).style.display = 'block';
+    // hide the lorem ipsum text
+    document.getElementById(off).style.display = 'none';
+}

@@ -1,48 +1,71 @@
 <!-- Content Header (Page header) -->
 <section class="content-header">
-  <p id="notice"><%= notice %></p>
   <h1>
     Profiles
   </h1>
+  <ol class="breadcrumb">
+    <li><%= link_to ('<i class="fa fa-dashboard"> </i>Dashboard').html_safe, home_path %></li>
+    <li class="active">Profiles</li>
+  </ol>
 </section>
 
 <!-- Main content -->
 <section class="content container-fluid">
-  <div class="table-responsive">
-    <table class="table table-hover">
-      <thead>
-        <tr>
-          <th>Name</th>
-          <th>Title</th>
-          <th>Maintainer</th>
-          <th>Copyright</th>
-          <th>License</th>
-          <th>Summary</th>
-          <th>Version</th>
-          <th colspan="3"></th>
-        </tr>
-      </thead>
-
-      <tbody>
-        <% @profiles.each do |profile| %>
-          <tr>
-            <td><%= profile.name %></td>
-            <td><%= profile.title %></td>
-            <td><%= profile.maintainer %></td>
-            <td><%= profile.copyright %></td>
-            <td><%= profile.license %></td>
-            <td><%= profile.summary %></td>
-            <td><%= profile.version %></td>
-            <td><%= link_to 'Show', profile %></td>
-            <td><%= link_to 'Edit', edit_profile_path(profile) %></td>
-            <td><%= link_to 'Destroy', profile, method: :delete, data: { confirm: 'Are you sure?' } %></td>
-          </tr>
-        <% end %>
-      </tbody>
-    </table>
+  <div class="row">
+    <div class="col-xs-12">
+      <div class="box box-primary">
+        <div class="box-header with-border">
+          <h3 class="box-title">Profiles</h3>
+        </div>
+        <!-- /.box-header -->
+        <div class="box-body table-responsive no-padding">
+          <table class="table table-hover">
+            <tr>
+              <th>Name</th>
+              <th>Title</th>
+              <th>Maintainer</th>
+              <th>Copyright</th>
+              <th>License</th>
+              <th>Summary</th>
+              <th>Version</th>
+              <th>Action</th>
+            </tr>
+            <% @profiles.each do |profile| %>
+              <tr>
+                <td><%= link_to profile.name, profile %></td>
+                <td><%= profile.title %></td>
+                <td><%= profile.maintainer %></td>
+                <td><%= profile.copyright %></td>
+                <td><%= profile.license %></td>
+                <td><%= profile.summary %></td>
+                <td><%= profile.version %></td>
+                <td><%= link_to 'Destroy', profile, method: :delete, data: { confirm: 'Are you sure?' } %></td>
+              </tr>
+            <% end %>
+          </table>
+        </div>
+        <!-- /.box-body -->
+      </div>
+      <!-- /.box -->
+    </div>
+    <div class="col-xs-6">
+      <div class="box box-primary">
+        <div class="box-header with-border">
+          <h3 class="box-title">Upload Profile</h3>
+        </div>
+        <div class="box-body">
+          <%= form_tag(upload_profile_path, multipart: true, :html => {class: 'form-control'}) do %>
+            <div class="input-group">
+              <%= file_field_tag :file, :class => "menu-text" %>
+            </div>
+            <br>
+            <div class="actions">
+              <%= submit_tag 'Upload', :class => "btn btn-info" %>
+            </div>
+          <% end %>
+        </div>
+      </div>
+    </div>
   </div>
-  <br>
-
-  <%= link_to 'New Profile', new_profile_path %>
 </section>
 <!-- /.content -->

@@ -15,7 +15,7 @@ class GroupsController < ApplicationController
   # GET /groups/:profile_id/new
   def new
     @profile = Profile.find(params[:profile_id])
-    @group = Group.new
+    @group = @profile.groups.new
   end
 
   # GET /groups/1/edit
@@ -26,10 +26,10 @@ class GroupsController < ApplicationController
   # POST /groups.json
   def create
     @profile = Profile.find(params[:profile_id])
-    @group = Group.new(group_params)
+    @group = @profile.groups.new(group_params)
 
     respond_to do |format|
-      if @group.save
+      if @profile.save
         format.html { redirect_to @profile, notice: 'Group was successfully created.' }
         format.json { render :show, status: :created, location: @group }
       else
@@ -58,7 +58,7 @@ class GroupsController < ApplicationController
   def destroy
     @group.destroy
     respond_to do |format|
-      format.html { redirect_to groups_url, notice: 'Group was successfully destroyed.' }
+      format.html { redirect_to @profile, notice: 'Group was successfully destroyed.' }
       format.json { head :no_content }
     end
   end

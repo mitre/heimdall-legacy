@@ -1,4 +1,14 @@
 <%= form_with(model: profile, local: true, :role => "form") do |form| %>
+<div class="box-header with-border">
+  <h3 class="box-title">Edit Profile Information</h3>
+  <button type="reset" id="cancel_btn" class="btn btn-info pull-right">
+    <i class="fa fa-cancel"></i> Cancel
+  </button>
+  <%= button_tag(type: "submit", class: "btn btn-primary pull-right margin-right", id: 'edit_btn') do %>
+    <i class="fa fa-edit"></i> Save
+  <% end %>
+</div>
+<div class="box-body">
   <% if profile.errors.any? %>
     <div id="error_explanation">
       <h2><%= pluralize(profile.errors.count, "error") %> prohibited this profile from being saved:</h2>
@@ -50,13 +60,5 @@
     <%= form.label :version %>
     <%= form.text_field :version, id: :profile_version, class: "form-control" %>
   </div>
-
-  <div class="form-group">
-    <%= form.label :sha256 %>
-    <%= form.text_field :sha256, id: :profile_sha256, class: "form-control" %>
-  </div>
-
-  <div class="actions">
-    <%= form.submit %>
-  </div>
+</div>
 <% end %>
