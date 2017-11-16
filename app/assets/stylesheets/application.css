@@ -71,3 +71,36 @@
 .margin-left {
   margin-left: 15px;
 }
+.btn-category-i {
+  background-color: #003366;
+  border-color: #004386;
+  color: #efeeee;
+}
+.btn-category-i:hover,
+.btn-category-i:active,
+.btn-category-i.hover {
+  background-color: #004386;
+  color: #fff;
+}
+.btn-category-ii {
+  background-color: #0080FF;
+  border-color: #0060BF;
+  color: #efeeee;
+}
+.btn-category-ii:hover,
+.btn-category-ii:active,
+.btn-category-ii.hover {
+  background-color: #0060BF;
+  color: #fff;
+}
+.btn-category-iii {
+  background-color: #99CCFF;
+  border-color: #397CBF;
+  color: #000000;
+}
+.btn-category-iii:hover,
+.btn-category-iii:active,
+.btn-category-iii.hover {
+  background-color: #397CBF;
+  color: #fff;
+}

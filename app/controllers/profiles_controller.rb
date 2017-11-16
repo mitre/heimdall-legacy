@@ -85,7 +85,7 @@ class ProfilesController < ApplicationController
       @@nist_800_53_json = JSON.parse(file)
     end
     nist_hash = @profile.nist_hash category
-    logger.debug "nist_hash: #{nist_hash.inspect}"
+    #logger.debug "nist_hash: #{nist_hash.inspect}"
     new_hash = @@nist_800_53_json.deep_dup
     total_impact = 0
     total_children = 0
@@ -99,27 +99,27 @@ class ProfilesController < ApplicationController
           control.delete('value')
           control["children"] = nist_hash[control["name"]]
           control["children"].each do |child|
-            logger.debug "CHILD #{child.inspect}"
+            #logger.debug "CHILD #{child.inspect}"
             if child[:impact]
               control_total_children += 1
               control_total_impact += child[:impact]
             end
-            logger.debug "#{control['name']}: #{child['impact']}, cont_impact: #{control_total_impact}, cont_children: #{control_total_children}"
+            #logger.debug "#{control['name']}: #{child['impact']}, cont_impact: #{control_total_impact}, cont_children: #{control_total_children}"
           end
         end
-        logger.debug "SET #{control['name']} impact: #{control_total_impact == 0.0 ? 0.0 : control_total_impact/control_total_children}"
+        #logger.debug "SET #{control['name']} impact: #{control_total_impact == 0.0 ? 0.0 : control_total_impact/control_total_children}"
         control["impact"] = control_total_impact == 0.0 ? 0.0 : control_total_impact/control_total_children
         cf_total_impact += control_total_impact
         cf_total_children += control_total_children
-        logger.debug "#{cf['name']} cft_impact: #{cf_total_impact}, cft_children: #{cf_total_children}"
+        #logger.debug "#{cf['name']} cft_impact: #{cf_total_impact}, cft_children: #{cf_total_children}"
       end
-      logger.debug "SET #{cf['name']} impact: #{cf_total_impact == 0.0 ? 0.0 : cf_total_impact/cf_total_children}"
+      #logger.debug "SET #{cf['name']} impact: #{cf_total_impact == 0.0 ? 0.0 : cf_total_impact/cf_total_children}"
       cf["impact"] = cf_total_impact == 0.0 ? 0.0 : cf_total_impact/cf_total_children
       total_impact += cf_total_impact
       total_children += cf_total_children
     end
     new_hash["impact"] = total_impact == 0.0 ? 0.0 : total_impact/total_children
-    logger.debug "new_hash: #{new_hash.inspect}"
+    #logger.debug "new_hash: #{new_hash.inspect}"
     render json: new_hash
   end
 

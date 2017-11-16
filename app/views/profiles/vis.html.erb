@@ -133,15 +133,134 @@ rect.parent,
       </div>
     </div>
   </div>
+  <div class="row">
+    <div class="col-xs-12">
+      <div class="box box-primary">
+        <div class="box-header">
+          <h3 class="box-title">Profile Controls</h3>
+        </div>
+        <!-- /.box-header -->
+        <div class="box-body">
+          <table id="controls" class="table table-bordered table-striped">
+            <thead>
+            <tr>
+              <th>Details</th>
+              <th>Control ID</th>
+              <th>Severity</th>
+              <th>Impact</th>
+              <th>NIST</th>
+            </tr>
+            </thead>
+            <tbody>
+              <% @profile.controls.each do |control| %>
+              <tr class="<%= control.category %>" id="<%= control.id %>">
+                <td><button class="<%= category_button(control.impact) %>" style="width:120px" onclick="show_details('<%= control.id %>');">View Details</button></td>
+                <td><%= link_to control.control_id, profile_control_path(@profile.id, control.id) %></td>
+                <td><%= control.tag 'severity' %></td>
+                <td><%= control.impact %></td>
+                <td><%= control.tag 'nist' %></td>
+              </tr>
+              <% end %>
+            </tbody>
+            <tfoot>
+            <tr>
+              <th>Details</th>
+              <th>Control ID</th>
+              <th>Severity</th>
+              <th>Impact</th>
+              <th>NIST</th>
+            </tr>
+          </tfoot>
+          </table>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div id="control_details2">
+  </div>
 </section>
 <!-- /.content -->
 <script>
-$(document).ready(function(){
 
-  $("#clear_filters_button").click(function(){
-    document.getElementById("clear_filters_button").style.visibility = "hidden";
-    reload_views(null);
+var oTable = $('#controls').DataTable();
+var cats = {"CAT I": true, "CAT II": true, "CAT III" : true};
+var profile_id = '<%= @profile.id %>';
+var shown_id = null;
+var turbo = false;
+
+function show_details(control_id) {
+  hsh = "#" + control_id;
+  url = '/profiles/' + profile_id + '/controls/' + control_id + '/details';
+  var tr = $(hsh);
+  if ($('#details_row').length) {
+    $('#details_row').remove();
+  }
+  if (control_id != shown_id) {
+    shown_id = control_id;
+    $.ajax(url, {
+        success: function(data) {
+          tr.after('<tr id="details_row" role="row"><td colspan="5" id="control_details">' + detailsData + '</td></tr>');
+          Prism.highlightAll();
+        },
+        error: function() {
+          console.log("Error occured");
+        }
+     });
+   } else {
+     shown_id = null;
+   }
+}
+
+$.fn.dataTableExt.afnFiltering.push(
+    function( oSettings, aData, iDataIndex ) {
+      var nTr = oSettings.aoData[ iDataIndex ].nTr;
+      if ($(nTr).hasClass('CAT I')) {
+        return cats['CAT I'];
+      } else if ($(nTr).hasClass('CAT II')) {
+        return cats['CAT II'];
+      } else if ($(nTr).hasClass('CAT III')) {
+        return cats['CAT III'];
+      }
+    }
+);
+
+document.addEventListener("turbolinks:load", function() {
+  turbo = true;
+  if($('[id^=controls_wrapper').length == 0) {
+    $('#controls').DataTable({
+      'paging'      : true,
+      'lengthChange': false,
+      'searching'   : true,
+      'ordering'    : true,
+      'info'        : true,
+      'autoWidth'   : false
+    });
+  }
+//});
+
+//$(document).ready(function(){
+  //console.log("document ready");
+
+  $("#clear_filters_button").click(function() {
+    if (currentDepth == 0) {
+      document.getElementById("clear_filters_button").style.visibility = "hidden";
+      clear_filter(true);
+      reload_views(null);
+    } else {
+      alert("You must be at the top levelof the chart to clear the filters");
+    }
   });
+
+  function clear_filter(bool) {
+    cats = {"CAT I": bool, "CAT II": bool, "CAT III" : bool};
+  }
+
+  function filter_table(category) {
+    if (category) {
+      clear_filter(false);
+      cats[category] = true;
+    }
+  }
 
   function accumulate_impact(d, low_r, high_r) {
     //console.log("accumulate_impact for " + d.name + ", low_r: " + low_r + ", high_r: " + high_r);
@@ -171,8 +290,10 @@ $(document).ready(function(){
         type : 'donut',
         onclick: function (d)
         {
-          document.getElementById("clear_filters_button").style.visibility = "visible";
-          reload_views(d.id);
+          if (currentDepth == 0) {
+            document.getElementById("clear_filters_button").style.visibility = "visible";
+            reload_views(d.id);
+          }
         },
       },
       color:
@@ -185,7 +306,7 @@ $(document).ready(function(){
       },
       donut:
       {
-        title: "Control Impact",
+        title: "Impact",
         label:
         {
           format: function (value, ratio, id)
@@ -255,7 +376,7 @@ $(document).ready(function(){
 	}
 
   // determines if white or black will be better contrasting color
-	function getContrast50(hexcolor, name){
+	function getContrast50(hexcolor){
 		return (parseInt(hexcolor.replace('#', ''), 16) > 0xffffff/3) ? 'black':'white';
 	}
 
@@ -276,6 +397,7 @@ $(document).ready(function(){
 	var margin = {top: 30, right: 0, bottom: 20, left: 0},
 		width = divWidth -25,
 		height = 540 - margin.top - margin.bottom,
+    currentDepth = 0,
 		formatNumber = d3.format(",%"),
 		colorDomain = [0.1, 0.5, 0.9],
     //colorRange = ['#dda8db', '#ebf2f7', '#9cbdd9'],
@@ -306,6 +428,8 @@ $(document).ready(function(){
 
   function reload_views(category) {
     drawTreemap(category);
+    filter_table(category);
+    oTable.draw();
   }
 
   function drawTreemap(category) {
@@ -313,7 +437,7 @@ $(document).ready(function(){
   	// introduce color scale here
   	treemap = d3.layout.treemap()
   		.children(function(d, depth) { return depth ? null : d._children; })
-  		.sort(function(a, b) { return a.value - b.value; })
+  		.sort(function(a, b) { return b.name.localeCompare(a.name); })
   		.ratio(height / width * 0.5 * (1 + Math.sqrt(5)))
   		.round(false);
 
@@ -340,37 +464,6 @@ $(document).ready(function(){
   		.attr("dy", ".75em");
 
     loadTreemapData(category);
-  }
-
-  function drawLegend() {
-    legend = d3.select("#chart").append("svg")
-      .attr("width", width + margin.left + margin.right)
-      .attr("height", 70)
-      .attr('class', 'legend')
-      .selectAll("g")
-        .data([0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18])
-        //.data([0,2,4,5,8,9,10,11,12,14,16,18])
-        .enter()
-        .append('g')
-
-  	legend.append("rect")
-  		.attr("x", function(d){return margin.left + d * 35})
-  		.attr("y", 10)
-  		.attr("fill", function(d) {return color(colorIncrements(d))})
-  		.attr('width', '35px')
-  		.attr('height', '40px')
-
-    // Use the severity keys for the chart legend
-    for (var key in severity) {
-      legend.append("text")
-    			.text(key)
-    			.attr('y', 0)
-    			.attr('x', (severity[key]-1) * 310 + 20);
-    }
-    //legend.append("text")
-    //    .text('Severity')
-    //    .attr('y', 0)
-    //    .attr('x', 330);
   }
 
   function loadTreemapData(category) {
@@ -436,13 +529,15 @@ $(document).ready(function(){
     			.attr("class","foreignobj")
     			.append("xhtml:div")
     			.attr("dy", ".75em")
-    			.html(function(d) { return '' +
-    				' <p class="title" style="color:' + getContrast50(get_color(d), d.name) + '"> ' + d.name + '</p>';
+    			.html(function(d) { return (d.desc && width > 750) ? '' +
+    				' <p class="title" style="color:' + getContrast50(get_color(d)) + '"> ' + d.name + '</p>' +
+            ' <p style="color:' + getContrast50(get_color(d)) + '"> ' + d.desc + '</p>' :
+            ' <p class="title" style="color:' + getContrast50(get_color(d)) + '"> ' + d.name + '</p>'
     				;})
     			.attr("class","textdiv"); //textdiv class allows us to style the text easily with CSS
 
-
     		function transition(d) {
+          currentDepth = d.depth;
     		  if (transitioning || !d) return;
     		  transitioning = true;
 
@@ -478,8 +573,8 @@ $(document).ready(function(){
 
     		  // Remove the old node when the transition is finished.
     		  t1.remove().each("end", function() {
-    			svg.style("shape-rendering", "crispEdges");
-    			transitioning = false;
+    			  svg.style("shape-rendering", "crispEdges");
+    			  transitioning = false;
     		  });
     		}
 
@@ -508,14 +603,14 @@ $(document).ready(function(){
 
   	  function name(d) {
     		return d.parent
-    			? d.name + " -  Click header to zoom out"
-    			: d.name  + " - Click in boxes zoom";
+    			? d.name + (d.desc ? ": " + d.desc : "") + " -  Click header to zoom out"
+    			: d.name + (d.desc ? ": " + d.desc : "")  + " -  Click in boxes zoom";
   	  }
 
   	  function nameSave(d) {
     		return d.parent
-    			? name(d.parent) + " - " + d.name + " -  Click header to zoom out"
-    			: d.name;
+    			? name(d.parent) + " - " + d.name + (d.desc ? ": " + d.desc : "") + " -  Click header to zoom out"
+    			: d.name + (d.desc ? ": " + d.desc : "");
   	  }
 
   	});

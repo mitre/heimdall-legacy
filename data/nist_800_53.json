@@ -2,7 +2,8 @@
   "name": "NIST 800 53",
   "children": [
     {
-      "name": "AC - Access Control",
+      "name": "AC",
+      "desc": "Access Control",
       "children": [
         {
           "name": "AC-1",
@@ -111,7 +112,8 @@
       ]
     },
     {
-      "name": "AU - Audit and Accountability",
+      "name": "AU",
+      "desc": "Audit and Accountability",
       "children": [
         {
           "name": "AU-1",
@@ -180,7 +182,8 @@
       ]
     },
     {
-      "name": "AT - Awareness and Training",
+      "name": "AT",
+      "desc": "Awareness and Training",
       "children": [
         {
           "name": "AT-1",
@@ -205,7 +208,8 @@
       ]
     },
     {
-      "name": "CM - Configuration Management",
+      "name": "CM",
+      "desc": "Configuration Management",
       "children": [
         {
           "name": "CM-1",
@@ -254,7 +258,8 @@
       ]
     },
     {
-      "name": "CP - Contingency Planning",
+      "name": "CP",
+      "desc": "Contingency Planning",
       "children": [
         {
           "name": "CP-1",
@@ -311,7 +316,8 @@
       ]
     },
     {
-      "name": "IA - Identification and Authentication",
+      "name": "IA",
+      "desc": "Identification and Authentication",
       "children": [
         {
           "name": "IA-1",
@@ -360,7 +366,8 @@
       ]
     },
     {
-      "name": "IR - Incident Response",
+      "name": "IR",
+      "desc": "Incident Response",
       "children": [
         {
           "name": "IR-1",
@@ -405,7 +412,8 @@
       ]
     },
     {
-      "name": "MA - Maintenance",
+      "name": "MA",
+      "desc": "Maintenance",
       "children": [
         {
           "name": "MA-1",
@@ -434,7 +442,8 @@
       ]
     },
     {
-      "name": "MP - Media Protection",
+      "name": "MP",
+      "desc": "Media Protection",
       "children": [
         {
           "name": "MP-1",
@@ -471,7 +480,8 @@
       ]
     },
     {
-      "name": "PS - Personnel Security",
+      "name": "PS",
+      "desc": "Personnel Security",
       "children": [
         {
           "name": "PS-1",
@@ -508,7 +518,8 @@
       ]
     },
     {
-      "name": "PE - Physical and Environmental Protection",
+      "name": "PE",
+      "desc": "Physical and Environmental Protection",
       "children": [
         {
           "name": "PE-1",
@@ -593,7 +604,8 @@
       ]
     },
     {
-      "name": "PL - Planning",
+      "name": "PL",
+      "desc": "Planning",
       "children": [
         {
           "name": "PL-1",
@@ -634,7 +646,8 @@
       ]
     },
     {
-      "name": "PM - Program Management",
+      "name": "PM",
+      "desc": "Program Management",
       "children": [
         {
           "name": "PM-1",
@@ -703,7 +716,8 @@
       ]
     },
     {
-      "name": "RA - Risk Assessment",
+      "name": "RA",
+      "desc": "Risk Assessment",
       "children": [
         {
           "name": "RA-1",
@@ -732,7 +746,8 @@
       ]
     },
     {
-      "name": "CA - Security Assessment and Authorization",
+      "name": "CA",
+      "desc": "Security Assessment and Authorization",
       "children": [
         {
           "name": "CA-1",
@@ -773,7 +788,8 @@
       ]
     },
     {
-      "name": "SC - System and Communications Protection",
+      "name": "SC",
+      "desc": "System and Communications Protection",
       "children": [
         {
           "name": "SC-1",
@@ -954,7 +970,8 @@
       ]
     },
     {
-      "name": "SI - System and Information Integrity",
+      "name": "SI",
+      "desc": "System and Information Integrity",
       "children": [
         {
           "name": "SI-1",
@@ -1027,7 +1044,8 @@
       ]
     },
     {
-      "name": "SA - System and Services Acquisition",
+      "name": "SA",
+      "desc": "System and Services Acquisition",
       "children": [
         {
           "name": "SA-1",

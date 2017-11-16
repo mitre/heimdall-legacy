@@ -15,6 +15,18 @@ class Control
   #accepts_nested_attributes_for :results
 
 
+  def category
+    if self.impact <= 0.3
+      return "CAT III"
+    end
+    if self.impact <= 0.6
+      return "CAT II"
+    end
+    if self.impact <= 0.9
+      return "CAT I"
+    end
+  end
+
   def refs_list=(arg)
     self.refs = arg.split(',').map { |v| v.strip }
   end
@@ -23,19 +35,13 @@ class Control
     self.refs.join(', ')
   end
 
-  def tag_nist_list=(arg)
-    self.tag_nist = arg.split(',').map { |v| v.strip }
+  def tag name
+    val = self.tags.where(:name => name).first.try(:value)
+    if val.kind_of?(Array)
+      val.join(", ")
+    else
+      val
+    end
   end
 
-  def tag_nist_list
-    self.tag_nist.join(', ')
-  end
-
-  def tag_subsystems_list=(arg)
-    self.tag_subsystems = arg.split(',').map { |v| v.strip }
-  end
-
-  def tag_subsystems_list
-    self.tag_subsystems.join(', ')
-  end
 end

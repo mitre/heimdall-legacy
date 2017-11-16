@@ -1,5 +1,5 @@
 class ControlsController < ApplicationController
-  before_action :set_control, only: [:show, :edit, :update, :destroy]
+  before_action :set_control, only: [:show, :edit, :update, :destroy, :details]
 
   # GET /controls
   # GET /controls.json
@@ -60,6 +60,14 @@ class ControlsController < ApplicationController
     respond_to do |format|
       format.html { redirect_to @profile, notice: 'Control was successfully destroyed.' }
       format.json { head :no_content }
+    end
+  end
+
+  def details
+    logger.debug "DETAILS for #{@control.control_id}"
+    respond_to do |format|
+      logger.debug "RENDER JS"
+      format.js {render layout: false}
     end
   end
 

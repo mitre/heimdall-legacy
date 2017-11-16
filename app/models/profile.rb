@@ -34,12 +34,12 @@ class Profile
   def nist_hash cat
     nist = {}
     range = self.category cat
-    logger.debug "CAT: #{cat}, range: #{range.inspect}"
+    #logger.debug "CAT: #{cat}, range: #{range.inspect}"
     self.controls.each do |control|
-      logger.debug "#{control.control_id}: #{control.impact}"
+      #logger.debug "#{control.control_id}: #{control.impact}"
       if range.nil? || (control.impact <= range[:high] && control.impact >= range[:low])
         if severity = control.tags.where(:name => 'severity').first
-          logger.debug "#{control.control_id}: severity: #{severity}"
+          #logger.debug "#{control.control_id}: severity: #{severity}"
           control.tags.where(:name => 'nist').each do |tag|
             if tag.value.is_a? Array
               tag.value.each do |value|
