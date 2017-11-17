@@ -23,6 +23,8 @@ class ProfilesController < ApplicationController
 
   # GET /profiles/1/edit
   def edit
+    @depend = @profile.depends.new()
+    @support = @profile.supports.new()
   end
 
   # POST /profiles
@@ -62,18 +64,6 @@ class ProfilesController < ApplicationController
     respond_to do |format|
       format.html { redirect_to profiles_url, notice: 'Profile was successfully destroyed.' }
       format.json { head :no_content }
-    end
-  end
-
-  def vis
-  end
-
-  def vis2
-    @profile = Profile.find(params[:id])
-    @profile.controls.each do |control|
-      control.tags.where(:name => 'nist').each do |tag|
-        logger.debug "#{control.control_id}: #{tag.value}"
-      end
     end
   end
 
