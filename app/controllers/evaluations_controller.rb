@@ -1,5 +1,7 @@
 class EvaluationsController < ApplicationController
-  before_action :set_evaluation, only: [:show, :edit, :update, :destroy]
+  before_action :set_evaluation, only: [:show, :edit, :update, :destroy, :nist_800_53]
+
+  @@nist_800_53_json = nil
 
   # GET /evaluations
   # GET /evaluations.json
@@ -65,6 +67,54 @@ class EvaluationsController < ApplicationController
       format.html { redirect_to evaluations_url, notice: 'Evaluation was successfully destroyed.' }
       format.json { head :no_content }
     end
+  end
+
+  def nist_800_53
+    category = nil
+    category = params[:category] if params.has_key?(:category)
+    status_symbol = nil
+    status_symbol = params[:status_symbol].downcase.tr(' ', '_').to_sym if params.has_key?(:status_symbol)
+    unless @@nist_800_53_json
+      file = File.read("#{Rails.root}/data/nist_800_53.json")
+      @@nist_800_53_json = JSON.parse(file)
+    end
+    nist_hash = @evaluation.nist_hash category, status_symbol
+    #logger.debug "nist_hash: #{nist_hash.inspect}"
+    new_hash = @@nist_800_53_json.deep_dup
+    total_impact = 0
+    total_children = 0
+    new_hash["children"].each do |cf|
+      cf_total_impact = 0.0
+      cf_total_children = 0
+      cf["children"].each do |control|
+        control_total_impact = 0.0
+        control_total_children = 0
+        if nist_hash[control["name"]]
+          control.delete('value')
+          control["children"] = nist_hash[control["name"]]
+          control["children"].each do |child|
+            #logger.debug "CHILD #{child.inspect}"
+            if child[:status_value]
+              control_total_children += 1
+              control_total_impact += child[:status_value]
+            end
+            #logger.debug "#{control['name']}: #{child['impact']}, cont_impact: #{control_total_impact}, cont_children: #{control_total_children}"
+          end
+        end
+        #logger.debug "SET #{control['name']} impact: #{control_total_impact == 0.0 ? 0.0 : control_total_impact/control_total_children}"
+        control["status_value"] = control_total_impact == 0.0 ? 0.0 : control_total_impact/control_total_children
+        cf_total_impact += control_total_impact
+        cf_total_children += control_total_children
+        #logger.debug "#{cf['name']} cft_impact: #{cf_total_impact}, cft_children: #{cf_total_children}"
+      end
+      #logger.debug "SET #{cf['name']} impact: #{cf_total_impact == 0.0 ? 0.0 : cf_total_impact/cf_total_children}"
+      cf["status_value"] = cf_total_impact == 0.0 ? 0.0 : cf_total_impact/cf_total_children
+      total_impact += cf_total_impact
+      total_children += cf_total_children
+    end
+    new_hash["status_value"] = total_impact == 0.0 ? 0.0 : total_impact/total_children
+    #logger.debug "new_hash: #{new_hash.inspect}"
+    render json: new_hash
   end
 
   def upload2

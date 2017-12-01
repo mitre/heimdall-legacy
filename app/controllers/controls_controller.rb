@@ -65,6 +65,7 @@ class ControlsController < ApplicationController
 
   def details
     logger.debug "DETAILS for #{@control.control_id}"
+    @evaluation = Evaluation.find(params[:evaluation_id]) if params.has_key?(:evaluation_id)
     respond_to do |format|
       logger.debug "RENDER JS"
       format.js {render layout: false}

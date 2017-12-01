@@ -1,104 +1,9 @@
-<style>
-#chart {
-  max-width: 100%;
-  overflow:auto;
-}
-
-text {
-  pointer-events: none;
-}
-
-.grandparent text {
-  font-weight: bold;
-}
-
-rect {
-  stroke: #fff;
-  stroke-width: 1px;
-}
-
-rect.parent,
-.grandparent rect {
-  stroke-width: 2px;
-}
-
-.children rect.parent,
-.grandparent rect {
-  cursor: pointer;
-}
-
-.children rect.child {
-  opacity: 0;
-}
-
-.children rect.parent {
-  fill-opacity: .8;
-}
-
-.children:hover rect.child {
-  opacity: 1;
-  stroke-width: 1px;
-}
-
-.children:hover rect.parent {
-  opacity: 0;
-}
-
-.legend {
-  padding-top:10px !important;
-  margin-bottom:8px !important;
-}
-
-.legend rect {
-  stroke-width: 0px;
-}
-
-.legend text {
-  text-anchor: middle;
-  pointer-events: auto;
-  font-size: 13px;
-  font-family: sans-serif;
-  fill: black;
-}
-
-.form-group {
-	text-align:left;
-}
-
-.textdiv {
-    font-family: "Open Sans",Helvetica,Arial,sans-serif;
-    font-size: 14px;
-    padding: 7px;
-	cursor: pointer;
-	overflow:none;
-}
-
-.textdiv .title {
-    font-size: 102%;
-    font-weight: bold;
-    margin-top: 8px;
-	font-size:11px !important;
-}
-
-.textdiv p{
-	line-height: 13px;
-	margin:0 0 4px !important;
-	padding:0px;
-	font-size:10px !important;
-}
-.floating {
-    position: fixed;
-    top: 110px;
-    right: 20px;
-    visibility: hidden;
-}
-</style>
 <!-- Content Header (Page header) -->
 <section class="content-header">
   <h1>
     Profile <%= link_to @profile.title, edit_profile_path(@profile) %>
   </h1>
-  <ol class="breadcrumb">
+  <ol class="breadcrumb" data-turbolinks="false">
     <li><%= link_to ('<i class="fa fa-dashboard"> </i>Dashboard').html_safe, home_path %></li>
     <li><%= link_to 'Profiles', profiles_path %></li>
     <li class="active">Profile</li>
@@ -139,7 +44,7 @@ rect.parent,
           <h3 class="box-title">Profile Controls</h3>
         </div>
         <!-- /.box-header -->
-        <div class="box-body">
+        <div class="box-body" data-turbolinks="false">
           <table id="controls" class="table table-bordered table-striped">
             <thead>
             <tr>
@@ -153,7 +58,7 @@ rect.parent,
             <tbody>
               <% @profile.controls.each do |control| %>
               <tr class="<%= control.category %>" id="<%= control.id %>">
-                <td><button class="<%= category_button(control.impact) %>" style="width:120px" onclick="show_details('<%= control.id %>');">View Details</button></td>
+                <td><button class="<%= category_button(control.impact) %>" style="width:120px" onclick="show_details('<%= @profile.id %>', '<%= control.id %>');">View Details</button></td>
                 <td><%= link_to control.control_id, profile_control_path(@profile.id, control.id) %></td>
                 <td><%= control.tag 'severity' %></td>
                 <td><%= control.impact %></td>
@@ -175,19 +80,16 @@ rect.parent,
       </div>
     </div>
   </div>
-  <div id="control_details2">
-  </div>
 </section>
 <!-- /.content -->
 <script>
 
-var oTable = $('#controls').DataTable();
+//var oTable = $('#controls').DataTable();
 var cats = {"CAT I": true, "CAT II": true, "CAT III" : true};
-var profile_id = '<%= @profile.id %>';
 var shown_id = null;
-var turbo = false;
+var loaded = null;
 
-function show_details(control_id) {
+function show_details(profile_id, control_id) {
   hsh = "#" + control_id;
   url = '/profiles/' + profile_id + '/controls/' + control_id + '/details';
   var tr = $(hsh);
@@ -210,6 +112,17 @@ function show_details(control_id) {
    }
 }
 
+function clear_filter(bool) {
+  cats = {"CAT I": bool, "CAT II": bool, "CAT III" : bool};
+}
+
+function filter_table(category) {
+  if (category) {
+    clear_filter(false);
+    cats[category] = true;
+  }
+}
+
 $.fn.dataTableExt.afnFiltering.push(
     function( oSettings, aData, iDataIndex ) {
       var nTr = oSettings.aoData[ iDataIndex ].nTr;
@@ -224,7 +137,11 @@ $.fn.dataTableExt.afnFiltering.push(
 );
 
 document.addEventListener("turbolinks:load", function() {
-  turbo = true;
+  if (loaded) {
+    return;
+  } else {
+    loaded = true;
+  }
   if($('[id^=controls_wrapper').length == 0) {
     $('#controls').DataTable({
       'paging'      : true,
@@ -235,10 +152,6 @@ document.addEventListener("turbolinks:load", function() {
       'autoWidth'   : false
     });
   }
-//});
-
-//$(document).ready(function(){
-  //console.log("document ready");
 
   $("#clear_filters_button").click(function() {
     if (currentDepth == 0) {
@@ -246,20 +159,9 @@ document.addEventListener("turbolinks:load", function() {
       clear_filter(true);
       reload_views(null);
     } else {
-      alert("You must be at the top levelof the chart to clear the filters");
+      alert("You must be at the top level of the chart to clear the filters");
     }
   });
-
-  function clear_filter(bool) {
-    cats = {"CAT I": bool, "CAT II": bool, "CAT III" : bool};
-  }
-
-  function filter_table(category) {
-    if (category) {
-      clear_filter(false);
-      cats[category] = true;
-    }
-  }
 
   function accumulate_impact(d, low_r, high_r) {
     //console.log("accumulate_impact for " + d.name + ", low_r: " + low_r + ", high_r: " + high_r);
@@ -428,11 +330,11 @@ document.addEventListener("turbolinks:load", function() {
   function reload_views(category) {
     drawTreemap(category);
     filter_table(category);
-    oTable.draw();
+    $('#controls').DataTable().draw();
   }
 
   function drawTreemap(category) {
-    d3.select("svg").remove();
+    d3.selectAll("svg").remove();
   	// introduce color scale here
   	treemap = d3.layout.treemap()
   		.children(function(d, depth) { return depth ? null : d._children; })

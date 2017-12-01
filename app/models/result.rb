@@ -7,11 +7,24 @@ class Result
   field :resource, type: String
   field :run_time, type: Float
   field :start_time, type: Date
+  field :message, type: String
   field :control_id, type: String
   field :profile_name, type: String
   embedded_in :evaluation, :inverse_of => :results
   attr_accessor :control
   attr_accessor :profile
+
+  def status_symbol
+    if self.status.include?('failed')
+      :open
+    elsif self.status.include?('passed')
+      :not_a_finding
+    elsif self.status.include?('skipped')
+      :not_reviewed
+    else
+      :not_tested
+    end
+  end
 
   def profile
     @attributes["profile"] ||= Profile.find_by(:name => self.profile_name)
