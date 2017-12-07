@@ -10,7 +10,7 @@ class Control
   embeds_many :tags, cascade_callbacks: true
   field :sl_ref, type: String
   field :sl_line, type: Integer
-  embedded_in :profile, :inverse_of => :controls
+  belongs_to :profile, :inverse_of => :controls
   #has_many :results
   #accepts_nested_attributes_for :results
 

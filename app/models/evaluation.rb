@@ -6,7 +6,7 @@ class Evaluation
   field :platform_name, type: String
   field :platform_release, type: String
   field :statistics_duration, type: String
-  embeds_many :results, cascade_callbacks: true
+  has_many :results
   accepts_nested_attributes_for :results
 
   @counts = nil

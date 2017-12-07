@@ -115,7 +115,11 @@ class ProfilesController < ApplicationController
 
   def upload
     file = params[:file]
-    @profile = Profile.create(transform(JSON.parse(file.read)))
+    profile_hash, controls = transform(JSON.parse(file.read))
+    @profile = Profile.create(profile_hash)
+    controls.each do |control|
+      @profile.controls.create(control)
+    end
     redirect_to @profile
   end
 
@@ -133,21 +137,23 @@ class ProfilesController < ApplicationController
     #convert parameters with hyphen to parameters with underscore and rename 'attributes'
     def transform hash
       #logger.debug("OLD HASH: #{hash.inspect}")
+      hash = hash.deep_transform_keys{ |key| key.to_s.tr('-', '_').gsub('attributes', 'profile_attributes').gsub(/\bid\b/, 'control_id') }
       hash["controls"].each do |control|
         tags = control.delete('tags')
         new_tags = []
-        logger.debug("TAGS: #{tags.inspect}")
+        #logger.debug("TAGS: #{tags.inspect}")
         tags.each do |key, value|
           new_tags << {"name": "#{key}", "value": value}
         end
-        logger.debug("new tags: #{new_tags.inspect}")
+        #logger.debug("new tags: #{new_tags.inspect}")
         control["tags"] = new_tags
         source_location = control.delete('source_location')
         source_location.each do |key, value|
           control["sl_#{key}"] = value
         end
       end
-      hash['attributes'].each do |attr|
+      controls = hash.delete('controls')
+      hash['profile_attributes'].each do |attr|
         options = attr.delete('options')
         options.each do |key, value|
           if key == "default"
@@ -162,6 +168,6 @@ class ProfilesController < ApplicationController
         end
       end
       #logger.debug("NEW HASH: #{hash.inspect}")
-      hash.deep_transform_keys{ |key| key.to_s.tr('-', '_').gsub('attributes', 'profile_attributes').gsub(/\bid\b/, 'control_id') }
+      return hash, controls
     end
 end

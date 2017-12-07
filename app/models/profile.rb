@@ -12,7 +12,8 @@ class Profile
   field :sha256, type: String
   embeds_many :depends, cascade_callbacks: true
   embeds_many :supports, cascade_callbacks: true
-  embeds_many :controls, cascade_callbacks: true
+  has_many :controls
+  has_many :evaluations
   embeds_many :groups, cascade_callbacks: true
   embeds_many :profile_attributes, cascade_callbacks: true
   accepts_nested_attributes_for :controls
@@ -57,15 +58,13 @@ class Profile
   end
 
   def self.transform hash
-    hash.deep_transform_keys{ |key| key.to_s.tr('-', '_').gsub(/\battributes\b/, 'profile_attributes').gsub(/\bid\b/, 'control_id') }
-    #logger.debug("OLD HASH: #{hash.inspect}")
-    logger.debug "KEYS: #{hash.keys.inspect}"
-    hash["controls"].each do |control|
+    hash = hash.deep_transform_keys{ |key| key.to_s.tr('-', '_').gsub(/\battributes\b/, 'profile_attributes').gsub(/\bid\b/, 'control_id') }
+    hash["controls"].try(:each) do |control|
       tags = control.delete('tags')
       results = control.delete('results')
       new_tags = []
       #logger.debug("TAGS: #{tags.inspect}")
-      tags.try(:each) do |key, value|
+      tags.each do |key, value|
         new_tags << {"name": "#{key}", "value": value}
       end
       #logger.debug("new tags: #{new_tags.inspect}")
@@ -75,9 +74,10 @@ class Profile
         control["sl_#{key}"] = value
       end
     end
+    controls = hash.delete('controls')
     hash['profile_attributes'].try(:each) do |attr|
       options = attr.delete('options')
-      options.try(:each) do |key, value|
+      options.each do |key, value|
         if key == "default"
           unless value.kind_of?(Array)
             unless value.kind_of?(String)
@@ -89,8 +89,8 @@ class Profile
         attr["option_#{key}"] = value
       end
     end
-    logger.debug("NEW HASH: #{hash.inspect}")
-    hash
+    #logger.debug("NEW HASH: #{hash.inspect}")
+    return hash, controls
   end
 
 end

@@ -12,7 +12,7 @@ class Result
   field :backtrace, type: Array, default: []
   field :control_id, type: String
   field :profile_name, type: String
-  embedded_in :evaluation, :inverse_of => :results
+  belongs_to :evaluation, :inverse_of => :results
   attr_accessor :control
   attr_accessor :profile
 

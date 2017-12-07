@@ -137,8 +137,12 @@ class EvaluationsController < ApplicationController
     contents = JSON.parse(file.read)
     if contents.key? "profiles"
       hash = transform(contents)
+      results = hash.delete('results')
       @evaluation = Evaluation.create(hash)
       logger.debug("New Evaluation: #{@evaluation.inspect}")
+      results.each do |result|
+        @evaluation.results.create(result)
+      end
       logger.debug("Results: #{@evaluation.results.size}")
       redirect_to evaluations_url, notice: 'Evaluation uploaded.'
     else
@@ -159,7 +163,7 @@ class EvaluationsController < ApplicationController
 
     #convert parameters with hyphen to parameters with underscore and rename 'attributes'
     def transform hash
-      hash.deep_transform_keys!{ |key| key.to_s.tr('-', '_').gsub('attributes', 'profile_attributes').gsub(/\bid\b/, 'control_id') }
+      hash.deep_transform_keys!{ |key| key.to_s.tr('-', '_').gsub(/\battributes\b/, 'profile_attributes').gsub(/\bid\b/, 'control_id') }
       hash.delete('controls')
       platform = hash.delete('platform')
       platform.try(:each) do |key, value|
@@ -174,7 +178,13 @@ class EvaluationsController < ApplicationController
       profiles.try(:each) do |profile_hash|
         profile = Profile.find_by(:name => profile_hash['name'])
         unless profile
-          profile = Profile.create(Profile.transform(profile_hash.deep_dup))
+          #profile = Profile.create(Profile.transform(profile_hash.deep_dup))
+          profile_hash, controls = Profile.transform(profile_hash.deep_dup)
+          profile = Profile.create(profile_hash)
+          controls.each do |control|
+            logger.debug "Add Control: #{control.keys}"
+            profile.controls.create(control)
+          end
         end
         profile_hash['controls'].try(:each) do |control_hash|
           if control = profile.controls.find_by(:control_id => control_hash['control_id'])
