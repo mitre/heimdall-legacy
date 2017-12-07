@@ -4,6 +4,7 @@ class ProfileAttribute
   field :name, type: String
   field :option_description, type: String
   field :option_default, type: Array, default: []
+  field :option_required, type: Boolean
   embedded_in :profile, :inverse_of => :profile_attributes
 
   def option_default_list=(arg)

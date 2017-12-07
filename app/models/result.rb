@@ -8,6 +8,8 @@ class Result
   field :run_time, type: Float
   field :start_time, type: Date
   field :message, type: String
+  field :exception, type: String
+  field :backtrace, type: Array, default: []
   field :control_id, type: String
   field :profile_name, type: String
   embedded_in :evaluation, :inverse_of => :results

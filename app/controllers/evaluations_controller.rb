@@ -13,7 +13,7 @@ class EvaluationsController < ApplicationController
   # GET /evaluations/1.json
   def show
     @profiles = @evaluation.profiles
-    @controls = @evaluation.controls
+    #@controls = @evaluation.controls
     respond_to do |format|
       format.html { render :show }
       format.json { render json: @evaluation}
@@ -95,19 +95,34 @@ class EvaluationsController < ApplicationController
           control["children"].each do |child|
             #logger.debug "CHILD #{child.inspect}"
             if child[:status_value]
-              control_total_children += 1
-              control_total_impact += child[:status_value]
+              if child[:status_value] > 0.4
+                if control_total_impact < 0.6
+                  control_total_children = 1
+                  control_total_impact = child[:status_value]
+                else
+                  control_total_children += 1
+                  control_total_impact += child[:status_value]
+                end
+                if child[:status_value] > 0.6
+                  control_total_children += 4
+                  control_total_impact += 4 * child[:status_value]
+                end
+                #logger.debug "#{control['name']}: #{child[:status_value]}, cont_impact: #{control_total_impact}, cont_children: #{control_total_children}"
+              elsif control_total_impact < 0.6
+                control_total_impact = 0.4
+                control_total_children = 1
+                #logger.debug "#{control['name']}: #{child[:status_value]}, cont_impact: #{control_total_impact}, cont_children: #{control_total_children}"
+              end
             end
-            #logger.debug "#{control['name']}: #{child['impact']}, cont_impact: #{control_total_impact}, cont_children: #{control_total_children}"
           end
         end
-        #logger.debug "SET #{control['name']} impact: #{control_total_impact == 0.0 ? 0.0 : control_total_impact/control_total_children}"
+        #logger.debug "SET #{control['name']} status_value: #{control_total_impact == 0.0 ? 0.0 : control_total_impact/control_total_children}"
         control["status_value"] = control_total_impact == 0.0 ? 0.0 : control_total_impact/control_total_children
         cf_total_impact += control_total_impact
         cf_total_children += control_total_children
-        #logger.debug "#{cf['name']} cft_impact: #{cf_total_impact}, cft_children: #{cf_total_children}"
+        #logger.debug "#{cf['name']} cft_status_value: #{cf_total_impact}, cft_children: #{cf_total_children}"
       end
-      #logger.debug "SET #{cf['name']} impact: #{cf_total_impact == 0.0 ? 0.0 : cf_total_impact/cf_total_children}"
+      #logger.debug "SET #{cf['name']} status_value: #{cf_total_impact == 0.0 ? 0.0 : cf_total_impact/cf_total_children}"
       cf["status_value"] = cf_total_impact == 0.0 ? 0.0 : cf_total_impact/cf_total_children
       total_impact += cf_total_impact
       total_children += cf_total_children
@@ -117,42 +132,18 @@ class EvaluationsController < ApplicationController
     render json: new_hash
   end
 
-  def upload2
-    file = params[:file]
-    hash = transform(JSON.parse(file.read))
-    @evaluation = Evaluation.create(:version => hash['version'], :other_checks => hash['other_checks'],
-      :platform_name => hash['platform_name'], :platform_release => hash['platform_release'], :statistics_duration => hash['statistics_duration'])
-    logger.debug("New Evaluation: #{@evaluation.inspect}")
-    hash['profiles'].each do |profile_hash|
-      if profile = Profile.find_by(:name => profile_hash['name'])
-        logger.debug("Profile: #{profile.name}")
-        @evaluation.profiles << profile
-        @evaluation.save
-        profile_hash['controls'].each do |control_hash|
-          logger.debug("Control: #{control_hash['control_id']}")
-          if control = profile.controls.find_by(:control_id => control_hash['control_id'])
-            control_hash['results'].each do |result_hash|
-              logger.debug("New Result: #{result_hash.inspect}")
-              result = Result.create(result_hash.merge(:control_id => control.id, :evaluation_id => @evaluation.id))
-              logger.debug("New Result: #{result.inspect}")
-              logger.debug("Total Results: #{@evaluation.results.size}")
-            end
-          end
-        end
-        @evaluation.save
-      end
-    end
-    redirect_to evaluations_url
-  end
-
   def upload
     file = params[:file]
-    hash = transform(JSON.parse(file.read))
-    logger.debug("HASH: #{hash.inspect}")
-    @evaluation = Evaluation.create(hash)
-    logger.debug("New Evaluation: #{@evaluation.inspect}")
-    logger.debug("Results: #{@evaluation.results.size}")
-    redirect_to evaluations_url
+    contents = JSON.parse(file.read)
+    if contents.key? "profiles"
+      hash = transform(contents)
+      @evaluation = Evaluation.create(hash)
+      logger.debug("New Evaluation: #{@evaluation.inspect}")
+      logger.debug("Results: #{@evaluation.results.size}")
+      redirect_to evaluations_url, notice: 'Evaluation uploaded.'
+    else
+      redirect_to evaluations_url, notice: 'File does not contain an evaluation.'
+    end
   end
 
   private
@@ -171,30 +162,32 @@ class EvaluationsController < ApplicationController
       hash.deep_transform_keys!{ |key| key.to_s.tr('-', '_').gsub('attributes', 'profile_attributes').gsub(/\bid\b/, 'control_id') }
       hash.delete('controls')
       platform = hash.delete('platform')
-      platform.each do |key, value|
+      platform.try(:each) do |key, value|
         hash["platform_#{key}"] = value
       end
       statistics = hash.delete('statistics')
-      statistics.each do |key, value|
+      statistics.try(:each) do |key, value|
         hash["statistics_#{key}"] = value
       end
       results = []
       profiles = hash.delete('profiles')
-      profiles.each do |profile_hash|
-        if profile = Profile.find_by(:name => profile_hash['name'])
-          profile_hash['controls'].each do |control_hash|
-            if control = profile.controls.find_by(:control_id => control_hash['control_id'])
-              control_hash['results'].each do |result|
-                result['profile_name'] = profile.name
-                result['control_id'] = control_hash['control_id']
-                results << result
-              end
+      profiles.try(:each) do |profile_hash|
+        profile = Profile.find_by(:name => profile_hash['name'])
+        unless profile
+          profile = Profile.create(Profile.transform(profile_hash.deep_dup))
+        end
+        profile_hash['controls'].try(:each) do |control_hash|
+          if control = profile.controls.find_by(:control_id => control_hash['control_id'])
+            control_hash['results'].try(:each) do |result|
+              result['profile_name'] = profile.name
+              result['control_id'] = control_hash['control_id']
+              results << result
             end
           end
         end
       end
       hash['results'] = results
-      logger.debug("hash: #{hash.inspect}")
+      #logger.debug("hash: #{hash.inspect}")
       hash
     end
 end

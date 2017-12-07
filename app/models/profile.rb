@@ -55,4 +55,42 @@ class Profile
     end
     nist
   end
+
+  def self.transform hash
+    hash.deep_transform_keys{ |key| key.to_s.tr('-', '_').gsub(/\battributes\b/, 'profile_attributes').gsub(/\bid\b/, 'control_id') }
+    #logger.debug("OLD HASH: #{hash.inspect}")
+    logger.debug "KEYS: #{hash.keys.inspect}"
+    hash["controls"].each do |control|
+      tags = control.delete('tags')
+      results = control.delete('results')
+      new_tags = []
+      #logger.debug("TAGS: #{tags.inspect}")
+      tags.try(:each) do |key, value|
+        new_tags << {"name": "#{key}", "value": value}
+      end
+      #logger.debug("new tags: #{new_tags.inspect}")
+      control["tags"] = new_tags
+      source_location = control.delete('source_location')
+      source_location.try(:each) do |key, value|
+        control["sl_#{key}"] = value
+      end
+    end
+    hash['profile_attributes'].try(:each) do |attr|
+      options = attr.delete('options')
+      options.try(:each) do |key, value|
+        if key == "default"
+          unless value.kind_of?(Array)
+            unless value.kind_of?(String)
+              value = "#{value}"
+            end
+            value = [value]
+          end
+        end
+        attr["option_#{key}"] = value
+      end
+    end
+    logger.debug("NEW HASH: #{hash.inspect}")
+    hash
+  end
+
 end

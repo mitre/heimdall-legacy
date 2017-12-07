@@ -110,9 +110,9 @@ class Evaluation
   def status_symbol_value symbol
     if symbol == :not_applicable
       return 0.2
-    elsif symbol == :not_a_finding
-      return 0.4
     elsif symbol == :not_reviewed
+      return 0.4
+    elsif symbol == :not_a_finding
       return 0.6
     elsif symbol == :open
       return 0.8
@@ -134,6 +134,7 @@ class Evaluation
               if tag.value.is_a? Array
                 tag.value.each do |value|
                   unless value.include?("Rev")
+                    value = value.split(' ')[0]
                     nist[value] = [] unless nist[value]
                     sym = status_symbol(control)
                     #logger.debug "#{control.control_id}: sym = #{sym}, equals #{status_symbol}: #{status_symbol == sym}"

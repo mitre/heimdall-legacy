@@ -31,6 +31,12 @@
 .blue {
   color: #337ab7;
 }
+.bg-light-grey {
+  background-color: #D8D8D8 !important;
+}
+.bg-med-grey {
+  background-color: #8C8C8C !important;
+}
 .hidden {
   display:none;
 }
@@ -39,6 +45,7 @@
 }
 .padded {
   padding: 5px;
+  font-size: 70px;
 }
 .column-2 {
   -webkit-columns: 100px 2; /* Chrome, Safari, Opera */
@@ -103,4 +110,13 @@
 .btn-category-iii.hover {
   background-color: #397CBF;
   color: #fff;
+}
+.btn-neutral {
+  background-color: #A5A5A5;
+  border-color: #727272;
+}
+.btn-neutral:hover,
+.btn-neutral:active,
+.btn-neutral.hover {
+  background-color: #8C8C8C;
 }

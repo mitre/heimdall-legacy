@@ -24,9 +24,9 @@ module ApplicationHelper
     elsif symbol == :not_a_finding
       'btn btn-success'
     elsif symbol == :not_reviewed
-      'btn btn-warning'
+      'btn btn-neutral'
     else
-      'btn btn-warning'
+      'btn btn-neutral'
     end
   end
 

@@ -73,7 +73,19 @@
 
   <!-- Small boxes (Stat box) -->
   <div class="row">
-    <div class="col-xs-12">
+    <div class="col-lg-2">
+      <div class="box box-primary">
+        <div class="box-header with-border">
+          <h3 class="box-title">Compliance Level</h3>
+        </div>
+        <!-- /.box-header -->
+        <div class="box-body">
+          <div id="profile_gauge"></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="col-xs-10">
       <div class="box box-primary">
         <div class="box-header">
           <h3 class="box-title">Findings</h3>
@@ -109,6 +121,20 @@
           <!-- ./col -->
           <div class="col-lg-3 col-xs-6">
             <!-- small box -->
+            <div class="small-box bg-med-grey">
+              <div class="inner">
+                <h3><%= @evaluation.status_counts[:not_reviewed] %></h3>
+
+                <p>Not Reviewed</p>
+              </div>
+              <div class="icon padded">
+                <i class="glyphicon glyphicon-warning-sign"></i>
+              </div>
+            </div>
+          </div>
+          <!-- ./col -->
+          <div class="col-lg-3 col-xs-6">
+            <!-- small box -->
             <div class="small-box bg-aqua">
               <div class="inner">
                 <h3><%= @evaluation.status_counts[:not_applicable] %></h3>
@@ -117,20 +143,6 @@
               </div>
               <div class="icon padded">
                 <i class="glyphicon glyphicon-ban-circle"></i>
-              </div>
-            </div>
-          </div>
-          <!-- ./col -->
-          <div class="col-lg-3 col-xs-6">
-            <!-- small box -->
-            <div class="small-box bg-yellow">
-              <div class="inner">
-                <h3><%= @evaluation.status_counts[:not_reviewed] %></h3>
-
-                <p>Not Reviewed</p>
-              </div>
-              <div class="icon padded">
-                <i class="glyphicon glyphicon-warning-sign"></i>
               </div>
             </div>
           </div>
@@ -157,21 +169,10 @@
         <div class="box-header with-border">
           <h3 class="box-title">Control Impact</h3>
         </div>
+        <button id="clear_filters_button" type="button" class="btn btn-primary floating">Clear Filters</button>
         <!-- /.box-header -->
         <div class="box-body">
           <div id="severity_pie"></div>
-        </div>
-      </div>
-    </div>
-    <div class="col-lg-4">
-      <div class="box box-primary">
-        <div class="box-header with-border">
-          <h3 class="box-title">Compliance Level</h3>
-          <button id="clear_filters_button" type="button" class="btn btn-primary floating">Clear Filters</button>
-        </div>
-        <!-- /.box-header -->
-        <div class="box-body">
-          <div id="profile_gauge"></div>
         </div>
       </div>
     </div>
@@ -363,8 +364,8 @@ document.addEventListener("turbolinks:load", function() {
   function draw_status_pie_chart(d)
   {
     var not_app = accumulate_status(d, 0.2);
-    var not_find = accumulate_status(d, 0.4);
-    var not_rev = accumulate_status(d, 0.6);
+    var not_rev = accumulate_status(d, 0.4);
+    var not_find = accumulate_status(d, 0.6);
     var open = accumulate_status(d, 0.8);
     total_count = not_app + not_find + not_rev + open;
     compliance_count = ((not_find + not_app) / total_count) * 100;
@@ -372,8 +373,8 @@ document.addEventListener("turbolinks:load", function() {
     status_data = [
                   ['Not A Finding',  not_find],
                   ['Open',           open],
-                  ['Not Applicable', not_app],
-                  ['Not Reviewed',   not_rev]
+                  ['Not Reviewed',   not_rev],
+                  ['Not Applicable', not_app]
                   ];
     c3.generate(
     {
@@ -390,11 +391,11 @@ document.addEventListener("turbolinks:load", function() {
       },
       color:
       {
-        pattern: ['rgb(137, 204, 81)', 'rgb(255, 0, 41)', 'rgb(0, 200, 241)', 'rgb(255, 200, 87)']
+        pattern: ['rgb(137, 204, 81)', 'rgb(255, 0, 41)', 'rgb(140, 140, 140)', 'rgb(153, 204, 255)']
       },
       size:
       {
-        height: 320
+        height: 280
       },
       donut:
       {
@@ -440,7 +441,7 @@ document.addEventListener("turbolinks:load", function() {
       },
       size:
       {
-        height: 320
+        height: 280
       },
       donut:
       {
@@ -474,12 +475,12 @@ document.addEventListener("turbolinks:load", function() {
       {
           pattern: ['#FF0000', '#F97600', '#F6C600', '#60B044'], // the three color levels for the percentage values.
           threshold: {
-              values: [30, 60, 90, 100]
+              values: [30, 40, 70, 100]
           }
       },
       size:
       {
-          height: 320
+          height: 120
       }
     });
   }
@@ -568,7 +569,7 @@ document.addEventListener("turbolinks:load", function() {
 		formatNumber = d3.format(",%"),
 		colorDomain = [0.2, 0.4, 0.6, 0.8],
     //colorRange = ['#dda8db', '#ebf2f7', '#9cbdd9'],
-    colorRange = ['#00CCFF', '#99CC66', '#FFCC66', '#FF0033'],
+    colorRange = ['#99CCFF', '#8C8C8C', '#99CC66', '#FF0033'],
 		//colorRange = ['green', 'orange', 'red'],
     severity = {'low': 1, 'medium': 2, 'high': 3},
 		transitioning,
