@@ -71,7 +71,7 @@ class EvaluationsController < ApplicationController
 
   def nist_800_53
     category = nil
-    category = params[:category] if params.has_key?(:category)
+    category = params[:category].downcase if params.has_key?(:category)
     status_symbol = nil
     status_symbol = params[:status_symbol].downcase.tr(' ', '_').to_sym if params.has_key?(:status_symbol)
     unless @@nist_800_53_json
@@ -92,8 +92,9 @@ class EvaluationsController < ApplicationController
         if nist_hash[control["name"]]
           control.delete('value')
           control["children"] = nist_hash[control["name"]]
-          control["children"].each do |child|
-            #logger.debug "CHILD #{child.inspect}"
+          control["children"].each do |childt|
+            logger.debug "CHILD #{childt.inspect}"
+            child = childt[:children].first
             if child[:status_value]
               if child[:status_value] > 0.4
                 if control_total_impact < 0.6

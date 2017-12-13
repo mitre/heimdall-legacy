@@ -10,22 +10,10 @@ class Control
   embeds_many :tags, cascade_callbacks: true
   field :sl_ref, type: String
   field :sl_line, type: Integer
-  embedded_in :profile, :inverse_of => :controls
+  belongs_to :profile, :inverse_of => :controls
   #has_many :results
   #accepts_nested_attributes_for :results
-
-
-  def category
-    if self.impact <= 0.3
-      return "CAT III"
-    end
-    if self.impact <= 0.6
-      return "CAT II"
-    end
-    if self.impact <= 0.9
-      return "CAT I"
-    end
-  end
+["title", "desc", "impact", "refs", "code", "control_id", "results", "tags", "sl_ref", "sl_line"]
 
   def refs_list=(arg)
     self.refs = arg.split(',').map { |v| v.strip }
