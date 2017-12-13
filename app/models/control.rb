@@ -11,7 +11,7 @@ class Control
   field :sl_ref, type: String
   field :sl_line, type: Integer
   belongs_to :profile, :inverse_of => :controls
-  #has_many :results
+  has_many :results
   #accepts_nested_attributes_for :results
 
 

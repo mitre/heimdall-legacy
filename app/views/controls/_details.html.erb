@@ -11,8 +11,9 @@
   <% if @evaluation %>
     <div id="fdetails" class="tab-pane fade in active">
       <table class="table table-bordered table-striped">
-        <tr><td colspan="3"><%= result_message(@evaluation.status_symbol(@control)) %>:<br><%= @control.desc %></td><tr>
-        <% @evaluation.control_results(@control.control_id).each do |result| %>
+        <% results = @control.results.where(:evaluation_id => @evaluation.id) %>
+        <tr><td colspan="3"><%= result_message(@evaluation.status_symbol(@control, results)) %>:<br><%= @control.desc %></td><tr>
+        <% results.each do |result| %>
           <tr>
             <td><%= result.status.upcase %></td>
             <td>Test: <%= result.code_desc %></td>

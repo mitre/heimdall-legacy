@@ -7,26 +7,27 @@ class Evaluation
   field :platform_release, type: String
   field :statistics_duration, type: String
   has_many :results
-  accepts_nested_attributes_for :results
+  has_and_belongs_to_many :profiles
+  #accepts_nested_attributes_for :results
 
   @counts = nil
   @control_hash = nil
   @profile_hash = nil
   @control_results_hash = nil
 
-  def profiles profile_name=nil
-    if @profile_hash.nil?
-      @profile_hash = {}
-      self.results.map(&:profile_name).uniq.each do |name|
-        @profile_hash[name] = Profile.find_by(:name => name)
-      end
-    end
-    if profile_name
-      @profile_hash[profile_name]
-    else
-      @profile_hash
-    end
-  end
+  #def profiles profile_name=nil
+  #  if @profile_hash.nil?
+  #    @profile_hash = {}
+  #    self.results.map(&:profile_name).uniq.each do |name|
+  #      @profile_hash[name] = Profile.find_by(:name => name)
+  #    end
+  #  end
+  #  if profile_name
+  #    @profile_hash[profile_name]
+  #  else
+  #    @profile_hash
+  #  end
+  #end
 
   def fill_hashes
     @control_hash = {}
@@ -67,14 +68,13 @@ class Evaluation
       @control_hash
     end
   end
-
+#ct.results.where(:evaluation_id => '5a316d213e12a7856a949680')
   def status_counts
     if @counts.nil?
       counts = {open: 0, not_a_finding: 0, not_reviewed: 0, not_tested: 0, not_applicable: 0}
-      control_results.each do |control_id, results|
-        if control = self.controls(control_id)
-          counts[status_symbol(control)] += 1
-        end
+      groups = results.group_by(&:control)
+      groups.each do |control, ct_results|
+        counts[status_symbol(control, ct_results)] += 1
       end
     end
     counts
@@ -90,11 +90,11 @@ class Evaluation
     end
   end
 
-  def status_symbol control
+  def status_symbol control, ct_results
     if control.impact.zero?
       :not_applicable
     else
-      status_list = control_results[control.control_id].map{ |result| result.status}.uniq
+      status_list = ct_results.map{ |result| result.status}.uniq
       if status_list.include?('failed')
         :open
       elsif status_list.include?('passed')
@@ -125,22 +125,22 @@ class Evaluation
     nist = {}
     range = self.category cat
     #logger.debug "CAT: #{cat}, range: #{range.inspect}, status_symbol: #{status_symbol}"
-    control_results.each do |control_id, results|
-      if control = self.controls(control_id)
-        #logger.debug "#{control.control_id}: #{control.impact}"
-        if range.nil? || (control.impact <= range[:high] && control.impact >= range[:low])
-          if severity = control.tags.where(:name => 'severity').first
-            control.tags.where(:name => 'nist').each do |tag|
-              if tag.value.is_a? Array
-                tag.value.each do |value|
-                  unless value.include?("Rev")
-                    value = value.split(' ')[0]
-                    nist[value] = [] unless nist[value]
-                    sym = status_symbol(control)
-                    #logger.debug "#{control.control_id}: sym = #{sym}, equals #{status_symbol}: #{status_symbol == sym}"
-                    if status_symbol.nil? || status_symbol == sym
-                      nist[value] << {"name": "#{control.control_id}", "status_symbol": sym, "status_value": status_symbol_value(sym), "severity": "#{severity.value}", "impact": control.impact, "value": 1}
-                    end
+    groups = results.group_by(&:control)
+    groups.each do |control, ct_results|
+      #control = result.control
+      #logger.debug "#{control.control_id}: #{control.impact}"
+      if range.nil? || (control.impact <= range[:high] && control.impact >= range[:low])
+        if severity = control.tags.where(:name => 'severity').first
+          control.tags.where(:name => 'nist').each do |tag|
+            if tag.value.is_a? Array
+              tag.value.each do |value|
+                unless value.include?("Rev")
+                  value = value.split(' ')[0]
+                  nist[value] = [] unless nist[value]
+                  sym = status_symbol(control, ct_results)
+                  #logger.debug "#{control.control_id}: sym = #{sym}, equals #{status_symbol}: #{status_symbol == sym}"
+                  if status_symbol.nil? || status_symbol == sym
+                    nist[value] << {"name": "#{control.control_id}", "status_symbol": sym, "status_value": status_symbol_value(sym), "severity": "#{severity.value}", "impact": control.impact, "value": 1}
                   end
                 end
               end

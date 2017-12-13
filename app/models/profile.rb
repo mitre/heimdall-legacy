@@ -13,7 +13,7 @@ class Profile
   embeds_many :depends, cascade_callbacks: true
   embeds_many :supports, cascade_callbacks: true
   has_many :controls
-  has_many :evaluations
+  has_and_belongs_to_many :evaluations
   embeds_many :groups, cascade_callbacks: true
   embeds_many :profile_attributes, cascade_callbacks: true
   accepts_nested_attributes_for :controls

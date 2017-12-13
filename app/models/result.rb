@@ -10,10 +10,11 @@ class Result
   field :message, type: String
   field :exception, type: String
   field :backtrace, type: Array, default: []
-  field :control_id, type: String
+  #field :control_id, type: String
   field :profile_name, type: String
   belongs_to :evaluation, :inverse_of => :results
-  attr_accessor :control
+  belongs_to :control, :inverse_of => :results
+  #attr_accessor :control
   attr_accessor :profile
 
   def status_symbol
@@ -36,11 +37,11 @@ class Result
     @attributes["profile"] = value
   end
 
-  def control
-    @attributes["control"] ||= self.profile.controls.find_by(:control_id => self.control_id)
-  end
+  #def control
+  #  @attributes["control"] ||= self.profile.controls.find_by(:control_id => self.control_id)
+  #end
 
-  def control=(value)
-    @attributes["control"] = value
-  end
+  #def control=(value)
+  #  @attributes["control"] = value
+  #end
 end

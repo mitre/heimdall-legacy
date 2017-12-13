@@ -1,7 +1,7 @@
 <!-- Content Header (Page header) -->
 <section class="content-header">
   <h1>
-    Evaluation <%= @evaluation.profiles.keys.first %>
+    Evaluation <%= @evaluation.profiles.map(&:name).join(', ') %>
   </h1>
   <ol class="breadcrumb" data-turbolinks="false">
     <li><%= link_to ('<i class="fa fa-dashboard"> </i>Dashboard').html_safe, home_path %></li>
@@ -209,15 +209,17 @@
             </tr>
             </thead>
             <tbody>
-              <% @evaluation.controls.each do |control_id, control| %>
-              <% sym = @evaluation.status_symbol(control) %>
-              <tr class="<%= control.category %> <%= status_label(sym) %>" id="<%= control.id %>">
-                <td><button class="<%= status_btn(sym) %>" style="width:120px" onclick="show_details('<%= control.profile.id %>', '<%= control.id %>', '<%= @evaluation.id %>');"><%= status_label(sym) %></button></td>
-                <td><%= link_to control_id, profile_control_path(control.profile.id, control.id) %></td>
-                <td><%= control.tag 'severity' %></td>
-                <td><%= control.impact %></td>
-                <td><%= control.tag 'nist' %></td>
-              </tr>
+              <% @evaluation.profiles.each do |profile| %>
+                <% profile.controls.each do |control| %>
+                  <% sym = @evaluation.status_symbol(control, control.results.where(:evaluation_id => @evaluation.id)) %>
+                  <tr class="<%= control.category %> <%= status_label(sym) %>" id="<%= control.id %>">
+                    <td><button class="<%= status_btn(sym) %>" style="width:120px" onclick="show_details('<%= profile.id %>', '<%= control.id %>', '<%= @evaluation.id %>');"><%= status_label(sym) %></button></td>
+                    <td><%= link_to control.control_id, profile_control_path(profile.id, control.id) %></td>
+                    <td><%= control.tag 'severity' %></td>
+                    <td><%= control.impact %></td>
+                    <td><%= control.tag 'nist' %></td>
+                  </tr>
+                <% end %>
               <% end %>
             </tbody>
             <tfoot>

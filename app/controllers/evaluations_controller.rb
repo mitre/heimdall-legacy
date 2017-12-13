@@ -72,13 +72,13 @@ class EvaluationsController < ApplicationController
   def nist_800_53
     category = nil
     category = params[:category] if params.has_key?(:category)
-    status_symbol = nil
-    status_symbol = params[:status_symbol].downcase.tr(' ', '_').to_sym if params.has_key?(:status_symbol)
+    status_sym = nil
+    status_sym = params[:status_symbol].downcase.tr(' ', '_').to_sym if params.has_key?(:status_symbol)
     unless @@nist_800_53_json
       file = File.read("#{Rails.root}/data/nist_800_53.json")
       @@nist_800_53_json = JSON.parse(file)
     end
-    nist_hash = @evaluation.nist_hash category, status_symbol
+    nist_hash = @evaluation.nist_hash category, status_sym
     #logger.debug "nist_hash: #{nist_hash.inspect}"
     new_hash = @@nist_800_53_json.deep_dup
     total_impact = 0
@@ -138,12 +138,24 @@ class EvaluationsController < ApplicationController
     if contents.key? "profiles"
       hash = transform(contents)
       results = hash.delete('results')
+      profiles = hash.delete('profiles')
       @evaluation = Evaluation.create(hash)
       logger.debug("New Evaluation: #{@evaluation.inspect}")
       results.each do |result|
-        @evaluation.results.create(result)
+        logger.debug("Add result to evalution")
+        @evaluation.results << result
       end
       logger.debug("Results: #{@evaluation.results.size}")
+      profiles.each do |profile|
+        logger.debug("Add profile to evalution")
+        @evaluation.profiles << profile
+      end
+      logger.debug("Profiles: #{@evaluation.profiles.size}")
+      #results.each do |result|
+      #  logger.debug("Add result for #{result['control_id']} to evalution")
+      #  @evaluation.results.create(result)
+      #end
+      #logger.debug("Results: #{@evaluation.results.size}")
       redirect_to evaluations_url, notice: 'Evaluation uploaded.'
     else
       redirect_to evaluations_url, notice: 'File does not contain an evaluation.'
@@ -174,30 +186,41 @@ class EvaluationsController < ApplicationController
         hash["statistics_#{key}"] = value
       end
       results = []
+      all_profiles = []
       profiles = hash.delete('profiles')
       profiles.try(:each) do |profile_hash|
         profile = Profile.find_by(:name => profile_hash['name'])
         unless profile
           #profile = Profile.create(Profile.transform(profile_hash.deep_dup))
-          profile_hash, controls = Profile.transform(profile_hash.deep_dup)
-          profile = Profile.create(profile_hash)
+          new_profile_hash, controls = Profile.transform(profile_hash.deep_dup)
+          profile = Profile.create(new_profile_hash)
           controls.each do |control|
             logger.debug "Add Control: #{control.keys}"
             profile.controls.create(control)
           end
         end
+        logger.debug "Add RESULTS"
         profile_hash['controls'].try(:each) do |control_hash|
+          logger.debug "For #{control_hash['control_id']}"
           if control = profile.controls.find_by(:control_id => control_hash['control_id'])
+            logger.debug "Found Control"
             control_hash['results'].try(:each) do |result|
+              logger.debug "For result #{result.inspect}"
               result['profile_name'] = profile.name
-              result['control_id'] = control_hash['control_id']
-              results << result
+              #result['control_id'] = control_hash['control_id']
+              #result['control'] = control
+              control.results.create(result)
+              #results << result
             end
+            results.concat control.results
           end
+          logger.debug "Results: #{results.size}"
         end
+        all_profiles << profile
       end
       hash['results'] = results
-      #logger.debug("hash: #{hash.inspect}")
+      hash['profiles'] = all_profiles
+      logger.debug("hash: #{hash.inspect}")
       hash
     end
 end
