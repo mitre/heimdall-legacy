@@ -8,101 +8,43 @@ class Evaluation
   field :statistics_duration, type: String
   has_many :results
   has_and_belongs_to_many :profiles
-  #accepts_nested_attributes_for :results
 
-  @counts = nil
-  @control_hash = nil
-  @profile_hash = nil
-  @control_results_hash = nil
-
-  #def profiles profile_name=nil
-  #  if @profile_hash.nil?
-  #    @profile_hash = {}
-  #    self.results.map(&:profile_name).uniq.each do |name|
-  #      @profile_hash[name] = Profile.find_by(:name => name)
-  #    end
-  #  end
-  #  if profile_name
-  #    @profile_hash[profile_name]
-  #  else
-  #    @profile_hash
-  #  end
-  #end
-
-  def fill_hashes
-    @control_hash = {}
-    @control_results_hash = {}
-    self.results.each do |result|
-      if profile = self.profiles(result.profile_name)
-        profile.controls.each do |control|
-          @control_hash[control.control_id] = control
-          unless @control_results_hash.key?(control.control_id)
-            @control_results_hash[control.control_id] = []
-          end
-          if result.control_id == control.control_id
-            @control_results_hash[control.control_id] << result
-          end
-        end
-      end
-    end
-  end
-
-  def control_results control_id=nil
-    if @control_results_hash.nil?
-      fill_hashes
-    end
-    if control_id
-      @control_results_hash[control_id]
-    else
-      @control_results_hash
-    end
-  end
-
-  def controls control_id=nil
-    if @control_hash.nil?
-      fill_hashes
-    end
-    if control_id
-      @control_hash[control_id]
-    else
-      @control_hash
-    end
-  end
-#ct.results.where(:evaluation_id => '5a316d213e12a7856a949680')
   def status_counts
-    if @counts.nil?
-      counts = {open: 0, not_a_finding: 0, not_reviewed: 0, not_tested: 0, not_applicable: 0}
-      groups = results.group_by(&:control)
-      groups.each do |control, ct_results|
-        counts[status_symbol(control, ct_results)] += 1
+    counts = {open: 0, not_a_finding: 0, not_reviewed: 0, not_tested: 0, not_applicable: 0}
+    controls = {}
+    profiles.each do |profile|
+      profile.controls.each do |control|
+        controls[control.id] = {:control => control, :results => []}
       end
     end
-    counts
-  end
-
-  @@categories = {"cat i": {low: 0.7, high: 0.9}, "cat ii": {low: 0.4, high: 0.6}, "cat iii": {low: 0.1, high: 0.3},}
-
-  def category cat
-    if cat
-      @@categories[cat.downcase.to_sym]
-    else
-      nil
+    results.each do |result|
+      controls[result.control_id][:results] << result
     end
+    controls.each do |control_id, ct|
+      sym = status_symbol(ct[:control], ct[:results])
+      ct[:status_symbol] = sym
+      counts[sym] += 1
+    end
+    return counts, controls
   end
 
   def status_symbol control, ct_results
     if control.impact.zero?
       :not_applicable
     else
-      status_list = ct_results.map{ |result| result.status}.uniq
-      if status_list.include?('failed')
-        :open
-      elsif status_list.include?('passed')
-        :not_a_finding
-      elsif status_list.include?('skipped')
-        :not_reviewed
-      else
+      if ct_results.nil?
         :not_tested
+      else
+        status_list = ct_results.map{ |result| result.status}.uniq
+        if status_list.include?('failed')
+          :open
+        elsif status_list.include?('passed')
+          :not_a_finding
+        elsif status_list.include?('skipped')
+          :not_reviewed
+        else
+          :not_tested
+        end
       end
     end
   end
@@ -123,24 +65,43 @@ class Evaluation
 
   def nist_hash cat, status_symbol
     nist = {}
-    range = self.category cat
-    #logger.debug "CAT: #{cat}, range: #{range.inspect}, status_symbol: #{status_symbol}"
-    groups = results.group_by(&:control)
-    groups.each do |control, ct_results|
-      #control = result.control
-      #logger.debug "#{control.control_id}: #{control.impact}"
-      if range.nil? || (control.impact <= range[:high] && control.impact >= range[:low])
+    logger.debug "CAT: #{cat}, status_symbol: #{status_symbol}"
+    #results.group_by(&:control).each do |control, ct_results|
+    cts = {}
+    results.each do |result|
+      unless cts.key?(result.control_id)
+        cts[result.control_id] = []
+      end
+      cts[result.control_id] << result
+    end
+    #cts.each do |key, list|
+    #  logger.debug "#{key}: #{list.size}"
+    #end
+    profiles.each do |profile|
+      #logger.debug "Profile: #{profile.name}"
+      profile.controls.each do |control|
+        #logger.debug "#{control.control_id}: #{control.impact}"
+        #ct_results = control.eval_results(self.id)
+        ct_results = cts[control.id]
         if severity = control.tags.where(:name => 'severity').first
-          control.tags.where(:name => 'nist').each do |tag|
-            if tag.value.is_a? Array
-              tag.value.each do |value|
-                unless value.include?("Rev")
-                  value = value.split(' ')[0]
-                  nist[value] = [] unless nist[value]
-                  sym = status_symbol(control, ct_results)
-                  #logger.debug "#{control.control_id}: sym = #{sym}, equals #{status_symbol}: #{status_symbol == sym}"
-                  if status_symbol.nil? || status_symbol == sym
-                    nist[value] << {"name": "#{control.control_id}", "status_symbol": sym, "status_value": status_symbol_value(sym), "severity": "#{severity.value}", "impact": control.impact, "value": 1}
+          if cat.nil? || cat == severity.value
+            #logger.debug "severity: #{severity.value}"
+            control.tags.where(:name => 'nist').each do |tag|
+              if tag.value.is_a? Array
+                tag.value.each do |value|
+                  unless value.include?("Rev")
+                    value = value.split(' ')[0]
+                    nist[value] = [] unless nist[value]
+                    sym = status_symbol(control, ct_results)
+                    #logger.debug "#{control.control_id}: sym = #{sym}, equals #{status_symbol}: #{status_symbol == sym}"
+                    if status_symbol.nil? || status_symbol == sym
+                      nist[value] << {"name": "#{control.control_id}", "status_value": status_symbol_value(sym), "children":
+                        [{"name": "#{control.control_id}", "title": control.title, "nist": control.tag('nist'),
+                          "status_symbol": sym, "status_value": status_symbol_value(sym),
+                          "severity": "#{severity.value}", "description": control.desc,
+                          "check": control.tag('check'), "fix": control.tag('fix'),
+                          "impact": control.impact, "value": 1}]}
+                    end
                   end
                 end
               end

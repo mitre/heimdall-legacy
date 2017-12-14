@@ -21,12 +21,12 @@
         <!-- /.box-header -->
         <div class="box-body">
           <p>
-            <strong>Version:</strong>
+            <strong>InSpec Version:</strong>
             <%= @evaluation.version %>
           </p>
 
           <p>
-            <strong>Other checks:</strong>
+            <strong>Other Checks:</strong>
             <%= @evaluation.other_checks %>
           </p>
         </div>
@@ -96,11 +96,11 @@
             <!-- small box -->
             <div class="small-box bg-green">
               <div class="inner">
-                <h3><%= @evaluation.status_counts[:not_a_finding] %></h3>
-                <p>Not a Finding</p>
-              </div>
-              <div class="icon padded">
-                <i class="glyphicon glyphicon-ok-circle"></i>
+                <ul class="horizontal-list">
+                  <li><h3><%= @counts[:not_a_finding] %>&nbsp;</h3></li>
+                  <li><h4>Not a Finding</h4></li>
+                </ul>
+                <p class="small-font">&nbsp;</p>
               </div>
             </div>
           </div>
@@ -109,12 +109,11 @@
             <!-- small box -->
             <div class="small-box bg-red">
               <div class="inner">
-                <h3><%= @evaluation.status_counts[:open] %></h3>
-
-                <p>Open</p>
-              </div>
-              <div class="icon padded">
-                <i class="glyphicon glyphicon-remove-circle"></i>
+                <ul class="horizontal-list">
+                  <li><h3><%= @counts[:open] %>&nbsp;</h3></li>
+                  <li><h4>Open</h4></li>
+                </ul>
+                <p class="small-font">&nbsp;</p>
               </div>
             </div>
           </div>
@@ -123,12 +122,11 @@
             <!-- small box -->
             <div class="small-box bg-med-grey">
               <div class="inner">
-                <h3><%= @evaluation.status_counts[:not_reviewed] %></h3>
-
-                <p>Not Reviewed</p>
-              </div>
-              <div class="icon padded">
-                <i class="glyphicon glyphicon-warning-sign"></i>
+                <ul class="horizontal-list">
+                  <li><h3><%= @counts[:not_reviewed] %>&nbsp;</h3></li>
+                  <li><h4>Not Reviewed</h4></li>
+                </ul>
+                <p class="small-font">(manual test or absent sub-component)</p>
               </div>
             </div>
           </div>
@@ -137,12 +135,11 @@
             <!-- small box -->
             <div class="small-box bg-aqua">
               <div class="inner">
-                <h3><%= @evaluation.status_counts[:not_applicable] %></h3>
-
-                <p>Not Applicable</p>
-              </div>
-              <div class="icon padded">
-                <i class="glyphicon glyphicon-ban-circle"></i>
+                <ul class="horizontal-list">
+                  <li><h3><%= @counts[:not_applicable] %>&nbsp;</h3></li>
+                  <li><h4>Not Applicable</h4></li>
+                </ul>
+                <p class="small-font">(exception for this system)</p>
               </div>
             </div>
           </div>
@@ -167,7 +164,7 @@
     <div class="col-lg-4">
       <div class="box box-primary">
         <div class="box-header with-border">
-          <h3 class="box-title">Control Impact</h3>
+          <h3 class="box-title">Control Severity</h3>
         </div>
         <button id="clear_filters_button" type="button" class="btn btn-primary floating">Clear Filters</button>
         <!-- /.box-header -->
@@ -202,33 +199,35 @@
             <thead>
             <tr>
               <th>Status</th>
+              <th>Title</th>
               <th>Control ID</th>
               <th>Severity</th>
-              <th>Impact</th>
               <th>NIST</th>
+              <th class="hidden">Details</th>
             </tr>
             </thead>
             <tbody>
-              <% @evaluation.profiles.each do |profile| %>
-                <% profile.controls.each do |control| %>
-                  <% sym = @evaluation.status_symbol(control, control.results.where(:evaluation_id => @evaluation.id)) %>
-                  <tr class="<%= control.category %> <%= status_label(sym) %>" id="<%= control.id %>">
-                    <td><button class="<%= status_btn(sym) %>" style="width:120px" onclick="show_details('<%= profile.id %>', '<%= control.id %>', '<%= @evaluation.id %>');"><%= status_label(sym) %></button></td>
-                    <td><%= link_to control.control_id, profile_control_path(profile.id, control.id) %></td>
-                    <td><%= control.tag 'severity' %></td>
-                    <td><%= control.impact %></td>
-                    <td><%= control.tag 'nist' %></td>
-                  </tr>
-                <% end %>
+              <% @controls.each do |control_id, hsh| %>
+                <% control = hsh[:control] %>
+                <% sym = hsh[:status_symbol] %>
+                <tr class="<%= control.tag('severity').capitalize %> <%= status_label(sym) %>" id="<%= control.id %>">
+                  <td><button class="<%= status_btn(sym) %>" style="width:120px" onclick="show_details('<%= control.profile_id %>', '<%= control.id %>', '<%= @evaluation.id %>');"><%= status_label(sym) %></button></td>
+                  <td><%= control.title %></td>
+                  <td><%= link_to control.control_id, profile_control_path(control.profile_id, control.id) %></td>
+                  <td><%= control.tag 'severity' %></td>
+                  <td><%= control.tag 'nist' %></td>
+                  <td class="hidden"><%= control.code %></td>
+                </tr>
               <% end %>
             </tbody>
             <tfoot>
             <tr>
               <th>Status</th>
+              <th>Title</th>
               <th>Control ID</th>
               <th>Severity</th>
-              <th>Impact</th>
               <th>NIST</th>
+              <th class="hidden">Details</th>
             </tr>
           </tfoot>
           </table>
@@ -241,7 +240,7 @@
 <script>
 
 //var oTable = $('#controls').DataTable();
-var cats = {"CAT I": true, "CAT II": true, "CAT III": true};
+var cats = {"High": true, "Medium": true, "Low": true};
 var stats = {"Not A Finding": true, "Not Applicable": true, "Open": true, "Not Reviewed": true};
 var shown_id = null;
 var loaded = null;
@@ -272,7 +271,7 @@ function show_details(profile_id, control_id, evaluation_id) {
 }
 
 function clear_cat_filter(bool) {
-  cats = {"CAT I": bool, "CAT II": bool, "CAT III" : bool};
+  cats = {"High": bool, "Medium": bool, "Low" : bool};
 }
 
 function clear_stat_filter(bool) {
@@ -295,12 +294,12 @@ $.fn.dataTableExt.afnFiltering.push(
       var nTr = oSettings.aoData[ iDataIndex ].nTr;
       var cats_bool = true;
       var stats_bool = true;
-      if ($(nTr).hasClass('CAT I')) {
-        cats_bool = cats['CAT I'];
-      } else if ($(nTr).hasClass('CAT II')) {
-        cats_bool = cats['CAT II'];
-      } else if ($(nTr).hasClass('CAT III')) {
-        cats_bool = cats['CAT III'];
+      if ($(nTr).hasClass('High')) {
+        cats_bool = cats['High'];
+      } else if ($(nTr).hasClass('Medium')) {
+        cats_bool = cats['Medium'];
+      } else if ($(nTr).hasClass('Low')) {
+        cats_bool = cats['Low'];
       }
       if ($(nTr).hasClass('Not A Finding')) {
         stats_bool = stats['Not A Finding'];
@@ -342,6 +341,19 @@ document.addEventListener("turbolinks:load", function() {
       alert("You must be at the top level of the chart to clear the filters");
     }
   });
+
+  String.prototype.capitalize = function() {
+      return this.charAt(0).toUpperCase() + this.slice(1);
+  }
+
+  String.prototype.titleize = function() {
+      var string_array = this.split('_');
+      string_array = string_array.map(function(str) {
+         return str.capitalize();
+      });
+
+      return string_array.join(' ');
+  }
 
   function accumulate_impact(d, low_r, high_r) {
     //console.log("accumulate_impact for " + d.name + ", low_r: " + low_r + ", high_r: " + high_r);
@@ -416,9 +428,9 @@ document.addEventListener("turbolinks:load", function() {
   function draw_severity_pie_chart(d)
   {
     severity_data = [
-              ['CAT I',   accumulate_impact(d, 0.7, 0.9)],
-              ['CAT II',  accumulate_impact(d, 0.4, 0.6)],
-              ['CAT III', accumulate_impact(d, 0.1, 0.3)],
+              ['High',   accumulate_impact(d, 0.7, 0.9)],
+              ['Medium',  accumulate_impact(d, 0.4, 0.6)],
+              ['Low', accumulate_impact(d, 0.1, 0.3)],
           ];
 
     c3.generate(
@@ -447,7 +459,7 @@ document.addEventListener("turbolinks:load", function() {
       },
       donut:
       {
-        title: "Impact",
+        title: "Severity",
         label:
         {
           format: function (value, ratio, id)
@@ -482,7 +494,7 @@ document.addEventListener("turbolinks:load", function() {
       },
       size:
       {
-          height: 120
+          height: 125
       }
     });
   }
@@ -603,6 +615,7 @@ document.addEventListener("turbolinks:load", function() {
   }
 
   function drawTreemap(category, status) {
+    console.log("drawTreemap");
     d3.selectAll("svg").remove();
   	// introduce color scale here
   	treemap = d3.layout.treemap()
@@ -644,6 +657,7 @@ document.addEventListener("turbolinks:load", function() {
     if (status) {
       api_path += "/status/" + encodeURIComponent(status);
     }
+    console.log("loadTreemapData from " + api_path);
   	d3.json(api_path, function(data) {
       root = data
       initialize(root);
@@ -704,10 +718,25 @@ document.addEventListener("turbolinks:load", function() {
     			.attr("class","foreignobj")
     			.append("xhtml:div")
     			.attr("dy", ".75em")
-    			.html(function(d) { return (d.desc && width > 750) ? '' +
-    				' <p class="title" style="color:' + getContrast50(get_color(d)) + '"> ' + d.name + '</p>' +
-            ' <p style="color:' + getContrast50(get_color(d)) + '"> ' + d.desc + '</p>' :
-            ' <p class="title" style="color:' + getContrast50(get_color(d)) + '"> ' + d.name + '</p>'
+    			.html(function(d) {
+            var colr = getContrast50(get_color(d));
+            if (d.desc && width > 750) {
+              return  ' <p class="title" style="color:' + colr + '"> ' + d.name + '</p>' +
+                ' <p style="color:' + colr + '"> ' + d.desc + '</p>';
+            } else {
+              if (d.impact) {
+                return ' <p class="title" style="color:' + colr + '"> ' + d.name + '</p>' +
+                  ' <p style="color:' + colr + '">Title: ' + d.title + '</p>' +
+                  ' <p style="color:' + colr + '">Description: ' + d.description + '</p>' +
+                  ' <p style="color:' + colr + '">Impact: ' + d.impact + '</p>' +
+                  ' <p style="color:' + colr + '">Status: ' + d.status_symbol.titleize() + '</p>' +
+                  ' <p style="color:' + colr + '">Check Text: ' + d.check + '</p>' +
+                  ' <p style="color:' + colr + '">Fix Text: ' + d.fix + '</p>' +
+                  ' <p style="color:' + colr + '">NIST Ref: ' + d.nist + '</p>';
+              } else {
+                return ' <p class="title" style="color:' + colr + '"> ' + d.name + '</p>';
+              }
+            }
     				;})
     			.attr("class","textdiv"); //textdiv class allows us to style the text easily with CSS
 

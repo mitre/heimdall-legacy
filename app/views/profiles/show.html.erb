@@ -27,7 +27,7 @@
     <div class="col-md-3">
       <div class="box box-primary">
         <div class="box-header with-border">
-          <h3 class="box-title">Control Impact</h3>
+          <h3 class="box-title">Control Severity</h3>
           <button id="clear_filters_button" type="button" class="btn btn-primary floating">Clear Filters</button>
         </div>
         <!-- /.box-header -->
@@ -49,30 +49,34 @@
             <thead>
             <tr>
               <th>Details</th>
+              <th>Title</th>
               <th>Control ID</th>
               <th>Severity</th>
-              <th>Impact</th>
               <th>NIST</th>
+              <th class="hidden">Details</th>
             </tr>
             </thead>
             <tbody>
               <% @profile.controls.each do |control| %>
-              <tr class="<%= control.category %>" id="<%= control.id %>">
+              <% Rails.logger.debug "control #{control.control_id}" %>
+              <tr class="<%= control.tag('severity').capitalize %>" id="<%= control.id %>">
                 <td><button class="<%= category_button(control.impact) %>" style="width:120px" onclick="show_details('<%= @profile.id %>', '<%= control.id %>');">View Details</button></td>
+                <td><%= control.title %></td>
                 <td><%= link_to control.control_id, profile_control_path(@profile.id, control.id) %></td>
                 <td><%= control.tag 'severity' %></td>
-                <td><%= control.impact %></td>
                 <td><%= control.tag 'nist' %></td>
+                <td class="hidden"><%= control.code %></td>
               </tr>
               <% end %>
             </tbody>
             <tfoot>
             <tr>
               <th>Details</th>
+              <th>Title</th>
               <th>Control ID</th>
               <th>Severity</th>
-              <th>Impact</th>
               <th>NIST</th>
+              <th class="hidden">Details</th>
             </tr>
           </tfoot>
           </table>
@@ -85,7 +89,7 @@
 <script>
 
 //var oTable = $('#controls').DataTable();
-var cats = {"CAT I": true, "CAT II": true, "CAT III" : true};
+var cats = {"High": true, "Medium": true, "Low" : true};
 var shown_id = null;
 var loaded = null;
 
@@ -113,7 +117,7 @@ function show_details(profile_id, control_id) {
 }
 
 function clear_filter(bool) {
-  cats = {"CAT I": bool, "CAT II": bool, "CAT III" : bool};
+  cats = {"High": bool, "Medium": bool, "Low" : bool};
 }
 
 function filter_table(category) {
@@ -126,12 +130,12 @@ function filter_table(category) {
 $.fn.dataTableExt.afnFiltering.push(
     function( oSettings, aData, iDataIndex ) {
       var nTr = oSettings.aoData[ iDataIndex ].nTr;
-      if ($(nTr).hasClass('CAT I')) {
-        return cats['CAT I'];
-      } else if ($(nTr).hasClass('CAT II')) {
-        return cats['CAT II'];
-      } else if ($(nTr).hasClass('CAT III')) {
-        return cats['CAT III'];
+      if ($(nTr).hasClass('High')) {
+        return cats['High'];
+      } else if ($(nTr).hasClass('Medium')) {
+        return cats['Medium'];
+      } else if ($(nTr).hasClass('Low')) {
+        return cats['Low'];
       }
     }
 );
@@ -176,9 +180,9 @@ document.addEventListener("turbolinks:load", function() {
   function draw_severity_pie_chart(d)
   {
     severity_data = [
-              ['CAT I',   accumulate_impact(d, 0.7, 0.9)],
-              ['CAT II',  accumulate_impact(d, 0.4, 0.6)],
-              ['CAT III', accumulate_impact(d, 0.1, 0.3)],
+              ['High',   accumulate_impact(d, 0.7, 0.9)],
+              ['Medium',  accumulate_impact(d, 0.4, 0.6)],
+              ['Low', accumulate_impact(d, 0.1, 0.3)],
           ];
 
     c3.generate(
@@ -207,7 +211,7 @@ document.addEventListener("turbolinks:load", function() {
       },
       donut:
       {
-        title: "Impact",
+        title: "Severity",
         label:
         {
           format: function (value, ratio, id)

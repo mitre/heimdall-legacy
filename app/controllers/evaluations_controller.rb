@@ -13,6 +13,8 @@ class EvaluationsController < ApplicationController
   # GET /evaluations/1.json
   def show
     @profiles = @evaluation.profiles
+    @counts, @controls = @evaluation.status_counts
+    #logger.debug "CONTROL: #{@controls.first.inspect}"
     #@controls = @evaluation.controls
     respond_to do |format|
       format.html { render :show }
@@ -71,7 +73,7 @@ class EvaluationsController < ApplicationController
 
   def nist_800_53
     category = nil
-    category = params[:category] if params.has_key?(:category)
+    category = params[:category].downcase if params.has_key?(:category)
     status_sym = nil
     status_sym = params[:status_symbol].downcase.tr(' ', '_').to_sym if params.has_key?(:status_symbol)
     unless @@nist_800_53_json
@@ -92,8 +94,9 @@ class EvaluationsController < ApplicationController
         if nist_hash[control["name"]]
           control.delete('value')
           control["children"] = nist_hash[control["name"]]
-          control["children"].each do |child|
-            #logger.debug "CHILD #{child.inspect}"
+          control["children"].each do |childt|
+            #logger.debug "CHILD #{childt.inspect}"
+            child = childt[:children].first
             if child[:status_value]
               if child[:status_value] > 0.4
                 if control_total_impact < 0.6
@@ -151,12 +154,7 @@ class EvaluationsController < ApplicationController
         @evaluation.profiles << profile
       end
       logger.debug("Profiles: #{@evaluation.profiles.size}")
-      #results.each do |result|
-      #  logger.debug("Add result for #{result['control_id']} to evalution")
-      #  @evaluation.results.create(result)
-      #end
-      #logger.debug("Results: #{@evaluation.results.size}")
-      redirect_to evaluations_url, notice: 'Evaluation uploaded.'
+      redirect_to @evaluation, notice: 'Evaluation uploaded.'
     else
       redirect_to evaluations_url, notice: 'File does not contain an evaluation.'
     end
@@ -189,9 +187,8 @@ class EvaluationsController < ApplicationController
       all_profiles = []
       profiles = hash.delete('profiles')
       profiles.try(:each) do |profile_hash|
-        profile = Profile.find_by(:name => profile_hash['name'])
+        profile = Profile.find_by(:sha256 => profile_hash['sha256'])
         unless profile
-          #profile = Profile.create(Profile.transform(profile_hash.deep_dup))
           new_profile_hash, controls = Profile.transform(profile_hash.deep_dup)
           profile = Profile.create(new_profile_hash)
           controls.each do |control|
@@ -206,11 +203,7 @@ class EvaluationsController < ApplicationController
             logger.debug "Found Control"
             control_hash['results'].try(:each) do |result|
               logger.debug "For result #{result.inspect}"
-              result['profile_name'] = profile.name
-              #result['control_id'] = control_hash['control_id']
-              #result['control'] = control
               control.results.create(result)
-              #results << result
             end
             results.concat control.results
           end

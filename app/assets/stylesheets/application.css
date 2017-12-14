@@ -43,6 +43,19 @@
 .shown {
   display:block;
 }
+.horizontal-list {
+  padding: 0;
+	list-style: none;
+}
+.horizontal-list > li {
+  display: inline-block;
+}
+.a-left {
+  text-align: left;
+}
+.small-font {
+    font-size: 10px !important;
+}
 .padded {
   padding: 5px;
   font-size: 70px;

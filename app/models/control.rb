@@ -12,20 +12,6 @@ class Control
   field :sl_line, type: Integer
   belongs_to :profile, :inverse_of => :controls
   has_many :results
-  #accepts_nested_attributes_for :results
-
-
-  def category
-    if self.impact <= 0.3
-      return "CAT III"
-    end
-    if self.impact <= 0.6
-      return "CAT II"
-    end
-    if self.impact <= 0.9
-      return "CAT I"
-    end
-  end
 
   def refs_list=(arg)
     self.refs = arg.split(',').map { |v| v.strip }
@@ -41,6 +27,22 @@ class Control
       val.join(", ")
     else
       val
+    end
+  end
+
+  def eval_results evaluation_id
+    results.where(:evaluation_id => evaluation_id)
+  end
+
+  def self.severity impact
+    if impact <= 0.3
+      return "low"
+    end
+    if impact <= 0.6
+      return "medium"
+    end
+    if impact <= 0.9
+      return "high"
     end
   end
 
