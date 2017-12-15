@@ -58,7 +58,6 @@
             </thead>
             <tbody>
               <% @profile.controls.each do |control| %>
-              <% Rails.logger.debug "control #{control.control_id}" %>
               <tr class="<%= control.tag('severity').capitalize %>" id="<%= control.id %>">
                 <td><button class="<%= category_button(control.impact) %>" style="width:120px" onclick="show_details('<%= @profile.id %>', '<%= control.id %>');">View Details</button></td>
                 <td><%= control.title %></td>
