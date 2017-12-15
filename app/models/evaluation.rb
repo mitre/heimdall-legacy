@@ -66,7 +66,6 @@ class Evaluation
   def nist_hash cat, status_symbol
     nist = {}
     logger.debug "CAT: #{cat}, status_symbol: #{status_symbol}"
-    #results.group_by(&:control).each do |control, ct_results|
     cts = {}
     results.each do |result|
       unless cts.key?(result.control_id)
@@ -74,14 +73,10 @@ class Evaluation
       end
       cts[result.control_id] << result
     end
-    #cts.each do |key, list|
-    #  logger.debug "#{key}: #{list.size}"
-    #end
     profiles.each do |profile|
       #logger.debug "Profile: #{profile.name}"
       profile.controls.each do |control|
         #logger.debug "#{control.control_id}: #{control.impact}"
-        #ct_results = control.eval_results(self.id)
         ct_results = cts[control.id]
         if severity = control.tags.where(:name => 'severity').first
           if cat.nil? || cat == severity.value
