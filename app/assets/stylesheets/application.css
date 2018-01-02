@@ -133,3 +133,9 @@
 .btn-neutral.hover {
   background-color: #8C8C8C;
 }
+#editor {
+    top: 0;
+    right: 0;
+    bottom: 0;
+    left: 0;
+}
