@@ -42,8 +42,19 @@ class ControlsController < ApplicationController
   # PATCH/PUT /controls/1
   # PATCH/PUT /controls/1.json
   def update
+    if new_control = Control.parse(control_params[:code])
+      logger.debug "New Control: #{new_control.inspect}"
+      #control_params[:title] = new_control.title
+      #control_params[:desc] = new_control.desc
+      #control_params[:impact] = new_control.impact
+    end
     respond_to do |format|
       if @control.update(control_params)
+        @control.title = new_control.title
+        @control.desc = new_control.desc
+        @control.impact = new_control.impact
+        @control.tags = new_control.tags
+        @control.save
         format.html { redirect_to profile_control_url(@profile, @control), notice: 'Control was successfully updated.' }
         format.json { render :show, status: :ok, location: @control }
       else
