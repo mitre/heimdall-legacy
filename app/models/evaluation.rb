@@ -107,4 +107,78 @@ class Evaluation
     end
     nist
   end
+
+  def self.transform hash
+    hash.deep_transform_keys!{ |key| key.to_s.tr('-', '_').gsub(/\battributes\b/, 'profile_attributes').gsub(/\bid\b/, 'control_id') }
+    hash.delete('controls')
+    platform = hash.delete('platform')
+    platform.try(:each) do |key, value|
+      hash["platform_#{key}"] = value
+    end
+    statistics = hash.delete('statistics')
+    statistics.try(:each) do |key, value|
+      hash["statistics_#{key}"] = value
+    end
+    results = []
+    all_profiles = []
+    profiles = hash.delete('profiles')
+    profiles.try(:each) do |profile_hash|
+      profile = Profile.find_by(:sha256 => profile_hash['sha256'])
+      unless profile
+        new_profile_hash, controls = Profile.transform(profile_hash.deep_dup)
+        profile = Profile.create(new_profile_hash)
+        controls.each do |control|
+          logger.debug "Add Control: #{control.keys}"
+          profile.controls.create(control)
+        end
+      end
+      logger.debug "Add RESULTS"
+      profile_hash['controls'].try(:each) do |control_hash|
+        logger.debug "For #{control_hash['control_id']}"
+        if control = profile.controls.find_by(:control_id => control_hash['control_id'])
+          logger.debug "Found Control"
+          control_hash['results'].try(:each) do |result|
+            logger.debug "For result #{result.inspect}"
+            control.results.create(result)
+          end
+          results.concat control.results
+        end
+        logger.debug "Results: #{results.size}"
+      end
+      all_profiles << profile
+    end
+    hash['results'] = results
+    hash['profiles'] = all_profiles
+    logger.debug("hash: #{hash.inspect}")
+    hash
+  end
+
+  def self.parse json_content
+    Rails.logger.debug "json_content: #{json_content.class}"
+    contents = json_content
+    #contents = JSON.parse(json_content)
+    Rails.logger.debug "contents keys: #{contents.keys()}"
+    if contents.key?("profiles") || contents.key?(:profiles)
+      Rails.logger.debug "transform hash"
+      hash = Evaluation.transform(contents)
+      results = hash.delete('results')
+      profiles = hash.delete('profiles')
+      evaluation = Evaluation.create(hash)
+      logger.debug("New Evaluation: #{evaluation.inspect}")
+      results.each do |result|
+        logger.debug("Add result to evalution")
+        evaluation.results << result
+      end
+      logger.debug("Results: #{evaluation.results.size}")
+      profiles.each do |profile|
+        logger.debug("Add profile to evalution")
+        evaluation.profiles << profile
+      end
+      logger.debug("Profiles: #{evaluation.profiles.size}")
+      return evaluation
+    else
+      Rails.logger.debug "return nil"
+      return nil
+    end
+  end
 end

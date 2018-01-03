@@ -1,5 +1,6 @@
 class EvaluationsController < ApplicationController
   before_action :set_evaluation, only: [:show, :edit, :update, :destroy, :nist_800_53]
+  protect_from_forgery except: [:create]
 
   @@nist_800_53_json = nil
 
@@ -34,15 +35,17 @@ class EvaluationsController < ApplicationController
   # POST /evaluations
   # POST /evaluations.json
   def create
-    @evaluation = Evaluation.new(evaluation_params)
+    data = params.to_unsafe_h()
+    eval_json = {"version": data[:version], "controls": data[:controls], "other_checks": data[:other_checks],
+      "profiles": data[:profiles], "platform": data[:platform], "statistics": data[:statistics]}
 
     respond_to do |format|
-      if @evaluation.save
+      if @evaluation = Evaluation.parse(eval_json)
         format.html { redirect_to @evaluation, notice: 'Evaluation was successfully created.' }
         format.json { render :show, status: :created, location: @evaluation }
       else
         format.html { render :new }
-        format.json { render json: @evaluation.errors, status: :unprocessable_entity }
+        format.json { render json: "Evaluation creation failed", status: :unprocessable_entity }
       end
     end
   end
@@ -137,23 +140,7 @@ class EvaluationsController < ApplicationController
 
   def upload
     file = params[:file]
-    contents = JSON.parse(file.read)
-    if contents.key? "profiles"
-      hash = transform(contents)
-      results = hash.delete('results')
-      profiles = hash.delete('profiles')
-      @evaluation = Evaluation.create(hash)
-      logger.debug("New Evaluation: #{@evaluation.inspect}")
-      results.each do |result|
-        logger.debug("Add result to evalution")
-        @evaluation.results << result
-      end
-      logger.debug("Results: #{@evaluation.results.size}")
-      profiles.each do |profile|
-        logger.debug("Add profile to evalution")
-        @evaluation.profiles << profile
-      end
-      logger.debug("Profiles: #{@evaluation.profiles.size}")
+    if @evaluation = Evaluation.parse(JSON.parse(file.read))
       redirect_to @evaluation, notice: 'Evaluation uploaded.'
     else
       redirect_to evaluations_url, notice: 'File does not contain an evaluation.'
@@ -171,49 +158,4 @@ class EvaluationsController < ApplicationController
       params.require(:evaluation).permit(:version, :other_checks, :platform_name, :platform_release, :statistics_duration)
     end
 
-    #convert parameters with hyphen to parameters with underscore and rename 'attributes'
-    def transform hash
-      hash.deep_transform_keys!{ |key| key.to_s.tr('-', '_').gsub(/\battributes\b/, 'profile_attributes').gsub(/\bid\b/, 'control_id') }
-      hash.delete('controls')
-      platform = hash.delete('platform')
-      platform.try(:each) do |key, value|
-        hash["platform_#{key}"] = value
-      end
-      statistics = hash.delete('statistics')
-      statistics.try(:each) do |key, value|
-        hash["statistics_#{key}"] = value
-      end
-      results = []
-      all_profiles = []
-      profiles = hash.delete('profiles')
-      profiles.try(:each) do |profile_hash|
-        profile = Profile.find_by(:sha256 => profile_hash['sha256'])
-        unless profile
-          new_profile_hash, controls = Profile.transform(profile_hash.deep_dup)
-          profile = Profile.create(new_profile_hash)
-          controls.each do |control|
-            logger.debug "Add Control: #{control.keys}"
-            profile.controls.create(control)
-          end
-        end
-        logger.debug "Add RESULTS"
-        profile_hash['controls'].try(:each) do |control_hash|
-          logger.debug "For #{control_hash['control_id']}"
-          if control = profile.controls.find_by(:control_id => control_hash['control_id'])
-            logger.debug "Found Control"
-            control_hash['results'].try(:each) do |result|
-              logger.debug "For result #{result.inspect}"
-              control.results.create(result)
-            end
-            results.concat control.results
-          end
-          logger.debug "Results: #{results.size}"
-        end
-        all_profiles << profile
-      end
-      hash['results'] = results
-      hash['profiles'] = all_profiles
-      logger.debug("hash: #{hash.inspect}")
-      hash
-    end
 end
