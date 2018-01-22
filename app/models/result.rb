@@ -1,6 +1,7 @@
 class Result
   include Mongoid::Document
   include Mongoid::Timestamps
+  include Mongoid::Userstamps::Model
   field :status, type: String
   field :code_desc, type: String
   field :skip_message, type: String

@@ -1,7 +1,11 @@
 <!-- Content Header (Page header) -->
 <section class="content-header">
   <h1>
-    Profile <%= link_to @profile.title, edit_profile_path(@profile) %>
+    <% if @profile.is_editable? && current_user %>
+      Profile <%= link_to @profile.title, edit_profile_path(@profile) %>
+    <% else %>
+      Profile <%= @profile.title %>
+    <% end %>
   </h1>
   <ol class="breadcrumb" data-turbolinks="false">
     <li><%= link_to ('<i class="fa fa-dashboard"> </i>Dashboard').html_safe, home_path %></li>

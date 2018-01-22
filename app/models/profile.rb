@@ -1,6 +1,8 @@
 class Profile
   include Mongoid::Document
   include Mongoid::Timestamps
+  include Mongoid::Userstamps::Model
+  resourcify
   field :name, type: String
   field :title, type: String
   field :maintainer, type: String
@@ -20,6 +22,10 @@ class Profile
   accepts_nested_attributes_for :supports
   accepts_nested_attributes_for :groups
   accepts_nested_attributes_for :profile_attributes
+
+  def is_editable?
+    evaluations.size == 0
+  end
 
   def nist_hash cat
     nist = {}

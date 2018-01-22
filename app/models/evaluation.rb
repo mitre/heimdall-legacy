@@ -1,6 +1,8 @@
 class Evaluation
   include Mongoid::Document
   include Mongoid::Timestamps
+  include Mongoid::Userstamps::Model
+  resourcify
   field :version, type: String
   field :other_checks, type: Array, default: []
   field :platform_name, type: String

@@ -1,5 +1,8 @@
 class User
   include Mongoid::Document
+  rolify
+  include Mongoid::Userstamps::User
+  after_create :assign_default_role
   # Include default devise modules. Others available are:
   # :confirmable, :lockable, :timeoutable and :omniauthable
   devise :database_authenticatable, :registerable,
@@ -33,4 +36,14 @@ class User
   # field :failed_attempts, type: Integer, default: 0 # Only if lock strategy is :failed_attempts
   # field :unlock_token,    type: String # Only if unlock strategy is :email or :both
   # field :locked_at,       type: Time
+
+  # new users get assigned the :editor role by default
+  def assign_default_role
+    self.add_role(:editor) if self.roles.blank?
+  end
+
+  # list of a user's role names
+  def role_names
+    self.roles.map{|role| role.name.capitalize}
+  end
 end

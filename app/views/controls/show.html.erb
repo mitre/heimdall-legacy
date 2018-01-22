@@ -18,8 +18,10 @@
       <div class="box box-primary">
         <div class="box-header">
           <h3 class="box-title">Control Information</h3>
-          <%= link_to 'Destroy', [@profile, @control], :method => :delete, class: "btn btn-danger pull-right", data: { confirm: 'Are you sure?' } %>
-          <%= link_to ('<i class="fa fa-edit"></i> Edit').html_safe, edit_profile_control_path(@profile.id, @control), class: "btn btn-primary pull-right margin-right" %>
+          <% if @profile.is_editable? && can?(:edit, @profile) %>
+            <%= link_to 'Destroy', [@profile, @control], :method => :delete, class: "btn btn-danger pull-right", data: { confirm: 'Are you sure?' } %>
+            <%= link_to ('<i class="fa fa-edit"></i> Edit').html_safe, edit_profile_control_path(@profile.id, @control), class: "btn btn-primary pull-right margin-right" %>
+          <% end %>
         </div>
         <!-- /.box-header -->
         <div class="box-body">

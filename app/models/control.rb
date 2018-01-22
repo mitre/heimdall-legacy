@@ -3,6 +3,7 @@ require 'ripper'
 class Control
   include Mongoid::Document
   include Mongoid::Timestamps
+  include Mongoid::Userstamps::Model
   field :title, type: String
   field :desc, type: String
   field :impact, type: Float
@@ -16,6 +17,10 @@ class Control
   has_many :results
 
   validate :code_is_valid
+
+  def is_editable?
+    results.size == 0
+  end
 
   def refs_list=(arg)
     self.refs = arg.split(',').map { |v| v.strip }
