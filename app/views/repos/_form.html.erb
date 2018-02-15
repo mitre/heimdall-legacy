@@ -1,0 +1,39 @@
+<%= form_with(model: repo, local: true) do |form| %>
+  <% if repo.errors.any? %>
+    <div id="error_explanation">
+      <h2><%= pluralize(repo.errors.count, "error") %> prohibited this repo from being saved:</h2>
+
+      <ul>
+      <% repo.errors.full_messages.each do |message| %>
+        <li><%= message %></li>
+      <% end %>
+      </ul>
+    </div>
+  <% end %>
+
+  <div class="form-group">
+    <%= form.label :name %>
+    <%= form.text_field :name, id: :repo_name, class: "form-control" %>
+  </div>
+
+  <div class="form-group">
+    <%= form.label :api_url, "API URL" %>
+    <%= form.text_field :api_url, id: :repo_api_url, class: "form-control" %>
+  </div>
+
+  <div class="form-group">
+    <%= form.label :repo_type %>
+    <ul>
+      <% Repo.types.each do |rtype| %>
+        <li><%= form.radio_button :repo_type, rtype %> <%= rtype %></li>
+      <% end %>
+    </ul>
+  </div>
+
+  <div class="form-group">
+    <%= button_tag(type: "submit", class: "btn btn-primary") do %>
+      <i class="fa fa-edit"></i> Save
+    <% end %>
+    <%= link_to ('<i class="fa fa-cancel"></i> Cancel').html_safe, @repo, class: "btn btn-info pull-right" %>
+  </div>
+<% end %>

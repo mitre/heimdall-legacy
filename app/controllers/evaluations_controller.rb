@@ -1,5 +1,5 @@
 class EvaluationsController < ApplicationController
-  before_action :set_evaluation, only: [:show, :edit, :update, :destroy, :nist_800_53]
+  before_action :set_evaluation, only: [:show, :edit, :update, :destroy, :ssp, :nist_800_53]
   protect_from_forgery except: [:create]
 
   @@nist_800_53_json = nil
@@ -72,6 +72,43 @@ class EvaluationsController < ApplicationController
       format.html { redirect_to evaluations_url, notice: 'Evaluation was successfully destroyed.' }
       format.json { head :no_content }
     end
+  end
+
+  # GET /profiles/1
+  # GET /profiles/1.json
+  def ssp
+    unless @@nist_800_53_json
+      file = File.read("#{Rails.root}/data/nist_800_53.json")
+      @@nist_800_53_json = JSON.parse(file)
+    end
+    @nist_hash = @@nist_800_53_json.deep_dup
+    @profiles = @evaluation.profiles
+    @counts, @controls = @evaluation.status_counts
+    @symbols = {}
+    @controls.each do |control_id, hsh|
+      control = hsh[:control]
+      @symbols[control.control_id] = hsh[:status_symbol]
+    end
+    @profiles.each do |profile|
+      families, nist = profile.control_families
+      logger.debug "Families: #{families}"
+      @nist_hash["children"].each do |cf|
+        family_value = 0
+        cf["children"].each do |control|
+          logger.debug "Check #{control["name"]}"
+          if families.include?(control["name"])
+            control["controls"] = nist[control["name"]]
+            control["value"] = control["controls"].size
+            family_value += control["controls"].size
+          else
+            control["value"] = 0
+          end
+        end
+        cf["value"] = family_value
+      end
+    end
+    #logger.debug "nist_hash: #{@nist_hash}"
+    logger.debug "@symbols: #{@symbols}"
   end
 
   def nist_800_53

@@ -1,0 +1,14 @@
+<p id="notice"><%= notice %></p>
+
+<p>
+  <strong>Username:</strong>
+  <%= @repo_cred.username %>
+</p>
+
+<p>
+  <strong>Token:</strong>
+  <%= @repo_cred.token %>
+</p>
+
+<%= link_to 'Edit', edit_repo_cred_path(@repo_cred) %> |
+<%= link_to 'Back', repo_creds_path %>

@@ -1,0 +1,21 @@
+<section class="content-header">
+  <h1>
+    New Repo
+  </h1>
+  <ol class="breadcrumb">
+    <li><%= link_to ('<i class="fa fa-dashboard"> </i>Dashboard').html_safe, home_path %></li>
+    <li><%= link_to 'Repos', repos_path %></li>
+    <li class="active">New Repo</li>
+  </ol>
+</section>
+
+<!-- Main content -->
+<section class="content container-fluid">
+  <div class="row">
+    <div class="col-md-6">
+      <div class="box box-primary" id="edit_form">
+        <%= render 'form', repo: @repo %>
+      </div>
+    </div>
+  </div>
+</section>

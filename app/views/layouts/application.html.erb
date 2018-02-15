@@ -9,16 +9,16 @@
     <%= stylesheet_link_tag    'application', media: 'all', 'data-turbolinks-track': 'reload' %>
     <%= javascript_include_tag 'application', 'data-turbolinks-track': 'reload' %>
   </head>
-  <body class="fixed hold-transition skin-blue sidebar-mini">
+  <body class="hold-transition skin-blue layout-top-nav">
     <div class="wrapper">
 
       <!-- Main Header -->
       <%= render :partial => 'layouts/header' %>
-      <!-- Left side column. contains the logo and sidebar -->
-      <%= render :partial => 'layouts/sidebar' %>
       <!-- Content Wrapper. Contains page content -->
       <div class="content-wrapper">
-        <%= yield %>
+        <div class='content'>
+          <%= yield %>
+        </div>
       </div>
       <!-- /.content-wrapper -->
 

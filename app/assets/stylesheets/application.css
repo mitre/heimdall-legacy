@@ -17,6 +17,10 @@
 .white-text {
   color: #ffffff;
 }
+.grey-text {
+  color: #777777;
+}
+
 .menu-text {
   color: #8aa4af;
 }
@@ -85,11 +89,27 @@
   -moz-columns: 100px 6; /* Firefox */
   columns: 100px 6;
 }
+.header-container {
+  margin-left: 0px;
+  padding-left: 0px;
+}
+.sidebar {
+  position: fixed;
+}
 .margin-right {
   margin-right: 5px;
 }
+.margin-small-left {
+  margin-left: 5px;
+}
 .margin-left {
   margin-left: 15px;
+}
+.margin-bottom {
+  margin-bottom: 5px;
+}
+.big-margin-bottom {
+  margin-bottom: 25px;
 }
 .btn-category-i {
   background-color: #003366;

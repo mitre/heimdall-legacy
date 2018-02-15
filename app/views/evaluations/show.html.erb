@@ -2,6 +2,8 @@
 <section class="content-header">
   <h1>
     Evaluation <%= @evaluation.profiles.map(&:name).join(', ') %>
+    |
+    <%= link_to "SSP", evaluation_ssp_path(@evaluation) %>
   </h1>
   <ol class="breadcrumb" data-turbolinks="false">
     <li><%= link_to ('<i class="fa fa-dashboard"> </i>Dashboard').html_safe, home_path %></li>

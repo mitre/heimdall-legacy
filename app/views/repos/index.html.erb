@@ -1,0 +1,47 @@
+<!-- Content Header (Page header) -->
+<section class="content-header">
+  <h1>
+    Repos
+  </h1>
+  <ol class="breadcrumb">
+    <li><%= link_to ('<i class="fa fa-dashboard"> </i>Dashboard').html_safe, home_path %></li>
+    <li class="active">Repos</li>
+  </ol>
+</section>
+
+<section class="content container-fluid">
+  <div class="row">
+    <div class="col-xs-12">
+      <div class="box box-primary">
+        <div class="box-header with-border">
+          <h3 class="box-title">Repos</h3>
+        </div>
+        <!-- /.box-header -->
+        <% if can? :read, Repo %>
+          <div class="box-body table-responsive no-padding">
+            <table class="table table-hover">
+              <tr>
+                <th>Name</th>
+                <th>API URL</th>
+                <th></th>
+              </tr>
+
+              <% @repos.each do |repo| %>
+                <tr>
+                  <td><%= link_to repo.name, repo %></td>
+                  <td><%= repo.api_url %></td>
+                  <td><% if can? :delete, repo %><%= link_to 'Destroy', repo, method: :delete, data: { confirm: 'Are you sure?' } %><% end %></td>
+                </tr>
+              <% end %>
+            </table>
+          </div>
+        <% end %>
+        <% if can? :create, Repo %>
+          <br>
+          <%= link_to 'New Repo', new_repo_path, class: "btn btn-primary margin-small-left margin-bottom" %>
+        <% end %>
+      </div>
+    </div>
+  </div>
+</section>
+<!-- /.content -->

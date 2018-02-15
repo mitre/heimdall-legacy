@@ -5,7 +5,7 @@
   <% else %>
     <li class="active"><a data-toggle="tab" href="#details">Details</a></li>
   <% end %>
-  <li onclick = test()><a data-toggle="tab" href="#inpec_code" >Inspec Code</a></li>
+  <li onclick = test()><a data-toggle="tab" href="#inspec_code" >Inspec Code</a></li>
 </ul>
 <div class="tab-content">
   <% if @evaluation %>
@@ -43,7 +43,7 @@
       <% end %>
     </table>
   </div>
-  <div id="inpec_code" class="tab-pane fade">
+  <div id="inspec_code" class="tab-pane fade">
     <table class="table table-bordered table-striped">
       <tr>
         <td><pre><code class="language-ruby"><%= @control.code %></code></pre></td>

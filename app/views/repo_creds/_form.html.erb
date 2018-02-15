@@ -1,0 +1,32 @@
+<%= form_with(model: [ @repo, @repo_cred ], local: true) do |form| %>
+  <% if repo_cred.errors.any? %>
+    <div id="error_explanation">
+      <h2><%= pluralize(repo_cred.errors.count, "error") %> prohibited this credential from being saved:</h2>
+
+      <ul>
+      <% repo_cred.errors.full_messages.each do |message| %>
+        <li><%= message %></li>
+      <% end %>
+      </ul>
+    </div>
+  <% end %>
+
+  <div class="form-group">
+    <%= form.label :username %>
+    <%= form.text_field :username, id: :repo_cred_username, class: "form-control" %>
+  </div>
+
+  <div class="form-group">
+    <%= form.label :token %>
+    <%= form.text_field :token, id: :repo_cred_token, class: "form-control" %>
+  </div>
+
+  <div class="form-group">
+    <%= button_tag(type: "submit", class: "btn btn-primary") do %>
+      <i class="fa fa-edit"></i> Save
+    <% end %>
+    <button type="reset" id="edit_cred_cancel_btn" class="btn btn-info pull-right">
+      <i class="fa fa-cancel"></i> Cancel
+    </button>
+  </div>
+<% end %>

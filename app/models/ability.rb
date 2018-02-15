@@ -14,14 +14,18 @@ class Ability
       can :create, Evaluation
       can :create, Control
       can :create, Result
+      can :create, Repo
+      can :create, RepoCred
       can :update, Profile, created_by_id: user.id # can update if own
       can :update, Evaluation, created_by_id: user.id
       can :update, Control, created_by_id: user.id
       can :update, Result, created_by_id: user.id
+      can :update, Repo, created_by_id: user.id
       can :delete, Profile, created_by_id: user.id # can delete if own
       can :delete, Evaluation, created_by_id: user.id
       can :delete, Control, created_by_id: user.id
       can :delete, Result, created_by_id: user.id
+      can :delete, Repo, created_by_id: user.id
     end
   end
 end

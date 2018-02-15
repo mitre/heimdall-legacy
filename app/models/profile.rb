@@ -27,6 +27,44 @@ class Profile
     evaluations.size == 0
   end
 
+  def control_families
+    families = []
+    nist = {}
+    self.controls.each do |control|
+      control.tags.where(:name => 'nist').each do |tag|
+        if tag.value.is_a? Array
+          tag.value.each do |value|
+            unless value.include?("Rev")
+              vals = value.split(" ")
+              nist[vals[0]] = [] unless nist[vals[0]]
+              nist[vals[0]] << control
+              families << vals[0]
+            end
+          end
+        end
+      end
+    end
+    return families, nist
+  end
+
+  def by_nist_family
+    nist = {}
+    self.controls.each do |control|
+      control.tags.where(:name => 'nist').each do |tag|
+        if tag.value.is_a? Array
+          tag.value.each do |value|
+            unless value.include?("Rev")
+              vals = value.split(" ")
+              nist[vals[0]] = [] unless nist[vals[0]]
+              nist[vals[0]] << control
+            end
+          end
+        end
+      end
+    end
+    nist.sort.to_h
+  end
+
   def nist_hash cat
     nist = {}
     #logger.debug "CAT: #{cat}, range: #{range.inspect}"
@@ -39,8 +77,9 @@ class Profile
             if tag.value.is_a? Array
               tag.value.each do |value|
                 unless value.include?("Rev")
-                  nist[value] = [] unless nist[value]
-                  nist[value] << {"name": "#{control.control_id}", "severity": "#{severity.value}", "impact": control.impact, "value": 1}
+                  vals = value.split(" ")
+                  nist[vals[0]] = [] unless nist[vals[0]]
+                  nist[vals[0]] << {"name": "#{control.control_id}", "severity": "#{severity.value}", "impact": control.impact, "value": 1}
                 end
               end
             end

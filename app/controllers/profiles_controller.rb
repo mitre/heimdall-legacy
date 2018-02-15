@@ -1,5 +1,5 @@
 class ProfilesController < ApplicationController
-  before_action :set_profile, only: [:show, :edit, :update, :destroy, :vis, :nist_800_53]
+  before_action :set_profile, only: [:show, :edit, :update, :destroy, :vis, :ssp, :nist_800_53]
 
   @@nist_800_53_json = nil
 
@@ -14,6 +14,27 @@ class ProfilesController < ApplicationController
   def show
     @depend = @profile.depends.new()
     @support = @profile.supports.new()
+  end
+
+  # GET /profiles/1
+  # GET /profiles/1.json
+  def ssp
+    unless @@nist_800_53_json
+      file = File.read("#{Rails.root}/data/nist_800_53.json")
+      @@nist_800_53_json = JSON.parse(file)
+    end
+    @nist_hash = @@nist_800_53_json.deep_dup
+    families, nist = @profile.control_families
+    @nist_hash["children"].each do |cf|
+      cf["children"].each do |control|
+        if families.include?(control["name"])
+          control["controls"] = nist[control["name"]]
+          control["value"] = control["controls"].size
+        else
+          control["value"] = 0
+        end
+      end
+    end
   end
 
   # GET /profiles/new
