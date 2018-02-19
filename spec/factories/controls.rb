@@ -17,5 +17,6 @@ FactoryGirl.define do
     tag_fix "MyText"
     sl_ref "MyString"
     sl_line 1
+    profile
   end
 end

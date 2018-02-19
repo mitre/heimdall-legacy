@@ -22,3 +22,10 @@ function toggleSections(on, off) {
     // hide the lorem ipsum text
     document.getElementById(off).style.display = 'none';
 }
+function tog(id) {
+  el = document.getElementById(id)
+  if (el.style.display == 'none')
+    el.style.display = 'block';
+  else
+    el.style.display = 'none';
+}

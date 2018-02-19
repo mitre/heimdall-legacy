@@ -143,11 +143,12 @@
                 <div class="container">
                   <% family["children"].each do |cf| %>
                     <% if cf["value"] > 0 %>
-                      <h3 id="<%= cf['name'] %>"><%= cf["name"] %></h2>
+                      <% cf_name = cf['name'] %>
+                      <h3 id="<%= cf_name %>" onclick="togAll('<%= cf_name %>')"><%= cf_name %></h3>
                       <div class="container big-margin-bottom">
                         <% cf["controls"].each_with_index do |control, index| %>
-                          <h4><%= index+1 %>. <%= control.title %> (<%= @symbols[control.control_id].to_s.titleize %>)</h4>
-                          <div class="container big-margin-bottom">
+                          <h4><%= index+1 %>. <button class="<%= status_btn(@symbols[control.control_id]) %>" onclick="tog('<%= control.control_id %>')"><%= @symbols[control.control_id].to_s.titleize %></button> <%= control.title %></h4>
+                          <div id="<%= control.control_id %>" class="container big-margin-bottom">
                             <%= control.desc %>
                             <h4>Check Text</h4> <pre><code class="language-ruby"><%= control.tag('check') %></code></pre>
                             <h4>Fix Text</h4> <pre><code class="language-ruby"><%= control.tag('fix') %></code></pre>
@@ -172,7 +173,7 @@
                 <ul class="list-unstyled">
                   <% family["children"].each do |cf| %>
                     <% if cf["value"] > 0 %>
-                      <li id="<%= cf['name'] %>"><%= cf["name"] %> <span class="grey-text">(<%= cf["value"] %>)</span></li>
+                      <li id="<%= cf['name'] %>"><%= cf["name"] %> <span class="grey-text margin-left">Controls: <%= cf["value"] %></span></li>
                     <% end %>
                   <% end %>
                 </ul>
@@ -185,143 +186,39 @@
   </div>
 </section>
 <script>
-document.addEventListener("turbolinks:load", function() {
-  CollapsibleLists.applyTo(document.getElementById('sspList'));
-  window.scrollTo(x-coord, y-coord);
-  Prism.highlightAll();
-});
-
-$.fn.scrollView = function () {
-  console.log("scrollView this: " + $(this));
-  return this.each(function () {
-    $('html, body').animate({
-      scrollTop: $(this).offset().top
-    }, 1000);
+  var families = {};
+  <% @nist_hash["children"].each do |family| %>
+    <% family["children"].each do |cf| %>
+      <% if cf["value"] > 0 %>
+        families["<%= cf['name'] %>"] = ["<%= raw cf["controls"].map(&:control_id).join('","') %>"];
+      <% end %>
+    <% end %>
+  <% end %>
+  console.log("ct:" + families["SC-9"][1]);
+  document.addEventListener("turbolinks:load", function() {
+    CollapsibleLists.applyTo(document.getElementById('sspList'));
+    Prism.highlightAll();
+    document.body.scrollTop = 0;
   });
-}
 
-/*
-
-CollapsibleLists.js
-
-An object allowing lists to dynamically expand and collapse
-
-Created by Stephen Morley - http://code.stephenmorley.org/ - and released under
-the terms of the CC0 1.0 Universal legal code:
-
-http://creativecommons.org/publicdomain/zero/1.0/legalcode
-
-*/
-
-const CollapsibleLists = (function(){
-
-    // Makes all lists with the class 'collapsibleList' collapsible. The
-    // parameter is:
-    //
-    // doNotRecurse - true if sub-lists should not be made collapsible
-    function apply(doNotRecurse){
-
-        [].forEach.call(document.getElementsByTagName('ul'), node => {
-
-            if (node.classList.contains('collapsibleList')){
-
-            applyTo(node, true);
-
-            if (!doNotRecurse){
-
-                [].forEach.call(node.getElementsByTagName('ul'), subnode => {
-                    subnode.classList.add('collapsibleList')
-            });
-
-            }
-
-        }
-
-    })
-
-    }
-
-    // Makes the specified list collapsible. The parameters are:
-    //
-    // node         - the list element
-    // doNotRecurse - true if sub-lists should not be made collapsible
-    function applyTo(node, doNotRecurse){
-
-        [].forEach.call(node.getElementsByTagName('li'), li => {
-
-            if (!doNotRecurse || node === li.parentNode){
-
-            li.style.userSelect       = 'none';
-            li.style.MozUserSelect    = 'none';
-            li.style.msUserSelect     = 'none';
-            li.style.WebkitUserSelect = 'none';
-            //li.style.background       = '#ededab';
-            li.style.padding = '5px 2px 2px 12px';
-            li.style.fontWeight = 'bold';
-            li.style.marginBottom = '1px';
-
-            li.addEventListener('click', handleClick.bind(null, li));
-
-            toggle(li);
-
-        }
-
+  $.fn.scrollView = function () {
+    return this.each(function () {
+      $('html, body').animate({
+        scrollTop: $(this).offset().top
+      }, 1000);
     });
+  }
 
+  function togAll(id) {
+    console.log("families[" + id + "]: " + families[id]);
+    for (ct in families[id]) {
+      console.log("ct: " + ct + ", " + families[id][ct]);
+      el = document.getElementById(families[id][ct]);
+      if (el.style.display == 'none')
+        el.style.display = 'block';
+      else
+        el.style.display = 'none';
     }
+  }
 
-    // Handles a click. The parameter is:
-    //
-    // node - the node for which clicks are being handled
-    function handleClick(node, e){
-
-        let li = e.target;
-        while (li.nodeName !== 'LI'){
-            li = li.parentNode;
-        }
-
-        if (li === node){
-          console.log("scroll to " + node.id);
-          if (node.id) {
-            elem = "#" + node.id;
-            console.log("scroll to " + elem);
-          }
-          $(elem).scrollView();
-            toggle(node);
-        }
-
-    }
-
-    // Opens or closes the unordered list elements directly within the
-    // specified node. The parameter is:
-    //
-    // node - the node containing the unordered list elements
-    function toggle(node){
-        const open = node.classList.contains('collapsibleListClosed');
-        const uls  = node.getElementsByTagName('ul');
-
-        [].forEach.call(uls, ul => {
-
-            let li = ul;
-            while (li.nodeName !== 'LI'){
-                li = li.parentNode;
-            }
-
-            if (li === node){
-                ul.style.display = (open ? 'block' : 'none');
-            }
-        });
-
-        node.classList.remove('collapsibleListOpen');
-        node.classList.remove('collapsibleListClosed');
-
-
-        if (uls.length > 0){
-            node.classList.add('collapsibleList' + (open ? 'Open' : 'Closed'));
-        }
-    }
-
-    return {apply, applyTo};
-
-})();
 </script>
