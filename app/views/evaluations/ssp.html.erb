@@ -194,7 +194,6 @@
       <% end %>
     <% end %>
   <% end %>
-  console.log("ct:" + families["SC-9"][1]);
   document.addEventListener("turbolinks:load", function() {
     CollapsibleLists.applyTo(document.getElementById('sspList'));
     Prism.highlightAll();
@@ -210,9 +209,7 @@
   }
 
   function togAll(id) {
-    console.log("families[" + id + "]: " + families[id]);
     for (ct in families[id]) {
-      console.log("ct: " + ct + ", " + families[id][ct]);
       el = document.getElementById(families[id][ct]);
       if (el.style.display == 'none')
         el.style.display = 'block';
