@@ -1,5 +1,5 @@
 FactoryGirl.define do
-  factory :support do
+  factory :support, :class => Support do
     os_family "MyString"
   end
 end

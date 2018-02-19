@@ -1,5 +1,5 @@
 FactoryGirl.define do
-  factory :depend do
+  factory :depend, :class => Depend do
     name "MyString"
     path "MyString"
   end

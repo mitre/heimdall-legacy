@@ -1,5 +1,5 @@
 FactoryGirl.define do
-  factory :repo do
+  factory :repo, :class => Repo do
     name "MyString"
     api_url "MyString"
   end

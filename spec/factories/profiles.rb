@@ -1,5 +1,5 @@
 FactoryGirl.define do
-  factory :profile do
+  factory :profile, :class => Profile do
     name "MyString"
     title "MyString"
     maintainer "MyString"
@@ -16,7 +16,7 @@ FactoryGirl.define do
     #profile_attributes "MyText5"
   end
 
-  factory :profile2 do
+  factory :profile2, :class => Profile do
     name "MyString2"
     title "MyString2"
     maintainer "MyString2"
@@ -28,7 +28,7 @@ FactoryGirl.define do
     sha256 "MyString2"
   end
 
-  factory :invalid_profile do
+  factory :invalid_profile, :class => Profile do
     maintainer "MyString"
     copyright "MyString"
     copyright_email "MyString"
@@ -36,4 +36,5 @@ FactoryGirl.define do
     summary "MyString"
     version "MyString"
   end
+
 end
