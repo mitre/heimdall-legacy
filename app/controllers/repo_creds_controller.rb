@@ -1,25 +1,5 @@
 class RepoCredsController < ApplicationController
-  before_action :set_repo_cred, only: [:show, :edit, :update, :destroy]
-
-  # GET /repo_creds
-  # GET /repo_creds.json
-  def index
-    @repo_creds = RepoCred.all
-  end
-
-  # GET /repo_creds/1
-  # GET /repo_creds/1.json
-  def show
-  end
-
-  # GET /repo_creds/new
-  def new
-    @repo_cred = RepoCred.new
-  end
-
-  # GET /repo_creds/1/edit
-  def edit
-  end
+  before_action :set_repo_cred, only: [:update, :destroy]
 
   # POST /repo_creds
   # POST /repo_creds.json

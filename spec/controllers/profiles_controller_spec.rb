@@ -58,18 +58,27 @@ RSpec.describe ProfilesController, type: :controller do
     end
   end
 
-  describe "GET #new" do
-    it "returns a success response" do
-      get :new, params: {}, session: valid_session
-      expect(response).to be_success
-    end
-  end
-
   describe "GET #edit" do
     it "returns a success response" do
       profile = create :profile
       get :edit, params: {id: profile.to_param}, session: valid_session
       expect(response).to be_success
+    end
+  end
+
+  describe "GET #nist_800_53" do
+    it "returns a success response" do
+      profile = create :profile
+      get :nist_800_53, params: {id: profile.to_param, category: "Medium"}, session: valid_session
+      expect(response.content_type).to eq("application/json")
+    end
+  end
+
+  describe "POST #upload" do
+    it "can upload a profile" do
+      @file = fixture_file_upload('sample_jsons/nginx_profile.json', 'text/json')
+      post :upload, params: {:file => @file}, session: valid_session
+      expect(response).to redirect_to(Profile.last)
     end
   end
 
@@ -108,7 +117,6 @@ RSpec.describe ProfilesController, type: :controller do
         put :update, params: {id: profile.to_param, profile: new_attributes}, session: valid_session
         profile.reload
         expect(profile.title).to_not eq(title)
-        #skip("Add assertions for updated state")
       end
 
       it "redirects to the profile" do

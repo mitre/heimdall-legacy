@@ -29,113 +29,120 @@ RSpec.describe ReposController, type: :controller do
   # Repo. As you add validations to Repo, be sure to
   # adjust the attributes here as well.
   let(:valid_attributes) {
-    skip("Add a hash of attributes valid for your model")
+    FactoryGirl.build(:repo).attributes
   }
 
   let(:invalid_attributes) {
-    skip("Add a hash of attributes invalid for your model")
+    {name: "name2", api_url: "url", repo_type: "GitNada"}
   }
 
   # This should return the minimal set of values that should be in the session
   # in order to pass any filters (e.g. authentication) defined in
   # ReposController. Be sure to keep this updated too.
   let(:valid_session) { {} }
+  let(:user) { User.create!(email: "repos-user#{rand(100000).to_s}@examples.com", password: '1234567890') }
 
-  describe "GET #index" do
-    it "returns a success response" do
-      repo = Repo.create! valid_attributes
-      get :index, params: {}, session: valid_session
-      expect(response).to be_success
+  context 'User is logged in' do
+    before do
+      sign_in user
     end
-  end
 
-  describe "GET #show" do
-    it "returns a success response" do
-      repo = Repo.create! valid_attributes
-      get :show, params: {id: repo.to_param}, session: valid_session
-      expect(response).to be_success
+    describe "GET #index" do
+      it "returns a success response" do
+        repo = Repo.create! valid_attributes
+        get :index, params: {}, session: valid_session
+        expect(response).to be_success
+      end
     end
-  end
 
-  describe "GET #new" do
-    it "returns a success response" do
-      get :new, params: {}, session: valid_session
-      expect(response).to be_success
+    describe "GET #show" do
+      it "returns a success response" do
+        repo = Repo.create! valid_attributes
+        get :show, params: {id: repo.to_param}, session: valid_session
+        expect(response).to be_success
+      end
     end
-  end
 
-  describe "GET #edit" do
-    it "returns a success response" do
-      repo = Repo.create! valid_attributes
-      get :edit, params: {id: repo.to_param}, session: valid_session
-      expect(response).to be_success
+    describe "GET #new" do
+      it "returns a success response" do
+        get :new, params: {}, session: valid_session
+        expect(response).to be_success
+      end
     end
-  end
 
-  describe "POST #create" do
-    context "with valid params" do
-      it "creates a new Repo" do
-        expect {
+    describe "GET #edit" do
+      it "returns a success response" do
+        repo = Repo.create! valid_attributes
+        get :edit, params: {id: repo.to_param}, session: valid_session
+        expect(response).to be_success
+      end
+    end
+
+    describe "POST #create" do
+      context "with valid params" do
+        it "creates a new Repo" do
+          expect {
+            post :create, params: {repo: valid_attributes}, session: valid_session
+          }.to change(Repo, :count).by(1)
+        end
+
+        it "redirects to the created repo" do
           post :create, params: {repo: valid_attributes}, session: valid_session
-        }.to change(Repo, :count).by(1)
+          expect(response).to redirect_to(Repo.last)
+        end
       end
 
-      it "redirects to the created repo" do
-        post :create, params: {repo: valid_attributes}, session: valid_session
-        expect(response).to redirect_to(Repo.last)
+      context "with invalid params" do
+        it "returns a success response (i.e. to display the 'new' template)" do
+          post :create, params: {repo: invalid_attributes}, session: valid_session
+          expect(response).to render_template(:new)
+        end
+      end
+    end
+
+    describe "PUT #update" do
+      context "with valid params" do
+        let(:new_attributes) {
+          {name: "name2", api_url: "url", repo_type: "GitLab"}
+        }
+
+        it "updates the requested repo" do
+          repo = Repo.create! valid_attributes
+          name = repo.name
+          put :update, params: {id: repo.to_param, repo: new_attributes}, session: valid_session
+          repo.reload
+          expect(repo.name).to_not eq(name)
+        end
+
+        it "redirects to the repo" do
+          repo = Repo.create! valid_attributes
+          put :update, params: {id: repo.to_param, repo: valid_attributes}, session: valid_session
+          expect(response).to redirect_to(repo)
+        end
+      end
+
+      context "with invalid params" do
+        it "returns a success response (i.e. to display the 'edit' template)" do
+          repo = Repo.create! valid_attributes
+          put :update, params: {id: repo.to_param, repo: invalid_attributes}, session: valid_session
+          expect(response).to render_template(:edit)
+        end
       end
     end
 
-    context "with invalid params" do
-      it "returns a success response (i.e. to display the 'new' template)" do
-        post :create, params: {repo: invalid_attributes}, session: valid_session
-        expect(response).to be_success
-      end
-    end
-  end
-
-  describe "PUT #update" do
-    context "with valid params" do
-      let(:new_attributes) {
-        skip("Add a hash of attributes valid for your model")
-      }
-
-      it "updates the requested repo" do
+    describe "DELETE #destroy" do
+      it "destroys the requested repo" do
         repo = Repo.create! valid_attributes
-        put :update, params: {id: repo.to_param, repo: new_attributes}, session: valid_session
-        repo.reload
-        skip("Add assertions for updated state")
+        expect {
+          delete :destroy, params: {id: repo.to_param}, session: valid_session
+        }.to change(Repo, :count).by(-1)
       end
 
-      it "redirects to the repo" do
+      it "redirects to the repos list" do
         repo = Repo.create! valid_attributes
-        put :update, params: {id: repo.to_param, repo: valid_attributes}, session: valid_session
-        expect(response).to redirect_to(repo)
-      end
-    end
-
-    context "with invalid params" do
-      it "returns a success response (i.e. to display the 'edit' template)" do
-        repo = Repo.create! valid_attributes
-        put :update, params: {id: repo.to_param, repo: invalid_attributes}, session: valid_session
-        expect(response).to be_success
-      end
-    end
-  end
-
-  describe "DELETE #destroy" do
-    it "destroys the requested repo" do
-      repo = Repo.create! valid_attributes
-      expect {
         delete :destroy, params: {id: repo.to_param}, session: valid_session
-      }.to change(Repo, :count).by(-1)
-    end
-
-    it "redirects to the repos list" do
-      repo = Repo.create! valid_attributes
-      delete :destroy, params: {id: repo.to_param}, session: valid_session
-      expect(response).to redirect_to(repos_url)
+        expect(response).to redirect_to(repos_url)
+      end
     end
   end
-
 end

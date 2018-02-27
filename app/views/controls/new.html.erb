@@ -3,13 +3,23 @@
   <h1>
     New Control
   </h1>
+  <ol class="breadcrumb">
+    <li><%= link_to ('<i class="fa fa-dashboard"> </i>Dashboard').html_safe, home_path %></li>
+    <li><%= link_to 'Profiles', profiles_path %></li>
+    <li><%= link_to 'Profile', profile_path(@profile.id) %></li>
+    <li class="active">New Control</li>
+  </ol>
 </section>
 
 <!-- Main content -->
 <section class="content container-fluid">
-
-<%= render 'form', control: @control %>
-
-<%= link_to 'Back', profile_path(@profile.id) %>
-</section>
-<!-- /.content -->
+  <div class="row">
+    <div class="col-md-6">
+      <div class="box box-primary">
+        <div class="box-body">
+          <%= render 'form', control: @control %>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

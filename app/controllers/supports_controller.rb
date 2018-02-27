@@ -1,32 +1,11 @@
 class SupportsController < ApplicationController
   before_action :transform
-  before_action :set_support, only: [:show, :edit, :update, :destroy]
+  before_action :set_profile, only: [:create, :destroy]
 
-  # GET /supports
-  # GET /supports.json
-  def index
-    @supports = Support.all
-  end
 
-  # GET /supports/1
-  # GET /supports/1.json
-  def show
-  end
-
-  # GET /supports/:profile_id/new/
-  def new
-    @profile = Profile.find(params[:profile_id])
-    @support = @profile.supports.new()
-  end
-
-  # GET /supports/1/edit
-  def edit
-  end
-
-  # POST /supports/:profile_id
-  # POST /supports.json
+  # POST /profiles/:profile_id/supports
+  # POST /profiles/:profile_id/supports.json
   def create
-    @profile = Profile.find(params[:profile_id])
     @support = @profile.supports.new(support_params)
 
     respond_to do |format|
@@ -40,23 +19,10 @@ class SupportsController < ApplicationController
     end
   end
 
-  # PATCH/PUT /supports/1
-  # PATCH/PUT /supports/1.json
-  def update
-    respond_to do |format|
-      if @support.update(support_params)
-        format.html { redirect_to @support, notice: 'Support was successfully updated.' }
-        format.json { render :show, status: :ok, location: @support }
-      else
-        format.html { render :edit }
-        format.json { render json: @support.errors, status: :unprocessable_entity }
-      end
-    end
-  end
-
-  # DELETE /supports/1
-  # DELETE /supports/1.json
+  # DELETE /profiles/:profile_id/supports/1
+  # DELETE /profiles/:profile_id/supports/1.json
   def destroy
+    @support = @profile.supports.find(params[:id])
     @support.destroy
     respond_to do |format|
       format.html { redirect_to @profile, notice: 'Support was successfully destroyed.' }
@@ -66,9 +32,8 @@ class SupportsController < ApplicationController
 
   private
     # Use callbacks to share common setup or constraints between actions.
-    def set_support
+    def set_profile
       @profile = Profile.find(params[:profile_id])
-      @support = @profile.supports.find(params[:id])
     end
 
     # Never trust parameters from the scary internet, only allow the white list through.

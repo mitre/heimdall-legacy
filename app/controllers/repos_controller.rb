@@ -83,9 +83,9 @@ class ReposController < ApplicationController
   # POST /repos.json
   def create
     @repo = Repo.new(repo_params)
-
+    good_type = Repo.types.include?(repo_params[:repo_type])
     respond_to do |format|
-      if @repo.save
+      if good_type && @repo.save
         format.html { redirect_to @repo, notice: 'Repo was successfully created.' }
         format.json { render :show, status: :created, location: @repo }
       else
@@ -98,8 +98,9 @@ class ReposController < ApplicationController
   # PATCH/PUT /repos/1
   # PATCH/PUT /repos/1.json
   def update
+    good_type = Repo.types.include?(repo_params[:repo_type])
     respond_to do |format|
-      if @repo.update(repo_params)
+      if good_type &&  @repo.update(repo_params)
         format.html { redirect_to @repo, notice: 'Repo was successfully updated.' }
         format.json { render :show, status: :ok, location: @repo }
       else

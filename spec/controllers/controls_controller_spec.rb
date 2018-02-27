@@ -40,109 +40,115 @@ RSpec.describe ControlsController, type: :controller do
   # in order to pass any filters (e.g. authentication) defined in
   # ControlsController. Be sure to keep this updated too.
   let(:valid_session) { {} }
+  let(:user) { User.create!(email: "user#{rand(100000).to_s}@examples.com", password: '1234567890') }
 
-  before(:each) do
-    @profile = Profile.find(valid_attributes['profile_id'])
-  end
-
-  describe "GET #index" do
-    it "returns a success response" do
-      control = Control.create! valid_attributes
-      get :index, params: {profile_id: control.profile_id}, session: valid_session
-      expect(response).to be_success
+  context 'User is logged in' do
+    before do
+      sign_in user
     end
-  end
 
-  describe "GET #show" do
-    it "returns a success response" do
-      control = Control.create! valid_attributes
-      get :show, params: {profile_id: control.profile_id, id: control.to_param}, session: valid_session
-      expect(response).to be_success
+    before(:each) do
+      @profile = Profile.find(valid_attributes['profile_id'])
     end
-  end
 
-  describe "GET #new" do
-    it "returns a success response" do
-      get :new, params: {profile_id: @profile.id}, session: valid_session
-      expect(response).to be_success
+    describe "GET #show" do
+      it "returns a success response" do
+        control = Control.create! valid_attributes
+        get :show, params: {profile_id: control.profile_id, id: control.to_param}, session: valid_session
+        expect(response).to be_success
+      end
     end
-  end
 
-  describe "GET #edit" do
-    it "returns a success response" do
-      control = Control.create! valid_attributes
-      get :edit, params: {profile_id: control.profile_id, id: control.to_param}, session: valid_session
-      expect(response).to be_success
+    describe "GET #details" do
+      it "returns a success response" do
+        control = Control.create! valid_attributes
+        get :details, :format => 'js', params: {profile_id: control.profile_id, id: control.to_param}, xhr: true, session: valid_session
+        expect(response.content_type).to eq("text/javascript")
+      end
     end
-  end
 
-  describe "POST #create" do
-    context "with valid params" do
-      it "creates a new Control" do
-        expect {
+    describe "GET #new" do
+      it "returns a success response" do
+        get :new, params: {profile_id: @profile.id}, session: valid_session
+        expect(response).to be_success
+      end
+    end
+
+    describe "GET #edit" do
+      it "returns a success response" do
+        control = Control.create! valid_attributes
+        get :edit, params: {profile_id: control.profile_id, id: control.to_param}, session: valid_session
+        expect(response).to be_success
+      end
+    end
+
+    describe "POST #create" do
+      context "with valid params" do
+        it "creates a new Control" do
+          expect {
+            post :create, params: {profile_id: @profile.id, control: valid_attributes}, session: valid_session
+          }.to change(Control, :count).by(1)
+        end
+
+        it "redirects to the created control" do
           post :create, params: {profile_id: @profile.id, control: valid_attributes}, session: valid_session
-        }.to change(Control, :count).by(1)
+          expect(response).to redirect_to(@profile)
+        end
       end
 
-      it "redirects to the created control" do
-        post :create, params: {profile_id: @profile.id, control: valid_attributes}, session: valid_session
+      context "with invalid params" do
+        it "returns a success response (i.e. to display the 'new' template)" do
+          post :create, params: {profile_id: @profile.id, control: invalid_attributes}, session: valid_session
+          #expect(response).to be_success
+          skip("Add assertions for invalid params")
+        end
+      end
+    end
+
+    describe "PUT #update" do
+      context "with valid params" do
+        let(:new_attributes) {
+          FactoryGirl.build(:control2).attributes
+        }
+
+        it "updates the requested control" do
+          control = Control.create! valid_attributes
+          title = control.title
+          put :update, params: {profile_id: control.profile_id, id: control.to_param, control: new_attributes}, session: valid_session
+          control.reload
+          expect(control.title).to_not eq(title)
+        end
+
+        it "redirects to the control" do
+          control = Control.create! valid_attributes
+          put :update, params: {profile_id: control.profile_id, id: control.to_param, control: valid_attributes}, session: valid_session
+          expect(response).to redirect_to(profile_control_url(@profile, control))
+        end
+      end
+
+      context "with invalid params" do
+        it "returns a success response (i.e. to display the 'edit' template)" do
+          control = Control.create! valid_attributes
+          put :update, params: {profile_id: control.profile_id, id: control.to_param, control: invalid_attributes}, session: valid_session
+          #expect(response).to be_success
+          skip("Add assertions for invalid params")
+        end
+      end
+    end
+
+    describe "DELETE #destroy" do
+      it "destroys the requested control" do
+        control = Control.create! valid_attributes
+        expect {
+          delete :destroy, params: {profile_id: control.profile_id, id: control.to_param}, session: valid_session
+        }.to change(Control, :count).by(-1)
+      end
+
+      it "redirects to the controls list" do
+        control = Control.create! valid_attributes
+        delete :destroy, params: {profile_id: control.profile_id, id: control.to_param}, session: valid_session
         expect(response).to redirect_to(@profile)
       end
     end
-
-    context "with invalid params" do
-      it "returns a success response (i.e. to display the 'new' template)" do
-        post :create, params: {profile_id: @profile.id, control: invalid_attributes}, session: valid_session
-        #expect(response).to be_success
-        skip("Add assertions for invalid params")
-      end
-    end
   end
-
-  describe "PUT #update" do
-    context "with valid params" do
-      let(:new_attributes) {
-        FactoryGirl.build(:control2).attributes
-      }
-
-      it "updates the requested control" do
-        control = Control.create! valid_attributes
-        title = control.title
-        put :update, params: {profile_id: control.profile_id, id: control.to_param, control: new_attributes}, session: valid_session
-        control.reload
-        expect(control.title).to_not eq(title)
-      end
-
-      it "redirects to the control" do
-        control = Control.create! valid_attributes
-        put :update, params: {profile_id: control.profile_id, id: control.to_param, control: valid_attributes}, session: valid_session
-        expect(response).to redirect_to(profile_control_url(@profile, control))
-      end
-    end
-
-    context "with invalid params" do
-      it "returns a success response (i.e. to display the 'edit' template)" do
-        control = Control.create! valid_attributes
-        put :update, params: {profile_id: control.profile_id, id: control.to_param, control: invalid_attributes}, session: valid_session
-        #expect(response).to be_success
-        skip("Add assertions for invalid params")
-      end
-    end
-  end
-
-  describe "DELETE #destroy" do
-    it "destroys the requested control" do
-      control = Control.create! valid_attributes
-      expect {
-        delete :destroy, params: {profile_id: control.profile_id, id: control.to_param}, session: valid_session
-      }.to change(Control, :count).by(-1)
-    end
-
-    it "redirects to the controls list" do
-      control = Control.create! valid_attributes
-      delete :destroy, params: {profile_id: control.profile_id, id: control.to_param}, session: valid_session
-      expect(response).to redirect_to(@profile)
-    end
-  end
-
 end

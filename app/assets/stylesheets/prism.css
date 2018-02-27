@@ -51,6 +51,7 @@ code[class*="language-"]::selection, code[class*="language-"] ::selection {
 pre[class*="language-"] {
 	padding: 1em;
 	margin: .5em 0;
+	/*width: min-content;*/
 	overflow: auto;
 }
 
@@ -136,4 +137,3 @@ pre[class*="language-"] {
 .token.entity {
 	cursor: help;
 }
-

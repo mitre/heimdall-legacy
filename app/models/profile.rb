@@ -125,6 +125,14 @@ class Profile
         attr["option_#{key}"] = value
       end
     end
+    groups = hash.delete('groups')
+    new_groups = []
+    groups.each do |group|
+      if group["title"].present? and group["controls"].size > 1
+        new_groups << group
+      end
+    end
+    hash["groups"] = new_groups if new_groups.size > 0
     #logger.debug("NEW HASH: #{hash.inspect}")
     return hash, controls
   end

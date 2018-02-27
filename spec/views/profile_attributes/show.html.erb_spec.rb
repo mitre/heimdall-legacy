@@ -2,17 +2,14 @@ require 'rails_helper'
 
 RSpec.describe "profile_attributes/show", type: :view do
   before(:each) do
-    @profile_attribute = assign(:profile_attribute, ProfileAttribute.create!(
-      :name => "Name",
-      :option_description => "Option Description",
-      :option_default => "Option Default"
-    ))
+    valid_attributes = {name: "MyString2", option_description: "MyString2", option_default: ["MyString2"]}
+    @profile = create :profile
+    @profile_attribute = @profile.profile_attributes.create! valid_attributes
   end
 
   it "renders attributes in <p>" do
     render
     expect(rendered).to match(/Name/)
     expect(rendered).to match(/Option Description/)
-    expect(rendered).to match(/Option Default/)
   end
 end

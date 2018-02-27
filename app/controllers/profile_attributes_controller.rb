@@ -1,12 +1,6 @@
 class ProfileAttributesController < ApplicationController
   before_action :set_profile_attribute, only: [:show, :edit, :update, :destroy]
 
-  # GET /profile_attributes
-  # GET /profile_attributes.json
-  def index
-    @profile_attributes = ProfileAttribute.all
-  end
-
   # GET /profile_attributes/1
   # GET /profile_attributes/1.json
   def show
@@ -26,10 +20,9 @@ class ProfileAttributesController < ApplicationController
   # POST /profile_attributes.json
   def create
     @profile = Profile.find(params[:profile_id])
-    @profile_attribute = ProfileAttribute.new(profile_attribute_params)
-
+    @profile_attribute = @profile.profile_attributes.new(profile_attribute_params)
     respond_to do |format|
-      if @profile_attribute.save
+      if @profile.save
         format.html { redirect_to @profile, notice: 'Attribute was successfully created.' }
         format.json { render :show, status: :created, location: @profile_attribute }
       else
@@ -44,7 +37,7 @@ class ProfileAttributesController < ApplicationController
   def update
     respond_to do |format|
       if @profile_attribute.update(profile_attribute_params)
-        format.html { redirect_to profile_profile_attribute_url(@profile, @profile_attribute), notice: 'Attribute was successfully updated.' }
+        format.html { redirect_to @profile, notice: 'Attribute was successfully updated.' }
         format.json { render :show, status: :ok, location: @profile_attribute }
       else
         format.html { render :edit }

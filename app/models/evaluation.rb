@@ -125,7 +125,7 @@ class Evaluation
     all_profiles = []
     profiles = hash.delete('profiles')
     profiles.try(:each) do |profile_hash|
-      profile = Profile.find_by(:sha256 => profile_hash['sha256'])
+      profile = Profile.where(:sha256 => profile_hash['sha256']).try(:first)
       unless profile
         new_profile_hash, controls = Profile.transform(profile_hash.deep_dup)
         profile = Profile.create(new_profile_hash)
@@ -137,7 +137,7 @@ class Evaluation
       logger.debug "Add RESULTS"
       profile_hash['controls'].try(:each) do |control_hash|
         logger.debug "For #{control_hash['control_id']}"
-        if control = profile.controls.find_by(:control_id => control_hash['control_id'])
+        if control = profile.controls.where(:control_id => control_hash['control_id']).try(:first)
           logger.debug "Found Control"
           control_hash['results'].try(:each) do |result|
             logger.debug "For result #{result.inspect}"
@@ -168,12 +168,12 @@ class Evaluation
       evaluation = Evaluation.create(hash)
       logger.debug("New Evaluation: #{evaluation.inspect}")
       results.each do |result|
-        logger.debug("Add result to evalution")
+        logger.debug("Add result to evaluation")
         evaluation.results << result
       end
       logger.debug("Results: #{evaluation.results.size}")
       profiles.each do |profile|
-        logger.debug("Add profile to evalution")
+        logger.debug("Add profile to evaluation")
         evaluation.profiles << profile
       end
       logger.debug("Profiles: #{evaluation.profiles.size}")

@@ -42,7 +42,9 @@
       </div>
       <!-- /.box -->
       <div class="box box-primary" id="edit_form", style="display:none;">
-        <%= render 'form', repo: @repo %>
+        <div class="box-body">
+          <%= render 'form', repo: @repo %>
+        </div>
       </div>
     </div>
     <!-- /.col 6 -->
@@ -71,7 +73,9 @@
       </div>
       <!-- /.box -->
       <div class="box box-primary" id="repo_cred_edit_form", style="display:none;">
-        <%= render 'repo_creds/form', repo_cred: @repo_cred %>
+        <div class="box-body">
+          <%= render 'repo_creds/form', repo_cred: @repo_cred %>
+        </div>
       </div>
       <!-- /.box -->
     </div>

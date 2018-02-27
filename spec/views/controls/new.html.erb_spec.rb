@@ -2,20 +2,14 @@ require 'rails_helper'
 
 RSpec.describe "controls/new", type: :view do
   before(:each) do
-    assign(:control, Control.new(
-      :title => "MyString",
-      :desc => "MyString",
-      :impact => 1.5,
-      :refs => "MyString",
-      :code => "MyText",
-      :control_id => "MyString"
-    ))
+    @control = create :control
+    @profile = @control.profile
   end
 
   it "renders new control form" do
     render
 
-    assert_select "form[action=?][method=?]", controls_path, "post" do
+    assert_select "form[method=?]", "post" do
 
       assert_select "input[name=?]", "control[title]"
 
@@ -23,7 +17,7 @@ RSpec.describe "controls/new", type: :view do
 
       assert_select "input[name=?]", "control[impact]"
 
-      assert_select "input[name=?]", "control[refs]"
+      assert_select "input[name=?]", "control[refs_list]"
 
       assert_select "textarea[name=?]", "control[code]"
 

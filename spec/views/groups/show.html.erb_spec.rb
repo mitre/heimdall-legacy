@@ -2,17 +2,14 @@ require 'rails_helper'
 
 RSpec.describe "groups/show", type: :view do
   before(:each) do
-    @group = assign(:group, Group.create!(
-      :title => "Title",
-      :controls => "Controls",
-      :control_id => "Control"
-    ))
+    valid_attributes = {title: "MyString2", controls: ["MyString2"], control_id: "MyString2"}
+    @profile = create :profile
+    @group = @profile.groups.create! valid_attributes
   end
 
   it "renders attributes in <p>" do
     render
     expect(rendered).to match(/Title/)
-    expect(rendered).to match(/Controls/)
-    expect(rendered).to match(/Control/)
+    expect(rendered).to match(/Control ID/)
   end
 end

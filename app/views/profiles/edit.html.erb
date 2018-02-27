@@ -179,7 +179,7 @@
             <ul class="list-unstyled column-4">
               <% @profile.groups.each do |gr| %>
                 <li>
-                  <%= link_to gr.control_id, profile_group_path(@profile.id, gr.id) %>
+                  <%= link_to gr.title, profile_group_path(@profile.id, gr.id) %>
                   <span class="margin-left">
                     <%= link_to ('<span class="glyphicon glyphicon-remove red"></span>').html_safe, [@profile, gr], :method => :delete, data: { confirm: 'Are you sure?' } %>
                   </span>

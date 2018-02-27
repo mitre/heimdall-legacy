@@ -29,45 +29,41 @@ RSpec.describe ProfileAttributesController, type: :controller do
   # ProfileAttribute. As you add validations to ProfileAttribute, be sure to
   # adjust the attributes here as well.
   let(:valid_attributes) {
-    skip("Add a hash of attributes valid for your model")
+    FactoryGirl.build(:profile_attribute).attributes
   }
 
   let(:invalid_attributes) {
-    skip("Add a hash of attributes invalid for your model")
+    {name: "MyString2", option_description: "MyString2", option_default: "MyString2"}
   }
+
+  before(:each) do
+    @profile = FactoryGirl.create(:profile)
+  end
 
   # This should return the minimal set of values that should be in the session
   # in order to pass any filters (e.g. authentication) defined in
   # ProfileAttributesController. Be sure to keep this updated too.
   let(:valid_session) { {} }
 
-  describe "GET #index" do
-    it "returns a success response" do
-      profile_attribute = ProfileAttribute.create! valid_attributes
-      get :index, params: {}, session: valid_session
-      expect(response).to be_success
-    end
-  end
-
   describe "GET #show" do
     it "returns a success response" do
-      profile_attribute = ProfileAttribute.create! valid_attributes
-      get :show, params: {id: profile_attribute.to_param}, session: valid_session
+      profile_attribute = @profile.profile_attributes.create! valid_attributes
+      get :show, params: {profile_id: @profile.id, id: profile_attribute.to_param}, session: valid_session
       expect(response).to be_success
     end
   end
 
   describe "GET #new" do
     it "returns a success response" do
-      get :new, params: {}, session: valid_session
+      get :new, params: {profile_id: @profile.id}, session: valid_session
       expect(response).to be_success
     end
   end
 
   describe "GET #edit" do
     it "returns a success response" do
-      profile_attribute = ProfileAttribute.create! valid_attributes
-      get :edit, params: {id: profile_attribute.to_param}, session: valid_session
+      profile_attribute = @profile.profile_attributes.create! valid_attributes
+      get :edit, params: {profile_id: @profile.id, id: profile_attribute.to_param}, session: valid_session
       expect(response).to be_success
     end
   end
@@ -76,20 +72,21 @@ RSpec.describe ProfileAttributesController, type: :controller do
     context "with valid params" do
       it "creates a new ProfileAttribute" do
         expect {
-          post :create, params: {profile_attribute: valid_attributes}, session: valid_session
-        }.to change(ProfileAttribute, :count).by(1)
+          post :create, params: {profile_id: @profile.id, profile_attribute: valid_attributes}, session: valid_session
+        }.to change { @profile.reload.profile_attributes.count }.by(1)
       end
 
       it "redirects to the created profile_attribute" do
-        post :create, params: {profile_attribute: valid_attributes}, session: valid_session
-        expect(response).to redirect_to(ProfileAttribute.last)
+        post :create, params: {profile_id: @profile.id, profile_attribute: valid_attributes}, session: valid_session
+        expect(response).to redirect_to(@profile)
       end
     end
 
     context "with invalid params" do
       it "returns a success response (i.e. to display the 'new' template)" do
-        post :create, params: {profile_attribute: invalid_attributes}, session: valid_session
-        expect(response).to be_success
+        expect {
+          post :create, params: {profile_id: @profile.id, profile_attribute: invalid_attributes}, session: valid_session
+        }.to raise_error(Mongoid::Errors::InvalidValue)
       end
     end
   end
@@ -97,44 +94,46 @@ RSpec.describe ProfileAttributesController, type: :controller do
   describe "PUT #update" do
     context "with valid params" do
       let(:new_attributes) {
-        skip("Add a hash of attributes valid for your model")
+        {name: "MyString2", option_description: "MyString2", option_default: ["MyString2"]}
       }
 
       it "updates the requested profile_attribute" do
-        profile_attribute = ProfileAttribute.create! valid_attributes
-        put :update, params: {id: profile_attribute.to_param, profile_attribute: new_attributes}, session: valid_session
+        profile_attribute = @profile.profile_attributes.create! valid_attributes
+        name = profile_attribute.name
+        put :update, params: {profile_id: @profile.id, id: profile_attribute.to_param, profile_attribute: new_attributes}, session: valid_session
         profile_attribute.reload
-        skip("Add assertions for updated state")
+        expect(profile_attribute.name).to_not eq(name)
       end
 
       it "redirects to the profile_attribute" do
-        profile_attribute = ProfileAttribute.create! valid_attributes
-        put :update, params: {id: profile_attribute.to_param, profile_attribute: valid_attributes}, session: valid_session
-        expect(response).to redirect_to(profile_attribute)
+        profile_attribute = @profile.profile_attributes.create! valid_attributes
+        put :update, params: {profile_id: @profile.id, id: profile_attribute.to_param, profile_attribute: valid_attributes}, session: valid_session
+        expect(response).to redirect_to(@profile)
       end
     end
 
     context "with invalid params" do
       it "returns a success response (i.e. to display the 'edit' template)" do
-        profile_attribute = ProfileAttribute.create! valid_attributes
-        put :update, params: {id: profile_attribute.to_param, profile_attribute: invalid_attributes}, session: valid_session
-        expect(response).to be_success
+        profile_attribute = @profile.profile_attributes.create! valid_attributes
+        expect {
+          put :update, params: {profile_id: @profile.id, id: profile_attribute.to_param, profile_attribute: invalid_attributes}, session: valid_session
+        }.to raise_error(Mongoid::Errors::InvalidValue)
       end
     end
   end
 
   describe "DELETE #destroy" do
     it "destroys the requested profile_attribute" do
-      profile_attribute = ProfileAttribute.create! valid_attributes
+      profile_attribute = @profile.profile_attributes.create! valid_attributes
       expect {
-        delete :destroy, params: {id: profile_attribute.to_param}, session: valid_session
-      }.to change(ProfileAttribute, :count).by(-1)
+        delete :destroy, params: {profile_id: @profile.id, id: profile_attribute.to_param}, session: valid_session
+      }.to change { @profile.reload.profile_attributes.count }.by(-1)
     end
 
     it "redirects to the profile_attributes list" do
-      profile_attribute = ProfileAttribute.create! valid_attributes
-      delete :destroy, params: {id: profile_attribute.to_param}, session: valid_session
-      expect(response).to redirect_to(profile_attributes_url)
+      profile_attribute = @profile.profile_attributes.create! valid_attributes
+      delete :destroy, params: {profile_id: @profile.id, id: profile_attribute.to_param}, session: valid_session
+      expect(response).to redirect_to(@profile)
     end
   end
 

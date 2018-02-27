@@ -1,12 +1,6 @@
 class ControlsController < ApplicationController
   before_action :set_control, only: [:show, :edit, :update, :destroy, :details]
 
-  # GET /controls
-  # GET /controls.json
-  def index
-    @controls = Control.all
-  end
-
   # GET /controls/1
   # GET /controls/1.json
   def show
@@ -42,12 +36,7 @@ class ControlsController < ApplicationController
   # PATCH/PUT /controls/1
   # PATCH/PUT /controls/1.json
   def update
-    if new_control = Control.parse(control_params[:code])
-      logger.debug "New Control: #{new_control.inspect}"
-      #control_params[:title] = new_control.title
-      #control_params[:desc] = new_control.desc
-      #control_params[:impact] = new_control.impact
-    end
+    new_control = Control.parse(control_params[:code])
     respond_to do |format|
       if @control.update(control_params)
         @control.title = new_control.title
@@ -78,7 +67,6 @@ class ControlsController < ApplicationController
     logger.debug "DETAILS for #{@control.control_id}"
     @evaluation = Evaluation.find(params[:evaluation_id]) if params.has_key?(:evaluation_id)
     respond_to do |format|
-      logger.debug "RENDER JS"
       format.js {render layout: false}
     end
   end

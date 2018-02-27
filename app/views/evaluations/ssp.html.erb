@@ -130,39 +130,39 @@
 <!-- Main content -->
 <section class="content container-fluid">
   <div class="row body">
-      <div class="col-md-9">
-        <div class="box box-primary">
-          <div class="box-header with-border">
-            <h1 class="box-title">SSP Ready Control Implementation Details and Status</h1>
-          </div>
-          <!-- /.box-header -->
-          <div class="box-body">
-            <% @nist_hash["children"].each do |family| %>
-              <% if family["value"] > 0 %>
-                <h2 id="<%= family['name'] %>"><%= family["name"] %>: <%= family["desc"] %></h2>
-                <div class="container">
-                  <% family["children"].each do |cf| %>
-                    <% if cf["value"] > 0 %>
-                      <% cf_name = cf['name'] %>
-                      <h3 id="<%= cf_name %>" onclick="togAll('<%= cf_name %>')"><%= cf_name %></h3>
-                      <div class="container big-margin-bottom">
-                        <% cf["controls"].each_with_index do |control, index| %>
-                          <h4><%= index+1 %>. <button class="<%= status_btn(@symbols[control.control_id]) %>" onclick="tog('<%= control.control_id %>')"><%= @symbols[control.control_id].to_s.titleize %></button> <%= control.title %></h4>
-                          <div id="<%= control.control_id %>" class="container big-margin-bottom">
-                            <%= control.desc %>
-                            <h4>Check Text</h4> <pre><code class="language-ruby"><%= control.tag('check') %></code></pre>
-                            <h4>Fix Text</h4> <pre><code class="language-ruby"><%= control.tag('fix') %></code></pre>
-                          </div>
-                        <% end %>
-                      </div>
-                    <% end %>
+    <div class="col-md-9">
+      <div class="box box-primary">
+        <div class="box-header with-border">
+          <h1 class="box-title">SSP Ready Control Implementation Details and Status</h1>
+        </div>
+        <!-- /.box-header -->
+        <div class="box-body">
+          <% @nist_hash["children"].each do |family| %>
+            <% if family["value"] > 0 %>
+              <h2 id="<%= family['name'] %>"><%= family["name"] %>: <%= family["desc"] %></h2>
+              <div class="container-fluid">
+                <% family["children"].each do |cf| %>
+                  <% if cf["value"] > 0 %>
+                    <% cf_name = cf['name'] %>
+                    <h3 id="<%= cf_name %>" onclick="togAll('<%= cf_name %>')"><%= cf_name %></h3>
+                    <div class="container-fluid big-margin-bottom">
+                      <% cf["controls"].each_with_index do |control, index| %>
+                        <h4><%= index+1 %>. <button class="<%= status_btn(@symbols[control.control_id]) %>" onclick="tog('<%= control.control_id %>')"><%= @symbols[control.control_id].to_s.titleize %></button> <%= control.title %></h4>
+                        <div id="<%= control.control_id %>" class="container-fluid big-margin-bottom">
+                          <%= control.desc %>
+                          <h4>Check Text</h4> <pre><%= control.tag('check') %></pre>
+                          <h4>Fix Text</h4> <pre><%= control.tag('fix') %></pre>
+                        </div>
+                      <% end %>
+                    </div>
                   <% end %>
-                </div>
-              <% end %>
+                <% end %>
+              </div>
             <% end %>
-          </div>
+          <% end %>
         </div>
       </div>
+    </div>
     <div class="col-md-3">
       <div id="sidebar" class="box box-primary sidebar">
         <ul id="sspList" class="list-unstyled">

@@ -2,28 +2,15 @@ require 'rails_helper'
 
 RSpec.describe "profiles/edit", type: :view do
   before(:each) do
-    @profile = assign(:profile, Profile.create!(
-      :name => "MyString",
-      :title => "MyString",
-      :maintainer => "MyString",
-      :copyright => "MyString",
-      :copyright_email => "MyString",
-      :license => "MyString",
-      :summary => "MyString",
-      :version => "MyString",
-      :sha256 => "MyString",
-      :depends => "MyText",
-      :supports => "MyText",
-      :controls => "MyText",
-      :groups => "MyText",
-      :profile_attributes => "MyText"
-    ))
+    @profile = create :profile
+    @depend = @profile.depends.new()
+    @support = @profile.supports.new()
   end
 
   it "renders the edit profile form" do
     render
 
-    assert_select "form[action=?][method=?]", profile_path(@profile), "post" do
+    assert_select "form[method=?]", "post" do
 
       assert_select "input[name=?]", "profile[name]"
 
@@ -41,17 +28,6 @@ RSpec.describe "profiles/edit", type: :view do
 
       assert_select "input[name=?]", "profile[version]"
 
-      assert_select "input[name=?]", "profile[sha256]"
-
-      assert_select "textarea[name=?]", "profile[depends]"
-
-      assert_select "textarea[name=?]", "profile[supports]"
-
-      assert_select "textarea[name=?]", "profile[controls]"
-
-      assert_select "textarea[name=?]", "profile[groups]"
-
-      assert_select "textarea[name=?]", "profile[profile_attributes]"
     end
   end
 end

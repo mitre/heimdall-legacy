@@ -1,9 +1,7 @@
 <%= form_with(model: profile, local: true, :role => "form") do |form| %>
 <div class="box-header with-border">
   <h3 class="box-title">Edit Profile Information</h3>
-  <button type="reset" id="cancel_btn" class="btn btn-info pull-right">
-    <i class="fa fa-cancel"></i> Cancel
-  </button>
+  <%= link_to 'Cancel', profile_path(@profile), class: "btn btn-info pull-right" %>
   <%= button_tag(type: "submit", class: "btn btn-primary pull-right margin-right", id: 'edit_btn') do %>
     <i class="fa fa-edit"></i> Save
   <% end %>

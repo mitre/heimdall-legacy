@@ -1,31 +1,9 @@
 class DependsController < ApplicationController
-  before_action :set_depend, only: [:show, :edit, :update, :destroy]
+  before_action :set_profile, only: [:create, :destroy]
 
-  # GET /depends
-  # GET /depends.json
-  def index
-    @depends = Depend.all
-  end
-
-  # GET /depends/1
-  # GET /depends/1.json
-  def show
-  end
-
-  # GET /depends/new
-  def new
-    @profile = Profile.find(params[:profile_id])
-    @depend = @profile.depends.new()
-  end
-
-  # GET /depends/1/edit
-  def edit
-  end
-
-  # POST /depends
-  # POST /depends.json
+  # POST /profiles/:profile_id/depends
+  # POST /profiles/:profile_id/depends.json
   def create
-    @profile = Profile.find(params[:profile_id])
     @depend = @profile.depends.new(depend_params)
     respond_to do |format|
       if @profile.save
@@ -38,23 +16,10 @@ class DependsController < ApplicationController
     end
   end
 
-  # PATCH/PUT /depends/1
-  # PATCH/PUT /depends/1.json
-  def update
-    respond_to do |format|
-      if @depend.update(depend_params)
-        format.html { redirect_to profile_depend_url(@profile, @depend), notice: 'Dependency was successfully updated.' }
-        format.json { render :show, status: :ok, location: @depend }
-      else
-        format.html { render :edit }
-        format.json { render json: @depend.errors, status: :unprocessable_entity }
-      end
-    end
-  end
-
-  # DELETE /depends/1
-  # DELETE /depends/1.json
+  # DELETE /profiles/:profile_id/depends/1
+  # DELETE /profiles/:profile_id/depends/1.json
   def destroy
+    @depend = @profile.depends.find(params[:id])
     @depend.destroy
     respond_to do |format|
       format.html { redirect_to @profile, notice: 'Depend was successfully destroyed.' }
@@ -64,9 +29,8 @@ class DependsController < ApplicationController
 
   private
     # Use callbacks to share common setup or constraints between actions.
-    def set_depend
+    def set_profile
       @profile = Profile.find(params[:profile_id])
-      @depend = @profile.depends.find(params[:id])
     end
 
     # Never trust parameters from the scary internet, only allow the white list through.

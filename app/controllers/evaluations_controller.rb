@@ -1,6 +1,6 @@
 class EvaluationsController < ApplicationController
-  before_action :set_evaluation, only: [:show, :edit, :update, :destroy, :ssp, :nist_800_53]
-  protect_from_forgery except: [:create]
+  before_action :set_evaluation, only: [:show, :destroy, :ssp, :nist_800_53]
+  protect_from_forgery
 
   @@nist_800_53_json = nil
 
@@ -20,47 +20,6 @@ class EvaluationsController < ApplicationController
     respond_to do |format|
       format.html { render :show }
       format.json { render json: @evaluation}
-    end
-  end
-
-  # GET /evaluations/new
-  def new
-    @evaluation = Evaluation.new
-  end
-
-  # GET /evaluations/1/edit
-  def edit
-  end
-
-  # POST /evaluations
-  # POST /evaluations.json
-  def create
-    data = params.to_unsafe_h()
-    eval_json = {"version": data[:version], "controls": data[:controls], "other_checks": data[:other_checks],
-      "profiles": data[:profiles], "platform": data[:platform], "statistics": data[:statistics]}
-
-    respond_to do |format|
-      if @evaluation = Evaluation.parse(eval_json)
-        format.html { redirect_to @evaluation, notice: 'Evaluation was successfully created.' }
-        format.json { render :show, status: :created, location: @evaluation }
-      else
-        format.html { render :new }
-        format.json { render json: "Evaluation creation failed", status: :unprocessable_entity }
-      end
-    end
-  end
-
-  # PATCH/PUT /evaluations/1
-  # PATCH/PUT /evaluations/1.json
-  def update
-    respond_to do |format|
-      if @evaluation.update(evaluation_params)
-        format.html { redirect_to @evaluation, notice: 'Evaluation was successfully updated.' }
-        format.json { render :show, status: :ok, location: @evaluation }
-      else
-        format.html { render :edit }
-        format.json { render json: @evaluation.errors, status: :unprocessable_entity }
-      end
     end
   end
 
@@ -188,11 +147,6 @@ class EvaluationsController < ApplicationController
     # Use callbacks to share common setup or constraints between actions.
     def set_evaluation
       @evaluation = Evaluation.find(params[:id])
-    end
-
-    # Never trust parameters from the scary internet, only allow the white list through.
-    def evaluation_params
-      params.require(:evaluation).permit(:version, :other_checks, :platform_name, :platform_release, :statistics_duration)
     end
 
 end

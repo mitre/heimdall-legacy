@@ -46,12 +46,14 @@ group :development, :test do
   gem 'rspec-rails', '~> 3.6'
   gem 'factory_girl_rails', '~> 4.8'
   gem 'database_cleaner', '~> 1.6', '>= 1.6.1'
+  gem 'simplecov'
 end
 
 group :test do
   gem 'capybara', '~> 2.14'
   gem 'mongoid-rspec', git: 'https://github.com/mongoid-rspec/mongoid-rspec.git'
   gem 'email_spec', '~> 2.1'
+  gem 'rails-controller-testing'
 end
 
 group :development do
