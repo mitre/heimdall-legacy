@@ -36,105 +36,111 @@ RSpec.describe ProfileAttributesController, type: :controller do
     {name: "MyString2", option_description: "MyString2", option_default: "MyString2"}
   }
 
-  before(:each) do
-    @profile = FactoryGirl.create(:profile)
-  end
-
   # This should return the minimal set of values that should be in the session
   # in order to pass any filters (e.g. authentication) defined in
   # ProfileAttributesController. Be sure to keep this updated too.
   let(:valid_session) { {} }
 
-  describe "GET #show" do
-    it "returns a success response" do
-      profile_attribute = @profile.profile_attributes.create! valid_attributes
-      get :show, params: {profile_id: @profile.id, id: profile_attribute.to_param}, session: valid_session
-      expect(response).to be_success
+  context 'Editor is logged in' do
+    let(:user) { FactoryGirl.create(:editor) }
+    before do
+      sign_in user
     end
-  end
 
-  describe "GET #new" do
-    it "returns a success response" do
-      get :new, params: {profile_id: @profile.id}, session: valid_session
-      expect(response).to be_success
+    before(:each) do
+      @profile = create :profile, created_by: user
     end
-  end
 
-  describe "GET #edit" do
-    it "returns a success response" do
-      profile_attribute = @profile.profile_attributes.create! valid_attributes
-      get :edit, params: {profile_id: @profile.id, id: profile_attribute.to_param}, session: valid_session
-      expect(response).to be_success
+    describe "GET #show" do
+      it "returns a success response" do
+        profile_attribute = @profile.profile_attributes.create! valid_attributes
+        get :show, params: {profile_id: @profile.id, id: profile_attribute.to_param}, session: valid_session
+        expect(response).to be_success
+      end
     end
-  end
 
-  describe "POST #create" do
-    context "with valid params" do
-      it "creates a new ProfileAttribute" do
-        expect {
+    describe "GET #new" do
+      it "returns a success response" do
+        get :new, params: {profile_id: @profile.id}, session: valid_session
+        expect(response).to be_success
+      end
+    end
+
+    describe "GET #edit" do
+      it "returns a success response" do
+        profile_attribute = @profile.profile_attributes.create! valid_attributes
+        get :edit, params: {profile_id: @profile.id, id: profile_attribute.to_param}, session: valid_session
+        expect(response).to be_success
+      end
+    end
+
+    describe "POST #create" do
+      context "with valid params" do
+        it "creates a new ProfileAttribute" do
+          expect {
+            post :create, params: {profile_id: @profile.id, profile_attribute: valid_attributes}, session: valid_session
+          }.to change { @profile.reload.profile_attributes.count }.by(1)
+        end
+
+        it "redirects to the created profile_attribute" do
           post :create, params: {profile_id: @profile.id, profile_attribute: valid_attributes}, session: valid_session
-        }.to change { @profile.reload.profile_attributes.count }.by(1)
+          expect(response).to redirect_to(@profile)
+        end
       end
 
-      it "redirects to the created profile_attribute" do
-        post :create, params: {profile_id: @profile.id, profile_attribute: valid_attributes}, session: valid_session
-        expect(response).to redirect_to(@profile)
+      context "with invalid params" do
+        it "returns a success response (i.e. to display the 'new' template)" do
+          expect {
+            post :create, params: {profile_id: @profile.id, profile_attribute: invalid_attributes}, session: valid_session
+          }.to raise_error(Mongoid::Errors::InvalidValue)
+        end
       end
     end
 
-    context "with invalid params" do
-      it "returns a success response (i.e. to display the 'new' template)" do
+    describe "PUT #update" do
+      context "with valid params" do
+        let(:new_attributes) {
+          {name: "MyString2", option_description: "MyString2", option_default: ["MyString2"]}
+        }
+
+        it "updates the requested profile_attribute" do
+          profile_attribute = @profile.profile_attributes.create! valid_attributes
+          name = profile_attribute.name
+          put :update, params: {profile_id: @profile.id, id: profile_attribute.to_param, profile_attribute: new_attributes}, session: valid_session
+          profile_attribute.reload
+          expect(profile_attribute.name).to_not eq(name)
+        end
+
+        it "redirects to the profile_attribute" do
+          profile_attribute = @profile.profile_attributes.create! valid_attributes
+          put :update, params: {profile_id: @profile.id, id: profile_attribute.to_param, profile_attribute: valid_attributes}, session: valid_session
+          expect(response).to redirect_to(@profile)
+        end
+      end
+
+      context "with invalid params" do
+        it "returns a success response (i.e. to display the 'edit' template)" do
+          profile_attribute = @profile.profile_attributes.create! valid_attributes
+          expect {
+            put :update, params: {profile_id: @profile.id, id: profile_attribute.to_param, profile_attribute: invalid_attributes}, session: valid_session
+          }.to raise_error(Mongoid::Errors::InvalidValue)
+        end
+      end
+    end
+
+    describe "DELETE #destroy" do
+      it "destroys the requested profile_attribute" do
+        profile_attribute = @profile.profile_attributes.create! valid_attributes
         expect {
-          post :create, params: {profile_id: @profile.id, profile_attribute: invalid_attributes}, session: valid_session
-        }.to raise_error(Mongoid::Errors::InvalidValue)
+          delete :destroy, params: {profile_id: @profile.id, id: profile_attribute.to_param}, session: valid_session
+        }.to change { @profile.reload.profile_attributes.count }.by(-1)
       end
-    end
-  end
 
-  describe "PUT #update" do
-    context "with valid params" do
-      let(:new_attributes) {
-        {name: "MyString2", option_description: "MyString2", option_default: ["MyString2"]}
-      }
-
-      it "updates the requested profile_attribute" do
+      it "redirects to the profile_attributes list" do
         profile_attribute = @profile.profile_attributes.create! valid_attributes
-        name = profile_attribute.name
-        put :update, params: {profile_id: @profile.id, id: profile_attribute.to_param, profile_attribute: new_attributes}, session: valid_session
-        profile_attribute.reload
-        expect(profile_attribute.name).to_not eq(name)
-      end
-
-      it "redirects to the profile_attribute" do
-        profile_attribute = @profile.profile_attributes.create! valid_attributes
-        put :update, params: {profile_id: @profile.id, id: profile_attribute.to_param, profile_attribute: valid_attributes}, session: valid_session
-        expect(response).to redirect_to(@profile)
-      end
-    end
-
-    context "with invalid params" do
-      it "returns a success response (i.e. to display the 'edit' template)" do
-        profile_attribute = @profile.profile_attributes.create! valid_attributes
-        expect {
-          put :update, params: {profile_id: @profile.id, id: profile_attribute.to_param, profile_attribute: invalid_attributes}, session: valid_session
-        }.to raise_error(Mongoid::Errors::InvalidValue)
-      end
-    end
-  end
-
-  describe "DELETE #destroy" do
-    it "destroys the requested profile_attribute" do
-      profile_attribute = @profile.profile_attributes.create! valid_attributes
-      expect {
         delete :destroy, params: {profile_id: @profile.id, id: profile_attribute.to_param}, session: valid_session
-      }.to change { @profile.reload.profile_attributes.count }.by(-1)
-    end
-
-    it "redirects to the profile_attributes list" do
-      profile_attribute = @profile.profile_attributes.create! valid_attributes
-      delete :destroy, params: {profile_id: @profile.id, id: profile_attribute.to_param}, session: valid_session
-      expect(response).to redirect_to(@profile)
+        expect(response).to redirect_to(@profile)
+      end
     end
   end
-
 end

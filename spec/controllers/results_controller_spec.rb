@@ -25,44 +25,36 @@ require 'rails_helper'
 
 RSpec.describe ResultsController, type: :controller do
 
-  # This should return the minimal set of attributes required to create a valid
-  # Result. As you add validations to Result, be sure to
-  # adjust the attributes here as well.
-  let(:valid_attributes) {
-    FactoryGirl.build(:result).attributes
-  }
-
-  let(:invalid_attributes) {
-    FactoryGirl.build(:invalid_result).attributes
-  }
-
-  before(:each) do
-    @evaluation = FactoryGirl.create(:evaluation)
-  end
 
   # This should return the minimal set of values that should be in the session
   # in order to pass any filters (e.g. authentication) defined in
   # ResultsController. Be sure to keep this updated too.
   let(:valid_session) { {} }
-  let(:user) { User.create!(email: "user#{rand(100000).to_s}@examples.com", password: '1234567890') }
 
-  context 'User is logged in' do
+  context 'Editor is logged in' do
+    let(:user) { FactoryGirl.create(:editor) }
     before do
       sign_in user
     end
 
+    before(:each) do
+      @evaluation = create :evaluation, created_by: user
+      @profile = create :profile, created_by: user
+      @control = create :control, profile_id: @profile.id, created_by: user
+    end
+
     describe "GET #index" do
       it "returns a success response" do
-        result = Result.create! valid_attributes
-        get :index, params: {evaluation_id: result.evaluation_id}, session: valid_session
+        result = create :result, evaluation_id: @evaluation.id, control_id: @control.id, created_by: user
+        get :index, params: {evaluation_id: @evaluation.id}, session: valid_session
         expect(response).to be_success
       end
     end
 
     describe "GET #show" do
       it "returns a success response" do
-        result = Result.create! valid_attributes
-        get :show, params: {evaluation_id:result.evaluation_id, id: result.to_param}, session: valid_session
+        result = create :result, evaluation_id: @evaluation.id, control_id: @control.id, created_by: user
+        get :show, params: {evaluation_id: @evaluation.id, id: result.to_param}, session: valid_session
         expect(response).to be_success
       end
     end

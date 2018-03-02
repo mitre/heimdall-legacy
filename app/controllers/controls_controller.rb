@@ -1,5 +1,6 @@
 class ControlsController < ApplicationController
   before_action :set_control, only: [:show, :edit, :update, :destroy, :details]
+  #authorize_resource, only: [:show, :edit, :update, :destroy, :details]
 
   # GET /controls/1
   # GET /controls/1.json
@@ -9,17 +10,20 @@ class ControlsController < ApplicationController
   # GET /controls/:profile_id/new
   def new
     @profile = Profile.find(params[:profile_id])
+    authorize! :create, @profile
     @control = @profile.controls.new()
   end
 
   # GET /controls/1/edit
   def edit
+    authorize! :edit, @profile
   end
 
   # POST /controls/:profile_id
   # POST /controls.json
   def create
     @profile = Profile.find(params[:profile_id])
+    authorize! :create, @profile
     @control = @profile.controls.new(control_params)
 
     respond_to do |format|
@@ -36,9 +40,10 @@ class ControlsController < ApplicationController
   # PATCH/PUT /controls/1
   # PATCH/PUT /controls/1.json
   def update
+    authorize! :update, @profile
     new_control = Control.parse(control_params[:code])
     respond_to do |format|
-      if @control.update(control_params)
+      if new_control && @control.update(control_params)
         @control.title = new_control.title
         @control.desc = new_control.desc
         @control.impact = new_control.impact
@@ -56,6 +61,7 @@ class ControlsController < ApplicationController
   # DELETE /controls/1
   # DELETE /controls/1.json
   def destroy
+    authorize! :destroy, @profile
     @control.destroy
     respond_to do |format|
       format.html { redirect_to @profile, notice: 'Control was successfully destroyed.' }

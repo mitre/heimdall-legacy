@@ -1,4 +1,5 @@
 class ResultsController < ApplicationController
+  authorize_resource
   before_action :set_eval, only: [:show, :index]
 
   # GET /results

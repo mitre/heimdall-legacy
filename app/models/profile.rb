@@ -22,7 +22,8 @@ class Profile
   accepts_nested_attributes_for :supports
   accepts_nested_attributes_for :groups
   accepts_nested_attributes_for :profile_attributes
-
+  validates_presence_of :name, :title, :sha256
+  
   def is_editable?
     evaluations.size == 0
   end

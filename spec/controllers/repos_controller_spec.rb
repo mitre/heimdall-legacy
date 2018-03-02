@@ -40,16 +40,16 @@ RSpec.describe ReposController, type: :controller do
   # in order to pass any filters (e.g. authentication) defined in
   # ReposController. Be sure to keep this updated too.
   let(:valid_session) { {} }
-  let(:user) { User.create!(email: "repos-user#{rand(100000).to_s}@examples.com", password: '1234567890') }
 
   context 'User is logged in' do
+    let(:user) { FactoryGirl.create(:editor) }
     before do
       sign_in user
     end
 
     describe "GET #index" do
       it "returns a success response" do
-        repo = Repo.create! valid_attributes
+        repo = create :repo, created_by: user
         get :index, params: {}, session: valid_session
         expect(response).to be_success
       end
@@ -57,7 +57,7 @@ RSpec.describe ReposController, type: :controller do
 
     describe "GET #show" do
       it "returns a success response" do
-        repo = Repo.create! valid_attributes
+        repo = create :repo, created_by: user
         get :show, params: {id: repo.to_param}, session: valid_session
         expect(response).to be_success
       end
@@ -72,7 +72,7 @@ RSpec.describe ReposController, type: :controller do
 
     describe "GET #edit" do
       it "returns a success response" do
-        repo = Repo.create! valid_attributes
+        repo = create :repo, created_by: user
         get :edit, params: {id: repo.to_param}, session: valid_session
         expect(response).to be_success
       end
@@ -107,7 +107,7 @@ RSpec.describe ReposController, type: :controller do
         }
 
         it "updates the requested repo" do
-          repo = Repo.create! valid_attributes
+          repo = create :repo, created_by: user
           name = repo.name
           put :update, params: {id: repo.to_param, repo: new_attributes}, session: valid_session
           repo.reload
@@ -115,7 +115,7 @@ RSpec.describe ReposController, type: :controller do
         end
 
         it "redirects to the repo" do
-          repo = Repo.create! valid_attributes
+          repo = create :repo, created_by: user
           put :update, params: {id: repo.to_param, repo: valid_attributes}, session: valid_session
           expect(response).to redirect_to(repo)
         end
@@ -123,7 +123,7 @@ RSpec.describe ReposController, type: :controller do
 
       context "with invalid params" do
         it "returns a success response (i.e. to display the 'edit' template)" do
-          repo = Repo.create! valid_attributes
+          repo = create :repo, created_by: user
           put :update, params: {id: repo.to_param, repo: invalid_attributes}, session: valid_session
           expect(response).to render_template(:edit)
         end
@@ -132,14 +132,14 @@ RSpec.describe ReposController, type: :controller do
 
     describe "DELETE #destroy" do
       it "destroys the requested repo" do
-        repo = Repo.create! valid_attributes
+        repo = create :repo, created_by: user
         expect {
           delete :destroy, params: {id: repo.to_param}, session: valid_session
         }.to change(Repo, :count).by(-1)
       end
 
       it "redirects to the repos list" do
-        repo = Repo.create! valid_attributes
+        repo = create :repo, created_by: user
         delete :destroy, params: {id: repo.to_param}, session: valid_session
         expect(response).to redirect_to(repos_url)
       end

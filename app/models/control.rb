@@ -92,6 +92,7 @@ class Control
         end
       rescue
         logger.debug "Couldn't parse control code #{code}"
+        control = nil
       end
     end
     control

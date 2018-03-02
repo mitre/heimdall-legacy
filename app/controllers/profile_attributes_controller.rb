@@ -4,22 +4,26 @@ class ProfileAttributesController < ApplicationController
   # GET /profile_attributes/1
   # GET /profile_attributes/1.json
   def show
+    authorize! :read, @profile
   end
 
   # GET /profile_attributes/:profile_id/new
   def new
     @profile = Profile.find(params[:profile_id])
+    authorize! :create, @profile
     @profile_attribute = @profile.profile_attributes.new
   end
 
   # GET /profile_attributes/1/edit
   def edit
+    authorize! :edit, @profile
   end
 
   # POST /profile_attributes
   # POST /profile_attributes.json
   def create
     @profile = Profile.find(params[:profile_id])
+    authorize! :create, @profile
     @profile_attribute = @profile.profile_attributes.new(profile_attribute_params)
     respond_to do |format|
       if @profile.save
@@ -35,6 +39,7 @@ class ProfileAttributesController < ApplicationController
   # PATCH/PUT /profile_attributes/1
   # PATCH/PUT /profile_attributes/1.json
   def update
+    authorize! :update, @profile
     respond_to do |format|
       if @profile_attribute.update(profile_attribute_params)
         format.html { redirect_to @profile, notice: 'Attribute was successfully updated.' }
@@ -49,6 +54,7 @@ class ProfileAttributesController < ApplicationController
   # DELETE /profile_attributes/1
   # DELETE /profile_attributes/1.json
   def destroy
+    authorize! :destroy, @profile
     @profile_attribute.destroy
     respond_to do |format|
       format.html { redirect_to @profile, notice: 'Attribute was successfully destroyed.' }

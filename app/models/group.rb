@@ -5,7 +5,8 @@ class Group
   field :controls, type: Array, default: []
   field :control_id, type: String
   embedded_in :profile, :inverse_of => :groups
-
+  validates_presence_of :title
+  
   def controls_list=(arg)
     self.controls = arg.split(',').map { |v| v.strip }
   end

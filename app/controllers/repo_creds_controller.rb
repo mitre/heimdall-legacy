@@ -5,6 +5,7 @@ class RepoCredsController < ApplicationController
   # POST /repo_creds.json
   def create
     @repo = Repo.find(params[:repo_id])
+    authorize! :create, @repo
     @repo_cred = @repo.repo_creds.new(repo_cred_params)
 
     respond_to do |format|
@@ -21,12 +22,13 @@ class RepoCredsController < ApplicationController
   # PATCH/PUT /repo_creds/1
   # PATCH/PUT /repo_creds/1.json
   def update
+    authorize! :update, @repo
     respond_to do |format|
       if @repo_cred.update(repo_cred_params)
         format.html { redirect_to @repo, notice: 'Repo cred was successfully updated.' }
         format.json { render :show, status: :ok, location: @repo_cred }
       else
-        format.html { render :edit }
+        format.html { redirect_to @repo, error: 'Repo credential was not successfully updated.' }
         format.json { render json: @repo_cred.errors, status: :unprocessable_entity }
       end
     end
@@ -35,7 +37,7 @@ class RepoCredsController < ApplicationController
   # DELETE /repo_creds/1
   # DELETE /repo_creds/1.json
   def destroy
-    @repo = Repo.find(params[:repo_id])
+    authorize! :destroy, @repo
     @repo_cred.destroy
     respond_to do |format|
       format.html { redirect_to @repo, notice: 'Repo cred was successfully destroyed.' }

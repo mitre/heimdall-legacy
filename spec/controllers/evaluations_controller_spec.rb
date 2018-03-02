@@ -25,31 +25,20 @@ require 'rails_helper'
 
 RSpec.describe EvaluationsController, type: :controller do
 
-  # This should return the minimal set of attributes required to create a valid
-  # Evaluation. As you add validations to Evaluation, be sure to
-  # adjust the attributes here as well.
-  let(:valid_attributes) {
-    FactoryGirl.build(:evaluation).attributes
-  }
-
-  let(:invalid_attributes) {
-    FactoryGirl.build(:invalid_evaluation).attributes
-  }
-
   # This should return the minimal set of values that should be in the session
   # in order to pass any filters (e.g. authentication) defined in
   # EvaluationsController. Be sure to keep this updated too.
   let(:valid_session) { {} }
-  let(:user) { User.create!(email: "user#{rand(100000).to_s}@examples.com", password: '1234567890') }
 
-  context 'User is logged in' do
+  context 'Editor is logged in' do
+    let(:user) { FactoryGirl.create(:editor) }
     before do
       sign_in user
     end
 
     describe "GET #index" do
       it "returns a success response" do
-        evaluation = Evaluation.create! valid_attributes
+        evaluation = create :evaluation, created_by: user
         get :index, params: {}, session: valid_session
         expect(response).to be_success
       end
@@ -57,7 +46,7 @@ RSpec.describe EvaluationsController, type: :controller do
 
     describe "GET #show" do
       it "returns a success response" do
-        evaluation = Evaluation.create! valid_attributes
+        evaluation = create :evaluation, created_by: user
         get :show, params: {id: evaluation.to_param}, session: valid_session
         expect(response).to be_success
       end
@@ -65,7 +54,7 @@ RSpec.describe EvaluationsController, type: :controller do
 
     describe "GET #ssp" do
       it "returns a success response" do
-        evaluation = Evaluation.create! valid_attributes
+        evaluation = create :evaluation, created_by: user
         get :ssp, params: {id: evaluation.to_param}, session: valid_session
         expect(response).to be_success
       end
@@ -73,7 +62,7 @@ RSpec.describe EvaluationsController, type: :controller do
 
     describe "GET #nist_800_53" do
       it "returns a success response" do
-        evaluation = Evaluation.create! valid_attributes
+        evaluation = create :evaluation, created_by: user
         get :nist_800_53, params: {id: evaluation.to_param, category: "Medium"}, session: valid_session
         expect(response.content_type).to eq("application/json")
       end
@@ -88,18 +77,49 @@ RSpec.describe EvaluationsController, type: :controller do
     end
 
     describe "DELETE #destroy" do
-      it "destroys the requested evaluation" do
-        evaluation = Evaluation.create! valid_attributes
+      it "is blocked from destroying the evaluation it doesn't own" do
+        evaluation = create :evaluation
+        expect {
+          delete :destroy, params: {id: evaluation.to_param}, session: valid_session
+        }.to raise_error(CanCan::AccessDenied)
+      end
+
+      it "destroys the owned evaluation" do
+        evaluation = create :evaluation, created_by: user
         expect {
           delete :destroy, params: {id: evaluation.to_param}, session: valid_session
         }.to change(Evaluation, :count).by(-1)
       end
 
-      it "redirects to the evaluations list" do
-        evaluation = Evaluation.create! valid_attributes
+      it "redirects to the evaluation list" do
+        evaluation = create :evaluation, created_by: user
         delete :destroy, params: {id: evaluation.to_param}, session: valid_session
         expect(response).to redirect_to(evaluations_url)
       end
+
     end
+  end
+
+  context 'An Admin is logged in' do
+    let(:admin) { FactoryGirl.create(:admin) }
+    before do
+      sign_in admin
+    end
+
+    describe "DELETE #destroy" do
+      it "destroys the requested evaluation" do
+        evaluation = create :evaluation
+        expect {
+          delete :destroy, params: {id: evaluation.to_param}, session: valid_session
+        }.to change(Evaluation, :count).by(-1)
+      end
+    end
+
+    it "redirects to the evaluations list" do
+      evaluation = create :evaluation
+      delete :destroy, params: {id: evaluation.to_param}, session: valid_session
+      expect(response).to redirect_to(evaluations_url)
+    end
+
   end
 end

@@ -1,4 +1,5 @@
 require 'rails_helper'
+require 'support/sign_in_support'
 
 RSpec.describe "Evaluations", type: :request do
   describe "GET /evaluations" do

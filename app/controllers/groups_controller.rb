@@ -4,11 +4,13 @@ class GroupsController < ApplicationController
   # GET /groups/1
   # GET /groups/1.json
   def show
+    authorize! :read, @profile
   end
 
   # GET /groups/:profile_id/new
   def new
     @profile = Profile.find(params[:profile_id])
+    authorize! :create, @profile
     @group = @profile.groups.new
   end
 
@@ -16,6 +18,7 @@ class GroupsController < ApplicationController
   # POST /groups.json
   def create
     @profile = Profile.find(params[:profile_id])
+    authorize! :create, @profile
     @group = @profile.groups.new(group_params)
 
     respond_to do |format|
@@ -32,12 +35,13 @@ class GroupsController < ApplicationController
   # PATCH/PUT /groups/1
   # PATCH/PUT /groups/1.json
   def update
+    authorize! :update, @profile
     respond_to do |format|
       if @group.update(group_params)
         format.html { redirect_to profile_group_url(@profile, @group), notice: 'Group was successfully updated.' }
         format.json { render :show, status: :ok, location: @group }
       else
-        format.html { redirect_to profile_group_url(@profile, @group), notice: 'Error updating Group' }
+        format.html { redirect_to profile_group_url(@profile, @group), error: 'Error updating Group' }
         format.json { render json: @group.errors, status: :unprocessable_entity }
       end
     end
@@ -46,6 +50,7 @@ class GroupsController < ApplicationController
   # PATCH/PUT /groups/1
   # PATCH/PUT /groups/1.json
   def add
+    authorize! :update, @profile
     @group.controls << group_params[:controls]
     logger.debug "add group_params: #{group_params.inspect}"
     respond_to do |format|
@@ -53,7 +58,7 @@ class GroupsController < ApplicationController
         format.html { redirect_to profile_group_url(@profile, @group), notice: 'Control was added to Group' }
         format.json { render :show, status: :ok, location: @group }
       else
-        format.html { redirect_to profile_group_url(@profile, @group), notice: 'Error updating Group' }
+        format.html { redirect_to profile_group_url(@profile, @group), error: 'Error updating Group' }
         format.json { render json: @group.errors, status: :unprocessable_entity }
       end
     end
@@ -62,6 +67,7 @@ class GroupsController < ApplicationController
   # PATCH/PUT /groups/1
   # PATCH/PUT /groups/1.json
   def remove
+    authorize! :update, @profile
     logger.debug "delete remove_params: #{remove_params.inspect}"
     control_id = remove_params[:control_id]
     logger.debug "delete #{control_id}"
@@ -71,7 +77,7 @@ class GroupsController < ApplicationController
         format.html { redirect_to profile_group_url(@profile, @group), notice: 'Control was deleted from Group' }
         format.json { render :show, status: :ok, location: @group }
       else
-        format.html { redirect_to profile_group_url(@profile, @group), notice: 'Error updating Group' }
+        format.html { redirect_to profile_group_url(@profile, @group), error: 'Error updating Group' }
         format.json { render json: @group.errors, status: :unprocessable_entity }
       end
     end
@@ -80,6 +86,7 @@ class GroupsController < ApplicationController
   # DELETE /groups/1
   # DELETE /groups/1.json
   def destroy
+    authorize! :destroy, @profile
     @group.destroy
     respond_to do |format|
       format.html { redirect_to @profile, notice: 'Group was successfully destroyed.' }

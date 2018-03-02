@@ -6,6 +6,7 @@ class SupportsController < ApplicationController
   # POST /profiles/:profile_id/supports
   # POST /profiles/:profile_id/supports.json
   def create
+    authorize! :create, @profile
     @support = @profile.supports.new(support_params)
 
     respond_to do |format|
@@ -22,6 +23,7 @@ class SupportsController < ApplicationController
   # DELETE /profiles/:profile_id/supports/1
   # DELETE /profiles/:profile_id/supports/1.json
   def destroy
+    authorize! :destroy, @profile
     @support = @profile.supports.find(params[:id])
     @support.destroy
     respond_to do |format|

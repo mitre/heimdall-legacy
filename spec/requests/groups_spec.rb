@@ -1,4 +1,5 @@
 require 'rails_helper'
+require 'support/sign_in_support'
 
 RSpec.describe "Groups", type: :request do
   describe "GET /profile/:profile_id/group/:id" do
@@ -8,7 +9,8 @@ RSpec.describe "Groups", type: :request do
       }
 
       it "works! (now write some real specs)" do
-        profile = create :profile
+        sign_in_as_a_valid_user
+        profile = create :profile, created_by: @user
         group = profile.groups.create! valid_attributes
         get profile_group_path(profile, group)
         expect(response).to have_http_status(200)

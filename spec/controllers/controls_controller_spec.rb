@@ -33,35 +33,39 @@ RSpec.describe ControlsController, type: :controller do
   }
 
   let(:invalid_attributes) {
-    FactoryGirl.build(:invalid_control).attributes
+    {title: "MyString",
+      desc: "MyString",
+      impact: 1.5,
+      refs: "MyString"
+    }
   }
 
   # This should return the minimal set of values that should be in the session
   # in order to pass any filters (e.g. authentication) defined in
   # ControlsController. Be sure to keep this updated too.
   let(:valid_session) { {} }
-  let(:user) { User.create!(email: "user#{rand(100000).to_s}@examples.com", password: '1234567890') }
 
-  context 'User is logged in' do
+  context 'Editor is logged in' do
+    let(:user) { FactoryGirl.create(:editor) }
     before do
       sign_in user
     end
 
     before(:each) do
-      @profile = Profile.find(valid_attributes['profile_id'])
+      @profile = create :profile, created_by: user
     end
 
     describe "GET #show" do
       it "returns a success response" do
-        control = Control.create! valid_attributes
-        get :show, params: {profile_id: control.profile_id, id: control.to_param}, session: valid_session
+        control = create :control, profile_id: @profile.id, created_by: user
+        get :show, params: {profile_id: @profile.id, id: control.to_param}, session: valid_session
         expect(response).to be_success
       end
     end
 
     describe "GET #details" do
       it "returns a success response" do
-        control = Control.create! valid_attributes
+        control = create :control, profile_id: @profile.id, created_by: user
         get :details, :format => 'js', params: {profile_id: control.profile_id, id: control.to_param}, xhr: true, session: valid_session
         expect(response.content_type).to eq("text/javascript")
       end
@@ -76,8 +80,8 @@ RSpec.describe ControlsController, type: :controller do
 
     describe "GET #edit" do
       it "returns a success response" do
-        control = Control.create! valid_attributes
-        get :edit, params: {profile_id: control.profile_id, id: control.to_param}, session: valid_session
+        control = create :control, profile_id: @profile.id, created_by: user
+        get :edit, params: {profile_id: @profile.id, id: control.to_param}, session: valid_session
         expect(response).to be_success
       end
     end
@@ -98,9 +102,9 @@ RSpec.describe ControlsController, type: :controller do
 
       context "with invalid params" do
         it "returns a success response (i.e. to display the 'new' template)" do
-          post :create, params: {profile_id: @profile.id, control: invalid_attributes}, session: valid_session
-          #expect(response).to be_success
-          skip("Add assertions for invalid params")
+          expect {
+            post :create, params: {profile_id: @profile.id, control: invalid_attributes}, session: valid_session
+          }.to raise_error(Mongoid::Errors::InvalidValue)
         end
       end
     end
@@ -112,7 +116,7 @@ RSpec.describe ControlsController, type: :controller do
         }
 
         it "updates the requested control" do
-          control = Control.create! valid_attributes
+          control = create :control, profile_id: @profile.id, created_by: user
           title = control.title
           put :update, params: {profile_id: control.profile_id, id: control.to_param, control: new_attributes}, session: valid_session
           control.reload
@@ -120,34 +124,34 @@ RSpec.describe ControlsController, type: :controller do
         end
 
         it "redirects to the control" do
-          control = Control.create! valid_attributes
+          control = create :control, profile_id: @profile.id, created_by: user
           put :update, params: {profile_id: control.profile_id, id: control.to_param, control: valid_attributes}, session: valid_session
-          expect(response).to redirect_to(profile_control_url(@profile, control))
+          expect(response).to redirect_to(profile_control_url(control.profile, control))
         end
       end
 
       context "with invalid params" do
         it "returns a success response (i.e. to display the 'edit' template)" do
-          control = Control.create! valid_attributes
+          control = create :control, profile_id: @profile.id, created_by: user
           put :update, params: {profile_id: control.profile_id, id: control.to_param, control: invalid_attributes}, session: valid_session
-          #expect(response).to be_success
-          skip("Add assertions for invalid params")
+          expect(response).to be_success
+          expect(response).to render_template(:edit)
         end
       end
     end
 
     describe "DELETE #destroy" do
       it "destroys the requested control" do
-        control = Control.create! valid_attributes
+        control = create :control, profile_id: @profile.id, created_by: user
         expect {
           delete :destroy, params: {profile_id: control.profile_id, id: control.to_param}, session: valid_session
         }.to change(Control, :count).by(-1)
       end
 
       it "redirects to the controls list" do
-        control = Control.create! valid_attributes
+        control = create :control, profile_id: @profile.id, created_by: user
         delete :destroy, params: {profile_id: control.profile_id, id: control.to_param}, session: valid_session
-        expect(response).to redirect_to(@profile)
+        expect(response).to redirect_to(control.profile)
       end
     end
   end

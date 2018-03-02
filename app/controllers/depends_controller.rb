@@ -4,6 +4,7 @@ class DependsController < ApplicationController
   # POST /profiles/:profile_id/depends
   # POST /profiles/:profile_id/depends.json
   def create
+    authorize! :create, @profile
     @depend = @profile.depends.new(depend_params)
     respond_to do |format|
       if @profile.save
@@ -19,6 +20,7 @@ class DependsController < ApplicationController
   # DELETE /profiles/:profile_id/depends/1
   # DELETE /profiles/:profile_id/depends/1.json
   def destroy
+    authorize! :destroy, @profile
     @depend = @profile.depends.find(params[:id])
     @depend.destroy
     respond_to do |format|

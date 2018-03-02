@@ -1,4 +1,5 @@
 require 'rails_helper'
+require 'support/sign_in_support'
 
 RSpec.describe "Supports", type: :request do
   describe "DELETE /profile/:profile_id/support/:id" do
@@ -8,7 +9,8 @@ RSpec.describe "Supports", type: :request do
       }
 
       it "works! (now write some real specs)" do
-        profile = create :profile
+        sign_in_as_a_valid_user
+        profile = create :profile, created_by: @user
         support = profile.supports.create! valid_attributes
         delete profile_support_path(profile, support)
         expect(response).to redirect_to(profile)

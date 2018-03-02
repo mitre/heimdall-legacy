@@ -32,55 +32,56 @@ RSpec.describe SupportsController, type: :controller do
     FactoryGirl.build(:support).attributes
   }
 
-  let(:invalid_attributes) {
-    FactoryGirl.build(:invalid_support).attributes
-  }
-
-  before(:each) do
-    @profile = FactoryGirl.create(:profile)
-  end
-
   # This should return the minimal set of values that should be in the session
   # in order to pass any filters (e.g. authentication) defined in
   # SupportsController. Be sure to keep this updated too.
   let(:valid_session) { {} }
 
-  describe "POST #create" do
-    context "with valid params" do
-      it "creates a new Support" do
-        expect {
+  context 'Editor is logged in' do
+    let(:user) { FactoryGirl.create(:editor) }
+    before do
+      sign_in user
+    end
+
+    before(:each) do
+      @profile = create :profile, created_by: user
+    end
+
+    describe "POST #create" do
+      context "with valid params" do
+        it "creates a new Support" do
+          expect {
+            post :create, params: {profile_id: @profile.id, support: valid_attributes}, session: valid_session
+          }.to change { @profile.reload.supports.count }.by(1)
+        end
+
+        it "redirects to the created support" do
           post :create, params: {profile_id: @profile.id, support: valid_attributes}, session: valid_session
-        }.to change { @profile.reload.supports.count }.by(1)
+          expect(response).to redirect_to(@profile)
+        end
       end
 
-      it "redirects to the created support" do
-        post :create, params: {profile_id: @profile.id, support: valid_attributes}, session: valid_session
+      context "with invalid params" do
+        it "returns a success response (i.e. to display the 'new' template)" do
+          post :create, params: {profile_id: @profile.id, support: {os_family: nil}}, session: valid_session
+          expect(response).to_not be_success
+        end
+      end
+    end
+
+    describe "DELETE #destroy" do
+      it "destroys the requested support" do
+        support = @profile.supports.create! valid_attributes
+        expect {
+          delete :destroy, params: {profile_id: @profile.id, id: support.to_param}, session: valid_session
+        }.to change { @profile.reload.supports.count }.by(-1)
+      end
+
+      it "redirects to the supports list" do
+        support = @profile.supports.create! valid_attributes
+        delete :destroy, params: {profile_id: @profile.id, id: support.to_param}, session: valid_session
         expect(response).to redirect_to(@profile)
       end
     end
-
-    context "with invalid params" do
-      it "returns a success response (i.e. to display the 'new' template)" do
-        post :create, params: {profile_id: @profile.id, support: invalid_attributes}, session: valid_session
-        #expect(response).to be_success
-        skip("Add assertions for invalid params")
-      end
-    end
   end
-
-  describe "DELETE #destroy" do
-    it "destroys the requested support" do
-      support = @profile.supports.create! valid_attributes
-      expect {
-        delete :destroy, params: {profile_id: @profile.id, id: support.to_param}, session: valid_session
-      }.to change { @profile.reload.supports.count }.by(-1)
-    end
-
-    it "redirects to the supports list" do
-      support = @profile.supports.create! valid_attributes
-      delete :destroy, params: {profile_id: @profile.id, id: support.to_param}, session: valid_session
-      expect(response).to redirect_to(@profile)
-    end
-  end
-
 end

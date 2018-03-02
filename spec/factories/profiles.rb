@@ -9,11 +9,6 @@ FactoryGirl.define do
     summary "MyString"
     version "MyString"
     sha256 "MyString"
-    #depends "MyText1"
-    #supports "MyText2"
-    #controls "MyText3"
-    #groups "MyText4"
-    #profile_attributes "MyText5"
   end
 
   factory :profile2, :class => Profile do
@@ -29,12 +24,15 @@ FactoryGirl.define do
   end
 
   factory :invalid_profile, :class => Profile do
+    name nil
+    title nil
     maintainer "MyString"
     copyright "MyString"
     copyright_email "MyString"
     license "MyString"
     summary "MyString"
     version "MyString"
+    sha256 nil
   end
 
 end

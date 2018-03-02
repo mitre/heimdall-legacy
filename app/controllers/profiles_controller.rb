@@ -1,5 +1,6 @@
 class ProfilesController < ApplicationController
-  before_action :set_profile, only: [:show, :edit, :update, :destroy, :vis, :ssp, :nist_800_53]
+  load_resource
+  authorize_resource only: [:show, :edit, :destroy, :upload]
 
   @@nist_800_53_json = nil
 
@@ -16,27 +17,6 @@ class ProfilesController < ApplicationController
     @support = @profile.supports.new()
   end
 
-  # GET /profiles/1
-  # GET /profiles/1.json
-  def ssp
-    unless @@nist_800_53_json
-      file = File.read("#{Rails.root}/data/nist_800_53.json")
-      @@nist_800_53_json = JSON.parse(file)
-    end
-    @nist_hash = @@nist_800_53_json.deep_dup
-    families, nist = @profile.control_families
-    @nist_hash["children"].each do |cf|
-      cf["children"].each do |control|
-        if families.include?(control["name"])
-          control["controls"] = nist[control["name"]]
-          control["value"] = control["controls"].size
-        else
-          control["value"] = 0
-        end
-      end
-    end
-  end
-
   # GET /profiles/1/edit
   def edit
     @depend = @profile.depends.new()
@@ -47,13 +27,12 @@ class ProfilesController < ApplicationController
   # POST /profiles.json
   def create
     @profile = Profile.new(profile_params)
-
     respond_to do |format|
       if @profile.save
         format.html { redirect_to @profile, notice: 'Profile was successfully created.' }
         format.json { render :show, status: :created, location: @profile }
       else
-        format.html { render :new }
+        format.html { redirect_to profiles_url, error: 'Profile was not successfully created.' }
         format.json { render json: @profile.errors, status: :unprocessable_entity }
       end
     end
@@ -67,7 +46,7 @@ class ProfilesController < ApplicationController
         format.html { redirect_to @profile, notice: 'Profile was successfully updated.' }
         format.json { render :show, status: :ok, location: @profile }
       else
-        format.html { render :edit }
+        format.html { render :edit, error: 'Profile was not successfully updated.' }
         format.json { render json: @profile.errors, status: :unprocessable_entity }
       end
     end
@@ -84,6 +63,7 @@ class ProfilesController < ApplicationController
   end
 
   def nist_800_53
+    authorize! :read, Profile
     category = nil
     category = params[:category].downcase if params.has_key?(:category)
     unless @@nist_800_53_json
@@ -130,6 +110,7 @@ class ProfilesController < ApplicationController
   end
 
   def upload
+    authorize! :create, Profile
     file = params[:file]
     contents = JSON.parse(file.read)
     if contents.key? "name"

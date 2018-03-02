@@ -1,4 +1,5 @@
 require 'rails_helper'
+require 'support/sign_in_support'
 
 RSpec.describe "Profiles", type: :request do
   describe "GET /profiles" do

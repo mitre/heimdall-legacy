@@ -5,7 +5,6 @@ FactoryGirl.define do
   end
 
   factory :invalid_dependency, :class => Depend do
-    name "MyString"
     path "MyString"
   end
 end

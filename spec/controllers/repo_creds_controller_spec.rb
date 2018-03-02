@@ -33,22 +33,22 @@ RSpec.describe RepoCredsController, type: :controller do
   }
 
   let(:invalid_attributes) {
-    FactoryGirl.build(:invalid_repo_cred).attributes
+    {username: nil, token: "token2"}
   }
-
-  before(:each) do
-    @repo = FactoryGirl.create(:repo)
-  end
 
   # This should return the minimal set of values that should be in the session
   # in order to pass any filters (e.g. authentication) defined in
   # RepoCredsController. Be sure to keep this updated too.
   let(:valid_session) { {} }
-  let(:user) { User.create!(email: "repouser#{rand(100000).to_s}@examples.com", password: '1234567890') }
 
-  context 'User is logged in' do
+  context 'Editor is logged in' do
+    let(:user) { FactoryGirl.create(:editor) }
     before do
       sign_in user
+    end
+
+    before(:each) do
+      @repo = create :repo, created_by: user
     end
 
     describe "POST #create" do
@@ -68,8 +68,7 @@ RSpec.describe RepoCredsController, type: :controller do
       context "with invalid params" do
         it "returns a success response (i.e. to display the 'new' template)" do
           post :create, params: {repo_id: @repo.id, repo_cred: invalid_attributes}, session: valid_session
-          #expect(response).to be_success
-          skip("Add assertions for invalid params")
+          expect(response).to_not be_success
         end
       end
     end
@@ -99,8 +98,7 @@ RSpec.describe RepoCredsController, type: :controller do
         it "returns a success response (i.e. to display the 'edit' template)" do
           repo_cred = @repo.repo_creds.create! valid_attributes
           put :update, params: {repo_id: @repo.id, id: repo_cred.to_param, repo_cred: invalid_attributes}, session: valid_session
-          #expect(response).to be_success
-          skip("Add assertions for invalid params")
+          expect(response).to_not be_success
         end
       end
     end

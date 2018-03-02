@@ -1,5 +1,7 @@
 class EvaluationsController < ApplicationController
-  before_action :set_evaluation, only: [:show, :destroy, :ssp, :nist_800_53]
+  load_resource
+  authorize_resource only: [:show, :destroy]
+  #before_action :set_evaluation, only: [:show, :destroy, :ssp, :nist_800_53]
   protect_from_forgery
 
   @@nist_800_53_json = nil
@@ -36,6 +38,7 @@ class EvaluationsController < ApplicationController
   # GET /profiles/1
   # GET /profiles/1.json
   def ssp
+    authorize! :read, Evaluation
     unless @@nist_800_53_json
       file = File.read("#{Rails.root}/data/nist_800_53.json")
       @@nist_800_53_json = JSON.parse(file)
@@ -71,6 +74,7 @@ class EvaluationsController < ApplicationController
   end
 
   def nist_800_53
+    authorize! :read, Evaluation
     category = nil
     category = params[:category].downcase if params.has_key?(:category)
     status_sym = nil
@@ -135,6 +139,7 @@ class EvaluationsController < ApplicationController
   end
 
   def upload
+    authorize! :create, Evaluation
     file = params[:file]
     if @evaluation = Evaluation.parse(JSON.parse(file.read))
       redirect_to @evaluation, notice: 'Evaluation uploaded.'
