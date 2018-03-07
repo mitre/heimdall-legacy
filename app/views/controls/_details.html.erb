@@ -30,7 +30,7 @@
       <tr><td>Control:</td><td><%= @control.control_id %></td></tr>
       <tr><td>Title:</td><td><%= @control.title %></td></tr>
       <tr><td>Desc:</td><td><%= @control.desc %></td></tr>
-      <tr><td>Severity:</td><td><%= @control.tag 'severity' %></td></tr>
+      <tr><td>Severity:</td><td><%= @control.severity %></td></tr>
       <tr><td>Impact:</td><td><%= @control.impact %></td></tr>
       <% if nist = @control.tag('nist') %>
         <tr><td>NIST Ref:</td><td><%= nist %></td></tr>

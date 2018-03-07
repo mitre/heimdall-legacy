@@ -78,7 +78,7 @@ class Evaluation
     profiles.each do |profile|
       #logger.debug "Profile: #{profile.name}"
       profile.controls.each do |control|
-        #logger.debug "#{control.control_id}: #{control.impact}"
+        logger.debug "#{control.control_id}: #{control.impact}, severity #{control.tags.where(:name => 'severity').first.try(:value)}"
         ct_results = cts[control.id]
         if severity = control.tags.where(:name => 'severity').first
           if cat.nil? || cat == severity.value
@@ -87,11 +87,12 @@ class Evaluation
               if tag.value.is_a? Array
                 tag.value.each do |value|
                   unless value.include?("Rev")
-                    value = value.split(' ')[0]
+                    value = value.split('(')[0].strip
                     nist[value] = [] unless nist[value]
                     sym = status_symbol(control, ct_results)
-                    #logger.debug "#{control.control_id}: sym = #{sym}, equals #{status_symbol}: #{status_symbol == sym}"
+                    logger.debug "#{control.control_id}: nist: #{value}, sym = #{sym}, equals #{status_symbol}: #{status_symbol == sym}"
                     if status_symbol.nil? || status_symbol == sym
+                      logger.debug "#{control.control_id}: nist: #{value}, status_value: #{status_symbol_value(sym)}"
                       nist[value] << {"name": "#{control.control_id}", "status_value": status_symbol_value(sym), "children":
                         [{"name": "#{control.control_id}", "title": control.title, "nist": control.tag('nist'),
                           "status_symbol": sym, "status_value": status_symbol_value(sym),
@@ -107,6 +108,7 @@ class Evaluation
         end
       end
     end
+    #logger.debug "nist: #{nist}"
     nist
   end
 

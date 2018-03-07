@@ -216,7 +216,7 @@
                   <td><button class="<%= status_btn(sym) %>" style="width:120px" onclick="show_details('<%= control.profile_id %>', '<%= control.id %>', '<%= @evaluation.id %>');"><%= status_label(sym) %></button></td>
                   <td><%= control.title %></td>
                   <td><%= link_to control.control_id, profile_control_path(control.profile_id, control.id) %></td>
-                  <td><%= control.tag 'severity' %></td>
+                  <td><%= control.severity %></td>
                   <td><%= control.tag 'nist' %></td>
                   <td class="hidden"><%= control.code %></td>
                 </tr>
@@ -357,32 +357,46 @@ document.addEventListener("turbolinks:load", function() {
       return string_array.join(' ');
   }
 
-  function accumulate_impact(d, low_r, high_r) {
-    //console.log("accumulate_impact for " + d.name + ", low_r: " + low_r + ", high_r: " + high_r);
-		count = (d._children = d.children)
-		  // recursion step, note that p and v are defined by reduce
-			? d.children.reduce(function(p, v) {im = accumulate_impact(v, low_r, high_r); return p + im; }, 0)
-			: (d.impact >= low_r && d.impact <= high_r) ? d.value : 0
-    //console.log("count = " + count);
-    return count;
-	}
-
-  function accumulate_status(d, value) {
-    //console.log("accumulate_impact for " + d.name + ", low_r: " + low_r + ", high_r: " + high_r);
-		count = (d._children = d.children)
-		  // recursion step, note that p and v are defined by reduce
-			? d.children.reduce(function(p, v) {im = accumulate_status(v, value); return p + im; }, 0)
-			: (d.status_value == value) ? d.value : 0
-    //console.log("count = " + count);
-    return count;
-	}
-
   function draw_status_pie_chart(d)
   {
-    var not_app = accumulate_status(d, 0.2);
-    var not_rev = accumulate_status(d, 0.4);
-    var not_find = accumulate_status(d, 0.6);
-    var open = accumulate_status(d, 0.8);
+    not_app = 0;
+    not_rev = 0;
+    not_find = 0;
+    open = 0;
+    ary = [];
+    if (d.children) {
+      for(var i=0, len=d.children.length; i < len; i++) {
+        child1 = d.children[i];
+        if (child1.children) {
+          for(var j=0, len2=child1.children.length; j < len2; j++) {
+            child2 = child1.children[j];
+            if (child2.children) {
+              for(var k=0, len3=child2.children.length; k < len3; k++) {
+                child3 = child2.children[k];
+                if (!(ary.includes(child3.name))) {
+                  ary.push(child3.name);
+                  status_value = child3.status_value;
+                  console.log("Child3: " + child3.name + ", status_value: " + status_value);
+                  if (status_value == 0.2) {
+                    not_app += 1;
+                  } else if (status_value == 0.4) {
+                    not_rev += 1;
+                  } else if (status_value == 0.6) {
+                    not_find += 1;
+                  } else if (status_value == 0.8) {
+                    open += 1;
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+    //var not_app = accumulate_status(d, 0.2);
+    //var not_rev = accumulate_status(d, 0.4);
+    //var not_find = accumulate_status(d, 0.6);
+    //var open = accumulate_status(d, 0.8);
     total_count = not_app + not_find + not_rev + open;
     compliance_count = ((not_find + not_app) / total_count) * 100;
 
@@ -429,11 +443,43 @@ document.addEventListener("turbolinks:load", function() {
 
   function draw_severity_pie_chart(d)
   {
+    high = 0;
+    medium = 0;
+    low = 0;
+    ary = [];
+    if (d.children) {
+      for(var i=0, len=d.children.length; i < len; i++) {
+        child1 = d.children[i];
+        if (child1.children) {
+          for(var j=0, len2=child1.children.length; j < len2; j++) {
+            child2 = child1.children[j];
+            if (child2.children) {
+              for(var k=0, len3=child2.children.length; k < len3; k++) {
+                child3 = child2.children[k];
+                if (!(ary.includes(child3.name))) {
+                  ary.push(child3.name);
+                  if (child3.children) {
+                    impact = child3.children[0].impact;
+                    if (impact <= 0.4) {
+                      low += 1;
+                    } else if (impact < 0.7) {
+                      medium += 1;
+                    } else if (impact >= 0.7) {
+                      high += 1;
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    }
     severity_data = [
-              ['High',   accumulate_impact(d, 0.7, 0.9)],
-              ['Medium',  accumulate_impact(d, 0.4, 0.6)],
-              ['Low', accumulate_impact(d, 0.1, 0.3)],
-          ];
+                    ['High',   high],
+                    ['Medium',  medium],
+                    ['Low', low],
+                ];
 
     c3.generate(
     {

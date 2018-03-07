@@ -43,14 +43,14 @@ class Control
     results.where(:evaluation_id => evaluation_id)
   end
 
-  def self.severity impact
-    if impact <= 0.3
+  def severity
+    if self.impact <= 0.3
       return "low"
     end
-    if impact <= 0.6
+    if self.impact <= 0.6
       return "medium"
     end
-    if impact <= 0.9
+    if self.impact <= 0.9
       return "high"
     end
   end

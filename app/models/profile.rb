@@ -23,7 +23,7 @@ class Profile
   accepts_nested_attributes_for :groups
   accepts_nested_attributes_for :profile_attributes
   validates_presence_of :name, :title, :sha256
-  
+
   def is_editable?
     evaluations.size == 0
   end
@@ -36,10 +36,10 @@ class Profile
         if tag.value.is_a? Array
           tag.value.each do |value|
             unless value.include?("Rev")
-              vals = value.split(" ")
-              nist[vals[0]] = [] unless nist[vals[0]]
-              nist[vals[0]] << control
-              families << vals[0]
+              val = value.split("(")[0].strip
+              nist[val] = [] unless nist[val]
+              nist[val] << control
+              families << val
             end
           end
         end
@@ -55,9 +55,9 @@ class Profile
         if tag.value.is_a? Array
           tag.value.each do |value|
             unless value.include?("Rev")
-              vals = value.split(" ")
-              nist[vals[0]] = [] unless nist[vals[0]]
-              nist[vals[0]] << control
+              val = value.split("(")[0].strip
+              nist[val] = [] unless nist[val]
+              nist[val] << control
             end
           end
         end
@@ -70,7 +70,7 @@ class Profile
     nist = {}
     #logger.debug "CAT: #{cat}, range: #{range.inspect}"
     self.controls.each do |control|
-      #logger.debug "#{control.control_id}: #{control.impact}"
+      #logger.debug "#{control.control_id}: impact #{control.impact}, severity #{control.tags.where(:name => 'severity').first}"
       if severity = control.tags.where(:name => 'severity').first
         if cat.nil? || cat == severity.value
           #logger.debug "#{control.control_id}: severity: #{severity}"
@@ -78,9 +78,9 @@ class Profile
             if tag.value.is_a? Array
               tag.value.each do |value|
                 unless value.include?("Rev")
-                  vals = value.split(" ")
-                  nist[vals[0]] = [] unless nist[vals[0]]
-                  nist[vals[0]] << {"name": "#{control.control_id}", "severity": "#{severity.value}", "impact": control.impact, "value": 1}
+                  val = value.split("(")[0].strip
+                  nist[val] = [] unless nist[val]
+                  nist[val] << {"name": "#{control.control_id}", "severity": "#{severity.value}", "impact": control.impact, "value": 1}
                 end
               end
             end
@@ -100,9 +100,6 @@ class Profile
       #logger.debug("TAGS: #{tags.inspect}")
       tags.each do |key, value|
         new_tags << {"name": "#{key}", "value": value}
-      end
-      unless tags.key? "severity"
-        new_tags << {"name": "severity", "value": Control.severity(control['impact'])}
       end
       #logger.debug("new tags: #{new_tags.inspect}")
       control["tags"] = new_tags

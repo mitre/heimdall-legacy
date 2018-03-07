@@ -95,11 +95,12 @@ class EvaluationsController < ApplicationController
         control_total_impact = 0.0
         control_total_children = 0
         if nist_hash[control["name"]]
+          #logger.debug "name: #{cf['name']}, control: #{control["name"]}"
           control.delete('value')
           control["children"] = nist_hash[control["name"]]
           control["children"].each do |childt|
-            #logger.debug "CHILD #{childt.inspect}"
             child = childt[:children].first
+            #logger.debug "CHILD #{childt['name']}, status_value: #{childt[:status_value]}, child status_value #{child[:status_value]}, status_symbol: #{child[:status_symbol]}"
             if child[:status_value]
               if child[:status_value] > 0.4
                 if control_total_impact < 0.6
