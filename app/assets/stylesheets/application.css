@@ -95,6 +95,7 @@
 }
 .sidebar {
   position: fixed;
+  width: 23%;
 }
 .margin-right {
   margin-right: 5px;

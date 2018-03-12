@@ -16,7 +16,9 @@ Rails.application.routes.draw do
   end
   resources :evaluations do
     resources :results
+    resources :downloads, only: [:show]
   end
+
   match 'profiles/:profile_id/controls/:id/details(/evaluation/:evaluation_id)' => 'controls#details', :as => :profile_control_details, :via => :get
   match 'profiles/:profile_id/groups/:id/add' => 'groups#add', :as => :profile_group_add, :via => :patch
   match 'profiles/:profile_id/groups/:id/remove/:control_id' => 'groups#remove', :as => :profile_group_remove, :via => :patch

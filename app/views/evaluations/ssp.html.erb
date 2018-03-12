@@ -147,7 +147,7 @@
                     <h3 id="<%= cf_name %>" onclick="togAll('<%= cf_name %>')"><%= cf_name %></h3>
                     <div class="container-fluid big-margin-bottom">
                       <% cf["controls"].each_with_index do |control, index| %>
-                        <h4><%= index+1 %>. <button class="<%= status_btn(@symbols[control.control_id]) %>" onclick="tog('<%= control.control_id %>')"><%= @symbols[control.control_id].to_s.titleize %></button> <%= control.title %></h4>
+                        <h4><%= index+1 %>. <button class="<%= status_btn(@symbols[control.control_id]) %>"><%= @symbols[control.control_id].to_s.titleize %></button> <%= control.title %></h4>
                         <div id="<%= control.control_id %>" class="container-fluid big-margin-bottom">
                           <%= control.desc %>
                           <h4>Check Text</h4> <pre><%= control.tag('check') %></pre>
@@ -164,6 +164,15 @@
       </div>
     </div>
     <div class="col-md-3">
+      <div id="sidebar" class="box box-primary">
+        <div class="box-body">
+          <h4><%= link_to "Download as PDF",
+            evaluation_download_path(@evaluation, format: "pdf"),
+            target: "_blank",
+            class: "download" %>
+          </h3>
+        </div>
+      </div>
       <div id="sidebar" class="box box-primary sidebar">
         <ul id="sspList" class="list-unstyled">
           <% @nist_hash["children"].each do |family| %>
