@@ -2,7 +2,6 @@ class SupportsController < ApplicationController
   before_action :transform
   before_action :set_profile, only: [:create, :destroy]
 
-
   # POST /profiles/:profile_id/supports
   # POST /profiles/:profile_id/supports.json
   def create
@@ -33,18 +32,19 @@ class SupportsController < ApplicationController
   end
 
   private
-    # Use callbacks to share common setup or constraints between actions.
-    def set_profile
-      @profile = Profile.find(params[:profile_id])
-    end
 
-    # Never trust parameters from the scary internet, only allow the white list through.
-    def support_params
-      params.require(:support).permit(:os_family)
-    end
+  # Use callbacks to share common setup or constraints between actions.
+  def set_profile
+    @profile = Profile.find(params[:profile_id])
+  end
 
-    #convert parameters with hyphen to parameters with underscore.
-    def transform
-      params.transform_keys! { |key| key.tr('-', '_') }
-    end
+  # Never trust parameters from the scary internet, only allow the white list through.
+  def support_params
+    params.require(:support).permit(:os_family)
+  end
+
+  #convert parameters with hyphen to parameters with underscore.
+  def transform
+    params.transform_keys! { |key| key.tr('-', '_') }
+  end
 end

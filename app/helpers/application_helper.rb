@@ -1,14 +1,11 @@
 module ApplicationHelper
-
   def category_button impact
     if impact <= 0.3
-      return "btn btn-category-iii"
-    end
-    if impact <= 0.6
-      return "btn btn-category-ii"
-    end
-    if impact <= 0.9
-      return "btn btn-category-i"
+      'btn btn-category-iii'
+    elsif impact <= 0.6
+      'btn btn-category-ii'
+    elsif impact <= 0.9
+      'btn btn-category-i'
     end
   end
 
@@ -43,5 +40,4 @@ module ApplicationHelper
       'No test available for this control'
     end
   end
-
 end

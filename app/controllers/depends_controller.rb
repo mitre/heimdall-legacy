@@ -30,13 +30,14 @@ class DependsController < ApplicationController
   end
 
   private
-    # Use callbacks to share common setup or constraints between actions.
-    def set_profile
-      @profile = Profile.find(params[:profile_id])
-    end
 
-    # Never trust parameters from the scary internet, only allow the white list through.
-    def depend_params
-      params.require(:depend).permit(:name, :path)
-    end
+  # Use callbacks to share common setup or constraints between actions.
+  def set_profile
+    @profile = Profile.find(params[:profile_id])
+  end
+
+  # Never trust parameters from the scary internet, only allow the white list through.
+  def depend_params
+    params.require(:depend).permit(:name, :path)
+  end
 end

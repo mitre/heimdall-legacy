@@ -11,19 +11,18 @@ class Result
   field :message, type: String
   field :exception, type: String
   field :backtrace, type: Array, default: []
-  belongs_to :evaluation, :inverse_of => :results
-  belongs_to :control, :inverse_of => :results
+  belongs_to :evaluation, inverse_of: :results
+  belongs_to :control, inverse_of: :results
 
   def status_symbol
-    if self.status.include?('failed')
+    if status.include?('failed')
       :open
-    elsif self.status.include?('passed')
+    elsif status.include?('passed')
       :not_a_finding
-    elsif self.status.include?('skipped')
+    elsif status.include?('skipped')
       :not_reviewed
     else
       :not_tested
     end
   end
-
 end

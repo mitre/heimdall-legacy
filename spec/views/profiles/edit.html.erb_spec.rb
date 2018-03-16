@@ -3,8 +3,8 @@ require 'rails_helper'
 RSpec.describe "profiles/edit", type: :view do
   before(:each) do
     @profile = create :profile
-    @depend = @profile.depends.new()
-    @support = @profile.supports.new()
+    @depend = @profile.depends.new
+    @support = @profile.supports.new
   end
 
   it "renders the edit profile form" do

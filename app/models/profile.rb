@@ -25,41 +25,37 @@ class Profile
   validates_presence_of :name, :title, :sha256
 
   def is_editable?
-    evaluations.size == 0
+    evaluations.empty?
   end
 
   def control_families
     families = []
     nist = {}
-    self.controls.each do |control|
-      control.tags.where(:name => 'nist').each do |tag|
-        if tag.value.is_a? Array
-          tag.value.each do |value|
-            unless value.include?("Rev")
-              val = value.split("(")[0].strip
-              nist[val] = [] unless nist[val]
-              nist[val] << control
-              families << val
-            end
-          end
+    controls.each do |control|
+      control.tags.where(name: 'nist').each do |tag|
+        next unless tag.value.is_a? Array
+        tag.value.each do |value|
+          next if value.include?('Rev')
+          val = value.split("(")[0].strip
+          nist[val] = [] unless nist[val]
+          nist[val] << control
+          families << val
         end
       end
     end
-    return families, nist
+    [families, nist]
   end
 
   def by_nist_family
     nist = {}
-    self.controls.each do |control|
-      control.tags.where(:name => 'nist').each do |tag|
-        if tag.value.is_a? Array
-          tag.value.each do |value|
-            unless value.include?("Rev")
-              val = value.split("(")[0].strip
-              nist[val] = [] unless nist[val]
-              nist[val] << control
-            end
-          end
+    controls.each do |control|
+      control.tags.where(name: 'nist').each do |tag|
+        next unless tag.value.is_a? Array
+        tag.value.each do |value|
+          next if value.include?('Rev')
+          val = value.split("(")[0].strip
+          nist[val] = [] unless nist[val]
+          nist[val] << control
         end
       end
     end
@@ -68,23 +64,16 @@ class Profile
 
   def nist_hash cat
     nist = {}
-    #logger.debug "CAT: #{cat}, range: #{range.inspect}"
-    self.controls.each do |control|
-      #logger.debug "#{control.control_id}: impact #{control.impact}, severity #{control.tags.where(:name => 'severity').first}"
-      if severity = control.tags.where(:name => 'severity').first
-        if cat.nil? || cat == severity.value
-          #logger.debug "#{control.control_id}: severity: #{severity}"
-          control.tags.where(:name => 'nist').each do |tag|
-            if tag.value.is_a? Array
-              tag.value.each do |value|
-                unless value.include?("Rev")
-                  val = value.split("(")[0].strip
-                  nist[val] = [] unless nist[val]
-                  nist[val] << {"name": "#{control.control_id}", "severity": "#{severity.value}", "impact": control.impact, "value": 1}
-                end
-              end
-            end
-          end
+    controls.each do |control|
+      severity = control.tags.where(name: 'severity').first
+      next unless severity && (cat.nil? || cat == severity.value)
+      control.tags.where(name: 'nist').each do |tag|
+        next unless tag.value.is_a? Array
+        tag.value.each do |value|
+          next if value.include?('Rev')
+          val = value.split("(")[0].strip
+          nist[val] = [] unless nist[val]
+          nist[val] << {"name": control.control_id.to_s, "severity": severity.value, "impact": control.impact, "value": 1}
         end
       end
     end
@@ -95,11 +84,11 @@ class Profile
     hash = hash.deep_transform_keys{ |key| key.to_s.tr('-', '_').gsub(/\battributes\b/, 'profile_attributes').gsub(/\bid\b/, 'control_id') }
     hash["controls"].try(:each) do |control|
       tags = control.delete('tags')
-      results = control.delete('results')
+      control.delete('results')
       new_tags = []
       #logger.debug("TAGS: #{tags.inspect}")
       tags.each do |key, value|
-        new_tags << {"name": "#{key}", "value": value}
+        new_tags << {"name": key.to_s, "value": value}
       end
       #logger.debug("new tags: #{new_tags.inspect}")
       control["tags"] = new_tags
@@ -113,9 +102,9 @@ class Profile
       options = attr.delete('options')
       options.each do |key, value|
         if key == "default"
-          unless value.kind_of?(Array)
-            unless value.kind_of?(String)
-              value = "#{value}"
+          unless value.is_a?(Array)
+            unless value.is_a?(String)
+              value = value.to_s
             end
             value = [value]
           end
@@ -130,9 +119,8 @@ class Profile
         new_groups << group
       end
     end
-    hash["groups"] = new_groups if new_groups.size > 0
+    hash["groups"] = new_groups if !new_groups.empty?
     #logger.debug("NEW HASH: #{hash.inspect}")
-    return hash, controls
+    [hash, controls]
   end
-
 end

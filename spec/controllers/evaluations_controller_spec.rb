@@ -36,6 +36,25 @@ RSpec.describe EvaluationsController, type: :controller do
       sign_in user
     end
 
+    context "with imported evaluation" do
+      let(:eval) { Evaluation.parse(JSON.parse(File.open("spec/support/bad_nginx.json", "r").read))}
+      describe "GET #ssp" do
+        it "returns a success response" do
+          #evaluation = create :evaluation, created_by: user
+          get :ssp, params: {id: eval.to_param}, session: valid_session
+          expect(response).to be_success
+        end
+      end
+
+      describe "GET #nist_800_53" do
+        it "returns a success response" do
+          #evaluation = create :evaluation, created_by: user
+          get :nist_800_53, params: {id: eval.to_param, category: "Medium"}, session: valid_session
+          expect(response.content_type).to eq("application/json")
+        end
+      end
+    end
+
     describe "GET #index" do
       it "returns a success response" do
         evaluation = create :evaluation, created_by: user
@@ -45,6 +64,7 @@ RSpec.describe EvaluationsController, type: :controller do
     end
 
     describe "GET #show" do
+      render_views
       it "returns a success response" do
         evaluation = create :evaluation, created_by: user
         get :show, params: {id: evaluation.to_param}, session: valid_session
@@ -52,33 +72,25 @@ RSpec.describe EvaluationsController, type: :controller do
       end
     end
 
-    describe "GET #ssp" do
-      it "returns a success response" do
-        evaluation = create :evaluation, created_by: user
-        get :ssp, params: {id: evaluation.to_param}, session: valid_session
-        expect(response).to be_success
-      end
-    end
-
-    describe "GET #nist_800_53" do
-      it "returns a success response" do
-        evaluation = create :evaluation, created_by: user
-        get :nist_800_53, params: {id: evaluation.to_param, category: "Medium"}, session: valid_session
-        expect(response.content_type).to eq("application/json")
-      end
-    end
-
     describe "POST #upload" do
       it "can upload an evaluation" do
         @file = fixture_file_upload('sample_jsons/good_nginxresults.json', 'text/json')
-        post :upload, params: {:file => @file}, session: valid_session
+        post :upload, params: {file: @file}, session: valid_session
         expect(response).to redirect_to(Evaluation.last)
+      end
+
+      it "rejects a malformed evaluation" do
+        @file = fixture_file_upload('spec/support/bad_profile.json', 'text/json')
+        post :upload, params: {file: @file}, session: valid_session
+        expect(response).to redirect_to(evaluations_path)
       end
     end
 
     describe "DELETE #destroy" do
       it "is blocked from destroying the evaluation it doesn't own" do
         evaluation = create :evaluation
+        admin = create :admin
+        user.remove_role :admin
         expect {
           delete :destroy, params: {id: evaluation.to_param}, session: valid_session
         }.to raise_error(CanCan::AccessDenied)

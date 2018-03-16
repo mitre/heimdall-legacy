@@ -1,6 +1,5 @@
 class ControlsController < ApplicationController
   before_action :set_control, only: [:show, :edit, :update, :destroy, :details]
-  #authorize_resource, only: [:show, :edit, :update, :destroy, :details]
 
   # GET /controls/1
   # GET /controls/1.json
@@ -11,7 +10,7 @@ class ControlsController < ApplicationController
   def new
     @profile = Profile.find(params[:profile_id])
     authorize! :create, @profile
-    @control = @profile.controls.new()
+    @control = @profile.controls.new
   end
 
   # GET /controls/1/edit
@@ -24,13 +23,13 @@ class ControlsController < ApplicationController
   def create
     @profile = Profile.find(params[:profile_id])
     authorize! :create, @profile
-    @control = @profile.controls.new(control_params)
-
     respond_to do |format|
-      if @profile.save
+      begin
+        @control = @profile.controls.new(control_params)
+        @profile.save
         format.html { redirect_to @profile, notice: 'Control was successfully created.' }
         format.json { render :show, status: :created, location: @control }
-      else
+      rescue
         format.html { redirect_to @profile, error: 'Control was not successfully created.' }
         format.json { render json: @control.errors, status: :unprocessable_entity }
       end
@@ -71,34 +70,29 @@ class ControlsController < ApplicationController
 
   def details
     logger.debug "DETAILS for #{@control.control_id}"
-    @evaluation = Evaluation.find(params[:evaluation_id]) if params.has_key?(:evaluation_id)
+    @evaluation = Evaluation.find(params[:evaluation_id]) if params.key?(:evaluation_id)
     respond_to do |format|
       format.js {render layout: false}
     end
   end
 
   private
-    # Use callbacks to share common setup or constraints between actions.
-    def set_control
-      @profile = Profile.find(params[:profile_id])
-      @control = @profile.controls.find(params[:id])
-    end
 
-    # Never trust parameters from the scary internet, only allow the white list through.
-    def control_params
-      params.require(:control).permit(
-        :id, :title, :desc, :impact, :refs, :refs_list,
-        :code, :control_id, :profile_id,
-        :tag_severity, :tag_gtitle, :tag_gid, :tag_rid, :tag_stig_id,
-        :tag_cci, :tag_nist, :tag_nist_list,
-        :tag_subsystems, :tag_subsystems_list, :tag_check, :tag_fix,
-        :sl_ref, :sl_line
-        )
-    end
+  # Use callbacks to share common setup or constraints between actions.
+  def set_control
+    @profile = Profile.find(params[:profile_id])
+    @control = @profile.controls.find(params[:id])
+  end
 
-    #convert parameters with hyphen to parameters with underscore and rename 'attributes'
-    def transform hash
-      hash.deep_transform_keys{ |key| key.to_s.tr('-', '_').gsub('id', 'control_id') }
-    end
-
+  # Never trust parameters from the scary internet, only allow the white list through.
+  def control_params
+    params.require(:control).permit(
+      :id, :title, :desc, :impact, :refs, :refs_list,
+      :code, :control_id, :profile_id,
+      :tag_severity, :tag_gtitle, :tag_gid, :tag_rid, :tag_stig_id,
+      :tag_cci, :tag_nist, :tag_nist_list,
+      :tag_subsystems, :tag_subsystems_list, :tag_check, :tag_fix,
+      :sl_ref, :sl_line
+    )
+  end
 end

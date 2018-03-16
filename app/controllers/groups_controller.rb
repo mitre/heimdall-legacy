@@ -19,13 +19,13 @@ class GroupsController < ApplicationController
   def create
     @profile = Profile.find(params[:profile_id])
     authorize! :create, @profile
-    @group = @profile.groups.new(group_params)
-
     respond_to do |format|
-      if @profile.save
+      begin
+        @group = @profile.groups.new(group_params)
+        @profile.save
         format.html { redirect_to profile_group_url(@profile, @group), notice: 'Group was successfully created.' }
         format.json { render :show, status: :created, location: @group }
-      else
+      rescue
         format.html { redirect_to @profile, error: 'Group was not successfully created.' }
         format.json { render json: @group.errors, status: :unprocessable_entity }
       end
@@ -37,10 +37,11 @@ class GroupsController < ApplicationController
   def update
     authorize! :update, @profile
     respond_to do |format|
-      if @group.update(group_params)
+      begin
+        @group.update(group_params)
         format.html { redirect_to profile_group_url(@profile, @group), notice: 'Group was successfully updated.' }
         format.json { render :show, status: :ok, location: @group }
-      else
+      rescue
         format.html { redirect_to profile_group_url(@profile, @group), error: 'Error updating Group' }
         format.json { render json: @group.errors, status: :unprocessable_entity }
       end
@@ -52,15 +53,10 @@ class GroupsController < ApplicationController
   def add
     authorize! :update, @profile
     @group.controls << group_params[:controls]
-    logger.debug "add group_params: #{group_params.inspect}"
+    @group.save
     respond_to do |format|
-      if @group.save
-        format.html { redirect_to profile_group_url(@profile, @group), notice: 'Control was added to Group' }
-        format.json { render :show, status: :ok, location: @group }
-      else
-        format.html { redirect_to profile_group_url(@profile, @group), error: 'Error updating Group' }
-        format.json { render json: @group.errors, status: :unprocessable_entity }
-      end
+      format.html { redirect_to profile_group_url(@profile, @group), notice: 'Control was added to Group' }
+      format.json { render :show, status: :ok, location: @group }
     end
   end
 
@@ -68,18 +64,12 @@ class GroupsController < ApplicationController
   # PATCH/PUT /groups/1.json
   def remove
     authorize! :update, @profile
-    logger.debug "delete remove_params: #{remove_params.inspect}"
     control_id = remove_params[:control_id]
-    logger.debug "delete #{control_id}"
     @group.controls.delete(control_id)
+    @group.save
     respond_to do |format|
-      if @group.save
-        format.html { redirect_to profile_group_url(@profile, @group), notice: 'Control was deleted from Group' }
-        format.json { render :show, status: :ok, location: @group }
-      else
-        format.html { redirect_to profile_group_url(@profile, @group), error: 'Error updating Group' }
-        format.json { render json: @group.errors, status: :unprocessable_entity }
-      end
+      format.html { redirect_to profile_group_url(@profile, @group), notice: 'Control was deleted from Group' }
+      format.json { render :show, status: :ok, location: @group }
     end
   end
 
@@ -95,18 +85,19 @@ class GroupsController < ApplicationController
   end
 
   private
-    # Use callbacks to share common setup or constraints between actions.
-    def set_group
-      @profile = Profile.find(params[:profile_id])
-      @group = @profile.groups.find(params[:id])
-    end
 
-    # Never trust parameters from the scary internet, only allow the white list through.
-    def group_params
-      params.require(:group).permit(:title, :controls, :controls_list, :control_id)
-    end
+  # Use callbacks to share common setup or constraints between actions.
+  def set_group
+    @profile = Profile.find(params[:profile_id])
+    @group = @profile.groups.find(params[:id])
+  end
 
-    def remove_params
-      params.permit(:profile_id, :id, :control_id)
-    end
+  # Never trust parameters from the scary internet, only allow the white list through.
+  def group_params
+    params.require(:group).permit(:title, :controls, :controls_list, :control_id)
+  end
+
+  def remove_params
+    params.permit(:profile_id, :id, :control_id)
+  end
 end

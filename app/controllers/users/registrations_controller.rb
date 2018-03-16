@@ -12,7 +12,7 @@ class Users::RegistrationsController < Devise::RegistrationsController
     logger.debug "CREATE"
     super
     logger.debug "AFTER CREATE"
-   end
+  end
 
   # GET /resource/edit
   # def edit

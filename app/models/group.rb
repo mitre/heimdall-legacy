@@ -4,14 +4,14 @@ class Group
   field :title, type: String
   field :controls, type: Array, default: []
   field :control_id, type: String
-  embedded_in :profile, :inverse_of => :groups
+  embedded_in :profile, inverse_of: :groups
   validates_presence_of :title
-  
+
   def controls_list=(arg)
-    self.controls = arg.split(',').map { |v| v.strip }
+    self.controls = arg.split(',').map(&:strip)
   end
 
   def controls_list
-    self.controls.join(', ')
+    controls.join(', ')
   end
 end

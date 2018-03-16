@@ -7,8 +7,8 @@ class Repo
   field :repo_type, type: String
   embeds_many :repo_creds, cascade_callbacks: true
   validates_presence_of :name, :api_url, :repo_type
-  
+
   def self.types
-    ["GitLab", "GitHub"]
+    %w{GitLab GitHub}
   end
 end

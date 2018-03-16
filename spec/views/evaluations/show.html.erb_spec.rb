@@ -2,13 +2,16 @@ require 'rails_helper'
 
 RSpec.describe "evaluations/show", type: :view do
   before(:each) do
-    @evaluation = assign(:evaluation, Evaluation.create!(
-      :version => "Version",
-      :other_checks => ["Other Checks"],
-      :platform_name => "Platform Name",
-      :platform_release => "Platform Release",
-      :statistics_duration => "Statistics Duration"
-    ))
+    @evaluation = assign(
+      :evaluation,
+      Evaluation.create!(
+        version:             "Version",
+        other_checks:        ["Other Checks"],
+        platform_name:       "Platform Name",
+        platform_release:    "Platform Release",
+        statistics_duration: "Statistics Duration",
+      ),
+    )
     @counts, @controls = @evaluation.status_counts
   end
 

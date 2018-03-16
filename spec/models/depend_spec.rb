@@ -1,5 +1,7 @@
 require 'rails_helper'
 
 RSpec.describe Depend, type: :model do
-  pending "add some examples to (or delete) #{__FILE__}"
+  it { is_expected.to be_mongoid_document }
+  it { is_expected.to have_timestamps }
+  it { is_expected.to be_embedded_in(:profile).as_inverse_of(:depends) }
 end

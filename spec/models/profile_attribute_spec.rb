@@ -1,5 +1,12 @@
 require 'rails_helper'
 
 RSpec.describe ProfileAttribute, type: :model do
-  pending "add some examples to (or delete) #{__FILE__}"
+  context 'with ProfileAttribute' do
+    let(:profile_attribute) { FactoryGirl.build(:profile_attribute) }
+
+    it 'set option_default_list' do
+      profile_attribute.option_default_list='option1, option2'
+      expect(profile_attribute.option_default).to eq %w{option1 option2}
+    end
+  end
 end

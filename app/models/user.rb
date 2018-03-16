@@ -39,11 +39,11 @@ class User
 
   # new users get assigned the :editor role by default
   def assign_default_role
-    self.add_role(:editor) if self.roles.blank?
+    add_role(:editor) if roles.blank?
   end
 
   # list of a user's role names
   def role_names
-    self.roles.map{|role| role.name.capitalize}
+    roles.map{|role| role.name.capitalize}
   end
 end

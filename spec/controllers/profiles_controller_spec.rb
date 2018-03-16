@@ -42,6 +42,7 @@ RSpec.describe ProfilesController, type: :controller do
   let(:valid_session) { {} }
 
   context 'User is logged in' do
+    let(:admin) { FactoryGirl.create(:admin) }
     let(:user) { FactoryGirl.create(:editor) }
     before do
       sign_in user
@@ -73,7 +74,11 @@ RSpec.describe ProfilesController, type: :controller do
 
     describe "GET #nist_800_53" do
       it "returns a success response" do
-        profile = create :profile, created_by: user
+        profile_hash, controls = Profile.transform(JSON.parse(File.open("spec/support/nginx_profile.json", "r").read))
+        profile = Profile.create(profile_hash)
+        controls.each do |control|
+          profile.controls.create(control)
+        end
         get :nist_800_53, params: {id: profile.to_param, category: "Medium"}, session: valid_session
         expect(response.content_type).to eq("application/json")
       end
@@ -81,9 +86,15 @@ RSpec.describe ProfilesController, type: :controller do
 
     describe "POST #upload" do
       it "can upload a profile" do
-        @file = fixture_file_upload('sample_jsons/nginx_profile.json', 'text/json')
-        post :upload, params: {:file => @file}, session: valid_session
+        @file = fixture_file_upload('spec/support/nginx_profile.json', 'text/json')
+        post :upload, params: {file: @file}, session: valid_session
         expect(response).to redirect_to(Profile.last)
+      end
+
+      it "rejects a malformed profile" do
+        @file = fixture_file_upload('spec/support/bad_profile.json', 'text/json')
+        post :upload, params: {file: @file}, session: valid_session
+        expect(response).to redirect_to(profiles_path)
       end
     end
 
@@ -105,6 +116,7 @@ RSpec.describe ProfilesController, type: :controller do
         it "returns a success response (i.e. to display the 'new' template)" do
           post :create, params: {profile: invalid_attributes}, session: valid_session
           expect(response).to_not be_success
+          expect(response).to redirect_to(profiles_path)
         end
       end
     end

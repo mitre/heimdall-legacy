@@ -15,14 +15,9 @@ class ResultsController < ApplicationController
   end
 
   private
-    # Use callbacks to share common setup or constraints between actions.
-    def set_eval
-      @evaluation = Evaluation.find(params[:evaluation_id])
-    end
 
-    # Never trust parameters from the scary internet, only allow the white list through.
-    def result_params
-      params.require(:result).permit(:status, :code_desc, :skip_message, :resource, :run_time, :start_time, :control_id)
-    end
-
+  # Use callbacks to share common setup or constraints between actions.
+  def set_eval
+    @evaluation = Evaluation.find(params[:evaluation_id])
+  end
 end

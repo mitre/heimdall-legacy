@@ -1,5 +1,4 @@
 FactoryGirl.define do
-  factory :role, :class => Role do
-
+  factory :role, class: Role do
   end
 end

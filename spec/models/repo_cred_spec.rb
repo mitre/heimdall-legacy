@@ -1,5 +1,6 @@
 require 'rails_helper'
 
 RSpec.describe RepoCred, type: :model do
-  pending "add some examples to (or delete) #{__FILE__}"
+  it { is_expected.to be_mongoid_document }
+  it { is_expected.to be_embedded_in(:repo).as_inverse_of(:repo_creds) }
 end

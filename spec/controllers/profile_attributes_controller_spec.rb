@@ -33,7 +33,7 @@ RSpec.describe ProfileAttributesController, type: :controller do
   }
 
   let(:invalid_attributes) {
-    {name: "MyString2", option_description: "MyString2", option_default: "MyString2"}
+    {name: nil, option_description: "MyString2", option_default: ["MyString2"]}
   }
 
   # This should return the minimal set of values that should be in the session
@@ -90,9 +90,9 @@ RSpec.describe ProfileAttributesController, type: :controller do
 
       context "with invalid params" do
         it "returns a success response (i.e. to display the 'new' template)" do
-          expect {
-            post :create, params: {profile_id: @profile.id, profile_attribute: invalid_attributes}, session: valid_session
-          }.to raise_error(Mongoid::Errors::InvalidValue)
+          post :create, params: {profile_id: @profile.id, profile_attribute: invalid_attributes}, session: valid_session
+          expect(response).to_not be_success
+          expect(response).to redirect_to(@profile)
         end
       end
     end
@@ -121,9 +121,9 @@ RSpec.describe ProfileAttributesController, type: :controller do
       context "with invalid params" do
         it "returns a success response (i.e. to display the 'edit' template)" do
           profile_attribute = @profile.profile_attributes.create! valid_attributes
-          expect {
-            put :update, params: {profile_id: @profile.id, id: profile_attribute.to_param, profile_attribute: invalid_attributes}, session: valid_session
-          }.to raise_error(Mongoid::Errors::InvalidValue)
+          put :update, params: {profile_id: @profile.id, id: profile_attribute.to_param, profile_attribute: invalid_attributes}, session: valid_session
+          expect(response).to be_success
+          expect(response).to render_template(:edit)
         end
       end
     end

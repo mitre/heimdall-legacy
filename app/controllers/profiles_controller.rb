@@ -2,7 +2,11 @@ class ProfilesController < ApplicationController
   load_resource
   authorize_resource only: [:show, :edit, :destroy, :upload]
 
-  @@nist_800_53_json = nil
+  @nist_800_53_json = nil
+
+  class << self
+    attr_accessor :nist_800_53_json
+  end
 
   # GET /profiles
   # GET /profiles.json
@@ -13,14 +17,14 @@ class ProfilesController < ApplicationController
   # GET /profiles/1
   # GET /profiles/1.json
   def show
-    @depend = @profile.depends.new()
-    @support = @profile.supports.new()
+    @depend = @profile.depends.new
+    @support = @profile.supports.new
   end
 
   # GET /profiles/1/edit
   def edit
-    @depend = @profile.depends.new()
-    @support = @profile.supports.new()
+    @depend = @profile.depends.new
+    @support = @profile.supports.new
   end
 
   # POST /profiles
@@ -65,14 +69,14 @@ class ProfilesController < ApplicationController
   def nist_800_53
     authorize! :read, Profile
     category = nil
-    category = params[:category].downcase if params.has_key?(:category)
-    unless @@nist_800_53_json
+    category = params[:category].downcase if params.key?(:category)
+    unless ProfilesController.nist_800_53_json
       file = File.read("#{Rails.root}/data/nist_800_53.json")
-      @@nist_800_53_json = JSON.parse(file)
+      ProfilesController.nist_800_53_json = JSON.parse(file)
     end
     nist_hash = @profile.nist_hash category
     #logger.debug "nist_hash: #{nist_hash.inspect}"
-    new_hash = @@nist_800_53_json.deep_dup
+    new_hash = ProfilesController.nist_800_53_json.deep_dup
     total_impact = 0
     total_children = 0
     new_hash["children"].each do |cf|
@@ -126,14 +130,9 @@ class ProfilesController < ApplicationController
   end
 
   private
-    # Use callbacks to share common setup or constraints between actions.
-    def set_profile
-      @profile = Profile.find(params[:id])
-    end
 
-    # Never trust parameters from the scary internet, only allow the white list through.
-    def profile_params
-      params.require(:profile).permit(:id, :name, :title, :maintainer, :copyright, :copyright_email, :license, :summary, :version, :sha256, :depends, :supports, :controls, :groups, :profile_attributes)
-    end
-
+  # Never trust parameters from the scary internet, only allow the white list through.
+  def profile_params
+    params.require(:profile).permit(:id, :name, :title, :maintainer, :copyright, :copyright_email, :license, :summary, :version, :sha256, :depends, :supports, :controls, :groups, :profile_attributes)
+  end
 end

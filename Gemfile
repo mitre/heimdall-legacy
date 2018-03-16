@@ -51,6 +51,9 @@ group :development, :test do
   gem 'factory_girl_rails', '~> 4.8'
   gem 'database_cleaner', '~> 1.6', '>= 1.6.1'
   gem 'simplecov'
+  gem 'brakeman'
+  gem 'rubocop', require: false
+  gem 'rails_best_practices'
 end
 
 group :test do
@@ -58,6 +61,7 @@ group :test do
   gem 'mongoid-rspec', git: 'https://github.com/mongoid-rspec/mongoid-rspec.git'
   gem 'email_spec', '~> 2.1'
   gem 'rails-controller-testing'
+  gem 'webmock'
 end
 
 group :development do

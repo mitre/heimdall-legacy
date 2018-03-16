@@ -82,9 +82,8 @@ RSpec.describe GroupsController, type: :controller do
 
       context "with invalid params" do
         it "returns a success response (i.e. to display the 'new' template)" do
-          expect {
-            post :create, params: {profile_id: @profile.id, group: invalid_attributes}, session: valid_session
-          }.to raise_error(Mongoid::Errors::InvalidValue)
+          post :create, params: {profile_id: @profile.id, group: invalid_attributes}, session: valid_session
+          expect(response).to redirect_to(@profile)
         end
       end
     end
@@ -113,9 +112,9 @@ RSpec.describe GroupsController, type: :controller do
       context "with invalid params" do
         it "should raise" do
           group = @profile.groups.create! valid_attributes
-          expect {
-            put :update, params: {profile_id: @profile.id, id: group.to_param, group: invalid_attributes}, session: valid_session
-          }.to raise_error(Mongoid::Errors::InvalidValue)
+          put :update, params: {profile_id: @profile.id, id: group.to_param, group: invalid_attributes}, session: valid_session
+          expect(response).to redirect_to(profile_group_url(@profile, group))
+          expect(response).to_not be_success
         end
       end
     end
@@ -140,15 +139,6 @@ RSpec.describe GroupsController, type: :controller do
           expect(response).to redirect_to(profile_group_url(@profile, @profile.reload.groups.last))
         end
       end
-
-      context "with invalid params" do
-        it "should raise" do
-          group = @profile.groups.create! valid_attributes
-          put :add, params: {profile_id: @profile.id, id: group.to_param, group: {name: "MyString2", path: "MyString2"}}, session: valid_session
-          expect(response).to_not be_success
-          expect(response).to redirect_to(profile_group_url(@profile, group))
-        end
-      end
     end
 
     describe "PUT #remove" do
@@ -164,15 +154,6 @@ RSpec.describe GroupsController, type: :controller do
         it "redirects to the group" do
           group = @profile.groups.create! valid_attributes
           put :remove, params: {profile_id: @profile.id, id: group.to_param, control_id: group.controls.first}, session: valid_session
-          expect(response).to redirect_to(profile_group_url(@profile, @profile.reload.groups.last))
-        end
-      end
-
-      context "with invalid params" do
-        it "should raise" do
-          group = @profile.groups.create! valid_attributes
-          put :remove, params: {profile_id: @profile.id, id: group.to_param, control_id: "Nada"}, session: valid_session
-          expect(response).to_not be_success
           expect(response).to redirect_to(profile_group_url(@profile, @profile.reload.groups.last))
         end
       end

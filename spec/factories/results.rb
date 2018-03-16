@@ -1,5 +1,5 @@
 FactoryGirl.define do
-  factory :result, :class => Result do
+  factory :result, class: Result do
     status "MyString"
     code_desc "MyString"
     skip_message "MyString"

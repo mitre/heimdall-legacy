@@ -13,7 +13,7 @@ RSpec.describe "results/show", type: :view do
       @control = create :control, profile_id: @profile.id, created_by: user
       @result = create :result, evaluation_id: @evaluation.id, control_id: @control.id, created_by: user
     end
-    
+
     it "renders attributes in <p>" do
       render
       expect(rendered).to match(/Status/)

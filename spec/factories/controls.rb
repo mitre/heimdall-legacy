@@ -1,5 +1,5 @@
 FactoryGirl.define do
-  factory :control, :class => Control do
+  factory :control, class: Control do
     title "The file permissions, ownership, and group membership of system files and\ncommands must match the vendor values."
     desc "Discretionary access control is weakened if a user or group has access\npermissions to system files and directories greater than the default.\n\n    Satisfies: SRG-OS-000257-GPOS-00098, SRG-OS-000278-GPOS-0010."
     impact 0.7
@@ -10,7 +10,7 @@ FactoryGirl.define do
     sl_line 23
   end
 
-  factory :control2, :class => Control do
+  factory :control2, class: Control do
     title "The file permissions, ownership, and group membership of system files and commands must match the vendor values."
     desc "Discretionary access control is weakened if a user or group has access permissions to system files and directories greater than the default.    Satisfies: SRG-OS-000257-GPOS-00098, SRG-OS-000278-GPOS-0010."
     impact 1.5

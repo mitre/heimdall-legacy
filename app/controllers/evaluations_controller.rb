@@ -4,7 +4,11 @@ class EvaluationsController < ApplicationController
   #before_action :set_evaluation, only: [:show, :destroy, :ssp, :nist_800_53]
   protect_from_forgery
 
-  @@nist_800_53_json = nil
+  @nist_800_53_json = nil
+
+  class << self
+    attr_accessor :nist_800_53_json
+  end
 
   # GET /evaluations
   # GET /evaluations.json
@@ -39,15 +43,11 @@ class EvaluationsController < ApplicationController
   # GET /profiles/1.json
   def ssp
     authorize! :read, Evaluation
-    unless @@nist_800_53_json
-      file = File.read("#{Rails.root}/data/nist_800_53.json")
-      @@nist_800_53_json = JSON.parse(file)
-    end
-    @nist_hash = @@nist_800_53_json.deep_dup
+    @nist_hash = EvaluationsController.nist_800_53_copy
     @profiles = @evaluation.profiles
     @counts, @controls = @evaluation.status_counts
     @symbols = {}
-    @controls.each do |control_id, hsh|
+    @controls.each do |_, hsh|
       control = hsh[:control]
       @symbols[control.control_id] = hsh[:status_symbol]
     end
@@ -57,7 +57,6 @@ class EvaluationsController < ApplicationController
       @nist_hash["children"].each do |cf|
         family_value = 0
         cf["children"].each do |control|
-          logger.debug "Check #{control["name"]}"
           if families.include?(control["name"])
             control["controls"] = nist[control["name"]]
             control["value"] = control["controls"].size
@@ -76,16 +75,12 @@ class EvaluationsController < ApplicationController
   def nist_800_53
     authorize! :read, Evaluation
     category = nil
-    category = params[:category].downcase if params.has_key?(:category)
+    category = params[:category].downcase if params.key?(:category)
     status_sym = nil
-    status_sym = params[:status_symbol].downcase.tr(' ', '_').to_sym if params.has_key?(:status_symbol)
-    unless @@nist_800_53_json
-      file = File.read("#{Rails.root}/data/nist_800_53.json")
-      @@nist_800_53_json = JSON.parse(file)
-    end
+    status_sym = params[:status_symbol].downcase.tr(' ', '_').to_sym if params.key?(:status_symbol)
     nist_hash = @evaluation.nist_hash category, status_sym
     #logger.debug "nist_hash: #{nist_hash.inspect}"
-    new_hash = @@nist_800_53_json.deep_dup
+    new_hash = EvaluationsController.nist_800_53_copy
     total_impact = 0
     total_children = 0
     new_hash["children"].each do |cf|
@@ -142,17 +137,19 @@ class EvaluationsController < ApplicationController
   def upload
     authorize! :create, Evaluation
     file = params[:file]
-    if @evaluation = Evaluation.parse(JSON.parse(file.read))
+    if (@eval = Evaluation.parse(JSON.parse(file.read)))
+      @evaluation = Evaluation.find(@eval.id)
       redirect_to @evaluation, notice: 'Evaluation uploaded.'
     else
       redirect_to evaluations_url, notice: 'File does not contain an evaluation.'
     end
   end
 
-  private
-    # Use callbacks to share common setup or constraints between actions.
-    def set_evaluation
-      @evaluation = Evaluation.find(params[:id])
+  def self.nist_800_53_copy
+    unless EvaluationsController.nist_800_53_json
+      file = File.read("#{Rails.root}/data/nist_800_53.json")
+      EvaluationsController.nist_800_53_json = JSON.parse(file)
     end
-
+    EvaluationsController.nist_800_53_json.deep_dup
+  end
 end

@@ -1,5 +1,5 @@
 FactoryGirl.define do
-  factory :evaluation, :class => Evaluation do
+  factory :evaluation, class: Evaluation do
     version "MyString"
     other_checks ["MyString"]
     platform_name "MyString"

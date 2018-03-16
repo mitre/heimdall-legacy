@@ -29,7 +29,7 @@ RSpec.describe ReposController, type: :controller do
   # Repo. As you add validations to Repo, be sure to
   # adjust the attributes here as well.
   let(:valid_attributes) {
-    FactoryGirl.build(:repo).attributes
+    FactoryGirl.build(:gitlab_repo).attributes
   }
 
   let(:invalid_attributes) {
@@ -49,16 +49,17 @@ RSpec.describe ReposController, type: :controller do
 
     describe "GET #index" do
       it "returns a success response" do
-        repo = create :repo, created_by: user
+        repo = create :github_repo, created_by: user
         get :index, params: {}, session: valid_session
         expect(response).to be_success
       end
     end
 
-    describe "GET #show" do
+    describe "GET #show GitLab" do
       it "returns a success response" do
-        repo = create :repo, created_by: user
-        get :show, params: {id: repo.to_param}, session: valid_session
+        repo_cred = create :gitlab_cred, created_by: user
+        @repo = repo_cred.repo
+        get :show, params: {id: @repo.to_param}, session: valid_session
         expect(response).to be_success
       end
     end
@@ -72,7 +73,7 @@ RSpec.describe ReposController, type: :controller do
 
     describe "GET #edit" do
       it "returns a success response" do
-        repo = create :repo, created_by: user
+        repo = create :gitlab_repo, created_by: user
         get :edit, params: {id: repo.to_param}, session: valid_session
         expect(response).to be_success
       end
@@ -107,7 +108,7 @@ RSpec.describe ReposController, type: :controller do
         }
 
         it "updates the requested repo" do
-          repo = create :repo, created_by: user
+          repo = create :gitlab_repo, created_by: user
           name = repo.name
           put :update, params: {id: repo.to_param, repo: new_attributes}, session: valid_session
           repo.reload
@@ -115,7 +116,7 @@ RSpec.describe ReposController, type: :controller do
         end
 
         it "redirects to the repo" do
-          repo = create :repo, created_by: user
+          repo = create :gitlab_repo, created_by: user
           put :update, params: {id: repo.to_param, repo: valid_attributes}, session: valid_session
           expect(response).to redirect_to(repo)
         end
@@ -123,7 +124,7 @@ RSpec.describe ReposController, type: :controller do
 
       context "with invalid params" do
         it "returns a success response (i.e. to display the 'edit' template)" do
-          repo = create :repo, created_by: user
+          repo = create :gitlab_repo, created_by: user
           put :update, params: {id: repo.to_param, repo: invalid_attributes}, session: valid_session
           expect(response).to render_template(:edit)
         end
@@ -132,14 +133,14 @@ RSpec.describe ReposController, type: :controller do
 
     describe "DELETE #destroy" do
       it "destroys the requested repo" do
-        repo = create :repo, created_by: user
+        repo = create :gitlab_repo, created_by: user
         expect {
           delete :destroy, params: {id: repo.to_param}, session: valid_session
         }.to change(Repo, :count).by(-1)
       end
 
       it "redirects to the repos list" do
-        repo = create :repo, created_by: user
+        repo = create :gitlab_repo, created_by: user
         delete :destroy, params: {id: repo.to_param}, session: valid_session
         expect(response).to redirect_to(repos_url)
       end

@@ -63,14 +63,15 @@ class ProfileAttributesController < ApplicationController
   end
 
   private
-    # Use callbacks to share common setup or constraints between actions.
-    def set_profile_attribute
-      @profile = Profile.find(params[:profile_id])
-      @profile_attribute = @profile.profile_attributes.find(params[:id])
-    end
 
-    # Never trust parameters from the scary internet, only allow the white list through.
-    def profile_attribute_params
-      params.require(:profile_attribute).permit(:name, :option_description, :option_default, :option_default_list)
-    end
+  # Use callbacks to share common setup or constraints between actions.
+  def set_profile_attribute
+    @profile = Profile.find(params[:profile_id])
+    @profile_attribute = @profile.profile_attributes.find(params[:id])
+  end
+
+  # Never trust parameters from the scary internet, only allow the white list through.
+  def profile_attribute_params
+    params.require(:profile_attribute).permit(:name, :option_description, :option_default, :option_default_list)
+  end
 end

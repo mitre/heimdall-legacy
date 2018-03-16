@@ -46,14 +46,15 @@ class RepoCredsController < ApplicationController
   end
 
   private
-    # Use callbacks to share common setup or constraints between actions.
-    def set_repo_cred
-      @repo = Repo.find(params[:repo_id])
-      @repo_cred = @repo.repo_creds.find(params[:id])
-    end
 
-    # Never trust parameters from the scary internet, only allow the white list through.
-    def repo_cred_params
-      params.require(:repo_cred).permit(:username, :token)
-    end
+  # Use callbacks to share common setup or constraints between actions.
+  def set_repo_cred
+    @repo = Repo.find(params[:repo_id])
+    @repo_cred = @repo.repo_creds.find(params[:id])
+  end
+
+  # Never trust parameters from the scary internet, only allow the white list through.
+  def repo_cred_params
+    params.require(:repo_cred).permit(:username, :token)
+  end
 end

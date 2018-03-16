@@ -36,8 +36,7 @@ RSpec.describe ControlsController, type: :controller do
     {title: "MyString",
       desc: "MyString",
       impact: 1.5,
-      refs: "MyString"
-    }
+      refs: "MyString"}
   }
 
   # This should return the minimal set of values that should be in the session
@@ -66,7 +65,7 @@ RSpec.describe ControlsController, type: :controller do
     describe "GET #details" do
       it "returns a success response" do
         control = create :control, profile_id: @profile.id, created_by: user
-        get :details, :format => 'js', params: {profile_id: control.profile_id, id: control.to_param}, xhr: true, session: valid_session
+        get :details, format: 'js', params: {profile_id: control.profile_id, id: control.to_param}, xhr: true, session: valid_session
         expect(response.content_type).to eq("text/javascript")
       end
     end
@@ -102,9 +101,8 @@ RSpec.describe ControlsController, type: :controller do
 
       context "with invalid params" do
         it "returns a success response (i.e. to display the 'new' template)" do
-          expect {
-            post :create, params: {profile_id: @profile.id, control: invalid_attributes}, session: valid_session
-          }.to raise_error(Mongoid::Errors::InvalidValue)
+          post :create, params: {profile_id: @profile.id, control: invalid_attributes}, session: valid_session
+          expect(response).to redirect_to(@profile)
         end
       end
     end
