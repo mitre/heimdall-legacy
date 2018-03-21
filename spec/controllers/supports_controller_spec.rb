@@ -47,39 +47,39 @@ RSpec.describe SupportsController, type: :controller do
       @profile = create :profile, created_by: user
     end
 
-    describe "POST #create" do
-      context "with valid params" do
-        it "creates a new Support" do
+    describe 'POST #create' do
+      context 'with valid params' do
+        it 'creates a new Support' do
           expect {
-            post :create, params: {profile_id: @profile.id, support: valid_attributes}, session: valid_session
+            post :create, params: { profile_id: @profile.id, support: valid_attributes }, session: valid_session
           }.to change { @profile.reload.supports.count }.by(1)
         end
 
-        it "redirects to the created support" do
-          post :create, params: {profile_id: @profile.id, support: valid_attributes}, session: valid_session
+        it 'redirects to the created support' do
+          post :create, params: { profile_id: @profile.id, support: valid_attributes }, session: valid_session
           expect(response).to redirect_to(@profile)
         end
       end
 
-      context "with invalid params" do
+      context 'with invalid params' do
         it "returns a success response (i.e. to display the 'new' template)" do
-          post :create, params: {profile_id: @profile.id, support: {os_family: nil}}, session: valid_session
+          post :create, params: { profile_id: @profile.id, support: { os_family: nil } }, session: valid_session
           expect(response).to_not be_success
         end
       end
     end
 
-    describe "DELETE #destroy" do
-      it "destroys the requested support" do
+    describe 'DELETE #destroy' do
+      it 'destroys the requested support' do
         support = @profile.supports.create! valid_attributes
         expect {
-          delete :destroy, params: {profile_id: @profile.id, id: support.to_param}, session: valid_session
+          delete :destroy, params: { profile_id: @profile.id, id: support.to_param }, session: valid_session
         }.to change { @profile.reload.supports.count }.by(-1)
       end
 
-      it "redirects to the supports list" do
+      it 'redirects to the supports list' do
         support = @profile.supports.create! valid_attributes
-        delete :destroy, params: {profile_id: @profile.id, id: support.to_param}, session: valid_session
+        delete :destroy, params: { profile_id: @profile.id, id: support.to_param }, session: valid_session
         expect(response).to redirect_to(@profile)
       end
     end

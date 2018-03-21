@@ -9,8 +9,8 @@ class User
          :recoverable, :rememberable, :trackable, :validatable
 
   ## Database authenticatable
-  field :email,              type: String, default: ""
-  field :encrypted_password, type: String, default: ""
+  field :email,              type: String, default: ''
+  field :encrypted_password, type: String, default: ''
 
   ## Recoverable
   field :reset_password_token,   type: String
@@ -44,6 +44,6 @@ class User
 
   # list of a user's role names
   def role_names
-    roles.map{|role| role.name.capitalize}
+    roles.map { |role| role.name.capitalize }
   end
 end

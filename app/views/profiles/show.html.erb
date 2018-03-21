@@ -394,10 +394,11 @@ document.addEventListener("turbolinks:load", function() {
   }
 
   function loadTreemapData(category) {
-    api_path = "<%= profile_nist_800_53_path(@profile) %>";
+    api_path = "<%= profile_nist_path(@profile) %>";
     if (category) {
       api_path += "/category/" + encodeURIComponent(category);
     }
+    api_path += ".json";
   	d3.json(api_path, function(data) {
       root = data
       initialize(root);

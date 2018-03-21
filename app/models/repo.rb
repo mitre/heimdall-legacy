@@ -11,4 +11,13 @@ class Repo
   def self.types
     %w{GitLab GitHub}
   end
+
+  def projects(repo_cred)
+    if repo_type == 'GitLab'
+      api = Git::GitLab.new(api_url, repo_cred.token)
+    elsif repo_type == 'GitHub'
+      api = Git::GitHub.new(repo_cred.token)
+    end
+    api.projects
+  end
 end

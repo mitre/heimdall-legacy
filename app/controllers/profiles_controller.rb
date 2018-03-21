@@ -66,58 +66,21 @@ class ProfilesController < ApplicationController
     end
   end
 
-  def nist_800_53
+  def nist
     authorize! :read, Profile
     category = nil
     category = params[:category].downcase if params.key?(:category)
-    unless ProfilesController.nist_800_53_json
-      file = File.read("#{Rails.root}/data/nist_800_53.json")
-      ProfilesController.nist_800_53_json = JSON.parse(file)
-    end
-    nist_hash = @profile.nist_hash category
-    #logger.debug "nist_hash: #{nist_hash.inspect}"
-    new_hash = ProfilesController.nist_800_53_json.deep_dup
-    total_impact = 0
-    total_children = 0
-    new_hash["children"].each do |cf|
-      cf_total_impact = 0.0
-      cf_total_children = 0
-      cf["children"].each do |control|
-        control_total_impact = 0.0
-        control_total_children = 0
-        if nist_hash[control["name"]]
-          control.delete('value')
-          control["children"] = nist_hash[control["name"]]
-          control["children"].each do |child|
-            #logger.debug "CHILD #{child.inspect}"
-            if child[:impact]
-              control_total_children += 1
-              control_total_impact += child[:impact]
-            end
-            #logger.debug "#{control['name']}: #{child['impact']}, cont_impact: #{control_total_impact}, cont_children: #{control_total_children}"
-          end
-        end
-        #logger.debug "SET #{control['name']} impact: #{control_total_impact == 0.0 ? 0.0 : control_total_impact/control_total_children}"
-        control["impact"] = control_total_impact == 0.0 ? 0.0 : control_total_impact/control_total_children
-        cf_total_impact += control_total_impact
-        cf_total_children += control_total_children
-        #logger.debug "#{cf['name']} cft_impact: #{cf_total_impact}, cft_children: #{cf_total_children}"
-      end
-      #logger.debug "SET #{cf['name']} impact: #{cf_total_impact == 0.0 ? 0.0 : cf_total_impact/cf_total_children}"
-      cf["impact"] = cf_total_impact == 0.0 ? 0.0 : cf_total_impact/cf_total_children
-      total_impact += cf_total_impact
-      total_children += cf_total_children
-    end
-    new_hash["impact"] = total_impact == 0.0 ? 0.0 : total_impact/total_children
-    #logger.debug "new_hash: #{new_hash.inspect}"
-    render json: new_hash
+    @control_hash = @profile.nist_hash category
+    nist_hash = ProfilesController.nist_800_53
+    @name = nist_hash['name']
+    @families = nist_hash['children']
   end
 
   def upload
     authorize! :create, Profile
     file = params[:file]
     contents = JSON.parse(file.read)
-    if contents.key? "name"
+    if contents.key? 'name'
       profile_hash, controls = Profile.transform(contents)
       @profile = Profile.create(profile_hash)
       controls.each do |control|
@@ -127,6 +90,14 @@ class ProfilesController < ApplicationController
     else
       redirect_to profiles_url, notice: 'File does not contain an profile.'
     end
+  end
+
+  def self.nist_800_53
+    unless ProfilesController.nist_800_53_json
+      file = File.read("#{Rails.root}/data/nist_800_53.json")
+      ProfilesController.nist_800_53_json = JSON.parse(file)
+    end
+    ProfilesController.nist_800_53_json
   end
 
   private

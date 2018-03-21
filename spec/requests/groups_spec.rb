@@ -1,14 +1,14 @@
 require 'rails_helper'
 require 'support/sign_in_support'
 
-RSpec.describe "Groups", type: :request do
-  describe "GET /profile/:profile_id/group/:id" do
-    context "with valid params" do
+RSpec.describe 'Groups', type: :request do
+  describe 'GET /profile/:profile_id/group/:id' do
+    context 'with valid params' do
       let(:valid_attributes) {
         FactoryGirl.build(:group).attributes
       }
 
-      it "works! (now write some real specs)" do
+      it 'works! (now write some real specs)' do
         sign_in_as_a_valid_user
         profile = create :profile, created_by: @user
         group = profile.groups.create! valid_attributes

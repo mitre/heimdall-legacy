@@ -1,1 +1,1 @@
-json.partial! "repos/repo", repo: @repo
+json.partial! 'repos/repo', repo: @repo

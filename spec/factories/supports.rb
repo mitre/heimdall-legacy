@@ -1,9 +1,9 @@
 FactoryGirl.define do
   factory :support, class: Support do
-    os_family "Windows"
+    os_family 'Windows'
   end
 
   factory :invalid_support, class: Support do
-    os_family "Not Unix"
+    os_family 'Not Unix'
   end
 end

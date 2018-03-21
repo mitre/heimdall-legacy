@@ -1,1 +1,1 @@
-json.partial! "controls/control", control: @control
+json.partial! 'controls/control', control: @control

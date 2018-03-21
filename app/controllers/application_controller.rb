@@ -1,6 +1,5 @@
 class ApplicationController < ActionController::Base
   protect_from_forgery with: :exception
-  #before_action :authenticate!
   before_action :define_userstamps_current, :check_for_admin
 
   protected

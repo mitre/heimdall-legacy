@@ -29,7 +29,7 @@ class ControlsController < ApplicationController
         @profile.save
         format.html { redirect_to @profile, notice: 'Control was successfully created.' }
         format.json { render :show, status: :created, location: @control }
-      rescue
+      rescue Mongoid::Errors::InvalidValue
         format.html { redirect_to @profile, error: 'Control was not successfully created.' }
         format.json { render json: @control.errors, status: :unprocessable_entity }
       end
@@ -40,17 +40,13 @@ class ControlsController < ApplicationController
   # PATCH/PUT /controls/1.json
   def update
     authorize! :update, @profile
-    new_control = Control.parse(control_params[:code])
     respond_to do |format|
-      if new_control && @control.update(control_params)
-        @control.title = new_control.title
-        @control.desc = new_control.desc
-        @control.impact = new_control.impact
-        @control.tags = new_control.tags
+      begin
+        @control.parse_update(control_params)
         @control.save
         format.html { redirect_to profile_control_url(@profile, @control), notice: 'Control was successfully updated.' }
         format.json { render :show, status: :ok, location: @control }
-      else
+      rescue Mongoid::Errors::InvalidValue
         format.html { render :edit }
         format.json { render json: @control.errors, status: :unprocessable_entity }
       end
@@ -72,7 +68,7 @@ class ControlsController < ApplicationController
     logger.debug "DETAILS for #{@control.control_id}"
     @evaluation = Evaluation.find(params[:evaluation_id]) if params.key?(:evaluation_id)
     respond_to do |format|
-      format.js {render layout: false}
+      format.js { render layout: false }
     end
   end
 

@@ -71,17 +71,27 @@ RSpec.configure do |config|
 
   config.before(:each) do
     stub_request(:get, /api.github.com/)
-      .with(headers: {'Accept'=>'*/*', 'User-Agent'=>'Ruby'})
-      .to_return(status: 200, body: "stubbed response", headers: {})
+      .with(headers: { 'Accept'=>'*/*', 'User-Agent'=>'Ruby' })
+      .to_return(status: 200, body: 'stubbed response', headers: {})
 
-    stub_request(:get, "https://gitlab.mitre.org/api/v3/projects")
+    stub_request(:get, 'https://gitlab.mitre.org/api/v3/projects')
       .with(headers: {
               'Accept'=>'application/json',
               'Authorization'=>'Bearer MyString5345345645766',
               'Content-Type'=>'application/x-www-form-urlencoded',
               'User-Agent'=>'Gitlab Ruby Gem 4.3.0'
             })
-      .to_return(status: 200, body: "", headers: {})
+      .to_return(status: 200, body: '', headers: {})
+
+    stub_request(:get, 'https://api.github.com/user/repos')
+      .with(headers: {
+              'Accept'=>'application/vnd.github.v3+json',
+              'Accept-Encoding'=>'gzip;q=1.0,deflate;q=0.6,identity;q=0.3',
+              'Authorization'=>'token MyString5345345645766',
+              'Content-Type'=>'application/json',
+              'User-Agent'=>'Octokit Ruby Gem 4.8.0'
+            })
+      .to_return(status: 200, body: '', headers: {})
   end
 
 end

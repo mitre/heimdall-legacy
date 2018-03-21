@@ -10,7 +10,6 @@ AllCops:
     - 'lib/bundles/inspec-init/templates/**/*'
     - 'www/demo/**/*'
     - 'bin/*'
-    - 'config/spring.rb'
     - 'config/initializers/rolify.rb'
 AlignParameters:
   Enabled: true
@@ -26,9 +25,6 @@ HashSyntax:
   Enabled: true
 LineLength:
   Enabled: false
-Lint/UselessAssignment:
-  Exclude:
-    - 'spec/**/*.rb'
 Layout/AlignHash:
   Enabled: false
 Layout/EmptyLineAfterMagicComment:
@@ -36,15 +32,7 @@ Layout/EmptyLineAfterMagicComment:
 Layout/EndOfLine:
   Enabled: true
   EnforcedStyle: lf
-Layout/LeadingCommentSpace:
-  Enabled: false
 Layout/SpaceAroundOperators:
-  Enabled: false
-Layout/SpaceBeforeBlockBraces:
-  Enabled: false
-Layout/SpaceInsideBlockBraces:
-  Enabled: false
-Layout/SpaceInsideHashLiteralBraces:
   Enabled: false
 MethodLength:
   Max: 40
@@ -86,8 +74,6 @@ Style/GuardClause:
   Enabled: false
 Style/IfUnlessModifier:
   Enabled: false
-Style/MethodDefParentheses:
-  Enabled: false
 Style/MethodMissing:
   Enabled: false
 Style/MultilineIfModifier:
@@ -111,8 +97,6 @@ Style/PercentLiteralDelimiters:
     '%w': '{}'
     '%W': ()
     '%x': ()
-Style/StringLiterals:
-  Enabled: false
 Style/SymbolArray:
   Enabled: false
 Style/TrailingCommaInArguments:

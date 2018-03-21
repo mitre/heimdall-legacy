@@ -25,7 +25,7 @@ class GroupsController < ApplicationController
         @profile.save
         format.html { redirect_to profile_group_url(@profile, @group), notice: 'Group was successfully created.' }
         format.json { render :show, status: :created, location: @group }
-      rescue
+      rescue Mongoid::Errors::InvalidValue
         format.html { redirect_to @profile, error: 'Group was not successfully created.' }
         format.json { render json: @group.errors, status: :unprocessable_entity }
       end
@@ -41,7 +41,7 @@ class GroupsController < ApplicationController
         @group.update(group_params)
         format.html { redirect_to profile_group_url(@profile, @group), notice: 'Group was successfully updated.' }
         format.json { render :show, status: :ok, location: @group }
-      rescue
+      rescue Mongoid::Errors::InvalidValue
         format.html { redirect_to profile_group_url(@profile, @group), error: 'Error updating Group' }
         format.json { render json: @group.errors, status: :unprocessable_entity }
       end

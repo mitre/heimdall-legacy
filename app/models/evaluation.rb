@@ -12,11 +12,11 @@ class Evaluation
   has_and_belongs_to_many :profiles
 
   def status_counts
-    counts = {open: 0, not_a_finding: 0, not_reviewed: 0, not_tested: 0, not_applicable: 0}
+    counts = { open: 0, not_a_finding: 0, not_reviewed: 0, not_tested: 0, not_applicable: 0 }
     controls = {}
     profiles.each do |profile|
       profile.controls.each do |control|
-        controls[control.id] = {control: control, results: []}
+        controls[control.id] = { control: control, results: [] }
       end
     end
     results.each do |result|
@@ -30,7 +30,7 @@ class Evaluation
     [counts, controls]
   end
 
-  def status_symbol control, ct_results
+  def status_symbol(control, ct_results)
     if control.impact.zero?
       :not_applicable
     elsif ct_results.nil?
@@ -49,22 +49,52 @@ class Evaluation
     end
   end
 
-  def status_symbol_value symbol
-    if symbol == :not_applicable
-      0.2
-    elsif symbol == :not_reviewed
-      0.4
-    elsif symbol == :not_a_finding
-      0.6
-    elsif symbol == :open
-      0.8
+  def status_symbol_value(symbol)
+    case symbol
+    when :not_applicable then 0.2
+    when :not_reviewed then 0.4
+    when :not_a_finding then 0.6
+    when :open then 0.8
     else
       0.0
     end
   end
 
-  def nist_hash cat, status_symbol
+  def tag_values(tag, control, params, nist)
+    if tag.value.is_a? Array
+      tag.value.each do |value|
+        next if value.include?('Rev')
+        value = value.split('(')[0].strip
+        nist[value] = [] unless nist[value]
+        sym = status_symbol(control, params[:ct_results])
+        next unless params[:status_symbol].nil? || params[:status_symbol] == sym
+        nist[value] << { "name": control.control_id.to_s, "status_value": status_symbol_value(sym), "children":
+          [{ "name": control.control_id.to_s, "title": control.title, "nist": control.tag('nist'),
+            "status_symbol": sym, "status_value": status_symbol_value(sym),
+            "severity": params[:severity].value, "description": control.desc,
+            "check": control.tag('check'), "fix": control.tag('fix'),
+            "impact": control.impact, "value": 1 }] }
+      end
+    end
+  end
+
+  def profile_values(cat, params)
     nist = {}
+    profiles.each do |profile|
+      profile.controls.each do |control|
+        params[:ct_results] = params[:cts][control.id]
+        severity = control.tags.where(name: 'severity').first
+        next unless severity && (cat.nil? || cat == severity.value)
+        params[:severity] = severity
+        control.tags.where(name: 'nist').each do |tag|
+          tag_values tag, control, params, nist
+        end
+      end
+    end
+    nist
+  end
+
+  def nist_hash(cat, status_symbol)
     cts = {}
     results.each do |result|
       unless cts.key?(result.control_id)
@@ -72,35 +102,12 @@ class Evaluation
       end
       cts[result.control_id] << result
     end
-    profiles.each do |profile|
-      profile.controls.each do |control|
-        ct_results = cts[control.id]
-        severity = control.tags.where(name: 'severity').first
-        next unless severity && (cat.nil? || cat == severity.value)
-        control.tags.where(name: 'nist').each do |tag|
-          next unless tag.value.is_a? Array
-          tag.value.each do |value|
-            next if value.include?('Rev')
-            value = value.split('(')[0].strip
-            nist[value] = [] unless nist[value]
-            sym = status_symbol(control, ct_results)
-            next unless status_symbol.nil? || status_symbol == sym
-            nist[value] << {"name": control.control_id.to_s, "status_value": status_symbol_value(sym), "children":
-              [{"name": control.control_id.to_s, "title": control.title, "nist": control.tag('nist'),
-                "status_symbol": sym, "status_value": status_symbol_value(sym),
-                "severity": severity.value, "description": control.desc,
-                "check": control.tag('check'), "fix": control.tag('fix'),
-                "impact": control.impact, "value": 1}]}
-          end
-        end
-      end
-    end
-    #logger.debug "nist: #{nist}"
-    nist
+    params = { status_symbol: status_symbol, cts: cts }
+    profile_values cat, params
   end
 
-  def self.transform hash
-    hash.deep_transform_keys!{ |key| key.to_s.tr('-', '_').gsub(/\battributes\b/, 'profile_attributes').gsub(/\bid\b/, 'control_id') }
+  def self.transform(hash)
+    hash.deep_transform_keys! { |key| key.to_s.tr('-', '_').gsub(/\battributes\b/, 'profile_attributes').gsub(/\bid\b/, 'control_id') }
     hash.delete('controls')
     platform = hash.delete('platform')
     platform.try(:each) do |key, value|
@@ -110,40 +117,14 @@ class Evaluation
     statistics.try(:each) do |key, value|
       hash["statistics_#{key}"] = value
     end
-    results = []
-    all_profiles = []
-    profiles = hash.delete('profiles')
-    profiles.try(:each) do |profile_hash|
-      profile = Profile.where(sha256: profile_hash['sha256']).try(:first)
-      unless profile
-        new_profile_hash, controls = Profile.transform(profile_hash.deep_dup)
-        profile = Profile.create(new_profile_hash)
-        controls.each do |control|
-          logger.debug "Add Control: #{control.keys}"
-          profile.controls.create(control)
-        end
-      end
-      profile_hash['controls'].try(:each) do |control_hash|
-        logger.debug "For #{control_hash['control_id']}"
-        if (control = profile.controls.where(control_id: control_hash['control_id']).try(:first))
-          logger.debug "Found Control"
-          control_hash['results'].try(:each) do |result|
-            logger.debug "For result #{result.inspect}"
-            control.results.create(result)
-          end
-          results.concat control.results
-        end
-        logger.debug "Results: #{results.size}"
-      end
-      all_profiles << profile
-    end
+    all_profiles, results = Profile.parse hash.delete('profiles')
     hash['results'] = results
     hash['profiles'] = all_profiles
     logger.debug("hash: #{hash.inspect}")
     hash
   end
 
-  def self.parse json_content
+  def self.parse(json_content)
     contents = json_content
     begin
       hash = Evaluation.transform(contents)
@@ -157,7 +138,7 @@ class Evaluation
         evaluation.profiles << profile
       end
       evaluation
-    rescue
+    rescue Mongoid::Errors::UnknownAttribute
       nil
     end
   end

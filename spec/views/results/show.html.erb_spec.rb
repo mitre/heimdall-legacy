@@ -1,6 +1,6 @@
 require 'rails_helper'
 
-RSpec.describe "results/show", type: :view do
+RSpec.describe 'results/show', type: :view do
   context 'Editor is logged in' do
     let(:user) { FactoryGirl.create(:editor) }
     before do
@@ -14,7 +14,7 @@ RSpec.describe "results/show", type: :view do
       @result = create :result, evaluation_id: @evaluation.id, control_id: @control.id, created_by: user
     end
 
-    it "renders attributes in <p>" do
+    it 'renders attributes' do
       render
       expect(rendered).to match(/Status/)
       expect(rendered).to match(/Resource/)

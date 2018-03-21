@@ -1,3 +1,5 @@
+require 'git'
+
 class ReposController < ApplicationController
   load_and_authorize_resource
 
@@ -10,53 +12,9 @@ class ReposController < ApplicationController
   # GET /repos/1
   # GET /repos/1.json
   def show
-    @repo_projects = []
     @repo_cred = @repo.repo_creds.where(created_by_id: current_user.id).first || @repo.repo_creds.new
-    begin
-      if @repo.repo_type == 'GitLab'
-        Gitlab.endpoint = @repo.api_url
-        Gitlab.private_token = @repo_cred.token
-        hsh = Gitlab.projects
-        if hsh.present?
-          hsh.each do |gitlab_proj|
-            begin
-              repo = gitlab_proj.to_hash
-              inspec = Gitlab.file_contents(repo["name_with_namespace"], 'inspec.yml')
-              logger.debug "inspec.yml: #{inspec}"
-              repo_proj = {}
-              repo_proj[:name] = repo["name_with_namespace"]
-              repo_proj[:description] = repo["description"]
-              repo_proj[:html_url] = repo["http_url_to_repo"]
-              @repo_projects << repo_proj
-            rescue
-              logger.debug "#{repo['name_with_namespace']} is missing inspec.yml file"
-            end
-          end
-        end
-      elsif @repo.repo_type == 'GitHub'
-        client = Octokit::Client.new(access_token: @repo_cred.token)
-        logger.debug "Octokit::Client: #{client}"
-        repos = client.repos.select{|repo| repo.name.include?('-baseline')}
-        logger.debug "GitHub repos: #{repos.size}"
-        repos.each do |repo|
-          begin
-            inspec = client.contents(repo["full_name"], path: 'inspec.yml')
-            logger.debug "inspec.yml: #{inspec}"
-            repo_proj = {}
-            repo_proj[:name] = repo["full_name"]
-            repo_proj[:description] = repo["description"]
-            repo_proj[:html_url] = repo["html_url"]
-            @repo_projects << repo_proj
-          rescue
-            logger.debug "#{repo['full_name']} is missing inspec.yml file"
-          end
-        end
-      end
-      logger.debug "@repo_projects: #{@repo_projects}"
-    rescue
-      logger.debug 'Rescued'
-      @repo_projects = []
-    end
+    @repo_projects = @repo.projects @repo_cred
+    logger.debug "@repo_projects: #{@repo_projects}"
   end
 
   # GET /repos/new

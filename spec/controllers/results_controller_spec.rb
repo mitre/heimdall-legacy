@@ -42,18 +42,18 @@ RSpec.describe ResultsController, type: :controller do
       @control = create :control, profile_id: @profile.id, created_by: user
     end
 
-    describe "GET #index" do
-      it "returns a success response" do
-        result = create :result, evaluation_id: @evaluation.id, control_id: @control.id, created_by: user
-        get :index, params: {evaluation_id: @evaluation.id}, session: valid_session
+    describe 'GET #index' do
+      it 'returns a success response' do
+        create :result, evaluation_id: @evaluation.id, control_id: @control.id, created_by: user
+        get :index, params: { evaluation_id: @evaluation.id }, session: valid_session
         expect(response).to be_success
       end
     end
 
-    describe "GET #show" do
-      it "returns a success response" do
+    describe 'GET #show' do
+      it 'returns a success response' do
         result = create :result, evaluation_id: @evaluation.id, control_id: @control.id, created_by: user
-        get :show, params: {evaluation_id: @evaluation.id, id: result.to_param}, session: valid_session
+        get :show, params: { evaluation_id: @evaluation.id, id: result.to_param }, session: valid_session
         expect(response).to be_success
       end
     end

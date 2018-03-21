@@ -1,5 +1,5 @@
 module ApplicationHelper
-  def category_button impact
+  def category_button(impact)
     if impact <= 0.3
       'btn btn-category-iii'
     elsif impact <= 0.6
@@ -9,25 +9,22 @@ module ApplicationHelper
     end
   end
 
-  def status_label symbol
+  def status_label(symbol)
     symbol.to_s.titleize
   end
 
-  def status_btn symbol
-    if symbol == :not_applicable
-      'btn btn-info'
-    elsif symbol == :open
-      'btn btn-danger'
-    elsif symbol == :not_a_finding
-      'btn btn-success'
-    elsif symbol == :not_reviewed
-      'btn btn-neutral'
+  def status_btn(symbol)
+    case symbol
+    when :not_applicable then 'btn btn-info'
+    when :open then 'btn btn-danger'
+    when :not_a_finding then 'btn btn-success'
+    when :not_reviewed then 'btn btn-neutral'
     else
       'btn btn-neutral'
     end
   end
 
-  def result_message symbol
+  def result_message(symbol)
     if symbol == :not_applicable
       'Justification'
     elsif symbol == :open

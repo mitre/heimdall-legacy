@@ -1,6 +1,6 @@
 require 'rails_helper'
 
-RSpec.describe "controls/edit", type: :view do
+RSpec.describe 'controls/edit', type: :view do
 
   context 'Editor is logged in' do
     let(:user) { FactoryGirl.create(:editor) }
@@ -13,11 +13,11 @@ RSpec.describe "controls/edit", type: :view do
       @control = create :control, profile_id: @profile.id, created_by: user
     end
 
-    it "renders the edit control form" do
+    it 'renders the edit control form' do
       render
 
-      assert_select "form[action=?][method=?]", profile_control_path(@profile, @control), "post" do
-        assert_select "textarea[name=?]", "control[code]"
+      assert_select 'form[action=?][method=?]', profile_control_path(@profile, @control), 'post' do
+        assert_select 'textarea[name=?]', 'control[code]'
       end
     end
   end

@@ -33,7 +33,7 @@ RSpec.describe GroupsController, type: :controller do
   }
 
   let(:invalid_attributes) {
-    {title: "MyString2", controls: "MyString2", control_id: "MyString2"}
+    { title: 'MyString2', controls: 'MyString2', control_id: 'MyString2' }
   }
 
   # This should return the minimal set of values that should be in the session
@@ -51,125 +51,125 @@ RSpec.describe GroupsController, type: :controller do
       @profile = create :profile, created_by: user
     end
 
-    describe "GET #show" do
-      it "returns a success response" do
+    describe 'GET #show' do
+      it 'returns a success response' do
         group = @profile.groups.create! valid_attributes
-        get :show, params: {profile_id: @profile.id, id: group.to_param}, session: valid_session
+        get :show, params: { profile_id: @profile.id, id: group.to_param }, session: valid_session
         expect(response).to be_success
       end
     end
 
-    describe "GET #new" do
-      it "returns a success response" do
-        get :new, params: {profile_id: @profile.id}, session: valid_session
+    describe 'GET #new' do
+      it 'returns a success response' do
+        get :new, params: { profile_id: @profile.id }, session: valid_session
         expect(response).to be_success
       end
     end
 
-    describe "POST #create" do
-      context "with valid params" do
-        it "creates a new Group" do
+    describe 'POST #create' do
+      context 'with valid params' do
+        it 'creates a new Group' do
           expect {
-            post :create, params: {profile_id: @profile.id, group: valid_attributes}, session: valid_session
+            post :create, params: { profile_id: @profile.id, group: valid_attributes }, session: valid_session
           }.to change { @profile.reload.groups.count }.by(1)
         end
 
-        it "redirects to the created group" do
-          post :create, params: {profile_id: @profile.id, group: valid_attributes}, session: valid_session
+        it 'redirects to the created group' do
+          post :create, params: { profile_id: @profile.id, group: valid_attributes }, session: valid_session
           expect(response).to redirect_to(profile_group_url(@profile, @profile.reload.groups.last))
         end
       end
 
-      context "with invalid params" do
+      context 'with invalid params' do
         it "returns a success response (i.e. to display the 'new' template)" do
-          post :create, params: {profile_id: @profile.id, group: invalid_attributes}, session: valid_session
+          post :create, params: { profile_id: @profile.id, group: invalid_attributes }, session: valid_session
           expect(response).to redirect_to(@profile)
         end
       end
     end
 
-    describe "PUT #update" do
-      context "with valid params" do
+    describe 'PUT #update' do
+      context 'with valid params' do
         let(:new_attributes) {
           FactoryGirl.build(:group2).attributes
         }
 
-        it "updates the requested group" do
+        it 'updates the requested group' do
           group = @profile.groups.create! valid_attributes
           title = group.title
-          put :update, params: {profile_id: @profile.id, id: group.to_param, group: new_attributes}, session: valid_session
+          put :update, params: { profile_id: @profile.id, id: group.to_param, group: new_attributes }, session: valid_session
           group.reload
           expect(group.title).to_not eq(title)
         end
 
-        it "redirects to the group" do
+        it 'redirects to the group' do
           group = @profile.groups.create! valid_attributes
-          put :update, params: {profile_id: @profile.id, id: group.to_param, group: valid_attributes}, session: valid_session
+          put :update, params: { profile_id: @profile.id, id: group.to_param, group: valid_attributes }, session: valid_session
           expect(response).to redirect_to(profile_group_url(@profile, @profile.reload.groups.last))
         end
       end
 
-      context "with invalid params" do
-        it "should raise" do
+      context 'with invalid params' do
+        it 'should raise' do
           group = @profile.groups.create! valid_attributes
-          put :update, params: {profile_id: @profile.id, id: group.to_param, group: invalid_attributes}, session: valid_session
+          put :update, params: { profile_id: @profile.id, id: group.to_param, group: invalid_attributes }, session: valid_session
           expect(response).to redirect_to(profile_group_url(@profile, group))
           expect(response).to_not be_success
         end
       end
     end
 
-    describe "PUT #add" do
-      context "with valid params" do
+    describe 'PUT #add' do
+      context 'with valid params' do
         let(:new_attributes) {
           FactoryGirl.build(:group2).attributes
         }
 
-        it "updates the requested group" do
+        it 'updates the requested group' do
           group = @profile.groups.create! valid_attributes
           controls = group.controls
-          put :add, params: {profile_id: @profile.id, id: group.to_param, group: new_attributes}, session: valid_session
+          put :add, params: { profile_id: @profile.id, id: group.to_param, group: new_attributes }, session: valid_session
           group.reload
           expect(group.controls).to_not eq(controls)
         end
 
-        it "redirects to the group" do
+        it 'redirects to the group' do
           group = @profile.groups.create! valid_attributes
-          put :add, params: {profile_id: @profile.id, id: group.to_param, group: valid_attributes}, session: valid_session
+          put :add, params: { profile_id: @profile.id, id: group.to_param, group: valid_attributes }, session: valid_session
           expect(response).to redirect_to(profile_group_url(@profile, @profile.reload.groups.last))
         end
       end
     end
 
-    describe "PUT #remove" do
-      context "with valid params" do
-        it "updates the requested group" do
+    describe 'PUT #remove' do
+      context 'with valid params' do
+        it 'updates the requested group' do
           group = @profile.groups.create! valid_attributes
           controls = group.controls
-          put :remove, params: {profile_id: @profile.id, id: group.to_param, control_id: group.controls.first}, session: valid_session
+          put :remove, params: { profile_id: @profile.id, id: group.to_param, control_id: group.controls.first }, session: valid_session
           group.reload
           expect(group.controls).to_not eq(controls)
         end
 
-        it "redirects to the group" do
+        it 'redirects to the group' do
           group = @profile.groups.create! valid_attributes
-          put :remove, params: {profile_id: @profile.id, id: group.to_param, control_id: group.controls.first}, session: valid_session
+          put :remove, params: { profile_id: @profile.id, id: group.to_param, control_id: group.controls.first }, session: valid_session
           expect(response).to redirect_to(profile_group_url(@profile, @profile.reload.groups.last))
         end
       end
     end
 
-    describe "DELETE #destroy" do
-      it "destroys the requested group" do
+    describe 'DELETE #destroy' do
+      it 'destroys the requested group' do
         group = @profile.groups.create! valid_attributes
         expect {
-          delete :destroy, params: {profile_id: @profile.id, id: group.to_param}, session: valid_session
+          delete :destroy, params: { profile_id: @profile.id, id: group.to_param }, session: valid_session
         }.to change { @profile.reload.groups.count }.by(-1)
       end
 
-      it "redirects to the groups list" do
+      it 'redirects to the groups list' do
         group = @profile.groups.create! valid_attributes
-        delete :destroy, params: {profile_id: @profile.id, id: group.to_param}, session: valid_session
+        delete :destroy, params: { profile_id: @profile.id, id: group.to_param }, session: valid_session
         expect(response).to redirect_to(@profile)
       end
     end

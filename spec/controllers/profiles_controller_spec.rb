@@ -48,120 +48,120 @@ RSpec.describe ProfilesController, type: :controller do
       sign_in user
     end
 
-    describe "GET #index" do
-      it "returns a success response" do
-        profile = create :profile, created_by: user
+    describe 'GET #index' do
+      it 'returns a success response' do
+        create :profile, created_by: user
         get :index, params: {}, session: valid_session
         expect(response).to be_success
       end
     end
 
-    describe "GET #show" do
-      it "returns a success response" do
+    describe 'GET #show' do
+      it 'returns a success response' do
         profile = create :profile, created_by: user
-        get :show, params: {id: profile.to_param}, session: valid_session
+        get :show, params: { id: profile.to_param }, session: valid_session
         expect(response).to be_success
       end
     end
 
-    describe "GET #edit" do
-      it "returns a success response" do
+    describe 'GET #edit' do
+      it 'returns a success response' do
         profile = create :profile, created_by: user
-        get :edit, params: {id: profile.to_param}, session: valid_session
+        get :edit, params: { id: profile.to_param }, session: valid_session
         expect(response).to be_success
       end
     end
 
-    describe "GET #nist_800_53" do
-      it "returns a success response" do
-        profile_hash, controls = Profile.transform(JSON.parse(File.open("spec/support/nginx_profile.json", "r").read))
+    describe 'GET #nist' do
+      it 'returns a success response' do
+        profile_hash, controls = Profile.transform(JSON.parse(File.open('spec/support/nginx_profile.json', 'r').read))
         profile = Profile.create(profile_hash)
         controls.each do |control|
           profile.controls.create(control)
         end
-        get :nist_800_53, params: {id: profile.to_param, category: "Medium"}, session: valid_session
-        expect(response.content_type).to eq("application/json")
+        get :nist, params: { format: 'json', id: profile.to_param, category: 'Medium' }, session: valid_session
+        expect(response.content_type).to eq('application/json')
       end
     end
 
-    describe "POST #upload" do
-      it "can upload a profile" do
+    describe 'POST #upload' do
+      it 'can upload a profile' do
         @file = fixture_file_upload('spec/support/nginx_profile.json', 'text/json')
-        post :upload, params: {file: @file}, session: valid_session
+        post :upload, params: { file: @file }, session: valid_session
         expect(response).to redirect_to(Profile.last)
       end
 
-      it "rejects a malformed profile" do
+      it 'rejects a malformed profile' do
         @file = fixture_file_upload('spec/support/bad_profile.json', 'text/json')
-        post :upload, params: {file: @file}, session: valid_session
+        post :upload, params: { file: @file }, session: valid_session
         expect(response).to redirect_to(profiles_path)
       end
     end
 
-    describe "POST #create" do
-      context "with valid params" do
-        it "creates a new Profile" do
+    describe 'POST #create' do
+      context 'with valid params' do
+        it 'creates a new Profile' do
           expect {
-            post :create, params: {profile: valid_attributes}, session: valid_session
+            post :create, params: { profile: valid_attributes }, session: valid_session
           }.to change(Profile, :count).by(1)
         end
 
-        it "redirects to the created profile" do
-          post :create, params: {profile: valid_attributes}, session: valid_session
+        it 'redirects to the created profile' do
+          post :create, params: { profile: valid_attributes }, session: valid_session
           expect(response).to redirect_to(Profile.last)
         end
       end
 
-      context "with invalid params" do
+      context 'with invalid params' do
         it "returns a success response (i.e. to display the 'new' template)" do
-          post :create, params: {profile: invalid_attributes}, session: valid_session
+          post :create, params: { profile: invalid_attributes }, session: valid_session
           expect(response).to_not be_success
           expect(response).to redirect_to(profiles_path)
         end
       end
     end
 
-    describe "PUT #update" do
-      context "with valid params" do
+    describe 'PUT #update' do
+      context 'with valid params' do
         let(:new_attributes) {
           FactoryGirl.build(:profile2).attributes
         }
 
-        it "updates the requested profile" do
+        it 'updates the requested profile' do
           profile = create :profile, created_by: user
           title = profile.title
-          put :update, params: {id: profile.to_param, profile: new_attributes}, session: valid_session
+          put :update, params: { id: profile.to_param, profile: new_attributes }, session: valid_session
           profile.reload
           expect(profile.title).to_not eq(title)
         end
 
-        it "redirects to the profile" do
+        it 'redirects to the profile' do
           profile = create :profile, created_by: user
-          put :update, params: {id: profile.to_param, profile: valid_attributes}, session: valid_session
+          put :update, params: { id: profile.to_param, profile: valid_attributes }, session: valid_session
           expect(response).to redirect_to(profile)
         end
       end
 
-      context "with invalid params" do
+      context 'with invalid params' do
         it "returns a success response (i.e. to display the 'edit' template)" do
           profile = create :profile, created_by: user
-          put :update, params: {id: profile.to_param, profile: invalid_attributes}, session: valid_session
+          put :update, params: { id: profile.to_param, profile: invalid_attributes }, session: valid_session
           expect(response).to render_template(:edit)
         end
       end
     end
 
-    describe "DELETE #destroy" do
-      it "destroys the requested profile" do
+    describe 'DELETE #destroy' do
+      it 'destroys the requested profile' do
         profile = create :profile, created_by: user
         expect {
-          delete :destroy, params: {id: profile.to_param}, session: valid_session
+          delete :destroy, params: { id: profile.to_param }, session: valid_session
         }.to change(Profile, :count).by(-1)
       end
 
-      it "redirects to the profiles list" do
+      it 'redirects to the profiles list' do
         profile = create :profile, created_by: user
-        delete :destroy, params: {id: profile.to_param}, session: valid_session
+        delete :destroy, params: { id: profile.to_param }, session: valid_session
         expect(response).to redirect_to(profiles_url)
       end
     end
@@ -174,47 +174,47 @@ RSpec.describe ProfilesController, type: :controller do
       sign_in user
     end
 
-    describe "PUT #update" do
-      context "with valid params" do
+    describe 'PUT #update' do
+      context 'with valid params' do
         let(:new_attributes) {
           FactoryGirl.build(:profile2).attributes
         }
 
-        it "updates the requested profile" do
+        it 'updates the requested profile' do
           profile = create :profile
           title = profile.title
-          put :update, params: {id: profile.to_param, profile: new_attributes}, session: valid_session
+          put :update, params: { id: profile.to_param, profile: new_attributes }, session: valid_session
           profile.reload
           expect(profile.title).to_not eq(title)
         end
 
-        it "redirects to the profile" do
+        it 'redirects to the profile' do
           profile = create :profile
-          put :update, params: {id: profile.to_param, profile: valid_attributes}, session: valid_session
+          put :update, params: { id: profile.to_param, profile: valid_attributes }, session: valid_session
           expect(response).to redirect_to(profile)
         end
       end
 
-      context "with invalid params" do
+      context 'with invalid params' do
         it "returns a success response (i.e. to display the 'edit' template)" do
           profile = create :profile
-          put :update, params: {id: profile.to_param, profile: invalid_attributes}, session: valid_session
+          put :update, params: { id: profile.to_param, profile: invalid_attributes }, session: valid_session
           expect(response).to render_template(:edit)
         end
       end
     end
 
-    describe "DELETE #destroy" do
-      it "destroys the requested profile" do
+    describe 'DELETE #destroy' do
+      it 'destroys the requested profile' do
         profile = create :profile
         expect {
-          delete :destroy, params: {id: profile.to_param}, session: valid_session
+          delete :destroy, params: { id: profile.to_param }, session: valid_session
         }.to change(Profile, :count).by(-1)
       end
 
-      it "redirects to the profiles list" do
+      it 'redirects to the profiles list' do
         profile = create :profile
-        delete :destroy, params: {id: profile.to_param}, session: valid_session
+        delete :destroy, params: { id: profile.to_param }, session: valid_session
         expect(response).to redirect_to(profiles_url)
       end
     end

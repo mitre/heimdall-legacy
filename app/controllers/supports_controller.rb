@@ -43,7 +43,7 @@ class SupportsController < ApplicationController
     params.require(:support).permit(:os_family)
   end
 
-  #convert parameters with hyphen to parameters with underscore.
+  # convert parameters with hyphen to parameters with underscore.
   def transform
     params.transform_keys! { |key| key.tr('-', '_') }
   end

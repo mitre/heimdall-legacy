@@ -28,36 +28,31 @@ RSpec.describe Control, type: :model do
       }"
     }
 
-    it "get is_editable?" do
+    it 'get is_editable?' do
       expect(control.is_editable?).to eq true
     end
 
-    it "set refs_list" do
+    it 'set refs_list' do
       control.refs_list='ref1, ref2'
       expect(control.refs).to eq %w{ref1 ref2}
     end
 
-    it "get low severity" do
+    it 'get low severity' do
       control.impact = 0.2
-      expect(control.severity).to eq "low"
+      expect(control.severity).to eq 'low'
     end
 
-    it "get medium severity" do
+    it 'get medium severity' do
       control.impact = 0.5
-      expect(control.severity).to eq "medium"
+      expect(control.severity).to eq 'medium'
     end
 
-    it "get high severity" do
+    it 'get high severity' do
       control.impact = 0.9
-      expect(control.severity).to eq "high"
+      expect(control.severity).to eq 'high'
     end
 
-    it "get empty results" do
-      results = control.eval_results nil
-      expect(results).to eq []
-    end
-
-    it "parse bad code" do
+    it 'parse bad code' do
       code = Control.parse bad_code
       expect(code).to eq nil
     end

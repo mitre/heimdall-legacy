@@ -698,13 +698,14 @@ document.addEventListener("turbolinks:load", function() {
   }
 
   function loadTreemapData(category, status) {
-    api_path = "<%= evaluation_nist_800_53_path(@evaluation) %>";
+    api_path = "<%= evaluation_nist_path(@evaluation) %>";
     if (category) {
       api_path += "/category/" + encodeURIComponent(category);
     }
     if (status) {
       api_path += "/status/" + encodeURIComponent(status);
     }
+    api_path += ".json";
     console.log("loadTreemapData from " + api_path);
   	d3.json(api_path, function(data) {
       root = data

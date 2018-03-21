@@ -33,7 +33,7 @@ RSpec.describe ReposController, type: :controller do
   }
 
   let(:invalid_attributes) {
-    {name: "name2", api_url: "url", repo_type: "GitNada"}
+    { name: 'name2', api_url: 'url', repo_type: 'GitNada' }
   }
 
   # This should return the minimal set of values that should be in the session
@@ -47,101 +47,110 @@ RSpec.describe ReposController, type: :controller do
       sign_in user
     end
 
-    describe "GET #index" do
-      it "returns a success response" do
-        repo = create :github_repo, created_by: user
+    describe 'GET #index' do
+      it 'returns a success response' do
+        create :repo, created_by: user
         get :index, params: {}, session: valid_session
         expect(response).to be_success
       end
     end
 
-    describe "GET #show GitLab" do
-      it "returns a success response" do
+    describe 'GET #show GitLab' do
+      it 'returns a success response' do
         repo_cred = create :gitlab_cred, created_by: user
         @repo = repo_cred.repo
-        get :show, params: {id: @repo.to_param}, session: valid_session
+        get :show, params: { id: @repo.to_param }, session: valid_session
         expect(response).to be_success
       end
     end
 
-    describe "GET #new" do
-      it "returns a success response" do
+    describe 'GET #show GitHub' do
+      it 'returns a success response' do
+        repo_cred = create :github_cred, created_by: user
+        @repo = repo_cred.repo
+        get :show, params: { id: @repo.to_param }, session: valid_session
+        expect(response).to be_success
+      end
+    end
+
+    describe 'GET #new' do
+      it 'returns a success response' do
         get :new, params: {}, session: valid_session
         expect(response).to be_success
       end
     end
 
-    describe "GET #edit" do
-      it "returns a success response" do
+    describe 'GET #edit' do
+      it 'returns a success response' do
         repo = create :gitlab_repo, created_by: user
-        get :edit, params: {id: repo.to_param}, session: valid_session
+        get :edit, params: { id: repo.to_param }, session: valid_session
         expect(response).to be_success
       end
     end
 
-    describe "POST #create" do
-      context "with valid params" do
-        it "creates a new Repo" do
+    describe 'POST #create' do
+      context 'with valid params' do
+        it 'creates a new Repo' do
           expect {
-            post :create, params: {repo: valid_attributes}, session: valid_session
+            post :create, params: { repo: valid_attributes }, session: valid_session
           }.to change(Repo, :count).by(1)
         end
 
-        it "redirects to the created repo" do
-          post :create, params: {repo: valid_attributes}, session: valid_session
+        it 'redirects to the created repo' do
+          post :create, params: { repo: valid_attributes }, session: valid_session
           expect(response).to redirect_to(Repo.last)
         end
       end
 
-      context "with invalid params" do
+      context 'with invalid params' do
         it "returns a success response (i.e. to display the 'new' template)" do
-          post :create, params: {repo: invalid_attributes}, session: valid_session
+          post :create, params: { repo: invalid_attributes }, session: valid_session
           expect(response).to render_template(:new)
         end
       end
     end
 
-    describe "PUT #update" do
-      context "with valid params" do
+    describe 'PUT #update' do
+      context 'with valid params' do
         let(:new_attributes) {
-          {name: "name2", api_url: "url", repo_type: "GitLab"}
+          { name: 'name2', api_url: 'url', repo_type: 'GitLab' }
         }
 
-        it "updates the requested repo" do
+        it 'updates the requested repo' do
           repo = create :gitlab_repo, created_by: user
           name = repo.name
-          put :update, params: {id: repo.to_param, repo: new_attributes}, session: valid_session
+          put :update, params: { id: repo.to_param, repo: new_attributes }, session: valid_session
           repo.reload
           expect(repo.name).to_not eq(name)
         end
 
-        it "redirects to the repo" do
+        it 'redirects to the repo' do
           repo = create :gitlab_repo, created_by: user
-          put :update, params: {id: repo.to_param, repo: valid_attributes}, session: valid_session
+          put :update, params: { id: repo.to_param, repo: valid_attributes }, session: valid_session
           expect(response).to redirect_to(repo)
         end
       end
 
-      context "with invalid params" do
+      context 'with invalid params' do
         it "returns a success response (i.e. to display the 'edit' template)" do
           repo = create :gitlab_repo, created_by: user
-          put :update, params: {id: repo.to_param, repo: invalid_attributes}, session: valid_session
+          put :update, params: { id: repo.to_param, repo: invalid_attributes }, session: valid_session
           expect(response).to render_template(:edit)
         end
       end
     end
 
-    describe "DELETE #destroy" do
-      it "destroys the requested repo" do
+    describe 'DELETE #destroy' do
+      it 'destroys the requested repo' do
         repo = create :gitlab_repo, created_by: user
         expect {
-          delete :destroy, params: {id: repo.to_param}, session: valid_session
+          delete :destroy, params: { id: repo.to_param }, session: valid_session
         }.to change(Repo, :count).by(-1)
       end
 
-      it "redirects to the repos list" do
+      it 'redirects to the repos list' do
         repo = create :gitlab_repo, created_by: user
-        delete :destroy, params: {id: repo.to_param}, session: valid_session
+        delete :destroy, params: { id: repo.to_param }, session: valid_session
         expect(response).to redirect_to(repos_url)
       end
     end

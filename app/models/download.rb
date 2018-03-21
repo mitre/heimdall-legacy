@@ -1,4 +1,4 @@
-require "render_anywhere"
+require 'render_anywhere'
 
 class Download
   include RenderAnywhere
@@ -17,18 +17,18 @@ class Download
     end
     @profiles.each do |profile|
       families, nist = profile.control_families
-      @nist_hash["children"].each do |cf|
+      @nist_hash['children'].each do |cf|
         family_value = 0
-        cf["children"].each do |control|
-          if families.include?(control["name"])
-            control["controls"] = nist[control["name"]]
-            control["value"] = control["controls"].size
-            family_value += control["controls"].size
+        cf['children'].each do |control|
+          if families.include?(control['name'])
+            control['controls'] = nist[control['name']]
+            control['value'] = control['controls'].size
+            family_value += control['controls'].size
           else
-            control["value"] = 0
+            control['value'] = 0
           end
         end
-        cf["value"] = family_value
+        cf['value'] = family_value
       end
     end
   end
@@ -36,11 +36,11 @@ class Download
   def to_pdf
     print "@eval: #{@evaluation}, profiles: #{@evaluation.profiles.size}\n"
     kit = PDFKit.new(as_html)
-    kit.to_file("tmp/ssp.pdf")
+    kit.to_file('tmp/ssp.pdf')
   end
 
   def filename
-    "SSP.pdf"
+    'SSP.pdf'
   end
 
   private
@@ -48,8 +48,8 @@ class Download
   attr_reader :invoice
 
   def as_html
-    render template: "evaluations/ssp_pdf",
-      layout: "ssp_pdf",
+    render template: 'evaluations/ssp_pdf',
+      layout: 'ssp_pdf',
       locals: { evaluation: @evaluation, nist_hash: @nist_hash, symbols: @symbols }
   end
 end

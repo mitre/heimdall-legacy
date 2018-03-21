@@ -25,8 +25,8 @@ class DownloadsController < ApplicationController
   def download_attributes
     {
       filename: download.filename,
-      type: "application/pdf",
-      disposition: "inline"
+      type: 'application/pdf',
+      disposition: 'inline'
     }
   end
 end

@@ -9,9 +9,9 @@ class Users::RegistrationsController < Devise::RegistrationsController
 
   # POST /resource
   def create
-    logger.debug "CREATE"
+    logger.debug 'CREATE'
     super
-    logger.debug "AFTER CREATE"
+    logger.debug 'AFTER CREATE'
   end
 
   # GET /resource/edit
