@@ -101,7 +101,7 @@
             </button>
           </div>
           <div id="add_depend_form", style="display:none;">
-            <%= render 'depends/form', depend: @depend %>
+            <%= render 'depends/form', depend: @profile.depends.new, profile: @profile %>
           </div>
         </div>
         <!-- /.box-body -->
@@ -130,7 +130,7 @@
             </button>
           </div>
           <div id="add_support_form", style="display:none;">
-            <%= render 'supports/form', support: @support %>
+            <%= render 'supports/form', support: @profile.supports.new, profile: @profile %>
           </div>
         </div>
         <!-- /.box-body -->
@@ -177,7 +177,7 @@
         <div class="box-body">
           <p>
             <ul class="list-unstyled column-4">
-              <% @profile.groups.each do |gr| %>
+              <% @profile.groups.where(:title.ne => nil).each do |gr| %>
                 <li>
                   <%= link_to gr.title, profile_group_path(@profile.id, gr.id) %>
                   <span class="margin-left">

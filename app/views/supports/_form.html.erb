@@ -1,4 +1,4 @@
-<%= form_with(model: [ @profile, @support ], local: true) do |form| %>
+<%= form_with(model: [ profile, support ], local: true) do |form| %>
   <% if support.errors.any? %>
     <div id="error_explanation">
       <h2><%= pluralize(support.errors.count, "error") %> prohibited this support from being saved:</h2>
@@ -11,7 +11,7 @@
     </div>
   <% end %>
 
-  <%= form.hidden_field :profile_id, :value => @profile.id, :name =>"profile_id" %>
+  <%= form.hidden_field :profile_id, :value => profile.id, :name =>"profile_id" %>
 
   <div class="form-group">
     <%= form.label :os_family, "OS Family" %>

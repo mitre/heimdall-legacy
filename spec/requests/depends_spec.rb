@@ -13,7 +13,7 @@ RSpec.describe 'Depends', type: :request do
         profile = create :profile, created_by: @user
         depend = profile.depends.create! valid_attributes
         delete profile_depend_path(profile, depend)
-        expect(response).to redirect_to(profile)
+        expect(response).to redirect_to(edit_profile_url(profile))
       end
     end
   end

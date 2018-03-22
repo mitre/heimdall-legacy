@@ -13,7 +13,7 @@ RSpec.describe 'Supports', type: :request do
         profile = create :profile, created_by: @user
         support = profile.supports.create! valid_attributes
         delete profile_support_path(profile, support)
-        expect(response).to redirect_to(profile)
+        expect(response).to redirect_to(edit_profile_url(profile))
       end
     end
   end

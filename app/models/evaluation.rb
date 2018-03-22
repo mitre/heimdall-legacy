@@ -60,6 +60,16 @@ class Evaluation
     end
   end
 
+  def symbols
+    _, controls = status_counts
+    symbols = {}
+    controls.each do |_, hsh|
+      control = hsh[:control]
+      symbols[control.control_id] = hsh[:status_symbol]
+    end
+    symbols
+  end
+
   def tag_values(tag, control, params, nist)
     if tag.value.is_a? Array
       tag.value.each do |value|

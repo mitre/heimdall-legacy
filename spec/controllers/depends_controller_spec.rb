@@ -61,7 +61,7 @@ RSpec.describe DependsController, type: :controller do
 
         it 'redirects to the created depend' do
           post :create, params: { profile_id: @profile.id, depend: valid_attributes }, session: valid_session
-          expect(response).to redirect_to(@profile)
+          expect(response).to redirect_to(edit_profile_url(@profile))
         end
       end
 
@@ -69,7 +69,7 @@ RSpec.describe DependsController, type: :controller do
         it "returns a success response (i.e. to display the 'new' template)" do
           post :create, params: { profile_id: @profile.id, depend: invalid_attributes }, session: valid_session
           expect(response).to_not be_success
-          expect(response).to redirect_to(@profile)
+          expect(response).to redirect_to(edit_profile_url(@profile))
         end
       end
     end
@@ -85,7 +85,7 @@ RSpec.describe DependsController, type: :controller do
       it 'redirects to the depends list' do
         depend = @profile.depends.create! valid_attributes
         delete :destroy, params: { profile_id: @profile.id, id: depend.to_param }, session: valid_session
-        expect(response).to redirect_to(@profile)
+        expect(response).to redirect_to(edit_profile_url(@profile))
       end
     end
   end

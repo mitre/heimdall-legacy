@@ -17,14 +17,10 @@ class ProfilesController < ApplicationController
   # GET /profiles/1
   # GET /profiles/1.json
   def show
-    @depend = @profile.depends.new
-    @support = @profile.supports.new
   end
 
   # GET /profiles/1/edit
   def edit
-    @depend = @profile.depends.new
-    @support = @profile.supports.new
   end
 
   # POST /profiles

@@ -6,15 +6,15 @@ Rails.application.routes.draw do
     sessions: 'users/sessions',
     registrations: 'users/registrations'
   }
-  resources :profiles do
+  resources :profiles, except: [:new] do
     resources :depends, only: [:create, :destroy]
     resources :supports, only: [:create, :destroy]
-    resources :controls
-    resources :profile_attributes
-    resources :groups
+    resources :controls, except: [:index]
+    resources :profile_attributes, except: [:index]
+    resources :groups, except: [:edit, :index]
   end
-  resources :evaluations do
-    resources :results
+  resources :evaluations, only: [:index, :show, :destroy] do
+    resources :results, only: [:index, :show]
     resources :downloads, only: [:show]
   end
 

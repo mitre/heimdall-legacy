@@ -1,4 +1,4 @@
-<%= form_with(model: [ @profile, @control ], local: true) do |form| %>
+<%= form_with(model: [ profile, control ], local: true) do |form| %>
   <% if control.errors.any? %>
     <div id="error_explanation">
       <h2><%= pluralize(control.errors.count, "error") %> prohibited this control from being saved:</h2>
@@ -57,7 +57,7 @@
     <%= button_tag(type: "submit", class: "btn btn-primary") do %>
       <i class="fa fa-edit"></i> Save
     <% end %>
-    <%= link_to ('<i class="fa fa-cancel"></i> Cancel').html_safe, edit_profile_path(@profile.id), class: "btn btn-info pull-right" %>
+    <%= link_to ('<i class="fa fa-cancel"></i> Cancel').html_safe, edit_profile_path(profile.id), class: "btn btn-info pull-right" %>
   </div>
   </div>
 <% end %>

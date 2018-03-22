@@ -8,13 +8,11 @@ class DownloadsController < ApplicationController
   private
 
   def evaluation
-    print "For evaluation_id #{params[:evaluation_id]}\n"
     Evaluation.find(params[:evaluation_id])
   end
 
   def download
     eval = evaluation
-    print "Found #{eval.inspect}\n"
     Download.new(eval)
   end
 

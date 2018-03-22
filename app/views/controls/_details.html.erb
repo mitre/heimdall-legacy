@@ -1,5 +1,5 @@
 <ul class="nav nav-tabs">
-  <% if @evaluation %>
+  <% if evaluation %>
     <li class="active"><a data-toggle="tab" href="#fdetails">Finding Details</a></li>
     <li><a data-toggle="tab" href="#details">Details</a></li>
   <% else %>
@@ -8,11 +8,11 @@
   <li onclick = test()><a data-toggle="tab" href="#inspec_code" >Inspec Code</a></li>
 </ul>
 <div class="tab-content">
-  <% if @evaluation %>
+  <% if evaluation %>
     <div id="fdetails" class="tab-pane fade in active">
       <table class="table table-bordered table-striped">
-        <% results = @control.results.where(:evaluation_id => @evaluation.id) %>
-        <tr><td colspan="3"><%= result_message(@evaluation.status_symbol(@control, results)) %>:<br><%= @control.desc %></td><tr>
+        <% results = control.results.where(:evaluation_id => evaluation.id) %>
+        <tr><td colspan="3"><%= result_message(evaluation.status_symbol(control, results)) %>:<br><%= control.desc %></td><tr>
         <% results.each do |result| %>
           <tr>
             <td><%= result.status.upcase %></td>
@@ -27,18 +27,18 @@
   <div id="details" class="tab-pane fade in active">
   <% end %>
     <table class="table table-bordered table-striped">
-      <tr><td>Control:</td><td><%= @control.control_id %></td></tr>
-      <tr><td>Title:</td><td><%= @control.title %></td></tr>
-      <tr><td>Desc:</td><td><%= @control.desc %></td></tr>
-      <tr><td>Severity:</td><td><%= @control.severity %></td></tr>
-      <tr><td>Impact:</td><td><%= @control.impact %></td></tr>
-      <% if nist = @control.tag('nist') %>
+      <tr><td>Control:</td><td><%= control.control_id %></td></tr>
+      <tr><td>Title:</td><td><%= control.title %></td></tr>
+      <tr><td>Desc:</td><td><%= control.desc %></td></tr>
+      <tr><td>Severity:</td><td><%= control.severity %></td></tr>
+      <tr><td>Impact:</td><td><%= control.impact %></td></tr>
+      <% if nist = control.tag('nist') %>
         <tr><td>NIST Ref:</td><td><%= nist %></td></tr>
       <% end %>
-      <% if check = @control.tag('check') %>
+      <% if check = control.tag('check') %>
         <tr><td>Check Text:</td><td><%= check %></td></tr>
       <% end %>
-      <% if fix = @control.tag('fix') %>
+      <% if fix = control.tag('fix') %>
         <tr><td>Fix Text:</td><td><%= fix %></td></tr>
       <% end %>
     </table>
@@ -46,7 +46,7 @@
   <div id="inspec_code" class="tab-pane fade">
     <table class="table table-bordered table-striped">
       <tr>
-        <td><pre><code class="language-ruby"><%= @control.code %></code></pre></td>
+        <td><pre><code class="language-ruby"><%= control.code %></code></pre></td>
       </tr>
     </table>
   </div>

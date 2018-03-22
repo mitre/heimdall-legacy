@@ -18,6 +18,7 @@ class Profile
   has_and_belongs_to_many :evaluations
   embeds_many :groups, cascade_callbacks: true
   embeds_many :profile_attributes, cascade_callbacks: true
+  accepts_nested_attributes_for :depends
   accepts_nested_attributes_for :controls
   accepts_nested_attributes_for :supports
   accepts_nested_attributes_for :groups

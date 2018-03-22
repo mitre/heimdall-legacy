@@ -84,15 +84,15 @@ RSpec.describe ProfileAttributesController, type: :controller do
 
         it 'redirects to the created profile_attribute' do
           post :create, params: { profile_id: @profile.id, profile_attribute: valid_attributes }, session: valid_session
-          expect(response).to redirect_to(@profile)
+          expect(response).to redirect_to(edit_profile_url(@profile))
         end
       end
 
       context 'with invalid params' do
-        it "returns a success response (i.e. to display the 'new' template)" do
+        it 'returns a success response' do
           post :create, params: { profile_id: @profile.id, profile_attribute: invalid_attributes }, session: valid_session
           expect(response).to_not be_success
-          expect(response).to redirect_to(@profile)
+          expect(response).to redirect_to(edit_profile_url(@profile))
         end
       end
     end
@@ -114,7 +114,7 @@ RSpec.describe ProfileAttributesController, type: :controller do
         it 'redirects to the profile_attribute' do
           profile_attribute = @profile.profile_attributes.create! valid_attributes
           put :update, params: { profile_id: @profile.id, id: profile_attribute.to_param, profile_attribute: valid_attributes }, session: valid_session
-          expect(response).to redirect_to(@profile)
+          expect(response).to redirect_to(edit_profile_url(@profile))
         end
       end
 
@@ -139,7 +139,7 @@ RSpec.describe ProfileAttributesController, type: :controller do
       it 'redirects to the profile_attributes list' do
         profile_attribute = @profile.profile_attributes.create! valid_attributes
         delete :destroy, params: { profile_id: @profile.id, id: profile_attribute.to_param }, session: valid_session
-        expect(response).to redirect_to(@profile)
+        expect(response).to redirect_to(edit_profile_url(@profile))
       end
     end
   end

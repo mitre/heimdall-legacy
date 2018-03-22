@@ -35,14 +35,8 @@ class EvaluationsController < ApplicationController
   def ssp
     authorize! :read, Evaluation
     @nist_hash = ProfilesController.nist_800_53
-    @profiles = @evaluation.profiles
-    @counts, @controls = @evaluation.status_counts
-    @symbols = {}
-    @controls.each do |_, hsh|
-      control = hsh[:control]
-      @symbols[control.control_id] = hsh[:status_symbol]
-    end
-    @profiles.each do |profile|
+    @symbols = @evaluation.symbols
+    @evaluation.profiles.each do |profile|
       families, nist = profile.control_families
       @nist_hash['children'].each do |cf|
         family_value = 0

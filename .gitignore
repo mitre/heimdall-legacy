@@ -11,6 +11,7 @@
 /tmp/
 /mongo_data/
 /log/*.log
+rails_best_practices_output.html
 
 # Used by dotenv library to load environment variables.
 # .env

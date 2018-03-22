@@ -1,4 +1,4 @@
-<%= form_with(model: [ @repo, @repo_cred ], local: true) do |form| %>
+<%= form_with(model: [ repo, repo_cred ], local: true) do |form| %>
   <% if repo_cred.errors.any? %>
     <div id="error_explanation">
       <h2><%= pluralize(repo_cred.errors.count, "error") %> prohibited this credential from being saved:</h2>

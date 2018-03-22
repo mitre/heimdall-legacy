@@ -34,7 +34,6 @@ class Download
   end
 
   def to_pdf
-    print "@eval: #{@evaluation}, profiles: #{@evaluation.profiles.size}\n"
     kit = PDFKit.new(as_html)
     kit.to_file('tmp/ssp.pdf')
   end

@@ -5,6 +5,7 @@ class GroupsController < ApplicationController
   # GET /groups/1.json
   def show
     authorize! :read, @profile
+    logger.debug "controls_list: #{@group.controls_list}"
   end
 
   # GET /groups/:profile_id/new

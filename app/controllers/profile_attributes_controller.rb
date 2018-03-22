@@ -24,14 +24,14 @@ class ProfileAttributesController < ApplicationController
   def create
     @profile = Profile.find(params[:profile_id])
     authorize! :create, @profile
-    @profile_attribute = @profile.profile_attributes.new(profile_attribute_params)
     respond_to do |format|
-      if @profile.save
-        format.html { redirect_to @profile, notice: 'Attribute was successfully created.' }
-        format.json { render :show, status: :created, location: @profile_attribute }
-      else
-        format.html { redirect_to @profile, error: 'Attribute was not successfully created.' }
-        format.json { render json: @profile_attribute.errors, status: :unprocessable_entity }
+      begin
+        @profile.profile_attributes.create!(profile_attribute_params)
+        format.html { redirect_to edit_profile_path(@profile), notice: 'Attribute was successfully created.' }
+        format.json { render :show, status: :created, location: @profile }
+      rescue Mongoid::Errors::Validations
+        format.html { redirect_to edit_profile_path(@profile), error: 'Attribute was not successfully created.' }
+        format.json { render json: @profile.errors, status: :unprocessable_entity }
       end
     end
   end
@@ -42,7 +42,7 @@ class ProfileAttributesController < ApplicationController
     authorize! :update, @profile
     respond_to do |format|
       if @profile_attribute.update(profile_attribute_params)
-        format.html { redirect_to @profile, notice: 'Attribute was successfully updated.' }
+        format.html { redirect_to edit_profile_path(@profile), notice: 'Attribute was successfully updated.' }
         format.json { render :show, status: :ok, location: @profile_attribute }
       else
         format.html { render :edit }
@@ -57,7 +57,7 @@ class ProfileAttributesController < ApplicationController
     authorize! :destroy, @profile
     @profile_attribute.destroy
     respond_to do |format|
-      format.html { redirect_to @profile, notice: 'Attribute was successfully destroyed.' }
+      format.html { redirect_to edit_profile_path(@profile), notice: 'Attribute was successfully destroyed.' }
       format.json { head :no_content }
     end
   end

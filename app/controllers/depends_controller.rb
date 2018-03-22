@@ -5,13 +5,13 @@ class DependsController < ApplicationController
   # POST /profiles/:profile_id/depends.json
   def create
     authorize! :create, @profile
-    @depend = @profile.depends.new(depend_params)
     respond_to do |format|
-      if @profile.save
-        format.html { redirect_to @profile, notice: 'Dependency was successfully created.' }
+      begin
+        @profile.depends.create!(depend_params)
+        format.html { redirect_to edit_profile_path(@profile), notice: 'Dependency was successfully created.' }
         format.json { render :show, status: :created, location: @depend }
-      else
-        format.html { redirect_to @profile, error: 'Dependency was not successfully created.' }
+      rescue Mongoid::Errors::Validations
+        format.html { redirect_to edit_profile_path(@profile), error: 'Dependency was not successfully created.' }
         format.json { render json: @depend.errors, status: :unprocessable_entity }
       end
     end
@@ -24,7 +24,7 @@ class DependsController < ApplicationController
     @depend = @profile.depends.find(params[:id])
     @depend.destroy
     respond_to do |format|
-      format.html { redirect_to @profile, notice: 'Depend was successfully destroyed.' }
+      format.html { redirect_to edit_profile_path(@profile), notice: 'Dependency was successfully destroyed.' }
       format.json { head :no_content }
     end
   end

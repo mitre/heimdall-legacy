@@ -6,15 +6,14 @@ class SupportsController < ApplicationController
   # POST /profiles/:profile_id/supports.json
   def create
     authorize! :create, @profile
-    @support = @profile.supports.new(support_params)
-
     respond_to do |format|
-      if @profile.save
-        format.html { redirect_to @profile, notice: 'Support was successfully created.' }
-        format.json { render :show, status: :created, location: @support }
-      else
-        format.html { redirect_to @profile, error: 'Support was not successfully created.' }
-        format.json { render json: @support.errors, status: :unprocessable_entity }
+      begin
+        @profile.supports.create!(support_params)
+        format.html { redirect_to edit_profile_path(@profile), notice: 'Support was successfully created.' }
+        format.json { render :show, status: :created, location: @profile }
+      rescue Mongoid::Errors::Validations
+        format.html { redirect_to edit_profile_path(@profile), error: 'Support was not successfully created.' }
+        format.json { render json: @profile.errors, status: :unprocessable_entity }
       end
     end
   end
@@ -26,7 +25,7 @@ class SupportsController < ApplicationController
     @support = @profile.supports.find(params[:id])
     @support.destroy
     respond_to do |format|
-      format.html { redirect_to @profile, notice: 'Support was successfully destroyed.' }
+      format.html { redirect_to edit_profile_path(@profile), notice: 'Support was successfully destroyed.' }
       format.json { head :no_content }
     end
   end

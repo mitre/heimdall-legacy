@@ -14,7 +14,6 @@ module Git
       projects = []
       hsh = Gitlab.projects
       if hsh.present?
-        print "GitLab projects: #{hsh.inspect}\n"
         hsh.each do |gitlab_proj|
           begin
             repo = gitlab_proj.to_hash

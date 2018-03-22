@@ -57,7 +57,7 @@ RSpec.describe SupportsController, type: :controller do
 
         it 'redirects to the created support' do
           post :create, params: { profile_id: @profile.id, support: valid_attributes }, session: valid_session
-          expect(response).to redirect_to(@profile)
+          expect(response).to redirect_to(edit_profile_url(@profile))
         end
       end
 
@@ -80,7 +80,7 @@ RSpec.describe SupportsController, type: :controller do
       it 'redirects to the supports list' do
         support = @profile.supports.create! valid_attributes
         delete :destroy, params: { profile_id: @profile.id, id: support.to_param }, session: valid_session
-        expect(response).to redirect_to(@profile)
+        expect(response).to redirect_to(edit_profile_url(@profile))
       end
     end
   end
