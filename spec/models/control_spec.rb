@@ -37,6 +37,10 @@ RSpec.describe Control, type: :model do
       expect(control.refs).to eq %w{ref1 ref2}
     end
 
+    it 'get short title' do
+      expect(control.short_title).to eq 'The file permissions, ownership, and group membersh...'
+    end
+
     it 'get low severity' do
       control.impact = 0.2
       expect(control.severity).to eq 'low'

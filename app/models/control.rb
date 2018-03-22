@@ -42,6 +42,10 @@ class Control
     end
   end
 
+  def short_title
+    title.nil? ? '' : "#{title[0..50]}..."
+  end
+
   def parse_update(params)
     assign_attributes(params)
     if (new_control = Control.parse(params[:code]))

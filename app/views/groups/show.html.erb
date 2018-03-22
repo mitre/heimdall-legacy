@@ -104,7 +104,7 @@
         <div class="box-body">
           <%= form_with(model: [ @profile, @group ], url: profile_group_add_path(@profile, @group), local: true, id: "add_form") do |form| %>
           <p>
-            <%= form.select :controls, @profile.controls.collect {|u| ["#{u.control_id}: #{u.title[0..50]}...", u.control_id]}, {}, :id => "add_control_list", :prompt => 'Select' %>
+            <%= form.select :controls, @profile.controls.collect {|u| ["#{u.control_id}: #{u.short_title}", u.control_id]}, {}, :id => "add_control_list", :prompt => 'Select' %>
             <button type="button" id="add_btn" class="btn btn-primary pull-right margin-right"><i class="fa fa-edit"></i> Add
             </button>
           </p>
