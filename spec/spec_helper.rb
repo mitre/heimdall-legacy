@@ -35,12 +35,14 @@ RSpec.configure do |config|
 
   # rspec-mocks config goes here. You can use an alternate test double
   # library (such as bogus or mocha) by changing the `mock_with` option here.
-  config.mock_with :rspec do |mocks|
-    # Prevents you from mocking or stubbing a method that does not exist on
-    # a real object. This is generally recommended, and will default to
-    # `true` in RSpec 4.
-    mocks.verify_partial_doubles = true
-  end
+  # config.mock_with :rspec do |mocks|
+  # Prevents you from mocking or stubbing a method that does not exist on
+  # a real object. This is generally recommended, and will default to
+  # `true` in RSpec 4.
+  #  mocks.verify_partial_doubles = true
+  # end
+
+  config.mock_with :mocha
 
   # This option will default to `:apply_to_host_groups` in RSpec 4 (and will
   # have no way to turn it off -- the option exists only for backwards
@@ -90,6 +92,33 @@ RSpec.configure do |config|
               'Authorization'=>'token MyString5345345645766',
               'Content-Type'=>'application/json',
               'User-Agent'=>'Octokit Ruby Gem 4.8.0'
+            })
+      .to_return(status: 200, body: '', headers: {})
+    stub_request(:get, 'https://gitlab.mitre.org/api/v3/projects/12187/repository/tree')
+      .with(headers: {
+              'Accept'=>'application/json',
+             'Authorization'=>'Bearer MyString5345345645766',
+             'Content-Type'=>'application/x-www-form-urlencoded',
+             'User-Agent'=>'Gitlab Ruby Gem 4.3.0'
+            })
+      .to_return(status: 200, body: '[{"id": "6956b5115ec7a870ac082154528f814085578a61", "name": "controls", "type": "tree", "path": "controls", "mode": "040000"},
+           {"id": "d564d0bc3dd917926892c55e3706cc116d5b165e", "name": "libraries", "type": "tree", "path": "libraries", "mode": "040000"},
+           {"id": "8e52bbc25b0fe1fec20ba890e0811e529f56b12c", "name": "README.md", "type": "blob", "path": "README.md", "mode": "100644"},
+           {"id": "3c969e2cfe52151e7a97e61e95570cd7ae44a663", "name": "inspec.yml", "type": "blob", "path": "inspec.yml", "mode": "100644"}]', headers: {})
+    stub_request(:get, 'https://gitlab.mitre.org/api/v3/projects/11892/repository/tree')
+      .with(headers: {
+              'Accept'=>'application/json',
+          'Authorization'=>'Bearer MyString5345345645766',
+          'Content-Type'=>'application/x-www-form-urlencoded',
+          'User-Agent'=>'Gitlab Ruby Gem 4.3.0'
+            })
+      .to_return(status: 200, body: '', headers: {})
+    stub_request(:get, 'https://gitlab.mitre.org/api/v3/projects/11870/repository/tree')
+      .with(headers: {
+              'Accept'=>'application/json',
+           'Authorization'=>'Bearer MyString5345345645766',
+           'Content-Type'=>'application/x-www-form-urlencoded',
+           'User-Agent'=>'Gitlab Ruby Gem 4.3.0'
             })
       .to_return(status: 200, body: '', headers: {})
   end

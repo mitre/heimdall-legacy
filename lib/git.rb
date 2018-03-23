@@ -1,5 +1,5 @@
 module Git
-  class GitLab
+  class GitLabProxy
     attr_accessor :api_url
     attr_accessor :token
 
@@ -15,16 +15,17 @@ module Git
       hsh = Gitlab.projects
       if hsh.present?
         hsh.each do |gitlab_proj|
-          begin
-            repo = gitlab_proj.to_hash
-            Gitlab.file_contents(repo['name_with_namespace'], 'inspec.yml')
+          repo = gitlab_proj.to_hash
+          next unless repo['default_branch']
+          next unless (tree = Gitlab.tree(repo['id']))
+          tree.each do |file_hsh|
+            next unless file_hsh.to_hash['name'] == 'inspec.yml'
             repo_proj = {}
             repo_proj[:name] = repo['name_with_namespace']
             repo_proj[:description] = repo['description']
             repo_proj[:html_url] = repo['http_url_to_repo']
             projects << repo_proj
-          rescue Gitlab::Error::NotFound
-            Rails.logger.debug 'No inpsec.yml'
+            break
           end
         end
       end
@@ -32,7 +33,7 @@ module Git
     end
   end
 
-  class GitHub
+  class GitHubProxy
     attr_accessor :token
 
     def initialize(token)
@@ -56,7 +57,7 @@ module Git
           repo_proj[:html_url] = repo['html_url']
           projects << repo_proj
         rescue Octokit::NotFound
-          Rails.logger.debug 'No inpsec.yml'
+          Rails.logger.debug 'no Inspec.yml'
         end
       end
       projects

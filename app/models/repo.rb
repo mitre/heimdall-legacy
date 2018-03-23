@@ -1,3 +1,5 @@
+require 'git'
+
 class Repo
   include Mongoid::Document
   include Mongoid::Timestamps
@@ -14,9 +16,9 @@ class Repo
 
   def projects(repo_cred)
     if repo_type == 'GitLab'
-      api = Git::GitLab.new(api_url, repo_cred.token)
+      api = Git::GitLabProxy.new(api_url, repo_cred.token)
     elsif repo_type == 'GitHub'
-      api = Git::GitHub.new(repo_cred.token)
+      api = Git::GitHubProxy.new(repo_cred.token)
     end
     api.projects
   end

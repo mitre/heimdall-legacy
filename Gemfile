@@ -62,6 +62,7 @@ group :test do
   gem 'email_spec', '~> 2.1'
   gem 'rails-controller-testing'
   gem 'webmock'
+  gem 'mocha'
 end
 
 group :development do
