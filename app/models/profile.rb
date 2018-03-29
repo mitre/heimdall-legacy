@@ -34,13 +34,10 @@ class Profile
     nist = {}
     controls.each do |control|
       control.tags.where(name: 'nist').each do |tag|
-        next unless tag.value.is_a? Array
-        tag.value.each do |value|
-          next if value.include?('Rev')
-          val = value.split('(')[0].strip
-          nist[val] = [] unless nist[val]
-          nist[val] << control
-          families << val
+        tag.good_values.each do |value|
+          nist[value] = [] unless nist[value]
+          nist[value] << control
+          families << value
         end
       end
     end
@@ -53,12 +50,9 @@ class Profile
       severity = control.tags.where(name: 'severity').first
       next unless severity && (cat.nil? || cat == severity.value)
       control.tags.where(name: 'nist').each do |tag|
-        next unless tag.value.is_a? Array
-        tag.value.each do |value|
-          next if value.include?('Rev')
-          val = value.split('(')[0].strip
-          nist[val] = [] unless nist[val]
-          nist[val] << { "name": control.control_id.to_s, "severity": severity.value, "impact": control.impact, "value": 1 }
+        tag.good_values.each do |value|
+          nist[value] = [] unless nist[value]
+          nist[value] << { "name": control.control_id.to_s, "severity": severity.value, "impact": control.impact, "value": 1 }
         end
       end
     end
@@ -105,6 +99,7 @@ class Profile
     controls = Control.transform hash.delete('controls')
     hash['profile_attributes'].try(:each) do |attr|
       options = attr.delete('options')
+      next unless options
       options.each do |key, value|
         if key == 'default'
           unless value.is_a?(Array)

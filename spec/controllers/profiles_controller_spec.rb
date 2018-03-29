@@ -96,6 +96,12 @@ RSpec.describe ProfilesController, type: :controller do
         post :upload, params: { file: @file }, session: valid_session
         expect(response).to redirect_to(profiles_path)
       end
+
+      it 'rejects another malformed profile' do
+        @file = fixture_file_upload('spec/support/bad_profile2.json', 'text/json')
+        post :upload, params: { file: @file }, session: valid_session
+        expect(response).to redirect_to(profiles_path)
+      end
     end
 
     describe 'POST #create' do

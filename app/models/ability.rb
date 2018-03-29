@@ -21,9 +21,9 @@ class Ability
           Support,
           Tag,
         ], created_by_id: user.id
-        if user.has_role?(:admin)
-          can :manage, :all
-        end
+      end
+      if user.has_role?(:admin)
+        can :manage, :all
       end
     end
   end

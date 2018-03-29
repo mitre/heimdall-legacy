@@ -78,11 +78,15 @@ class ProfilesController < ApplicationController
     contents = JSON.parse(file.read)
     if contents.key? 'name'
       profile_hash, controls = Profile.transform(contents)
-      @profile = Profile.create(profile_hash)
-      controls.each do |control|
-        @profile.controls.create(control)
+      begin
+        @profile = Profile.create(profile_hash)
+        controls.each do |control|
+          @profile.controls.create(control)
+        end
+        redirect_to @profile, notice: 'Profile uploaded.'
+      rescue Mongoid::Errors::InvalidValue
+        redirect_to profiles_url, notice: 'Profile was malformed.'
       end
-      redirect_to @profile, notice: 'Profile uploaded.'
     else
       redirect_to profiles_url, notice: 'File does not contain an profile.'
     end

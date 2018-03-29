@@ -71,20 +71,16 @@ class Evaluation
   end
 
   def tag_values(tag, control, params, nist)
-    if tag.value.is_a? Array
-      tag.value.each do |value|
-        next if value.include?('Rev')
-        value = value.split('(')[0].strip
-        nist[value] = [] unless nist[value]
-        sym = status_symbol(control, params[:ct_results])
-        next unless params[:status_symbol].nil? || params[:status_symbol] == sym
-        nist[value] << { "name": control.control_id.to_s, "status_value": status_symbol_value(sym), "children":
-          [{ "name": control.control_id.to_s, "title": control.title, "nist": control.tag('nist'),
-            "status_symbol": sym, "status_value": status_symbol_value(sym),
-            "severity": params[:severity].value, "description": control.desc,
-            "check": control.tag('check'), "fix": control.tag('fix'),
-            "impact": control.impact, "value": 1 }] }
-      end
+    tag.good_values.each do |value|
+      nist[value] = [] unless nist[value]
+      sym = status_symbol(control, params[:ct_results])
+      next unless params[:status_symbol].nil? || params[:status_symbol] == sym
+      nist[value] << { "name": control.control_id.to_s, "status_value": status_symbol_value(sym), "children":
+        [{ "name": control.control_id.to_s, "title": control.title, "nist": control.tag('nist'),
+          "status_symbol": sym, "status_value": status_symbol_value(sym),
+          "severity": params[:severity].value, "description": control.desc,
+          "check": control.tag('check'), "fix": control.tag('fix'),
+          "impact": control.impact, "value": 1 }] }
     end
   end
 
