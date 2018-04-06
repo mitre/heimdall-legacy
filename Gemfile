@@ -44,6 +44,14 @@ gem 'pdfkit'
 gem 'render_anywhere'
 gem 'wkhtmltopdf-binary'
 
+# For inspec2ckl
+gem 'nokogiri-happymapper'
+gem 'happymapper'
+gem 'nokogiri', '~> 1.8.1'
+gem 'thor'
+gem 'json'
+gem 'pry'
+
 group :development, :test do
   # Call 'byebug' anywhere in the code to stop execution and get a debugger console
   gem 'byebug', platforms: [:mri, :mingw, :x64_mingw]

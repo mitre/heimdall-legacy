@@ -24,6 +24,7 @@ Rails.application.routes.draw do
   match 'profiles/:id/nist(/category/:category)' => 'profiles#nist', as: :profile_nist, :via => :get
   match 'profile_upload' => 'profiles#upload', as: :upload_profile, :via => :post
   match 'evaluations/:id/ssp' => 'evaluations#ssp', as: :evaluation_ssp, :via => :get
+  match 'evaluations/:id/filter' => 'evaluations#show', as: :evaluation_filter, :via => :post
   match 'evaluation_upload' => 'evaluations#upload', as: :upload_evaluation, :via => :post
   match 'evaluations/:id/nist(/category/:category)(/status/:status_symbol)' => 'evaluations#nist', as: :evaluation_nist, :via => :get
 

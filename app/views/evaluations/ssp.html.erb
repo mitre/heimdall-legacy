@@ -118,6 +118,8 @@
     Evaluation <%= link_to @evaluation.profiles.map(&:name).join(', '), evaluation_path(@evaluation.id) %>
     |
     SSP
+    |
+    <%= link_to 'CKL', evaluation_path(@evaluation, format: :ckl) %>
   </h1>
   <ol class="breadcrumb" data-turbolinks="false">
     <li><%= link_to ('<i class="fa fa-dashboard"> </i>Dashboard').html_safe, home_path %></li>

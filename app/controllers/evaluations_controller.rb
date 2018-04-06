@@ -1,6 +1,6 @@
 class EvaluationsController < ApplicationController
   load_resource
-  authorize_resource only: [:show, :destroy]
+  authorize_resource only: [:show, :destroy, :filter]
   protect_from_forgery
 
   # GET /evaluations
@@ -12,11 +12,14 @@ class EvaluationsController < ApplicationController
   # GET /evaluations/1
   # GET /evaluations/1.json
   def show
+    logger.debug "params: #{params.inspect}"
     @profiles = @evaluation.profiles
     @counts, @controls = @evaluation.status_counts
+    @nist_hash = ProfilesController.nist_800_53
     respond_to do |format|
       format.html { render :show }
-      format.json { render json: @evaluation }
+      format.json { render :show }
+      format.ckl { render :show, layout: false }
     end
   end
 

@@ -3,7 +3,9 @@
   <h1>
     Evaluation <%= @evaluation.profiles.map(&:name).join(', ') %>
     |
-    <%= link_to "SSP", evaluation_ssp_path(@evaluation) %>
+    <%= link_to 'SSP', evaluation_ssp_path(@evaluation) %>
+    |
+    <%= link_to 'CKL', evaluation_path(@evaluation, format: :ckl) %>
   </h1>
   <ol class="breadcrumb" data-turbolinks="false">
     <li><%= link_to ('<i class="fa fa-dashboard"> </i>Dashboard').html_safe, home_path %></li>
@@ -177,7 +179,7 @@
     </div>
   </div>
   <div class="row">
-    <div class="col-xs-12">
+    <div class="col-md-12">
       <div class="box box-primary">
         <div class="box-header with-border">
           <h3 class="box-title">Controls</h3>
@@ -188,6 +190,41 @@
         </div>
       </div>
     </div>
+    <!--
+    <div class="col-md-3">
+      <div class="box box-primary">
+        <div class="box-header with-border">
+          <h3 class="box-title">Control Families</h3>
+        </div>
+        <div class="box-body">
+          <%= form_for :families, url: evaluation_filter_path(@evaluation), remote: true do |form| %>
+            <div class="form-group">
+              <div class="col-md-3">
+                <% @nist_hash["children"].first((@nist_hash["children"].size/2).to_i).each do |family| %>
+                  <div class="checkbox">
+                    <label>
+                      <%= form.check_box family['name'], {:checked=>true, :multiple => true} %>
+                      <%= family['name'] %>
+                    </label>
+                  </div>
+                <% end %>
+                <%= form.submit "Filter by Selected"%>
+              </div>
+              <div class="col-md-3">
+                <% @nist_hash["children"].last((@nist_hash["children"].size/2).to_i).each do |family| %>
+                  <div class="checkbox">
+                    <label>
+                      <%= form.check_box family['name'], {:checked=>true, :multiple => true} %>
+                      <%= family['name'] %>
+                    </label>
+                  </div>
+                <% end %>
+              </div>
+            </div>
+          <% end %>
+        </div>
+      </div>
+    </div> -->
   </div>
   <div class="row">
     <div class="col-xs-12">
@@ -322,7 +359,8 @@ document.addEventListener("turbolinks:load", function() {
   } else {
     loaded = true;
   }
-  if($('[id^=controls_wrapper').length == 0) {
+
+  if($( "[id^='controls_wrapper']" ).length == 0) {
     $('#controls').DataTable({
       'paging'      : true,
       'lengthChange': false,
@@ -660,6 +698,11 @@ document.addEventListener("turbolinks:load", function() {
     drawTreemap(category, status);
     filter_table(category, status);
     $('#controls').DataTable().draw();
+    var datatable = $('#controls').dataTable().api();
+    //datatable.clear();
+    //datatable.rows.add(dataSet);
+    datatable.draw();
+
   }
 
   function drawTreemap(category, status) {

@@ -17,6 +17,10 @@ class ProfilesController < ApplicationController
   # GET /profiles/1
   # GET /profiles/1.json
   def show
+    # respond_to do |format|
+    #   format.html { render :show }
+    #   format.json { render json: @profile.to_json}
+    # end
   end
 
   # GET /profiles/1/edit

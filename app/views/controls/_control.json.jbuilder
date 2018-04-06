@@ -10,3 +10,8 @@ json.source_location do
   json.line control.sl_line
 end
 json.id control.control_id
+if control.results.present?
+  json.results control.results do |result|
+    json.partial! 'results/result', result: result
+  end
+end

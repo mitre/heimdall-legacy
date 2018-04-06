@@ -1,2 +1,11 @@
-json.extract! evaluation, :id, :version, :other_checks, :platform_name, :platform_release, :statistics_duration, :created_at, :updated_at
-json.url evaluation_url(evaluation, format: :json)
+json.extract! evaluation, :version, :other_checks
+json.profiles evaluation.profiles do |profile|
+  json.partial! 'profiles/profile', profile: profile
+end
+json.platform do
+  json.name evaluation.platform_name
+  json.release evaluation.platform_release
+end
+json.statistics do
+  json.duration evaluation.statistics_duration
+end

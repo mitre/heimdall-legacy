@@ -1,3 +1,5 @@
+require 'inspec2ckl'
+
 class Evaluation
   include Mongoid::Document
   include Mongoid::Timestamps
@@ -10,6 +12,33 @@ class Evaluation
   field :statistics_duration, type: String
   has_many :results
   has_and_belongs_to_many :profiles
+
+  def to_jbuilder
+    Jbuilder.new do |json|
+      json.extract! self, :version, :other_checks
+      json.profiles(profiles.collect { |profile| profile.to_jbuilder.attributes! })
+      json.platform do
+        json.name platform_name
+        json.release platform_release
+      end
+      json.statistics do
+        json.duration statistics_duration
+      end
+    end
+  end
+
+  def as_json
+    to_jbuilder.attributes!
+  end
+
+  def to_json
+    to_jbuilder.target!
+  end
+
+  def to_ckl
+    inspec2ckl = Inspec2ckl.new(to_json, nil, nil, nil)
+    inspec2ckl.to_ckl
+  end
 
   def status_counts
     counts = { open: 0, not_a_finding: 0, not_reviewed: 0, not_tested: 0, not_applicable: 0 }

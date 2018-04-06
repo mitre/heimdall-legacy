@@ -18,6 +18,34 @@ class Control
   validates_presence_of :control_id
   validate :code_is_valid
 
+  def to_jbuilder
+    Jbuilder.new do |json|
+      json.extract! self, :title, :desc, :impact, :refs
+      json.tags do
+        tags.each do |tag|
+          json.set!(tag.name, tag.value)
+        end
+      end
+      json.extract! self, :code
+      json.source_location do
+        json.ref sl_ref
+        json.line sl_line
+      end
+      json.id control_id
+      if results.present?
+        json.results(results.collect { |result| result.to_jbuilder.attributes! })
+      end
+    end
+  end
+
+  def as_json
+    to_jbuilder.attributes!
+  end
+
+  def to_json
+    to_jbuilder.target!
+  end
+
   def is_editable?
     results.empty?
   end

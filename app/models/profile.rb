@@ -25,6 +25,27 @@ class Profile
   accepts_nested_attributes_for :profile_attributes
   validates_presence_of :name, :title, :sha256
 
+  def to_jbuilder
+    Jbuilder.new do |json|
+      json.extract! self, :name, :title, :maintainer, :copyright,
+                    :copyright_email, :license, :summary, :version
+      json.depends depends, :name, :path
+      json.supports(supports.collect { |support| support.to_jbuilder.attributes! })
+      json.controls(controls.collect { |control| control.to_jbuilder.attributes! })
+      json.groups(groups.collect { |group| group.to_jbuilder.attributes! })
+      json.attributes(profile_attributes.collect { |profile_attribute| profile_attribute.to_jbuilder.attributes! })
+      json.extract! self, :sha256
+    end
+  end
+
+  def as_json
+    to_jbuilder.attributes!
+  end
+
+  def to_json
+    to_jbuilder.target!
+  end
+
   def is_editable?
     evaluations.empty?
   end

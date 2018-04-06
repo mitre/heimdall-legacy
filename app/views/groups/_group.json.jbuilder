@@ -1,1 +1,2 @@
-json.extract! group, :title, :controls, :control_id
+json.extract! group, :title, :controls
+json.id group.control_id
