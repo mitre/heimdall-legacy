@@ -13,6 +13,7 @@ RSpec.describe 'evaluations/show', type: :view do
       ),
     )
     @counts, @controls = @evaluation.status_counts
+    @nist_hash = ProfilesController.nist_800_53
   end
 
   it 'renders attributes' do

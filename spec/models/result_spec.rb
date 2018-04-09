@@ -22,5 +22,15 @@ RSpec.describe Result, type: :model do
       result.status = 'skipped'
       expect(result.status_symbol).to eq :not_reviewed
     end
+
+    it 'get build json string' do
+      expect(result.to_json).to be_a(String)
+      expect(JSON.parse(result.to_json)).to have_key('status')
+    end
+
+    it 'get build json' do
+      expect(result.as_json).to have_key('status')
+    end
+
   end
 end

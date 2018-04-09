@@ -32,9 +32,7 @@ class Inspec2ckl < Checklist
   end
 
   def clk_status(control)
-    print "clk_status: #{control[:status]}\n"
     status_list = control[:status].uniq
-    print "status_list: #{status_list}\n"
     if status_list.include?('failed')
       result = 'Open'
     elsif status_list.include?('passed')
@@ -47,7 +45,6 @@ class Inspec2ckl < Checklist
     if control[:impact].to_f.zero?
       result = 'Not_Applicable'
     end
-    print "result: #{result}\n"
     result
   end
 
@@ -63,7 +60,6 @@ class Inspec2ckl < Checklist
   def update_ckl_file
     @checklist = Checklist.parse(@cklist.to_s)
     @data.keys.each do |control_id|
-      print '.'
       vuln = @checklist.where('Vuln_Num', control_id.to_s)
       vuln.status = clk_status(@data[control_id])
       vuln.finding_details << clk_finding_details(@data[control_id], vuln.status)
@@ -71,7 +67,6 @@ class Inspec2ckl < Checklist
   end
 
   def generate_vuln_data(control)
-    print "generate_vuln_data for control: #{control.inspect}\n"
     vuln = Vuln.new
     stig_data_list = []
 
@@ -110,7 +105,6 @@ class Inspec2ckl < Checklist
     istig = IStig.new
     vuln_list = []
     @data.keys.each do |control_id|
-      print "control_id: #{control_id}\n"
       vuln_list.push(generate_vuln_data(@data[control_id]))
     end
     istig.stig_info = StigInfo.new
@@ -127,7 +121,6 @@ class Inspec2ckl < Checklist
     json['profiles'].each do |profile|
       profile['controls'].each do |control|
         c_id = control['id'].to_sym
-        print "C_ID: #{c_id}\n"
         data[c_id] = {}
         data[c_id][:vuln_num]       = control['id'] unless control['id'].nil?
         data[c_id][:rule_title]     = control['title'] unless control['title'].nil?
@@ -147,17 +140,13 @@ class Inspec2ckl < Checklist
 
         data[c_id][:status] = []
         data[c_id][:message] = []
-        print "CONTROL: #{control}\n"
         if control.key?('results')
-          print "Has Results\n"
           control['results'].each do |result|
             data[c_id][:status].push(result['status'])
             data[c_id][:message].push(result['skip_message']) if result['status'] == 'skipped'
             data[c_id][:message].push("FAILED -- Test: #{result['code_desc']}\nMessage: #{result['message']}\n") if result['status'] == 'failed'
             data[c_id][:message].push("PASS -- #{result['code_desc']}\n") if result['status'] == 'passed'
           end
-        else
-          print "No Results\n"
         end
         if data[c_id][:impact].to_f.zero?
           data[c_id][:message] = control['desc']

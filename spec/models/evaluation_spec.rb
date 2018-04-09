@@ -36,6 +36,19 @@ RSpec.describe Evaluation, type: :model do
       expect(nist).to have_key('CM-6')
     end
 
+    it 'get build json string' do
+      expect(eval.to_json).to be_a(String)
+      expect(JSON.parse(eval.to_json)).to have_key('version')
+    end
+
+    it 'get build json' do
+      expect(eval.as_json).to have_key('version')
+    end
+
+    it 'get build ckl string' do
+      expect(eval.to_ckl).to be_a(String)
+    end
+
     it 'get parse with bad data' do
       nist = Evaluation.parse JSON.parse('{"some": "nonsense", "instead": "of an evaluation"}')
       expect(nist).to be_nil

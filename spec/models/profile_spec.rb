@@ -27,5 +27,13 @@ RSpec.describe Profile, type: :model do
       expect(nist).to have_key('CM-6')
     end
 
+    it 'get build json string' do
+      expect(@profile.to_json).to be_a(String)
+      expect(JSON.parse(@profile.to_json)).to have_key('name')
+    end
+
+    it 'get build json' do
+      expect(@profile.as_json).to have_key('name')
+    end
   end
 end

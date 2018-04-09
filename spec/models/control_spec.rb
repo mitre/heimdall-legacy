@@ -56,6 +56,15 @@ RSpec.describe Control, type: :model do
       expect(control.severity).to eq 'high'
     end
 
+    it 'get build json string' do
+      expect(control.to_json).to be_a(String)
+      expect(JSON.parse(control.to_json)).to have_key('title')
+    end
+
+    it 'get build json' do
+      expect(control.as_json).to have_key('title')
+    end
+
     it 'parse bad code' do
       code = Control.parse bad_code
       expect(code).to eq nil
