@@ -1,12 +1,6 @@
 <!-- Content Header (Page header) -->
 <section class="content-header">
-  <h1>
-    Evaluation <%= @evaluation.profiles.map(&:name).join(', ') %>
-    |
-    <%= link_to 'SSP', evaluation_ssp_path(@evaluation) %>
-    |
-    <%= link_to 'CKL', evaluation_path(@evaluation, format: :ckl) %>
-  </h1>
+  <h1>Evaluation <%= @evaluation.profiles.map(&:name).join(', ') %></h1>
   <ol class="breadcrumb" data-turbolinks="false">
     <li><%= link_to ('<i class="fa fa-dashboard"> </i>Dashboard').html_safe, home_path %></li>
     <li><%= link_to 'Evaluations', evaluations_path %>
@@ -17,7 +11,7 @@
 <!-- Main content -->
 <section class="content container-fluid">
   <div class="row">
-    <div class="col-md-4">
+    <div class="col-md-3">
       <div class="box box-primary">
         <div class="box-header">
           <h3 class="box-title">Evaluation Information</h3>
@@ -36,7 +30,7 @@
         </div>
       </div>
     </div>
-    <div class="col-md-4">
+    <div class="col-md-3">
       <div class="box box-primary">
         <div class="box-header">
           <h3 class="box-title">Platform</h3>
@@ -55,7 +49,7 @@
         </div>
       </div>
     </div>
-    <div class="col-md-4">
+    <div class="col-md-3">
       <div class="box box-primary">
         <div class="box-header">
           <h3 class="box-title">Statistics</h3>
@@ -69,6 +63,24 @@
           <p>
             <strong>Uploaded:</strong>
             <%= @evaluation.created_at %>
+          </p>
+        </div>
+      </div>
+    </div>
+    <div class="col-md-3">
+      <div class="box box-primary">
+        <div class="box-header">
+          <h3 class="box-title">Formats</h3>
+        </div>
+        <!-- /.box-header -->
+        <div class="box-body">
+          <p>
+            <strong>View SSP:</strong>
+            <%= link_to 'SSP', evaluation_ssp_path(@evaluation) %>
+          </p>
+          <p>
+            <strong>Export CKL:</strong>
+            <%= link_to 'CKL', evaluation_path(@evaluation, format: :ckl), :target => "_blank" %>
           </p>
         </div>
       </div>
@@ -177,21 +189,7 @@
         </div>
       </div>
     </div>
-  </div>
-  <div class="row">
-    <div class="col-md-12">
-      <div class="box box-primary">
-        <div class="box-header with-border">
-          <h3 class="box-title">Controls</h3>
-        </div>
-        <!-- /.box-header -->
-        <div class="box-body">
-          <div id="chart"></div>
-        </div>
-      </div>
-    </div>
-    <!--
-    <div class="col-md-3">
+    <!--div class="col-lg-4">
       <div class="box box-primary">
         <div class="box-header with-border">
           <h3 class="box-title">Control Families</h3>
@@ -224,7 +222,20 @@
           <% end %>
         </div>
       </div>
-    </div> -->
+    </div-->
+  </div>
+  <div class="row">
+    <div class="col-md-12">
+      <div class="box box-primary">
+        <div class="box-header with-border">
+          <h3 class="box-title">Controls</h3>
+        </div>
+        <!-- /.box-header -->
+        <div class="box-body">
+          <div id="chart"></div>
+        </div>
+      </div>
+    </div>
   </div>
   <div class="row">
     <div class="col-xs-12">
@@ -249,7 +260,7 @@
               <% @controls.each do |control_id, hsh| %>
                 <% control = hsh[:control] %>
                 <% sym = hsh[:status_symbol] %>
-                <tr class="<%= control.tag('severity').capitalize %> <%= status_label(sym) %>" id="<%= control.id %>">
+                <tr class="<%= control.severity.capitalize %> <%= status_label(sym) %>" id="<%= control.id %>">
                   <td><button class="<%= status_btn(sym) %>" style="width:120px" onclick="show_details('<%= control.profile_id %>', '<%= control.id %>', '<%= @evaluation.id %>');"><%= status_label(sym) %></button></td>
                   <td><%= control.title %></td>
                   <td><%= link_to control.control_id, profile_control_path(control.profile_id, control.id) %></td>

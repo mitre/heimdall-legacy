@@ -44,7 +44,7 @@
                   <td><%= profile.version %></td>
                   <td><%= profile.is_editable? %></td>
                   <td><%= profile.created_by.try(:email) %></td>
-                  <td><% if can? :delete, profile %><%= link_to 'Destroy', profile, method: :delete, data: { confirm: 'Are you sure?' } %><% end %></td>
+                  <td><% if (can? :delete, profile) && (profile.is_editable?) %><%= link_to 'Destroy', profile, method: :delete, data: { confirm: 'Are you sure?' } %><% end %></td>
                 </tr>
               <% end %>
             </table>

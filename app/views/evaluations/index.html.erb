@@ -21,7 +21,7 @@
           <div class="box-body table-responsive no-padding">
             <table class="table table-hover">
               <tr>
-                <th>Profile Name</th>
+                <th>Profiles</th>
                 <th>Uploaded</th>
                 <th>InSpec Version</th>
                 <th>Platform name</th>
@@ -32,18 +32,16 @@
               </tr>
 
               <% @evaluations.each do |evaluation| %>
-                <% evaluation.profiles.each do |profile| %>
-                  <tr>
-                    <td><%= link_to profile.name, evaluation %></td>
-                    <td><%= evaluation.created_at %></td>
-                    <td><%= evaluation.version %></td>
-                    <td><%= evaluation.platform_name %></td>
-                    <td><%= evaluation.platform_release %></td>
-                    <td><%= evaluation.statistics_duration %></td>
-                    <td><%= evaluation.created_by.try(:email) %></td>
-                    <td><% if can? :delete, evaluation %><%= link_to 'Destroy', evaluation, method: :delete, data: { confirm: 'Are you sure?' } %><% end %></td>
-                  </tr>
-                <% end %>
+                <tr>
+                  <td><%= link_to evaluation.profiles.map(&:name).join(', '), evaluation %></td>
+                  <td><%= evaluation.created_at %></td>
+                  <td><%= evaluation.version %></td>
+                  <td><%= evaluation.platform_name %></td>
+                  <td><%= evaluation.platform_release %></td>
+                  <td><%= evaluation.statistics_duration %></td>
+                  <td><%= evaluation.created_by.try(:email) %></td>
+                  <td><% if can? :delete, evaluation %><%= link_to 'Destroy', evaluation, method: :delete, data: { confirm: 'Are you sure?' } %><% end %></td>
+                </tr>
               <% end %>
             </table>
           </div>

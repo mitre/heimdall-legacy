@@ -42,10 +42,10 @@
   background-color: #8C8C8C !important;
 }
 .hidden {
-  display:none;
+  display: none;
 }
 .shown {
-  display:block;
+  display: block;
 }
 .horizontal-list {
   padding: 0;

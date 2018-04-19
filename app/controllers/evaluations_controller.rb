@@ -39,8 +39,10 @@ class EvaluationsController < ApplicationController
     authorize! :read, Evaluation
     @nist_hash = ProfilesController.nist_800_53
     @symbols = @evaluation.symbols
+    # @counts, @controls = @evaluation.status_counts
     @evaluation.profiles.each do |profile|
       families, nist = profile.control_families
+      next if families.empty?
       @nist_hash['children'].each do |cf|
         family_value = 0
         cf['children'].each do |control|

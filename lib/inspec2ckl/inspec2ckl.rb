@@ -125,15 +125,17 @@ class Inspec2ckl < Checklist
         data[c_id][:vuln_num]       = control['id'] unless control['id'].nil?
         data[c_id][:rule_title]     = control['title'] unless control['title'].nil?
         data[c_id][:vuln_discuss]   = control['desc'] unless control['desc'].nil?
-        data[c_id][:severity]       = control['tags']['severity'] unless control['tags']['severity'].nil?
-        data[c_id][:gid]            = control['tags']['gid'] unless control['tags']['gid'].nil?
-        data[c_id][:group_title]    = control['tags']['gtitle'] unless control['tags']['gtitle'].nil?
-        data[c_id][:rule_id]        = control['tags']['rid'] unless control['tags']['rid'].nil?
-        data[c_id][:rule_ver]       = control['tags']['stig_id'] unless control['tags']['stig_id'].nil?
-        data[c_id][:cci_ref]        = control['tags']['cci'] unless control['tags']['cci'].nil?
-        data[c_id][:nist]           = control['tags']['nist'].join(' ') unless control['tags']['nist'].nil?
-        data[c_id][:check_content]  = control['tags']['check'] unless control['tags']['check'].nil?
-        data[c_id][:fix_text]       = control['tags']['fix'] unless control['tags']['fix'].nil?
+        unless control['tags'].nil?
+          data[c_id][:severity]       = control['tags']['severity'] unless control['tags']['severity'].nil?
+          data[c_id][:gid]            = control['tags']['gid'] unless control['tags']['gid'].nil?
+          data[c_id][:group_title]    = control['tags']['gtitle'] unless control['tags']['gtitle'].nil?
+          data[c_id][:rule_id]        = control['tags']['rid'] unless control['tags']['rid'].nil?
+          data[c_id][:rule_ver]       = control['tags']['stig_id'] unless control['tags']['stig_id'].nil?
+          data[c_id][:cci_ref]        = control['tags']['cci'] unless control['tags']['cci'].nil?
+          data[c_id][:nist]           = control['tags']['nist'].join(' ') unless control['tags']['nist'].nil?
+          data[c_id][:check_content]  = control['tags']['check'] unless control['tags']['check'].nil?
+          data[c_id][:fix_text]       = control['tags']['fix'] unless control['tags']['fix'].nil?
+        end
         data[c_id][:impact]         = control['impact'].to_s unless control['impact'].nil?
         data[c_id][:profile_name]   = profile['name'].to_s unless profile['name'].nil?
         data[c_id][:profile_shasum] = profile['sha256'].to_s unless profile['sha256'].nil?

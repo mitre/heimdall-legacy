@@ -68,12 +68,12 @@ class Profile
   def nist_hash(cat)
     nist = {}
     controls.each do |control|
-      severity = control.tags.where(name: 'severity').first
-      next unless severity && (cat.nil? || cat == severity.value)
+      severity = control.severity
+      next unless severity && (cat.nil? || cat == severity)
       control.tags.where(name: 'nist').each do |tag|
         tag.good_values.each do |value|
           nist[value] = [] unless nist[value]
-          nist[value] << { "name": control.control_id.to_s, "severity": severity.value, "impact": control.impact, "value": 1 }
+          nist[value] << { "name": control.control_id.to_s, "severity": severity, "impact": control.impact, "value": 1 }
         end
       end
     end

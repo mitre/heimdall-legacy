@@ -107,7 +107,7 @@ class Evaluation
       nist[value] << { "name": control.control_id.to_s, "status_value": status_symbol_value(sym), "children":
         [{ "name": control.control_id.to_s, "title": control.title, "nist": control.tag('nist'),
           "status_symbol": sym, "status_value": status_symbol_value(sym),
-          "severity": params[:severity].value, "description": control.desc,
+          "severity": params[:severity], "description": control.desc,
           "check": control.tag('check'), "fix": control.tag('fix'),
           "impact": control.impact, "value": 1 }] }
     end
@@ -118,8 +118,8 @@ class Evaluation
     profiles.each do |profile|
       profile.controls.each do |control|
         params[:ct_results] = params[:cts][control.id]
-        severity = control.tags.where(name: 'severity').first
-        next unless severity && (cat.nil? || cat == severity.value)
+        severity = control.severity
+        next unless severity && (cat.nil? || cat == severity)
         params[:severity] = severity
         control.tags.where(name: 'nist').each do |tag|
           tag_values tag, control, params, nist
@@ -165,12 +165,16 @@ class Evaluation
       hash = Evaluation.transform(contents)
       results = hash.delete('results')
       profiles = hash.delete('profiles')
-      evaluation = Evaluation.create(hash)
-      results.each do |result|
-        evaluation.results << result
-      end
-      profiles.each do |profile|
-        evaluation.profiles << profile
+      if profiles.empty?
+        evaluation = nil
+      else
+        evaluation = Evaluation.create(hash)
+        results.each do |result|
+          evaluation.results << result
+        end
+        profiles.each do |profile|
+          evaluation.profiles << profile
+        end
       end
       evaluation
     rescue Mongoid::Errors::UnknownAttribute

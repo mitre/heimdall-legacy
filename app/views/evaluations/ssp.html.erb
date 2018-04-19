@@ -114,13 +114,7 @@
 </style>
 <!-- Content Header (Page header) -->
 <section class="content-header">
-  <h1>
-    Evaluation <%= link_to @evaluation.profiles.map(&:name).join(', '), evaluation_path(@evaluation.id) %>
-    |
-    SSP
-    |
-    <%= link_to 'CKL', evaluation_path(@evaluation, format: :ckl) %>
-  </h1>
+  <h1>Evaluation <%= link_to @evaluation.profiles.map(&:name).join(', '), evaluation_path(@evaluation.id) %></h1>
   <ol class="breadcrumb" data-turbolinks="false">
     <li><%= link_to ('<i class="fa fa-dashboard"> </i>Dashboard').html_safe, home_path %></li>
     <li><%= link_to 'Evaluations', evaluations_path %></li>
@@ -139,6 +133,25 @@
         </div>
         <!-- /.box-header -->
         <div class="box-body">
+          <% counts, _ = @evaluation.status_counts %>
+          <% total_count = counts[:open] + counts[:not_a_finding] + counts[:not_reviewed] + counts[:not_tested] + counts[:not_applicable] %>
+          <% compliance_level = ((counts[:not_a_finding] + counts[:not_applicable]).to_f / total_count) * 100 %>
+          <h2>Compliance Level: <%= compliance_level.round(1) %>%</h2>
+          <div class="container-fluid">
+            <div class="row">
+              <div class="col-xs-3">
+                <h4>Not a Finding: <%= counts[:not_a_finding] %></h4>
+                <h4>Open: <%= counts[:open] %></h4>
+              </div>
+              <div class="col-xs-3">
+                <h4>Not Reviewed: <%= counts[:not_reviewed] %></h4>
+                <h4>Not Tested: <%= counts[:not_tested] %></h4>
+              </div>
+              <div class="col-xs-3">
+                <h4>Not Applicable: <%= counts[:not_applicable] %></h4>
+              </div>
+            </div>
+          </div>
           <% @nist_hash["children"].each do |family| %>
             <% if family["value"] > 0 %>
               <h2 id="<%= family['name'] %>"><%= family["name"] %>: <%= family["desc"] %></h2>
@@ -149,8 +162,8 @@
                     <h3 id="<%= cf_name %>" onclick="togAll('<%= cf_name %>')"><%= cf_name %></h3>
                     <div class="container-fluid big-margin-bottom">
                       <% cf["controls"].each_with_index do |control, index| %>
-                        <h4><%= index+1 %>. <button class="<%= status_btn(@symbols[control.control_id]) %>"><%= @symbols[control.control_id].to_s.titleize %></button> <%= control.title %></h4>
-                        <div id="<%= control.control_id %>" class="container-fluid big-margin-bottom">
+                        <h4><button class="<%= status_btn(@symbols[control.control_id]) %>" onclick="$('#<%= control.control_id %>').toggle()"><%= @symbols[control.control_id].to_s.titleize %></button> <%= index+1 %>. <%= control.title %></h4>
+                        <div id="<%= control.control_id %>" class="container-fluid big-margin-bottom" style="display: none">
                           <%= control.desc %>
                           <h4>Check Text</h4> <pre><%= control.tag('check') %></pre>
                           <h4>Fix Text</h4> <pre><%= control.tag('fix') %></pre>
@@ -177,6 +190,7 @@
       </div>
       <div id="sidebar" class="box box-primary sidebar">
         <ul id="sspList" class="list-unstyled">
+          <li onclick='$(window).scrollTop(0);'>Scroll to Top</li>
           <% @nist_hash["children"].each do |family| %>
             <% if family["value"] > 0 %>
               <li id="<%= family['name'] %>">
@@ -220,12 +234,11 @@
   }
 
   function togAll(id) {
+    console.log("togAll " + id);
     for (ct in families[id]) {
-      el = document.getElementById(families[id][ct]);
-      if (el.style.display == 'none')
-        el.style.display = 'block';
-      else
-        el.style.display = 'none';
+      console.log("control " + families[id][ct]);
+      idStr = "#" + families[id][ct];
+      $(idStr).toggle();
     }
   }
 

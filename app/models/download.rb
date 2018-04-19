@@ -17,6 +17,7 @@ class Download
     end
     @profiles.each do |profile|
       families, nist = profile.control_families
+      next if families.empty?
       @nist_hash['children'].each do |cf|
         family_value = 0
         cf['children'].each do |control|
@@ -34,7 +35,13 @@ class Download
   end
 
   def to_pdf
-    kit = PDFKit.new(as_html)
+    options = {
+      'margin-top': '0.10in',
+      'margin-right': '0.10in',
+      'margin-bottom': '0.10in',
+      'margin-left': '0.10in'
+    }
+    kit = PDFKit.new(as_html, options=options)
     kit.to_file('tmp/ssp.pdf')
   end
 

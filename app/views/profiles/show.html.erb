@@ -62,11 +62,7 @@
             </thead>
             <tbody>
               <% @profile.controls.each do |control| %>
-              <% Rails.logger.debug "Control: #{control.control_id}" %>
-              <% Rails.logger.debug "Tags: #{control.tags.inspect}" %>
-              <% sev_class = control.tag('severity') ? control.tag('severity').capitalize : '' %>
-              <% Rails.logger.debug "Severity: #{control.tag('severity')}, class: #{sev_class}" %>
-              <tr class="<%= control.tag('severity') ? control.tag('severity').capitalize : '' %>" id="<%= control.id %>">
+              <tr class="<%= control.severity.capitalize %>" id="<%= control.id %>">
                 <td><button class="<%= category_button(control.impact) %>" style="width:120px" onclick="show_details('<%= @profile.id %>', '<%= control.id %>');">View Details</button></td>
                 <td><%= control.title %></td>
                 <td><%= link_to control.control_id, profile_control_path(@profile.id, control.id) %></td>
