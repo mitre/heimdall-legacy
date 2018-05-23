@@ -2,12 +2,6 @@ class ProfilesController < ApplicationController
   load_resource
   authorize_resource only: [:show, :edit, :destroy, :upload]
 
-  @nist_800_53_json = nil
-
-  class << self
-    attr_accessor :nist_800_53_json
-  end
-
   # GET /profiles
   # GET /profiles.json
   def index
@@ -71,7 +65,7 @@ class ProfilesController < ApplicationController
     category = nil
     category = params[:category].downcase if params.key?(:category)
     @control_hash = @profile.nist_hash category
-    nist_hash = ProfilesController.nist_800_53
+    nist_hash = Constants::NIST_800_53
     @name = nist_hash['name']
     @families = nist_hash['children']
   end
@@ -94,14 +88,6 @@ class ProfilesController < ApplicationController
     else
       redirect_to profiles_url, notice: 'File does not contain an profile.'
     end
-  end
-
-  def self.nist_800_53
-    unless ProfilesController.nist_800_53_json
-      file = File.read("#{Rails.root}/data/nist_800_53.json")
-      ProfilesController.nist_800_53_json = JSON.parse(file)
-    end
-    ProfilesController.nist_800_53_json
   end
 
   private

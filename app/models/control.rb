@@ -70,6 +70,31 @@ class Control
     end
   end
 
+  def parse_nist_tag(nist_tag)
+    if (m_fields = nist_tag.match(/([A-Z]{2})\-(\d+)((\s*([a-z])|\.([a-z])){1}((\.|\s+)(\d+))?)?\s*(\(\d+\))?((\s*([a-z])|\.([a-z])|\s*\(([a-z])\)){1}((\.|\s+)(\d+))?)?/))
+      # <MatchData "AC-15 a 3(2) b 2" 1:"AC" 2:"15" 3:" a 3" 4:" a" 5:"a" 6:nil 7:" 3" 8:" " 9:"3" 10:"(2)" 11:" b 2" 12:" b" 13:"b" 14:nil 15:nil 16:" 2" 17:" " 18:"2">
+      value = "#{m_fields[1]}-#{m_fields[2]}"
+      value += ".#{m_fields[5] || m_fields[6]}" if m_fields[4].present?
+      value += ".#{m_fields[9]}" if m_fields[9].present?
+      value += m_fields[10] if m_fields[10].present?
+      value += ".#{m_fields[13] || m_fields[14] || m_fields[15]}" if m_fields[12].present?
+      value += ".#{m_fields[18]}" if m_fields[18].present?
+      value
+    else
+      nist_tag
+    end
+  end
+
+  def nist_tags
+    values = []
+    if (nist_tags = tag('nist'))
+      nist_tags.split(',').map(&:strip).each do |nist_tag|
+        values << parse_nist_tag(nist_tag)
+      end
+    end
+    values
+  end
+
   def short_title
     title.nil? ? '' : "#{title[0..50]}..."
   end

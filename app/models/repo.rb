@@ -15,11 +15,21 @@ class Repo
   end
 
   def projects(repo_cred)
+    return [] unless repo_cred
     if repo_type == 'GitLab'
-      api = Git::GitLabProxy.new(api_url, repo_cred.token)
+      begin
+        api = Git::GitLabProxy.new(api_url, repo_cred.token)
+        api.projects
+      rescue Gitlab::Error::Unauthorized, UncaughtThrowError
+        []
+      end
     elsif repo_type == 'GitHub'
-      api = Git::GitHubProxy.new(repo_cred.token)
+      begin
+        api = Git::GitHubProxy.new(repo_cred.token)
+        api.projects
+      rescue Octokit::Unauthorized, UncaughtThrowError
+        []
+      end
     end
-    api.projects
   end
 end

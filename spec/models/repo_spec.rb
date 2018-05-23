@@ -3,6 +3,25 @@ require 'rails_helper'
 RSpec.describe Repo, type: :model do
   it { is_expected.to be_mongoid_document }
 
+  context 'Stubbed as Unauthorized' do
+    let(:user) { FactoryGirl.create(:editor) }
+    it 'GitLab returns an empty array on auth failure' do
+      repo_cred = create :gitlab_cred, created_by: user
+      @repo = repo_cred.repo
+      Git::GitLabProxy.stubs(:new).throws(Gitlab::Error::Unauthorized)
+      projects = @repo.projects repo_cred
+      expect(projects).to eq []
+    end
+
+    it 'GitHub returns an empty array on auth failure' do
+      repo_cred = create :github_cred, created_by: user
+      @repo = repo_cred.repo
+      Git::GitHubProxy.stubs(:new).throws(Octokit::Unauthorized)
+      projects = @repo.projects repo_cred
+      expect(projects).to eq []
+    end
+  end
+
   context 'GitLab Stubbed' do
     let(:user) { FactoryGirl.create(:editor) }
     before do

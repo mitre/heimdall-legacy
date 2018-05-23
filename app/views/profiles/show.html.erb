@@ -67,7 +67,7 @@
                 <td><%= control.title %></td>
                 <td><%= link_to control.control_id, profile_control_path(@profile.id, control.id) %></td>
                 <td><%= control.severity %></td>
-                <td><%= control.tag 'nist' %></td>
+                <td><%= control.nist_tags.join(', ') %></td>
                 <td class="hidden"><%= control.code %></td>
               </tr>
               <% end %>

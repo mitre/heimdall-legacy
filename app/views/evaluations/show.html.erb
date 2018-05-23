@@ -165,7 +165,7 @@
       </div>
     </div>
   </div>
-  <div class="row">
+  <div class="row" id="all_controls_row">
     <div class="col-lg-4">
       <div class="box box-primary">
         <div class="box-header with-border">
@@ -189,40 +189,284 @@
         </div>
       </div>
     </div>
-    <!--div class="col-lg-4">
+    <div class="col-lg-4">
       <div class="box box-primary">
         <div class="box-header with-border">
-          <h3 class="box-title">Control Families</h3>
+          <h3 class="box-title">Control Filter</h3>
+          <% if @filter_label %>
+              <span class="span-title">Active Filter:</span></br>
+              <h4><%= @filter_label %></h4>
+              <br>
+              <%= link_to "Clear Filter", evaluation_clear_filter_path(@evaluation), class: "btn btn-primary" %>
+          <% end %>
         </div>
-        <div class="box-body">
-          <%= form_for :families, url: evaluation_filter_path(@evaluation), remote: true do |form| %>
-            <div class="form-group">
-              <div class="col-md-3">
-                <% @nist_hash["children"].first((@nist_hash["children"].size/2).to_i).each do |family| %>
-                  <div class="checkbox">
-                    <label>
-                      <%= form.check_box family['name'], {:checked=>true, :multiple => true} %>
-                      <%= family['name'] %>
-                    </label>
+        <div class="box-body no-top-padding">
+          <div class="col-md-4">
+            <%= form_for :filter, url: evaluation_filter_path(@evaluation), remote: true do |form| %>
+              <div class="row">
+                <div class="box-body">
+                  <div class="col-md-2 padded-right">
+                    <% @nist_hash["children"].first((@nist_hash["children"].size/2).to_i).each do |family| %>
+                      <div class="checkbox">
+                        <label>
+                          <%= form.check_box 'family', {:id=> "fam_cb_#{family['name']}", :checked=>false, :multiple => true}, family['name'], nil %>
+                          <%= family['name'] %>
+                        </label>
+                      </div>
+                    <% end %>
                   </div>
-                <% end %>
-                <%= form.submit "Filter by Selected"%>
+                  <div class="col-md-2 padded-right">
+                    <% @nist_hash["children"].last((@nist_hash["children"].size/2).to_i).each do |family| %>
+                      <div class="checkbox">
+                        <label>
+                          <%= form.check_box 'family', {:id=> "fam_cb_#{family['name']}", :checked=>false, :multiple => true}, family['name'], nil %>
+                          <%= family['name'] %>
+                        </label>
+                      </div>
+                    <% end %>
+                  </div>
+                </div>
               </div>
-              <div class="col-md-3">
-                <% @nist_hash["children"].last((@nist_hash["children"].size/2).to_i).each do |family| %>
-                  <div class="checkbox">
-                    <label>
-                      <%= form.check_box family['name'], {:checked=>true, :multiple => true} %>
-                      <%= family['name'] %>
-                    </label>
-                  </div>
+              <div class="row">
+                <div class="col-md-4">
+                  <%= button_tag(type: "submit", class: "btn btn-primary") do %>
+                    <i class="fa fa-edit"></i> Filter by Family
+                  <% end %>
+                </div>
+              </div>
+            <% end %>
+          </div>
+          <div class="col-md-6">
+            <%= form_for :filter_group, url: evaluation_filter_select_path(@evaluation), remote: true do |form| %>
+              <div class="box-body">
+                <p>
+                  <h4>Select Filter Group</h4>
+                  <%= form.select :id, FilterGroup.all.collect {|u| [u.name, u.id]}, { :prompt => 'Select' } %>
+                  <h4>Or</h4>
+                  <h4>Select Filter</h4>
+                  <%= form.select :filter_ids, Filter.all.collect {|u| [u.to_s, u.id]}, { :prompt => 'Select' } %>
+                  <br>
+                </p>
+                <%= button_tag(type: "submit", class: "btn btn-primary") do %>
+                  <i class="fa fa-edit"></i> Filter by Selected
                 <% end %>
+                <h4>Or</h4>
+                <button type="button" id="build_btn" class="btn btn-block btn-info">Build Filter</button>
+              </div>
+            <% end %>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="row", style="display:none;" id="filter_row">
+    <div class="col-md-12">
+      <div class="box box-primary">
+        <div class="box-header with-border">
+          <h3 class="box-title">Control Filters</h3>
+        </div>
+        <!-- /.box-header -->
+        <div class="box-body">
+          <%= form_for :filter, url: evaluation_filter_path(@evaluation), remote: true do |form| %>
+            <div class="row">
+              <div class="col-sm-1">
+                <div class="box-header">
+                  <h3 class="box-title">Families</h3>
+                </div>
+                <div class="form-group">
+                  <div class="col-md-2 padded-right">
+                    <% @nist_hash["children"].first((@nist_hash["children"].size/2).to_i).each do |family| %>
+                      <div class="checkbox">
+                        <label>
+                          <%= form.check_box 'family', {:id=> "fam_cb_#{family['name']}", :checked=>false, :multiple => true, :onclick=>'filterNumbers()'}, family['name'], nil %>
+                          <%= family['name'] %>
+                        </label>
+                      </div>
+                    <% end %>
+                  </div>
+                  <div class="col-md-2 padded-right">
+                    <% @nist_hash["children"].last((@nist_hash["children"].size/2).to_i).each do |family| %>
+                      <div class="checkbox">
+                        <label>
+                          <%= form.check_box 'family', {:id=> "fam_cb_#{family['name']}", :checked=>false, :multiple => true, :onclick=>'filterNumbers()'}, family['name'], nil %>
+                          <%= family['name'] %>
+                        </label>
+                      </div>
+                    <% end %>
+                  </div>
+                </div>
+              </div>
+              <div class="col-sm-2">
+                <div class="box-header">
+                  <h3 class="box-title">Numbers</h3>
+                </div>
+                <div class="form-group">
+                  <div class="col-md-2 padded-right">
+                    <% (1..11).each do |num| %>
+                      <div class="checkbox">
+                        <label>
+                          <%= form.check_box("number", {:id=> "num_cb_#{num}", :checked=>false, :multiple => true}, num, nil) %>
+                          <%= num %>
+                        </label>
+                      </div>
+                    <% end %>
+                  </div>
+                  <div class="col-md-2 padded-right">
+                    <% (12..22).each do |num| %>
+                      <div class="checkbox">
+                        <label>
+                          <%= form.check_box("number", {:id=> "num_cb_#{num}", :checked=>false, :multiple => true}, num, nil) %>
+                          <%= num %>
+                        </label>
+                      </div>
+                    <% end %>
+                  </div>
+                  <div class="col-md-2 padded-right">
+                    <% (23..33).each do |num| %>
+                      <div class="checkbox">
+                        <label>
+                          <%= form.check_box("number", {:id=> "num_cb_#{num}", :checked=>false, :multiple => true}, num, nil) %>
+                          <%= num %>
+                        </label>
+                      </div>
+                    <% end %>
+                  </div>
+                  <div class="col-md-2 padded-right">
+                    <% (34..44).each do |num| %>
+                      <div class="checkbox">
+                        <label>
+                          <%= form.check_box("number", {:id=> "num_cb_#{num}", :checked=>false, :multiple => true}, num, nil) %>
+                          <%= num %>
+                        </label>
+                      </div>
+                    <% end %>
+                  </div>
+                </div>
+              </div>
+              <div class="col-sm-1">
+                <div class="box-header">
+                  <h3 class="box-title">Part</h3>
+                </div>
+                <div class="form-group">
+                  <div class="col-md-2">
+                    <% ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k'].each do |fam| %>
+                      <div class="checkbox">
+                        <label>
+                          <%= form.check_box("sub_fam", {:id=> "sub_fam_cb_#{fam}", :checked=>false, :multiple => true}, fam, nil) %>
+                          <%= fam %>
+                        </label>
+                      </div>
+                    <% end %>
+                  </div>
+                </div>
+              </div>
+              <div class="col-sm-1">
+                <div class="box-header">
+                  <h3 class="box-title">Sub-Part</h3>
+                </div>
+                <div class="form-group">
+                  <div class="col-md-2">
+                    <% (1..10).each do |num| %>
+                      <div class="checkbox">
+                        <label>
+                          <%= form.check_box("sub_num", {:id=> "sub_num_cb_#{num}", :checked=>false, :multiple => true}, num, nil) %>
+                          <%= num %>
+                        </label>
+                      </div>
+                    <% end %>
+                  </div>
+                </div>
+              </div>
+              <div class="col-sm-1">
+                <div class="box-header">
+                  <h3 class="box-title">Enhancement</h3>
+                </div>
+                <div class="form-group">
+                  <div class="col-md-2 padded-right">
+                    <% (1..12).each do |enhancement| %>
+                      <div class="checkbox">
+                        <label>
+                          <%= form.check_box("enhancement", {:id=> "enhancement_cb_#{enhancement}", :checked=>false, :multiple => true, :onclick=>'yesEnhancements()'}, enhancement, nil) %>
+                          <%= "(#{enhancement})" %>
+                        </label>
+                      </div>
+                    <% end %>
+                  </div>
+                  <div class="col-md-2 padded-right">
+                    <% (13..24).each do |enhancement| %>
+                      <div class="checkbox">
+                        <label>
+                          <%= form.check_box("enhancement", {:id=> "enhancement_cb_#{enhancement}", :checked=>false, :multiple => true, :onclick=>'yesEnhancements()'}, enhancement, nil) %>
+                          <%= "(#{enhancement})" %>
+                        </label>
+                      </div>
+                    <% end %>
+                    <div class="checkbox">
+                      <label>
+                        <%= form.check_box("enhancement", {:id=> "none_enhance_cb", :checked=>false, :multiple => true, :onclick=>'noEnhancements()'}, "none", nil) %>
+                        None
+                      </label>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <div class="col-sm-1">
+                <div class="box-header">
+                  <h3 class="box-title">Part</h3>
+                </div>
+                <div class="form-group">
+                  <div class="col-md-2">
+                    <% ['a', 'b', 'c', 'd', 'e', 'f'].each do |fam| %>
+                      <div class="checkbox">
+                        <label>
+                          <%= form.check_box("enh_sub_fam", {:id=> "enh_sub_fam_cb_#{fam}", :checked=>false, :multiple => true, :disabled=>true}, fam, nil) %>
+                          <%= fam %>
+                        </label>
+                      </div>
+                    <% end %>
+                  </div>
+                </div>
+              </div>
+              <div class="col-sm-1">
+                <div class="box-header">
+                  <h3 class="box-title">Sub-Part</h3>
+                </div>
+                <div class="form-group">
+                  <div class="col-md-2">
+                    <% (1..5).each do |num| %>
+                      <div class="checkbox">
+                        <label>
+                          <%= form.check_box("enh_sub_num", {:id=> "enh_sub_num_cb_#{num}", :checked=>false, :multiple => true, :disabled=>true}, num, nil) %>
+                          <%= num %>
+                        </label>
+                      </div>
+                    <% end %>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="row">
+              <div class="col-sm-1">
+                <div class="checkbox">
+                  <label>
+                    <%= form.check_box("save_filter", {:id=> "save_filter_cb", :checked=>false}, "save", nil) %>
+                    Save Filter
+                  </label>
+                </div>
+              </div>
+              <div class="col-sm-1">
+                <%= button_tag(type: "submit", class: "btn btn-primary pull-right margin-right") do %>
+                  <i class="fa fa-edit"></i> Filter by Selected
+                <% end %>
+              </div>
+              <div class="col-sm-1">
+                <button type="button" id="close_build_btn" class="btn btn-block btn-info">Close</button>
               </div>
             </div>
           <% end %>
         </div>
       </div>
-    </div-->
+    </div>
   </div>
   <div class="row">
     <div class="col-md-12">
@@ -265,7 +509,7 @@
                   <td><%= control.title %></td>
                   <td><%= link_to control.control_id, profile_control_path(control.profile_id, control.id) %></td>
                   <td><%= control.severity %></td>
-                  <td><%= control.tag 'nist' %></td>
+                  <td><%= control.nist_tags.join(', ') %></td>
                   <td class="hidden"><%= control.code %></td>
                 </tr>
               <% end %>
@@ -296,6 +540,91 @@ var shown_id = null;
 var loaded = null;
 var compliance_count = 0.0;
 var total_count = 0;
+var nist_counts = {"AC": 25, "AU": 16, "AT": 5, "CM": 11, "CP": 13, "IA": 11, "IR": 10, "MA": 6, "MP": 8,
+  "PS": 8, "PE": 20, "PL": 9, "PM": 16, "RA": 6, "CA": 9, "SC": 44, "SI": 17, "SA": 22};
+
+function filterNumbers() {
+  count = 0;
+  checked = null;
+  $('input:checkbox[id^="fam_cb_"]:checked').each(function(){
+    count += 1;
+    checked = $(this).val();
+  });
+  if(count == 1) {
+    $('input:checkbox[id^="num_cb_"]').each(function(){
+      if($(this).val() <= nist_counts[checked]) {
+        $(this).prop("disabled", false);
+      } else {
+        $(this).prop('checked', false);
+        $(this).prop("disabled", true);
+      }
+      $('input:checkbox[id^="sub_fam_cb_"]').each(function(){
+        $(this).prop("disabled", false);
+      });
+      $('input:checkbox[id^="sub_num_cb_"]').each(function(){
+        $(this).prop("disabled", false);
+      });
+    });
+  } else if (count > 1) {
+    $('input:checkbox[id^="num_cb_"]').each(function(){
+      $(this).prop('checked', false);
+      $(this).prop("disabled", true);
+    });
+    $('input:checkbox[id^="sub_fam_cb_"]').each(function(){
+      $(this).prop('checked', false);
+      $(this).prop("disabled", true);
+    });
+    $('input:checkbox[id^="sub_num_cb_"]').each(function(){
+      $(this).prop('checked', false);
+      $(this).prop("disabled", true);
+    });
+  } else {
+    $('input:checkbox[id^="num_cb_"]').each(function(){
+      $(this).prop("disabled", false);
+    });
+  }
+}
+
+function noEnhancements() {
+  $('input:checkbox[id^="enhancement_cb_"]').each(function(){
+    $(this).prop('checked', false);
+  });
+  $('input:checkbox[id^="enh_sub_fam_cb_"]').each(function(){
+    $(this).prop('checked', false);
+    $(this).prop("disabled", true);
+  });
+  $('input:checkbox[id^="enh_sub_num_cb_"]').each(function(){
+    $(this).prop('checked', false);
+    $(this).prop("disabled", true);
+  });
+}
+
+function yesEnhancements() {
+  count = 0;
+  $('input:checkbox[id^="enhancement_cb_"]:checked').each(function(){
+    count += 1;
+  });
+  $('input:checkbox[id^="none_enhance_cb"]').each(function(){
+    $(this).prop('checked', false);
+  });
+  if(count > 1){
+    $('input:checkbox[id^="enh_sub_fam_cb_"]').each(function(){
+      $(this).prop('checked', false);
+      $(this).prop("disabled", true);
+    });
+    $('input:checkbox[id^="enh_sub_num_cb_"]').each(function(){
+      $(this).prop('checked', false);
+      $(this).prop("disabled", true);
+    });
+  } else {
+    $('input:checkbox[id^="enh_sub_fam_cb_"]').each(function(){
+      $(this).prop("disabled", false);
+    });
+    $('input:checkbox[id^="enh_sub_num_cb_"]').each(function(){
+      $(this).prop("disabled", false);
+    });
+  }
+}
 
 function show_details(profile_id, control_id, evaluation_id) {
   hsh = "#" + control_id;
@@ -382,6 +711,16 @@ document.addEventListener("turbolinks:load", function() {
     });
   }
 
+  $("#build_btn").click(function(){
+    console.log("show builder");
+    document.getElementById("filter_row").style.display = 'block';
+  });
+
+  $("#close_build_btn").click(function(){
+    console.log("Close builder");
+    document.getElementById("filter_row").style.display = 'none';
+  });
+
   $("#clear_filters_button").click(function() {
     if (currentDepth == 0) {
       document.getElementById("clear_filters_button").style.visibility = "hidden";
@@ -425,7 +764,6 @@ document.addEventListener("turbolinks:load", function() {
                 if (!(ary.includes(child3.name))) {
                   ary.push(child3.name);
                   status_value = child3.status_value;
-                  console.log("Child3: " + child3.name + ", status_value: " + status_value);
                   if (status_value == 0.2) {
                     not_app += 1;
                   } else if (status_value == 0.4) {
@@ -446,8 +784,8 @@ document.addEventListener("turbolinks:load", function() {
     //var not_rev = accumulate_status(d, 0.4);
     //var not_find = accumulate_status(d, 0.6);
     //var open = accumulate_status(d, 0.8);
-    total_count = not_app + not_find + not_rev + open;
-    compliance_count = ((not_find + not_app) / total_count) * 100;
+    total_count = not_find + not_rev + open;
+    compliance_count = (not_find / total_count) * 100;
 
     status_data = [
                   ['Not A Finding',  not_find],

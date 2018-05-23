@@ -52,6 +52,8 @@ gem 'thor'
 gem 'json'
 gem 'pry'
 
+gem 'inspec_to', :git => "git@gitlab.mitre.org:inspec/inspec_to.git"
+
 group :development, :test do
   # Call 'byebug' anywhere in the code to stop execution and get a debugger console
   gem 'byebug', platforms: [:mri, :mingw, :x64_mingw]

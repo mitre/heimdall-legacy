@@ -64,6 +64,21 @@
   padding: 5px;
   font-size: 70px;
 }
+.padded-right {
+  padding-right: 35px;
+}
+.no-top-padding {
+  padding-top: 0px;
+  padding-bottom: 5px;
+}
+.little_wider {
+    min-width: 200px;
+}
+.span-title {
+    font-size: 18px;
+    margin: 0;
+    line-height: 1;
+}
 .column-2 {
   -webkit-columns: 100px 2; /* Chrome, Safari, Opera */
   -moz-columns: 100px 2; /* Firefox */

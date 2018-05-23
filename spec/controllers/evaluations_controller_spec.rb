@@ -29,6 +29,11 @@ RSpec.describe EvaluationsController, type: :controller do
   # in order to pass any filters (e.g. authentication) defined in
   # EvaluationsController. Be sure to keep this updated too.
   let(:valid_session) { {} }
+  let(:filter_session) { { filter: FactoryGirl.create(:filter) } }
+  let(:filter_group_session) { { filter_group: FactoryGirl.create(:filter_group) } }
+  let(:filter_attributes) {
+    FactoryGirl.build(:filter_no_enh).attributes
+  }
 
   context 'Editor is logged in' do
     let(:user) { FactoryGirl.create(:editor) }
@@ -48,11 +53,38 @@ RSpec.describe EvaluationsController, type: :controller do
 
       describe 'GET #nist' do
         it 'returns a success response' do
-          # evaluation = create :evaluation, created_by: user
           get :nist, params: { format: 'json', id: eval.to_param, category: 'Medium' }, session: valid_session
           expect(response.content_type).to eq('application/json')
         end
       end
+
+      describe 'GET #show with filter' do
+        render_views
+        it 'returns a success response' do
+          get :show, params: { id: eval.to_param }, session: filter_session
+          expect(response).to be_success
+        end
+      end
+
+      describe 'GET #show with filter group' do
+        render_views
+        it 'returns a success response' do
+          filter_group = create :filter_group, created_by: user
+          filter = create :filter_simple, created_by: user
+          filter_group.filters << filter
+          get :show, params: { id: eval.to_param }, session: { filter_group: filter_group }
+          expect(response).to be_success
+        end
+      end
+
+      describe 'GET clear filter' do
+        render_views
+        it 'returns a success response' do
+          get :clear_filter, params: { id: eval.to_param }, session: valid_session
+          expect(response).to redirect_to(Evaluation.last)
+        end
+      end
+
     end
 
     describe 'GET #index' do
@@ -83,6 +115,43 @@ RSpec.describe EvaluationsController, type: :controller do
         @file = fixture_file_upload('spec/support/bad_profile.json', 'text/json')
         post :upload, params: { file: @file }, session: valid_session
         expect(response).to redirect_to(evaluations_path)
+      end
+    end
+
+    describe 'POST filter' do
+      it 'can create a filter' do
+        evaluation = create :evaluation, created_by: user
+        post :filter, params: { id: evaluation.to_param, filter: filter_attributes }, session: valid_session
+        expect(response).to redirect_to(Evaluation.last)
+      end
+
+      it 'can save a filter' do
+        evaluation = create :evaluation, created_by: user
+        post :filter, params: { id: evaluation.to_param, filter: { family: %w{AC SC}, save_filter: 'true' } }, session: valid_session
+        expect(response).to redirect_to(Evaluation.last)
+      end
+    end
+
+    context 'with filters' do
+      before(:each) do
+        @filter_group = create :filter_group, created_by: user
+        @filter = create :filter, filter_group_ids: [@filter_group.id], created_by: user
+      end
+
+      describe 'Select filter group' do
+        it 'can upload an evaluation' do
+          evaluation = create :evaluation, created_by: user
+          post :filter_select, params: { id: evaluation.to_param, filter_group: { id: @filter_group.id } }, session: valid_session
+          expect(response).to redirect_to(Evaluation.last)
+        end
+      end
+
+      describe 'Select filter' do
+        it 'can upload an evaluation' do
+          evaluation = create :evaluation, created_by: user
+          post :filter_select, params: { id: evaluation.to_param, filter_group: { id: nil, filter_ids: @filter.id } }, session: valid_session
+          expect(response).to redirect_to(Evaluation.last)
+        end
       end
     end
 

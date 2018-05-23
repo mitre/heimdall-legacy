@@ -20,6 +20,8 @@ class Ability
           Role,
           Support,
           Tag,
+          Filter,
+          FilterGroup,
         ], created_by_id: user.id
       end
       if user.has_role?(:admin)

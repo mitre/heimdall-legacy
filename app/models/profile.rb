@@ -25,6 +25,24 @@ class Profile
   accepts_nested_attributes_for :profile_attributes
   validates_presence_of :name, :title, :sha256
 
+  def filtered_controls(filters = nil)
+    return controls if filters.nil?
+    filtered_list = controls.select do |control|
+      keep = false
+      filters.each do |filter|
+        control.nist_tags.each do |nist_tag|
+          if nist_tag.match(filter.regex)
+            keep = true
+            break
+          end
+        end
+        break if keep
+      end
+      keep
+    end
+    filtered_list
+  end
+
   def to_jbuilder
     Jbuilder.new do |json|
       json.extract! self, :name, :title, :maintainer, :copyright,
@@ -86,7 +104,6 @@ class Profile
       new_profile_hash, controls = Profile.transform(profile_hash.deep_dup)
       profile = Profile.create(new_profile_hash)
       controls.each do |control|
-        logger.debug "Add Control: #{control.keys}"
         profile.controls.create(control)
       end
     end
@@ -99,16 +116,12 @@ class Profile
     profiles.try(:each) do |profile_hash|
       profile = Profile.find_or_new profile_hash
       profile_hash['controls'].try(:each) do |control_hash|
-        logger.debug "For #{control_hash['control_id']}"
         if (control = profile.controls.where(control_id: control_hash['control_id']).try(:first))
-          logger.debug 'Found Control'
           control_hash['results'].try(:each) do |result|
-            logger.debug "For result #{result.inspect}"
             control.results.create(result)
           end
           results.concat control.results
         end
-        logger.debug "Results: #{results.size}"
       end
       all_profiles << profile
     end

@@ -1,5 +1,3 @@
-require 'inspec2ckl'
-
 class Evaluation
   include Mongoid::Document
   include Mongoid::Timestamps
@@ -36,20 +34,22 @@ class Evaluation
   end
 
   def to_ckl
-    inspec2ckl = Inspec2ckl.new(to_json, nil, nil, nil)
-    inspec2ckl.to_ckl
+    InspecTo.ckl(to_json)
   end
 
-  def status_counts
+  def status_counts(filters = nil)
     counts = { open: 0, not_a_finding: 0, not_reviewed: 0, not_tested: 0, not_applicable: 0 }
     controls = {}
     profiles.each do |profile|
-      profile.controls.each do |control|
+      p_controls = filters.nil? ? profile.controls : profile.filtered_controls(filters)
+      p_controls.each do |control|
         controls[control.id] = { control: control, results: [] }
       end
     end
     results.each do |result|
-      controls[result.control_id][:results] << result
+      if controls[result.control_id]
+        controls[result.control_id][:results] << result
+      end
     end
     controls.each do |_, ct|
       sym = status_symbol(ct[:control], ct[:results])
@@ -113,10 +113,11 @@ class Evaluation
     end
   end
 
-  def profile_values(cat, params)
+  def profile_values(cat, params, filters = nil)
     nist = {}
     profiles.each do |profile|
-      profile.controls.each do |control|
+      p_controls = filters.nil? ? profile.controls : profile.filtered_controls(filters)
+      p_controls.each do |control|
         params[:ct_results] = params[:cts][control.id]
         severity = control.severity
         next unless severity && (cat.nil? || cat == severity)
@@ -129,7 +130,7 @@ class Evaluation
     nist
   end
 
-  def nist_hash(cat, status_symbol)
+  def nist_hash(cat, status_symbol, filters = nil)
     cts = {}
     results.each do |result|
       unless cts.key?(result.control_id)
@@ -138,7 +139,7 @@ class Evaluation
       cts[result.control_id] << result
     end
     params = { status_symbol: status_symbol, cts: cts }
-    profile_values cat, params
+    profile_values cat, params, filters
   end
 
   def self.transform(hash)
@@ -155,7 +156,6 @@ class Evaluation
     all_profiles, results = Profile.parse hash.delete('profiles')
     hash['results'] = results
     hash['profiles'] = all_profiles
-    logger.debug("hash: #{hash.inspect}")
     hash
   end
 
