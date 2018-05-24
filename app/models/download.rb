@@ -41,7 +41,7 @@ class Download
       'margin-bottom': '0.10in',
       'margin-left': '0.10in'
     }
-    kit = PDFKit.new(as_html, options=options)
+    kit = PDFKit.new(as_html, options)
     kit.to_file('tmp/ssp.pdf')
   end
 

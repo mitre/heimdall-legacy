@@ -134,8 +134,8 @@
         <!-- /.box-header -->
         <div class="box-body">
           <% counts, _ = @evaluation.status_counts %>
-          <% total_count = counts[:open] + counts[:not_a_finding] + counts[:not_reviewed] + counts[:not_tested] + counts[:not_applicable] %>
-          <% compliance_level = ((counts[:not_a_finding] + counts[:not_applicable]).to_f / total_count) * 100 %>
+          <% total_count = counts[:open] + counts[:not_a_finding] + counts[:not_reviewed] + counts[:not_tested] %>
+          <% compliance_level = ((counts[:not_a_finding]).to_f / total_count) * 100 %>
           <h2>Compliance Level: <%= compliance_level.round(1) %>%</h2>
           <div class="container-fluid">
             <div class="row">

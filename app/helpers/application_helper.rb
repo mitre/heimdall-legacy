@@ -37,4 +37,9 @@ module ApplicationHelper
       'No test available for this control'
     end
   end
+
+  def ary_to_s(val)
+    return '' if val.nil? || val.empty?
+    val.size == 1 ? val.first.to_s.delete('"') : val.to_s.delete('"')
+  end
 end

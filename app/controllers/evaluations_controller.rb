@@ -1,6 +1,6 @@
 class EvaluationsController < ApplicationController
   load_resource
-  authorize_resource only: [:show, :destroy, :filter]
+  authorize_resource only: [:show, :destroy, :filter, :clear_filter]
   protect_from_forgery
 
   # GET /evaluations
@@ -12,10 +12,10 @@ class EvaluationsController < ApplicationController
   # GET /evaluations/1
   # GET /evaluations/1.json
   def show
-    logger.debug "params: #{params.inspect}"
     @profiles = @evaluation.profiles
-    @counts, @controls = @evaluation.status_counts
-    @nist_hash = ProfilesController.nist_800_53
+    filters, @filter_label = session_filters
+    @counts, @controls = @evaluation.status_counts(filters)
+    @nist_hash = Constants::NIST_800_53
     respond_to do |format|
       format.html { render :show }
       format.json { render :show }
@@ -37,9 +37,8 @@ class EvaluationsController < ApplicationController
   # GET /profiles/1.json
   def ssp
     authorize! :read, Evaluation
-    @nist_hash = ProfilesController.nist_800_53
+    @nist_hash = Constants::NIST_800_53
     @symbols = @evaluation.symbols
-    # @counts, @controls = @evaluation.status_counts
     @evaluation.profiles.each do |profile|
       families, nist = profile.control_families
       next if families.empty?
@@ -61,14 +60,46 @@ class EvaluationsController < ApplicationController
 
   def nist
     authorize! :read, Evaluation
+    filters, = session_filters
     category = nil
     category = params[:category].downcase if params.key?(:category)
     status_sym = nil
     status_sym = params[:status_symbol].downcase.tr(' ', '_').to_sym if params.key?(:status_symbol)
-    @control_hash = @evaluation.nist_hash category, status_sym
-    nist_hash = ProfilesController.nist_800_53
-    @name = nist_hash['name']
-    @families = nist_hash['children']
+    @control_hash = @evaluation.nist_hash category, status_sym, filters
+    @name = Constants::NIST_800_53['name']
+    @families = Constants::NIST_800_53['children']
+  end
+
+  def clear_filter
+    session[:filter] = nil
+    session[:filter_group] = nil
+    redirect_to @evaluation
+  end
+
+  def filter
+    logger.debug "params: #{params.inspect}"
+    f_params = params[:filter]
+    @filter = Filter.valid_filter f_params
+    if f_params[:save_filter]
+      @filter.save
+    end
+    session[:filter] = @filter
+    session[:filter_group] = nil
+    redirect_to @evaluation
+  end
+
+  def filter_select
+    filter_params = params[:filter_group]
+    if filter_params[:id].present?
+      @filter_group = FilterGroup.find(filter_params[:id])
+      session[:filter] = nil
+      session[:filter_group] = @filter_group
+    elsif filter_params[:filter_ids].present?
+      @filter = Filter.find(filter_params[:filter_ids])
+      session[:filter_group] = nil
+      session[:filter] = @filter
+    end
+    redirect_to @evaluation
   end
 
   def upload
@@ -80,5 +111,22 @@ class EvaluationsController < ApplicationController
     else
       redirect_to evaluations_url, notice: 'File does not contain an evaluation.'
     end
+  end
+
+  private
+
+  def session_filters
+    filters = nil
+    filter_label = nil
+    if session[:filter]
+      filter = session[:filter].is_a?(Filter) ? session[:filter] : Filter.new(session[:filter])
+      filters = [filter]
+      filter_label = filter.to_s
+    elsif session[:filter_group]
+      filter_group = session[:filter_group].is_a?(FilterGroup) ? session[:filter_group] : FilterGroup.new(session[:filter_group])
+      filters = filter_group.filters
+      filter_label = "#{filter_group.name}: #{filter_group.filters.map(&:to_s).join(', ')}"
+    end
+    [filters, filter_label]
   end
 end

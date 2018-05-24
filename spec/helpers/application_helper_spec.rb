@@ -35,4 +35,10 @@ RSpec.describe ApplicationHelper, type: :helper do
     end
   end
 
+  describe 'ary_to_s' do
+    it 'converts an array to a string' do
+      expect(helper.ary_to_s(['"value"'])).to eq('value')
+    end
+  end
+
 end
