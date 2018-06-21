@@ -155,6 +155,24 @@ RSpec.describe EvaluationsController, type: :controller do
       end
     end
 
+    context 'with imported evaluation' do
+      let(:eval1) { Evaluation.parse(JSON.parse(File.open('spec/support/ngadev-test1.json', 'r').read)) }
+      let(:eval2) { Evaluation.parse(JSON.parse(File.open('spec/support/ngadev-test1.json', 'r').read)) }
+      describe 'POST #compare' do
+        it 'returns a success response' do
+          post :compare, params: { evaluation: { eval_ids: [eval1.to_param, eval2.to_param] } }, session: valid_session
+          expect(response).to be_success
+        end
+      end
+
+      describe 'POST #compare' do
+        it 'returns a redirect response' do
+          post :compare, params: { evaluation: { eval_ids: [] } }, session: valid_session
+          expect(response).to redirect_to(evaluations_path)
+        end
+      end
+    end
+
     describe 'DELETE #destroy' do
       it "is blocked from destroying the evaluation it doesn't own" do
         evaluation = create :evaluation

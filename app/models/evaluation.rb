@@ -8,8 +8,19 @@ class Evaluation
   field :platform_name, type: String
   field :platform_release, type: String
   field :statistics_duration, type: String
-  has_many :results
-  has_and_belongs_to_many :profiles
+  field :findings, type: Hash
+  field :start_time, type: Time
+  has_many :results, dependent: :destroy
+  has_and_belongs_to_many :profiles, dependent: :destroy
+
+  def findings
+    if read_attribute(:findings).nil?
+      counts, = status_counts
+      write_attribute(:findings, counts)
+      save
+    end
+    read_attribute(:findings)
+  end
 
   def to_jbuilder
     Jbuilder.new do |json|
@@ -122,8 +133,13 @@ class Evaluation
         severity = control.severity
         next unless severity && (cat.nil? || cat == severity)
         params[:severity] = severity
-        control.tags.where(name: 'nist').each do |tag|
-          tag_values tag, control, params, nist
+        nist_tags = control.tags.where(name: 'nist')
+        if nist_tags.empty?
+          tag_values Tag.new(name: 'nist', value: ['UM-1']), control, params, nist
+        else
+          nist_tags.each do |tag|
+            tag_values tag, control, params, nist
+          end
         end
       end
     end
@@ -175,6 +191,10 @@ class Evaluation
         profiles.each do |profile|
           evaluation.profiles << profile
         end
+      end
+      unless evaluation.nil?
+        evaluation.start_time = evaluation.results.map(&:start_time).sort.try(:first)
+        evaluation.save
       end
       evaluation
     rescue Mongoid::Errors::UnknownAttribute

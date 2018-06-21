@@ -58,6 +58,14 @@ class Control
     refs.join(', ')
   end
 
+  def start_time
+    results.map(&:start_time).sort.first
+  end
+
+  def run_time
+    results.map(&:run_time).inject(0, :+).round(6)
+  end
+
   def tag(name)
     val = tags.where(name: name).first.try(:value)
     val.is_a?(Array) ? val.join(', ') : val

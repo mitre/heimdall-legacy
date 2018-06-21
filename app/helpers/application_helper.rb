@@ -42,4 +42,16 @@ module ApplicationHelper
     return '' if val.nil? || val.empty?
     val.size == 1 ? val.first.to_s.delete('"') : val.to_s.delete('"')
   end
+
+  def pass_pixels(findings)
+    (findings[:not_a_finding] / (findings[:open] + findings[:not_a_finding] + findings[:not_tested] + findings[:not_reviewed]).to_f * 200.0).round
+  end
+
+  def fail_pixels(findings)
+    200 - pass_pixels(findings)
+  end
+
+  def compliance(findings)
+    (findings[:not_a_finding] / (findings[:open] + findings[:not_a_finding] + findings[:not_tested] + findings[:not_reviewed]).to_f * 100.0).round(2)
+  end
 end

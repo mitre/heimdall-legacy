@@ -1,30 +1,30 @@
 <ul class="nav nav-tabs">
   <% if evaluation %>
-    <li class="active"><a data-toggle="tab" href="#fdetails">Finding Details</a></li>
-    <li><a data-toggle="tab" href="#details">Details</a></li>
+    <li class="active"><a data-toggle="tab" href="#fdetails-<%= control.id %>">Finding Details</a></li>
+    <li><a data-toggle="tab" href="#details-<%= control.id %>">Details</a></li>
   <% else %>
-    <li class="active"><a data-toggle="tab" href="#details">Details</a></li>
+    <li class="active"><a data-toggle="tab" href="#details-<%= control.id %>">Details</a></li>
   <% end %>
-  <li onclick = test()><a data-toggle="tab" href="#inspec_code" >Inspec Code</a></li>
+  <li onclick = test()><a data-toggle="tab" href="#inspec_code-<%= control.id %>" >Inspec Code</a></li>
 </ul>
 <div class="tab-content">
   <% if evaluation %>
-    <div id="fdetails" class="tab-pane fade in active">
+    <div id="fdetails-<%= control.id %>" class="tab-pane fade in active">
       <table class="table table-bordered table-striped">
         <% results = control.results.where(:evaluation_id => evaluation.id) %>
         <tr><td colspan="3"><%= result_message(evaluation.status_symbol(control, results)) %>:<br><%= control.desc %></td><tr>
         <% results.each do |result| %>
           <tr>
             <td><%= result.status.upcase %></td>
-            <td>Test: <%= result.code_desc %></td>
-            <td><% if result.message %>Message: <%= result.message %><% end %></td>
+            <td style="max-width:300px; word-wrap:break-word">Test: <%= result.code_desc %></td>
+            <td style="max-width:300px; word-wrap:break-word"><% if result.message %>Message: <%= result.message %><% end %></td>
           </tr>
         <% end %>
       </table>
     </div>
-    <div id="details" class="tab-pane fade">
+    <div id="details-<%= control.id %>" class="tab-pane fade">
   <% else %>
-  <div id="details" class="tab-pane fade in active">
+  <div id="details-<%= control.id %>" class="tab-pane fade in active">
   <% end %>
     <table class="table table-bordered table-striped">
       <tr><td>Control:</td><td><%= control.control_id %></td></tr>
@@ -43,7 +43,7 @@
       <% end %>
     </table>
   </div>
-  <div id="inspec_code" class="tab-pane fade">
+  <div id="inspec_code-<%= control.id %>" class="tab-pane fade">
     <table class="table table-bordered table-striped">
       <tr>
         <td><pre><code class="language-ruby"><%= control.code %></code></pre></td>

@@ -7,7 +7,7 @@ class Result
   field :skip_message, type: String
   field :resource, type: String
   field :run_time, type: Float
-  field :start_time, type: Date
+  field :start_time, type: Time
   field :message, type: String
   field :exception, type: String
   field :backtrace, type: Array, default: []

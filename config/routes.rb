@@ -33,6 +33,7 @@ Rails.application.routes.draw do
   match 'evaluations/:id/clear_filter' => 'evaluations#clear_filter', as: :evaluation_clear_filter, :via => :get
   match 'evaluation_upload' => 'evaluations#upload', as: :upload_evaluation, :via => :post
   match 'evaluations/:id/nist(/category/:category)(/status/:status_symbol)' => 'evaluations#nist', as: :evaluation_nist, :via => :get
+  match 'evaluations_compare' => 'evaluations#compare', as: :evaluations_compare, :via => [:get, :post]
 
   root to: 'dashboard#index', as: :home
 end
