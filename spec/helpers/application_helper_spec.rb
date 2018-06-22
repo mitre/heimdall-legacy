@@ -41,4 +41,25 @@ RSpec.describe ApplicationHelper, type: :helper do
     end
   end
 
+  context 'with findings' do
+    let(:findings) { { not_a_finding: 23, open: 43, not_reviewed: 23, not_tested: 10, not_applicable: 18 } }
+
+    describe 'pass_pixels' do
+      it 'converts an array to a string' do
+        expect(helper.pass_pixels(findings)).to eq(46)
+      end
+    end
+
+    describe 'fail_pixels' do
+      it 'converts an array to a string' do
+        expect(helper.fail_pixels(findings)).to eq(154)
+      end
+    end
+
+    describe 'compliance' do
+      it 'converts an array to a string' do
+        expect(helper.compliance(findings)).to eq(23.23)
+      end
+    end
+  end
 end

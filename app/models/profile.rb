@@ -14,7 +14,7 @@ class Profile
   field :sha256, type: String
   embeds_many :depends, cascade_callbacks: true
   embeds_many :supports, cascade_callbacks: true
-  has_many :controls
+  has_many :controls, dependent: :destroy
   has_and_belongs_to_many :evaluations
   embeds_many :groups, cascade_callbacks: true
   embeds_many :profile_attributes, cascade_callbacks: true

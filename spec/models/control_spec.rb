@@ -75,4 +75,13 @@ RSpec.describe Control, type: :model do
       expect(control.save).to eq false
     end
   end
+
+  context 'Evaluation imported' do
+    let(:eval) { Evaluation.parse(JSON.parse(File.open('spec/support/ngadev-test1.json', 'r').read)) }
+
+    it 'get start time' do
+      control = eval.profiles.first.controls.first
+      expect(control.start_time).to eq '2018-04-08 19:24:40.000000000 +0000'
+    end
+  end
 end

@@ -4,6 +4,18 @@ RSpec.describe Evaluation, type: :model do
   context 'Evaluation imported' do
     let(:eval) { Evaluation.parse(JSON.parse(File.open('spec/support/bad_nginx.json', 'r').read)) }
 
+    it 'get findings' do
+      findings = eval.findings
+      expect(findings).to_not be_empty
+      expect(findings).to include(
+        open:           3,
+        not_a_finding:  33,
+        not_reviewed:   3,
+        not_tested:     1,
+        not_applicable: 1,
+      )
+    end
+
     it 'get status_counts' do
       counts, controls = eval.status_counts
       expect(counts).to_not be_empty
@@ -52,6 +64,15 @@ RSpec.describe Evaluation, type: :model do
     it 'get parse with bad data' do
       nist = Evaluation.parse JSON.parse('{"some": "nonsense", "instead": "of an evaluation"}')
       expect(nist).to be_nil
+    end
+  end
+  context 'Evaluation imported' do
+    let(:eval) { Evaluation.parse(JSON.parse(File.open('spec/support/ngadev-test1.json', 'r').read)) }
+
+    it 'get nist_hash' do
+      nist = eval.nist_hash nil, nil
+      expect(nist).to_not be_empty
+      expect(nist).to have_key('UM-1')
     end
   end
 end

@@ -77,7 +77,6 @@ class EvaluationsController < ApplicationController
   end
 
   def filter
-    logger.debug "params: #{params.inspect}"
     f_params = params[:filter]
     @filter = Filter.valid_filter f_params
     if f_params[:save_filter]
@@ -110,6 +109,28 @@ class EvaluationsController < ApplicationController
       redirect_to @evaluation, notice: 'Evaluation uploaded.'
     else
       redirect_to evaluations_url, notice: 'File does not contain an evaluation.'
+    end
+  end
+
+  def compare
+    if params[:evaluation] && params[:evaluation][:eval_ids]
+      eval_params = params[:evaluation][:eval_ids]
+      @evaluations = []
+      @compare_hsh = {}
+      eval_params.each do |eval_id|
+        evaluation = Evaluation.find(eval_id)
+        @evaluations << evaluation
+        _, controls = evaluation.status_counts
+        controls.each do |_, hsh|
+          control = hsh[:control]
+          unless @compare_hsh.key?(control.control_id)
+            @compare_hsh[control.control_id] = {}
+          end
+          @compare_hsh[control.control_id][evaluation.id] = hsh
+        end
+      end
+    else
+      redirect_to evaluations_url
     end
   end
 

@@ -169,6 +169,24 @@
 .btn-neutral.hover {
   background-color: #8C8C8C;
 }
+.cn-msg-table td {
+	white-space: nowrap;
+	vertical-align: top;
+}
+
+.cn-msg-table td:not(:first-child),
+.cn-msg-table td.cn-msg-count {
+	padding-left: 0px;
+}
+
+.cn-msg-table td:not(:last-child) {
+	padding-right: 0px;
+}
+
+.cn-msg-bar {
+	height: 11px;
+}
+
 #editor {
     top: 0;
     right: 0;

@@ -19,31 +19,59 @@
         <!-- /.box-header -->
         <% if can? :read, Evaluation %>
           <div class="box-body table-responsive no-padding">
+            <%= form_for :evaluation, url: evaluations_compare_path do |form| %>
             <table class="table table-hover">
               <tr>
                 <th>Profiles</th>
-                <th>Uploaded</th>
+                <th>Start Time</th>
+                <th>Duration</th>
                 <th>InSpec Version</th>
-                <th>Platform name</th>
-                <th>Platform release</th>
-                <th>Statistics duration</th>
+                <th>Platform Name</th>
+                <th>Platform Release</th>
+                <th>Compliance</th>
+                <th>Compare</th>
                 <th>Owner</th>
                 <th></th>
               </tr>
 
-              <% @evaluations.each do |evaluation| %>
+              <% @evaluations.sort_by{ |t| [t.profiles.map(&:name).join(', '), t.start_time] }.each do |evaluation| %>
                 <tr>
                   <td><%= link_to evaluation.profiles.map(&:name).join(', '), evaluation %></td>
-                  <td><%= evaluation.created_at %></td>
+                  <td><%= evaluation.start_time %></td>
+                  <td><%= evaluation.statistics_duration %></td>
                   <td><%= evaluation.version %></td>
                   <td><%= evaluation.platform_name %></td>
                   <td><%= evaluation.platform_release %></td>
-                  <td><%= evaluation.statistics_duration %></td>
+                  <td>
+                    <table id="message_counts" class="cn-msg-table">
+                      <tr>
+                        <td><div class="cn-msg-bar bg-green" data-status="0" style="width: <%= pass_pixels(evaluation.findings) %>px"></div></td>
+                        <td><div class="cn-msg-bar bg-red" data-status="3" style="width: <%= fail_pixels(evaluation.findings) %>px"></div></td>
+                      </tr>
+                    </table>
+                  </td>
+                  <td>
+                    <div class="checkbox">
+                      <label>
+                        <%= form.check_box 'eval_ids', {:checked=>false, :multiple => true}, evaluation.id, nil %>
+                      </lable>
+                    </div>
+                  </td>
                   <td><%= evaluation.created_by.try(:email) %></td>
                   <td><% if can? :delete, evaluation %><%= link_to 'Destroy', evaluation, method: :delete, data: { confirm: 'Are you sure?' } %><% end %></td>
                 </tr>
               <% end %>
+              <tr>
+                <td colspan='7'></td>
+                <td>
+                  <%= button_tag(type: "submit", class: "btn btn-primary") do %>
+                    <i class="fa fa-edit"></i> Compare
+                  <% end %>
+                </td>
+                <td colspan='2'></td>
+              </tr>
             </table>
+            <% end %>
           </div>
         <% end %>
       </div>
