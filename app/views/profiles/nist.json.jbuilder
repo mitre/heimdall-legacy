@@ -2,6 +2,7 @@ total_impact = 0
 total_children = 0
 json.name @name
 json.children @families do |family|
+  next if family['name'] == 'UM' && @control_hash['UM-1'].nil?
   cf_total_impact = 0.0
   cf_total_children = 0
   json.name family['name']

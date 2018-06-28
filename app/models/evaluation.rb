@@ -12,6 +12,7 @@ class Evaluation
   field :start_time, type: Time
   has_many :results, dependent: :destroy
   has_and_belongs_to_many :profiles, dependent: :destroy
+  scope :recent, ->(num) { order(created_at: :desc).limit(num) }
 
   def findings
     if read_attribute(:findings).nil?

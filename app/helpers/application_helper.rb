@@ -54,4 +54,12 @@ module ApplicationHelper
   def compliance(findings)
     (findings[:not_a_finding] / (findings[:open] + findings[:not_a_finding] + findings[:not_tested] + findings[:not_reviewed]).to_f * 100.0).round(2)
   end
+
+  def icon(clss)
+    case clss
+    when Evaluation then 'ion-pie-graph'
+    when Profile then 'ion-ios-folder'
+    when User then 'ion-person-add'
+    end
+  end
 end
