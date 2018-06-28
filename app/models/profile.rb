@@ -24,6 +24,7 @@ class Profile
   accepts_nested_attributes_for :groups
   accepts_nested_attributes_for :profile_attributes
   validates_presence_of :name, :title, :sha256
+  scope :recent, ->(num) { order(created_at: :desc).limit(num) }
 
   def filtered_controls(filters = nil)
     return controls if filters.nil?

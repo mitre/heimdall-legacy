@@ -6,7 +6,7 @@ class ApplicationController < ActionController::Base
 
   # Set userstamp for any database updates to the current user
   def define_userstamps_current
-    Mongoid::Userstamps::Config.set_current(current_user) if current_user
+    Mongoid::Userstamps::User.current = current_user
   end
 
   # Make the first user an admin

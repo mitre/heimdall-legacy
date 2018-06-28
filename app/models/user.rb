@@ -1,5 +1,6 @@
 class User
   include Mongoid::Document
+  include Mongoid::Timestamps
   rolify
   include Mongoid::Userstamps::User
   after_create :assign_default_role
@@ -38,6 +39,8 @@ class User
   # field :locked_at,       type: Time
 
   # new users get assigned the :editor role by default
+  scope :recent, ->(num) { order(created_at: :desc).limit(num) }
+
   def assign_default_role
     add_role(:editor) if roles.blank?
   end
