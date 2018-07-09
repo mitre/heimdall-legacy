@@ -21,15 +21,15 @@ sync-repo:
     - chmod 600 ~/push_key
 
     # configure git
-    - git config --global user.email 'jsauriol@mitre.org' # Normally this is associated with the $GITLAB_PUSH_KEY
-    - git config --global user.name 'Sauriol, Jack' # Normally this is associated with the $GITLAB_PUSH_KEY
+    - git config --global user.email 'deployer@mitre.org' # Normally this is associated with the $GITLAB_PUSH_KEY
+    - git config --global user.name 'inspec-dev Deployer' # Normally this is associated with the $GITLAB_PUSH_KEY
 
     # add gitlab.mitre.org to known_hosts to avoid "host key verification failed" error
     - touch ~/.ssh/known_hosts
     - echo $GITLAB_KEYSCAN >> ~/.ssh/known_hosts
 
   script:
-    - git clone https://aaronlippold:$(echo $GITHUB_ACCESS_TOKEN)@github.com/aaronlippold/heimdall heimdall
+    - git clone https://aaronlippold:$(echo $GITHUB_ACCESS_TOKEN)@github.com/aaronlippold/heimdall heimdall >/dev/null 2>/dev/null
     - cd heimdall
     - git remote add github git@gitlab.mitre.org:inspec/heimdall.git
     - ssh-agent sh -c 'ssh-add ~/push_key; git push --force --tags github master || true' # REMOTE NAME from previous line
