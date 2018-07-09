@@ -30,6 +30,6 @@ sync-repo:
 
   script:
     - git clone https://aaronlippold:$(echo $GITHUB_ACCESS_TOKEN)@github.com/aaronlippold/heimdall heimdall
-    - cd vulcan
+    - cd heimdall
     - git remote add github git@gitlab.mitre.org:inspec/heimdall.git
     - ssh-agent sh -c 'ssh-add ~/push_key; git push --force --tags github master || true' # REMOTE NAME from previous line
