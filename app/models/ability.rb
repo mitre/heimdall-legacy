@@ -28,6 +28,12 @@ class Ability
         can :read, Circle, id: Circle.with_role(:member, user).pluck(:id)
         can :write, Circle, id: Circle.with_role(:member, user).pluck(:id)
         can :read, [Filter, FilterGroup, Repo, RepoCred, Role]
+        can [:read], Evaluation do |evaluation|
+          user.readable_evaluation?(evaluation.id)
+        end
+        can [:read], Profile do |profile|
+          user.readable_profile?(profile.id)
+        end
       end
       if user.has_role?(:admin)
         can :manage, :all
