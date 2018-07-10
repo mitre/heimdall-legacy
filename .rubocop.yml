@@ -74,7 +74,7 @@ Style/GuardClause:
   Enabled: false
 Style/IfUnlessModifier:
   Enabled: false
-Style/MethodMissing:
+Style/MethodMissingSuper:
   Enabled: false
 Style/MultilineIfModifier:
   Enabled: false

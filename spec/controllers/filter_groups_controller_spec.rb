@@ -29,7 +29,7 @@ RSpec.describe FilterGroupsController, type: :controller do
   # FilterGroup. As you add validations to FilterGroup, be sure to
   # adjust the attributes here as well.
   let(:valid_attributes) {
-    FactoryGirl.build(:filter_group).attributes
+    FactoryBot.build(:filter_group).attributes
   }
 
   let(:invalid_attributes) {
@@ -42,7 +42,7 @@ RSpec.describe FilterGroupsController, type: :controller do
   let(:valid_session) { {} }
 
   context 'User is logged in' do
-    let(:user) { FactoryGirl.create(:editor) }
+    let(:user) { FactoryBot.create(:editor) }
     before do
       sign_in user
     end

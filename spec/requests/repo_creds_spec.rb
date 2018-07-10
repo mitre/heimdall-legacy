@@ -5,7 +5,7 @@ RSpec.describe 'RepoCreds', type: :request do
   describe 'DELETE /repo/:repo_id/repo_cred/:id' do
     context 'with valid params' do
       let(:valid_attributes) {
-        FactoryGirl.build(:repo_cred).attributes
+        FactoryBot.build(:repo_cred).attributes
       }
 
       it 'works! (now write some real specs)' do

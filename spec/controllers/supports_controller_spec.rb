@@ -29,7 +29,7 @@ RSpec.describe SupportsController, type: :controller do
   # Support. As you add validations to Support, be sure to
   # adjust the attributes here as well.
   let(:valid_attributes) {
-    FactoryGirl.build(:support).attributes
+    FactoryBot.build(:support).attributes
   }
 
   # This should return the minimal set of values that should be in the session
@@ -38,7 +38,7 @@ RSpec.describe SupportsController, type: :controller do
   let(:valid_session) { {} }
 
   context 'Editor is logged in' do
-    let(:user) { FactoryGirl.create(:editor) }
+    let(:user) { FactoryBot.create(:editor) }
     before do
       sign_in user
     end

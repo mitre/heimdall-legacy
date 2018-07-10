@@ -59,7 +59,7 @@ class Control
   end
 
   def start_time
-    results.map(&:start_time).sort.first
+    results.map(&:start_time).min
   end
 
   def run_time

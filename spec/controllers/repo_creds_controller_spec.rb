@@ -29,7 +29,7 @@ RSpec.describe RepoCredsController, type: :controller do
   # RepoCred. As you add validations to RepoCred, be sure to
   # adjust the attributes here as well.
   let(:valid_attributes) {
-    FactoryGirl.build(:repo_cred).attributes
+    FactoryBot.build(:repo_cred).attributes
   }
 
   let(:invalid_attributes) {
@@ -42,7 +42,7 @@ RSpec.describe RepoCredsController, type: :controller do
   let(:valid_session) { {} }
 
   context 'Editor is logged in' do
-    let(:user) { FactoryGirl.create(:editor) }
+    let(:user) { FactoryBot.create(:editor) }
     before do
       sign_in user
     end

@@ -1,4 +1,4 @@
-FactoryGirl.define do
+FactoryBot.define do
   factory :result, class: Result do
     status 'MyString'
     code_desc 'MyString'

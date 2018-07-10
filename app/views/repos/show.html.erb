@@ -16,9 +16,10 @@
       <div class="box box-primary shown" id="repo_info">
         <div class="box-header with-border">
           <h3 class="box-title">Repo Information</h3>
-          <%= link_to 'Destroy', @repo, method: :delete, class: "btn btn-danger pull-right", data: { confirm: 'Are you sure?' } %>
-          <button type="button" id="edit_btn" class="btn btn-primary pull-right margin-right"><i class="fa fa-edit"></i> Edit
-          </button>
+          <% if can?(:manage, @repo) %>
+            <%= link_to 'Destroy', @repo, method: :delete, class: "btn btn-danger pull-right", data: { confirm: 'Are you sure?' } %>
+            <button type="button" id="edit_btn" class="btn btn-primary pull-right margin-right"><i class="fa fa-edit"></i> Edit</button>
+          <% end %>
         </div>
         <!-- /.box-header -->
         <div class="box-body">
@@ -35,6 +36,11 @@
           <p>
             <strong>Type:</strong>
             <%= @repo.repo_type %>
+          </p>
+
+          <p>
+            <strong>Created By:</strong>
+            <%= @repo.created_by.try(:email) %>
           </p>
 
         </div>

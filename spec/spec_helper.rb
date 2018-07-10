@@ -1,4 +1,4 @@
-require 'factory_girl_rails'
+require 'factory_bot_rails'
 require 'simplecov'
 require 'webmock/rspec'
 WebMock.disable_net_connect!(allow_localhost: true)
@@ -51,7 +51,7 @@ RSpec.configure do |config|
   # triggering implicit auto-inclusion in groups with matching metadata.
   config.shared_context_metadata_behavior = :apply_to_host_groups
 
-  config.include FactoryGirl::Syntax::Methods
+  config.include FactoryBot::Syntax::Methods
   config.before(:suite) do
     DatabaseCleaner.clean_with(:truncation)
   end
@@ -85,6 +85,15 @@ RSpec.configure do |config|
             })
       .to_return(status: 200, body: '', headers: {})
 
+    stub_request(:get, 'https://gitlab.mitre.org/api/v3/projects')
+      .with(headers: {
+              'Accept'=>'application/json',
+              'Authorization'=>'Bearer MyString5345345645766',
+              'Content-Type'=>'application/x-www-form-urlencoded',
+              'User-Agent'=>'Gitlab Ruby Gem 4.4.0'
+            })
+      .to_return(status: 200, body: '', headers: {})
+
     stub_request(:get, 'https://api.github.com/user/repos')
       .with(headers: {
               'Accept'=>'application/vnd.github.v3+json',
@@ -94,17 +103,37 @@ RSpec.configure do |config|
               'User-Agent'=>'Octokit Ruby Gem 4.8.0'
             })
       .to_return(status: 200, body: '', headers: {})
+    stub_request(:get, 'https://api.github.com/user/repos')
+      .with(headers: {
+              'Accept'=>'application/vnd.github.v3+json',
+              'Accept-Encoding'=>'gzip;q=1.0,deflate;q=0.6,identity;q=0.3',
+              'Authorization'=>'token MyString5345345645766',
+              'Content-Type'=>'application/json',
+              'User-Agent'=>'Octokit Ruby Gem 4.9.0'
+            })
+      .to_return(status: 200, body: '', headers: {})
     stub_request(:get, 'https://gitlab.mitre.org/api/v3/projects/12187/repository/tree')
       .with(headers: {
               'Accept'=>'application/json',
-             'Authorization'=>'Bearer MyString5345345645766',
-             'Content-Type'=>'application/x-www-form-urlencoded',
-             'User-Agent'=>'Gitlab Ruby Gem 4.3.0'
+              'Authorization'=>'Bearer MyString5345345645766',
+              'Content-Type'=>'application/x-www-form-urlencoded',
+              'User-Agent'=>'Gitlab Ruby Gem 4.3.0'
             })
       .to_return(status: 200, body: '[{"id": "6956b5115ec7a870ac082154528f814085578a61", "name": "controls", "type": "tree", "path": "controls", "mode": "040000"},
            {"id": "d564d0bc3dd917926892c55e3706cc116d5b165e", "name": "libraries", "type": "tree", "path": "libraries", "mode": "040000"},
            {"id": "8e52bbc25b0fe1fec20ba890e0811e529f56b12c", "name": "README.md", "type": "blob", "path": "README.md", "mode": "100644"},
            {"id": "3c969e2cfe52151e7a97e61e95570cd7ae44a663", "name": "inspec.yml", "type": "blob", "path": "inspec.yml", "mode": "100644"}]', headers: {})
+    stub_request(:get, 'https://gitlab.mitre.org/api/v3/projects/12187/repository/tree')
+      .with(headers: {
+              'Accept'=>'application/json',
+              'Authorization'=>'Bearer MyString5345345645766',
+              'Content-Type'=>'application/x-www-form-urlencoded',
+              'User-Agent'=>'Gitlab Ruby Gem 4.4.0'
+            })
+      .to_return(status: 200, body: '[{"id": "6956b5115ec7a870ac082154528f814085578a61", "name": "controls", "type": "tree", "path": "controls", "mode": "040000"},
+            {"id": "d564d0bc3dd917926892c55e3706cc116d5b165e", "name": "libraries", "type": "tree", "path": "libraries", "mode": "040000"},
+            {"id": "8e52bbc25b0fe1fec20ba890e0811e529f56b12c", "name": "README.md", "type": "blob", "path": "README.md", "mode": "100644"},
+            {"id": "3c969e2cfe52151e7a97e61e95570cd7ae44a663", "name": "inspec.yml", "type": "blob", "path": "inspec.yml", "mode": "100644"}]', headers: {})
     stub_request(:get, 'https://gitlab.mitre.org/api/v3/projects/11892/repository/tree')
       .with(headers: {
               'Accept'=>'application/json',
@@ -113,12 +142,28 @@ RSpec.configure do |config|
           'User-Agent'=>'Gitlab Ruby Gem 4.3.0'
             })
       .to_return(status: 200, body: '', headers: {})
+    stub_request(:get, 'https://gitlab.mitre.org/api/v3/projects/11892/repository/tree')
+      .with(headers: {
+              'Accept'=>'application/json',
+          'Authorization'=>'Bearer MyString5345345645766',
+          'Content-Type'=>'application/x-www-form-urlencoded',
+          'User-Agent'=>'Gitlab Ruby Gem 4.4.0'
+            })
+      .to_return(status: 200, body: '', headers: {})
     stub_request(:get, 'https://gitlab.mitre.org/api/v3/projects/11870/repository/tree')
       .with(headers: {
               'Accept'=>'application/json',
            'Authorization'=>'Bearer MyString5345345645766',
            'Content-Type'=>'application/x-www-form-urlencoded',
            'User-Agent'=>'Gitlab Ruby Gem 4.3.0'
+            })
+      .to_return(status: 200, body: '', headers: {})
+    stub_request(:get, 'https://gitlab.mitre.org/api/v3/projects/11870/repository/tree')
+      .with(headers: {
+              'Accept'=>'application/json',
+           'Authorization'=>'Bearer MyString5345345645766',
+           'Content-Type'=>'application/x-www-form-urlencoded',
+           'User-Agent'=>'Gitlab Ruby Gem 4.4.0'
             })
       .to_return(status: 200, body: '', headers: {})
   end

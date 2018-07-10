@@ -29,7 +29,7 @@ RSpec.describe ProfileAttributesController, type: :controller do
   # ProfileAttribute. As you add validations to ProfileAttribute, be sure to
   # adjust the attributes here as well.
   let(:valid_attributes) {
-    FactoryGirl.build(:profile_attribute).attributes
+    FactoryBot.build(:profile_attribute).attributes
   }
 
   let(:invalid_attributes) {
@@ -42,7 +42,7 @@ RSpec.describe ProfileAttributesController, type: :controller do
   let(:valid_session) { {} }
 
   context 'Editor is logged in' do
-    let(:user) { FactoryGirl.create(:editor) }
+    let(:user) { FactoryBot.create(:editor) }
     before do
       sign_in user
     end

@@ -2,7 +2,7 @@ require 'rails_helper'
 
 RSpec.describe Group, type: :model do
   context 'with Group' do
-    let(:group) { FactoryGirl.build(:group) }
+    let(:group) { FactoryBot.build(:group) }
 
     it 'set controls_list' do
       group.controls_list='control1, control2'

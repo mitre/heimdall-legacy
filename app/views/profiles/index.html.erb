@@ -1,8 +1,5 @@
-<!-- Content Header (Page header) -->
 <section class="content-header">
-  <h1>
-    Profiles
-  </h1>
+  <h1>Profiles</h1>
   <ol class="breadcrumb">
     <li><%= link_to ('<i class="fa fa-dashboard"> </i>Dashboard').html_safe, home_path %></li>
     <li class="active">Profiles</li>
@@ -34,18 +31,27 @@
                 <th>Action</th>
               </tr>
               <% @profiles.each do |profile| %>
-                <tr>
-                  <td><%= link_to profile.name, profile %></td>
-                  <td><%= profile.title %></td>
-                  <td><%= profile.maintainer %></td>
-                  <td><%= profile.copyright %></td>
-                  <td><%= profile.license %></td>
-                  <td><%= profile.summary %></td>
-                  <td><%= profile.version %></td>
-                  <td><%= profile.is_editable? %></td>
-                  <td><%= profile.created_by.try(:email) %></td>
-                  <td><% if (can? :delete, profile) && (profile.is_editable?) %><%= link_to 'Destroy', profile, method: :delete, data: { confirm: 'Are you sure?' } %><% end %></td>
-                </tr>
+                <% Rails.logger.debug "can? :read, #{profile.name} #{can? :read, profile}" %>
+                <% Rails.logger.debug "current_user.readable_profile?(#{profile.id}): #{current_user.readable_profile?(profile.id)}" %>
+                <% if can?(:read, profile) || current_user.readable_profile?(profile.id) %>
+                  <% Rails.logger.debug "show #{profile.name}" %>
+                  <tr>
+                    <td><%= link_to profile.name, profile %></td>
+                    <td><%= profile.title %></td>
+                    <td><%= profile.maintainer %></td>
+                    <td><%= profile.copyright %></td>
+                    <td><%= profile.license %></td>
+                    <td><%= profile.summary %></td>
+                    <td><%= profile.version %></td>
+                    <td><%= profile.is_editable? %></td>
+                    <td><%= profile.created_by.try(:email) %></td>
+                    <td>
+                      <% if (can? :delete, profile) && (profile.is_editable?) %>
+                        <%= link_to 'Destroy', profile, method: :delete, data: { confirm: 'Are you sure?' } %>
+                      <% end %>
+                    </td>
+                  </tr>
+                <% end %>
               <% end %>
             </table>
           </div>

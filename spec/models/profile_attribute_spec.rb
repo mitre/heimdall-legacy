@@ -2,7 +2,7 @@ require 'rails_helper'
 
 RSpec.describe ProfileAttribute, type: :model do
   context 'with ProfileAttribute' do
-    let(:profile_attribute) { FactoryGirl.build(:profile_attribute) }
+    let(:profile_attribute) { FactoryBot.build(:profile_attribute) }
 
     it 'set option_default_list' do
       profile_attribute.option_default_list='option1, option2'

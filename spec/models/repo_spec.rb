@@ -4,7 +4,7 @@ RSpec.describe Repo, type: :model do
   it { is_expected.to be_mongoid_document }
 
   context 'Stubbed as Unauthorized' do
-    let(:user) { FactoryGirl.create(:editor) }
+    let(:user) { FactoryBot.create(:editor) }
     it 'GitLab returns an empty array on auth failure' do
       repo_cred = create :gitlab_cred, created_by: user
       @repo = repo_cred.repo
@@ -23,7 +23,7 @@ RSpec.describe Repo, type: :model do
   end
 
   context 'GitLab Stubbed' do
-    let(:user) { FactoryGirl.create(:editor) }
+    let(:user) { FactoryBot.create(:editor) }
     before do
       @gitlab_response = [
         { hash:
@@ -117,7 +117,7 @@ RSpec.describe Repo, type: :model do
   end
 
   context 'GitHub Stubbed' do
-    let(:user) { FactoryGirl.create(:editor) }
+    let(:user) { FactoryBot.create(:editor) }
     before do
       @github_response = [{ id: 103436456,
        name: 'heimdall-baseline',

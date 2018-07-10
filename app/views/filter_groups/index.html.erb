@@ -39,7 +39,9 @@
       </div>
     </div>
   </div>
-  <div class="box-body">
-    <%= link_to 'New Filter Group', new_filter_group_path, class: "btn btn-info" %>
-  </div>
+  <% if can? :create, FilterGroup %>
+    <div class="box-body">
+      <%= link_to 'New Filter Group', new_filter_group_path, class: "btn btn-info" %>
+    </div>
+  <% end %>
 </section>
