@@ -143,13 +143,14 @@ $.fn.dataTableExt.afnFiltering.push(
     }
 );
 
+
 document.addEventListener("turbolinks:load", function() {
   if (loaded) {
     return;
   } else {
     loaded = true;
   }
-  if($('[id^=controls_wrapper').length == 0) {
+  if($('[id^=controls_wrapper]').length == 0) {
     $('#controls').DataTable({
       'paging'      : true,
       'lengthChange': false,
@@ -185,7 +186,7 @@ document.addEventListener("turbolinks:load", function() {
             if (child2.children) {
               for(var k=0, len3=child2.children.length; k < len3; k++) {
                 child3 = child2.children[k];
-                if (!(ary.includes(child3.name))) {
+                if (!(ary.indexOf(child3.name) >= 0)) {
                   ary.push(child3.name);
                   if (child3.impact <= 0.3) {
                     low += 1;

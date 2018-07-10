@@ -54,6 +54,22 @@ class User
     Evaluation.where(created_by: id)
   end
 
+  def readable_evaluations
+    retval = Evaluation.where(created_by: id)
+    my_circles.each do |circle|
+      retval += circle.evaluations
+    end
+    retval
+  end
+
+  def readable_profiles
+    retval = Profile.where(created_by: id)
+    my_circles.each do |circle|
+      retval += circle.profiles
+    end
+    retval
+  end
+
   def my_profiles
     Profile.where(created_by: id)
   end

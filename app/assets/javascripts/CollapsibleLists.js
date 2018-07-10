@@ -19,24 +19,22 @@ const CollapsibleLists = (function(){
     // doNotRecurse - true if sub-lists should not be made collapsible
     function apply(doNotRecurse){
 
-        [].forEach.call(document.getElementsByTagName('ul'), node => {
-
+        var myNodeList = document.querySelectorAll('ul'); // grabs some <ul>
+        [].forEach.call(myNodeList, function (node) {
             if (node.classList.contains('collapsibleList')){
 
-              applyTo(node, true);
+                applyTo(node, true);
 
-              if (!doNotRecurse){
+                if (!doNotRecurse){
 
-                  [].forEach.call(node.getElementsByTagName('ul'), subnode => {
-                      subnode.classList.add('collapsibleList')
-              });
+                    [].forEach.call(node.getElementsByTagName('ul'), subnode => {
+                        subnode.classList.add('collapsibleList')
+                    });
 
-              }
+                }
 
-          }
-
-      })
-
+            }
+        });
     }
 
     // Makes the specified list collapsible. The parameters are:
@@ -45,24 +43,24 @@ const CollapsibleLists = (function(){
     // doNotRecurse - true if sub-lists should not be made collapsible
     function applyTo(node, doNotRecurse){
         if (node) {
-          [].forEach.call(node.getElementsByTagName('li'), li => {
+            var myLiList = document.querySelectorAll('li'); // grabs some <li>
+            [].forEach.call(myLiList, function (li) {
+                if (!doNotRecurse || node === li.parentNode){
 
-              if (!doNotRecurse || node === li.parentNode){
+                    li.style.userSelect       = 'none';
+                    li.style.MozUserSelect    = 'none';
+                    li.style.msUserSelect     = 'none';
+                    li.style.WebkitUserSelect = 'none';
+                    //li.style.background       = '#ededab';
+                    li.style.padding = '5px 2px 2px 12px';
+                    li.style.fontWeight = 'bold';
+                    li.style.marginBottom = '1px';
 
-                li.style.userSelect       = 'none';
-                li.style.MozUserSelect    = 'none';
-                li.style.msUserSelect     = 'none';
-                li.style.WebkitUserSelect = 'none';
-                //li.style.background       = '#ededab';
-                li.style.padding = '5px 2px 2px 12px';
-                li.style.fontWeight = 'bold';
-                li.style.marginBottom = '1px';
+                    li.addEventListener('click', handleClick.bind(null, li));
 
-                li.addEventListener('click', handleClick.bind(null, li));
-
-                toggle(li);
-            }
-          });
+                    toggle(li);
+                }
+            });
         }
     }
 
