@@ -2,7 +2,7 @@ require 'rails_helper'
 
 RSpec.describe 'Filters', type: :request do
   describe 'GET /filters' do
-    it 'works! (now write some real specs)' do
+    it 'should be valid' do
       sign_in_as_a_valid_user
       filter = create :filter, created_by: @user
       get filter_path(filter)

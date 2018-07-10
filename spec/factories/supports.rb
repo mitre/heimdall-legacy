@@ -1,4 +1,4 @@
-FactoryGirl.define do
+FactoryBot.define do
   factory :support, class: Support do
     os_family 'Windows'
   end

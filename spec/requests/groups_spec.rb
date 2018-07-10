@@ -5,7 +5,7 @@ RSpec.describe 'Groups', type: :request do
   describe 'GET /profile/:profile_id/group/:id' do
     context 'with valid params' do
       let(:valid_attributes) {
-        FactoryGirl.build(:group).attributes
+        FactoryBot.build(:group).attributes
       }
 
       it 'works! (now write some real specs)' do

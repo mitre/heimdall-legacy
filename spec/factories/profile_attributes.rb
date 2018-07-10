@@ -1,4 +1,4 @@
-FactoryGirl.define do
+FactoryBot.define do
   factory :profile_attribute, class: ProfileAttribute do
     name 'MyString'
     option_description 'MyString'

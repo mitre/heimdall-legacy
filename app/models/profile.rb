@@ -100,13 +100,15 @@ class Profile
   end
 
   def self.find_or_new(profile_hash)
-    profile = Profile.where(sha256: profile_hash['sha256']).try(:first)
-    unless profile
+    profiles = Profile.where(sha256: profile_hash['sha256'])
+    if profiles.empty?
       new_profile_hash, controls = Profile.transform(profile_hash.deep_dup)
       profile = Profile.create(new_profile_hash)
       controls.each do |control|
         profile.controls.create(control)
       end
+    else
+      profile = profiles.first
     end
     profile
   end

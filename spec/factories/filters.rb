@@ -1,4 +1,4 @@
-FactoryGirl.define do
+FactoryBot.define do
   factory :filter, class: Filter do
     family ['AC']
     number ['7']

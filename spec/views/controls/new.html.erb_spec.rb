@@ -3,7 +3,7 @@ require 'rails_helper'
 RSpec.describe 'controls/new', type: :view do
 
   context 'Editor is logged in' do
-    let(:user) { FactoryGirl.create(:editor) }
+    let(:user) { FactoryBot.create(:editor) }
     before do
       sign_in user
     end

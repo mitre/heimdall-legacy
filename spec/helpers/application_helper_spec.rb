@@ -41,6 +41,14 @@ RSpec.describe ApplicationHelper, type: :helper do
     end
   end
 
+  describe 'icon' do
+    it 'get as css label for a class' do
+      expect(helper.icon(Evaluation)).to eq('ion-pie-graph')
+      expect(helper.icon(Profile)).to eq('ion-ios-folder')
+      expect(helper.icon(User)).to eq('ion-person-add')
+    end
+  end
+
   context 'with findings' do
     let(:findings) { { not_a_finding: 23, open: 43, not_reviewed: 23, not_tested: 10, not_applicable: 18 } }
 

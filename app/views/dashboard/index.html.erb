@@ -67,7 +67,7 @@
         </div>
         <div class="small-box-footer">
           <% if can? :create, Profile %>
-            <%= link_to ('Upload <i class="fa fa-upload"></i>').html_safe, "#",id: "upload_profile_btn", class: "white-text" %>
+            <%= link_to ('Upload <i class="fa fa-upload"></i>').html_safe, "#", id: "upload_profile_btn", class: "white-text" %>
             &nbsp;&nbsp;&nbsp;&nbsp;
           <% end %>
           <%= link_to ('More info <i class="fa fa-arrow-circle-right"></i>').html_safe, profiles_path, class: "white-text" %>
@@ -133,7 +133,7 @@
               <div class="timeline-item">
                   <span class="time"><i class="fa fa-clock-o"></i><%= item.created_at.strftime('%H:%M:%S') %></span>
 
-                  <h3 class="timeline-header"><%= item.class %> Added</h3>
+                  <h3 class="timeline-header"><%= item.class %> Added<% unless item.class == User %> by <%=item.created_by.email %><% end %></h3>
 
                   <div class="timeline-body">
                     <% if item.class == Evaluation %>

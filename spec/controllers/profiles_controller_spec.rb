@@ -29,11 +29,11 @@ RSpec.describe ProfilesController, type: :controller do
   # Profile. As you add validations to Profile, be sure to
   # adjust the attributes here as well.
   let(:valid_attributes) {
-    FactoryGirl.build(:profile).attributes
+    FactoryBot.build(:profile).attributes
   }
 
   let(:invalid_attributes) {
-    FactoryGirl.build(:invalid_profile).attributes
+    FactoryBot.build(:invalid_profile).attributes
   }
 
   # This should return the minimal set of values that should be in the session
@@ -42,8 +42,8 @@ RSpec.describe ProfilesController, type: :controller do
   let(:valid_session) { {} }
 
   context 'User is logged in' do
-    let(:admin) { FactoryGirl.create(:admin) }
-    let(:user) { FactoryGirl.create(:editor) }
+    let(:admin) { FactoryBot.create(:admin) }
+    let(:user) { FactoryBot.create(:editor) }
     before do
       sign_in user
     end
@@ -130,7 +130,7 @@ RSpec.describe ProfilesController, type: :controller do
     describe 'PUT #update' do
       context 'with valid params' do
         let(:new_attributes) {
-          FactoryGirl.build(:profile2).attributes
+          FactoryBot.build(:profile2).attributes
         }
 
         it 'updates the requested profile' do
@@ -175,7 +175,7 @@ RSpec.describe ProfilesController, type: :controller do
   end
 
   context 'admin is logged in' do
-    let(:user) { FactoryGirl.create(:admin) }
+    let(:user) { FactoryBot.create(:admin) }
     before do
       sign_in user
     end
@@ -183,7 +183,7 @@ RSpec.describe ProfilesController, type: :controller do
     describe 'PUT #update' do
       context 'with valid params' do
         let(:new_attributes) {
-          FactoryGirl.build(:profile2).attributes
+          FactoryBot.build(:profile2).attributes
         }
 
         it 'updates the requested profile' do

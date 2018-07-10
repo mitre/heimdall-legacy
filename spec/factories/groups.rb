@@ -1,4 +1,4 @@
-FactoryGirl.define do
+FactoryBot.define do
   factory :group, class: Group do
     title 'MyString'
     controls ['MyString']

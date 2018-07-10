@@ -3,7 +3,7 @@ require 'support/sign_in_support'
 
 RSpec.describe 'Controls', type: :request do
   context 'Editor is logged in' do
-    let(:user) { FactoryGirl.create(:editor) }
+    let(:user) { FactoryBot.create(:editor) }
     before do
       sign_in_as_a_valid_user
     end

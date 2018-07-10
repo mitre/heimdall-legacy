@@ -6,7 +6,7 @@ RSpec.describe Depend, type: :model do
   it { is_expected.to be_embedded_in(:profile).as_inverse_of(:depends) }
 
   context 'with Depend' do
-    let(:depend) { FactoryGirl.build(:dependency) }
+    let(:depend) { FactoryBot.build(:dependency) }
 
     it 'get build json string' do
       expect(depend.to_json).to be_a(String)

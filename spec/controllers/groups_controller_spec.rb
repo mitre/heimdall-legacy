@@ -29,7 +29,7 @@ RSpec.describe GroupsController, type: :controller do
   # Group. As you add validations to Group, be sure to
   # adjust the attributes here as well.
   let(:valid_attributes) {
-    FactoryGirl.build(:group).attributes
+    FactoryBot.build(:group).attributes
   }
 
   let(:invalid_attributes) {
@@ -42,7 +42,7 @@ RSpec.describe GroupsController, type: :controller do
   let(:valid_session) { {} }
 
   context 'Editor is logged in' do
-    let(:user) { FactoryGirl.create(:editor) }
+    let(:user) { FactoryBot.create(:editor) }
     before do
       sign_in user
     end
@@ -91,7 +91,7 @@ RSpec.describe GroupsController, type: :controller do
     describe 'PUT #update' do
       context 'with valid params' do
         let(:new_attributes) {
-          FactoryGirl.build(:group2).attributes
+          FactoryBot.build(:group2).attributes
         }
 
         it 'updates the requested group' do
@@ -122,7 +122,7 @@ RSpec.describe GroupsController, type: :controller do
     describe 'PUT #add' do
       context 'with valid params' do
         let(:new_attributes) {
-          FactoryGirl.build(:group2).attributes
+          FactoryBot.build(:group2).attributes
         }
 
         it 'updates the requested group' do

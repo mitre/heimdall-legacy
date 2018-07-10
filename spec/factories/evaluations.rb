@@ -1,4 +1,4 @@
-FactoryGirl.define do
+FactoryBot.define do
   factory :evaluation, class: Evaluation do
     version 'MyString'
     other_checks ['MyString']

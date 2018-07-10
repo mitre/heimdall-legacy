@@ -5,7 +5,7 @@ RSpec.describe Support, type: :model do
   it { is_expected.to be_embedded_in(:profile).as_inverse_of(:supports) }
 
   context 'with Support' do
-    let(:support) { FactoryGirl.build(:support) }
+    let(:support) { FactoryBot.build(:support) }
 
     it 'get build json string' do
       expect(support.to_json).to be_a(String)

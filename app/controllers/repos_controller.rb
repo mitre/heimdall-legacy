@@ -1,4 +1,4 @@
-require 'git'
+# require 'git'
 
 class ReposController < ApplicationController
   load_and_authorize_resource

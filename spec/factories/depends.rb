@@ -1,4 +1,4 @@
-FactoryGirl.define do
+FactoryBot.define do
   factory :dependency, class: Depend do
     name 'MyString'
     path 'MyString'

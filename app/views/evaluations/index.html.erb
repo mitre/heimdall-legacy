@@ -35,31 +35,36 @@
               </tr>
 
               <% @evaluations.sort_by{ |t| [t.profiles.map(&:name).join(', '), t.start_time] }.each do |evaluation| %>
-                <tr>
-                  <td><%= link_to evaluation.profiles.map(&:name).join(', '), evaluation %></td>
-                  <td><%= evaluation.start_time %></td>
-                  <td><%= evaluation.statistics_duration %></td>
-                  <td><%= evaluation.version %></td>
-                  <td><%= evaluation.platform_name %></td>
-                  <td><%= evaluation.platform_release %></td>
-                  <td>
-                    <table id="message_counts" class="cn-msg-table">
-                      <tr>
-                        <td><div class="cn-msg-bar bg-green" data-status="0" style="width: <%= pass_pixels(evaluation.findings) %>px"></div></td>
-                        <td><div class="cn-msg-bar bg-red" data-status="3" style="width: <%= fail_pixels(evaluation.findings) %>px"></div></td>
-                      </tr>
-                    </table>
-                  </td>
-                  <td>
-                    <div class="checkbox">
-                      <label>
-                        <%= form.check_box 'eval_ids', {:checked=>false, :multiple => true}, evaluation.id, nil %>
-                      </lable>
-                    </div>
-                  </td>
-                  <td><%= evaluation.created_by.try(:email) %></td>
-                  <td><% if can? :delete, evaluation %><%= link_to 'Destroy', evaluation, method: :delete, data: { confirm: 'Are you sure?' } %><% end %></td>
-                </tr>
+                <% Rails.logger.debug "can? :read, #{evaluation.profiles.map(&:name).join(', ')} #{can? :read, evaluation}" %>
+                <% Rails.logger.debug "current_user.readable_evaluation?(#{evaluation.id}): #{current_user.readable_evaluation?(evaluation.id)}" %>
+                <% if can?(:read, evaluation) || current_user.readable_evaluation?(evaluation.id) %>
+                  <% Rails.logger.debug "show #{evaluation.profiles.map(&:name).join(', ')}" %>
+                  <tr>
+                    <td><%= link_to evaluation.profiles.map(&:name).join(', '), evaluation %></td>
+                    <td><%= evaluation.start_time %></td>
+                    <td><%= evaluation.statistics_duration %></td>
+                    <td><%= evaluation.version %></td>
+                    <td><%= evaluation.platform_name %></td>
+                    <td><%= evaluation.platform_release %></td>
+                    <td>
+                      <table id="message_counts" class="cn-msg-table">
+                        <tr>
+                          <td><div class="cn-msg-bar bg-green" data-status="0" style="width: <%= pass_pixels(evaluation.findings) %>px"></div></td>
+                          <td><div class="cn-msg-bar bg-red" data-status="3" style="width: <%= fail_pixels(evaluation.findings) %>px"></div></td>
+                        </tr>
+                      </table>
+                    </td>
+                    <td>
+                      <div class="checkbox">
+                        <label>
+                          <%= form.check_box 'eval_ids', {:checked=>false, :multiple => true}, evaluation.id, nil %>
+                        </label>
+                      </div>
+                    </td>
+                    <td><%= evaluation.created_by.try(:email) %></td>
+                    <td><% if can? :delete, evaluation %><%= link_to 'Destroy', evaluation, method: :delete, data: { confirm: 'Are you sure?' } %><% end %></td>
+                  </tr>
+                <% end %>
               <% end %>
               <tr>
                 <td colspan='7'></td>

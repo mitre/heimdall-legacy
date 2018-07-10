@@ -29,11 +29,11 @@ RSpec.describe DependsController, type: :controller do
   # Depend. As you add validations to Depend, be sure to
   # adjust the attributes here as well.
   let(:valid_attributes) {
-    FactoryGirl.build(:dependency).attributes
+    FactoryBot.build(:dependency).attributes
   }
 
   let(:invalid_attributes) {
-    FactoryGirl.build(:invalid_dependency).attributes
+    FactoryBot.build(:invalid_dependency).attributes
   }
 
   # This should return the minimal set of values that should be in the session
@@ -42,7 +42,7 @@ RSpec.describe DependsController, type: :controller do
   let(:valid_session) { {} }
 
   context 'Editor is logged in' do
-    let(:user) { FactoryGirl.create(:editor) }
+    let(:user) { FactoryBot.create(:editor) }
     before do
       sign_in user
     end

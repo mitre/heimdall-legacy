@@ -29,14 +29,14 @@ RSpec.describe EvaluationsController, type: :controller do
   # in order to pass any filters (e.g. authentication) defined in
   # EvaluationsController. Be sure to keep this updated too.
   let(:valid_session) { {} }
-  let(:filter_session) { { filter: FactoryGirl.create(:filter) } }
-  let(:filter_group_session) { { filter_group: FactoryGirl.create(:filter_group) } }
+  let(:filter_session) { { filter: FactoryBot.create(:filter) } }
+  let(:filter_group_session) { { filter_group: FactoryBot.create(:filter_group) } }
   let(:filter_attributes) {
-    FactoryGirl.build(:filter_no_enh).attributes
+    FactoryBot.build(:filter_no_enh).attributes
   }
 
   context 'Editor is logged in' do
-    let(:user) { FactoryGirl.create(:editor) }
+    let(:user) { FactoryBot.create(:editor) }
     before do
       sign_in user
     end
@@ -157,7 +157,7 @@ RSpec.describe EvaluationsController, type: :controller do
 
     context 'with imported evaluation' do
       let(:eval1) { Evaluation.parse(JSON.parse(File.open('spec/support/ngadev-test1.json', 'r').read)) }
-      let(:eval2) { Evaluation.parse(JSON.parse(File.open('spec/support/ngadev-test1.json', 'r').read)) }
+      let(:eval2) { Evaluation.parse(JSON.parse(File.open('spec/support/ngadev-test2.json', 'r').read)) }
       describe 'POST #compare' do
         it 'returns a success response' do
           post :compare, params: { evaluation: { eval_ids: [eval1.to_param, eval2.to_param] } }, session: valid_session
@@ -200,7 +200,7 @@ RSpec.describe EvaluationsController, type: :controller do
   end
 
   context 'An Admin is logged in' do
-    let(:admin) { FactoryGirl.create(:admin) }
+    let(:admin) { FactoryBot.create(:admin) }
     before do
       sign_in admin
     end

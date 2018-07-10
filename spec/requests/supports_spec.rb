@@ -5,7 +5,7 @@ RSpec.describe 'Supports', type: :request do
   describe 'DELETE /profile/:profile_id/support/:id' do
     context 'with valid params' do
       let(:valid_attributes) {
-        FactoryGirl.build(:support).attributes
+        FactoryBot.build(:support).attributes
       }
 
       it 'works! (now write some real specs)' do

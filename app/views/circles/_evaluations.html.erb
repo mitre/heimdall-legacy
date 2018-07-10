@@ -1,0 +1,21 @@
+<p>
+  <strong>Evaluations:</strong>
+
+  <table class="table table-hover">
+    <tr>
+      <th>Profiles</th>
+      <th>Start Time</th>
+      <th>Platform Name</th>
+      <th></th>
+    </tr>
+
+    <% circle.evaluations.each do |evaluation| %>
+      <tr>
+        <td><%= link_to evaluation.profiles.map(&:name).join(', '), evaluation %></td>
+        <td><%= evaluation.start_time %></td>
+        <td><%= evaluation.version %></td>
+        <td><%= link_to ('<span class="glyphicon glyphicon-remove red"></span>').html_safe, circle_eval_remove_path(circle, evaluation), :method => :delete, remote: true %></td>
+      </tr>
+    <% end %>
+  </table>
+</p>

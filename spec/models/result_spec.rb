@@ -2,7 +2,7 @@ require 'rails_helper'
 
 RSpec.describe Result, type: :model do
   context 'Result built' do
-    let(:result) { FactoryGirl.build(:result) }
+    let(:result) { FactoryBot.build(:result) }
 
     it 'get not_tested status_symbol' do
       expect(result.status_symbol).to eq :not_tested

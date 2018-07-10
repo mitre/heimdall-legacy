@@ -1,0 +1,30 @@
+<%= form_with(model: circle, local: true, :role => "form") do |form| %>
+<div class="box-header with-border">
+  <h3 class="box-title">Circle Information</h3>
+  <% unless circle.created_at.nil? %>
+    <button type="button" id="cancel_btn" class="btn btn-info pull-right"></i> Cancel</button>
+  <% end %>
+  <%= button_tag(type: "submit", class: "btn btn-primary pull-right margin-right", id: 'edit_btn') do %>
+    <i class="fa fa-edit"></i> Save
+  <% end %>
+</div>
+<div class="box-body">
+  <% if circle.errors.any? %>
+    <div id="error_explanation">
+      <h2><%= pluralize(circle.errors.count, "error") %> prohibited this circle from being saved:</h2>
+
+      <ul>
+      <% circle.errors.full_messages.each do |message| %>
+        <li><%= message %></li>
+      <% end %>
+      </ul>
+    </div>
+  <% end %>
+
+  <div class="form-group">
+    <%= form.label :name %>
+    <%= form.text_field :name, id: :circle_name, class: "form-control" %>
+  </div>
+
+</div>
+<% end %>

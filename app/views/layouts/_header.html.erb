@@ -13,10 +13,17 @@
     <!-- Collect the nav links, forms, and other content for toggling -->
     <div data-turbolinks="false" class="collapse navbar-collapse pull-left" id="navbar-collapse">
       <ul class="nav navbar-nav">
-        <li><%= link_to "Evaluations", evaluations_path %></li>
-        <li><%= link_to "Profiles", profiles_path %></li>
-        <li><%= link_to "Repos", repos_path %></li>
-        <li><%= link_to "Filters", filter_groups_path %></li>
+        <% if current_user %>
+          <li><%= link_to "Evaluations", evaluations_path %></li>
+          <li><%= link_to "Profiles", profiles_path %></li>
+          <li><%= link_to "Circles", circles_path %></li>
+          <% if can? :read, Repo %>
+            <li><%= link_to "Repos", repos_path %></li>
+          <% end %>
+          <% if can? :read, FilterGroup %>
+            <li><%= link_to "Filters", filter_groups_path %></li>
+          <% end %>
+        <% end %>
       </ul>
       <!--form class="navbar-form navbar-left" role="search">
         <div class="form-group">
