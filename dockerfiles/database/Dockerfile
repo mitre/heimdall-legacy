@@ -1,8 +1,11 @@
 # Pull base image.
 FROM mongo
 
-# Define mountable directories.
-VOLUME ["/data/db"]
+## Define mountable directories.
+## VOLUME ["/data/db"] 
+#^ This should only be done if updates are considered destructive
+#^ https://github.com/moby/moby/issues/30647 Persistent db's are
+#^ supposed to be constructed from named volumes in docker-compose.yml
 
 # Define working directory.
 WORKDIR /data
