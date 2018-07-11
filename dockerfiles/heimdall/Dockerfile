@@ -1,4 +1,4 @@
-FROM ruby:2.4.2
+FROM ruby:2.4.4
 
 RUN apt-get update -qq && apt-get install -y build-essential libpq-dev nodejs
 
@@ -17,6 +17,7 @@ ADD . .
 RUN mv config/mongoid.yml config/mongoid.yml.orig
 RUN mv config/mongoid.yml.docker config/mongoid.yml
 
-CMD ["bundle", "exec", "rails", "server"]
-
 EXPOSE 3000
+
+CMD ["bundle", "exec", "rails", "server", "-p", "3000"]
+

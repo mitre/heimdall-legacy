@@ -1,13 +1,14 @@
 version: '3'
 
 services:
+  # If you wish to use a db other than mongo, this is 100% wrong
   db:
     build: "./dockerfiles/database"
     volumes:
-      - ./mongo_data:/data/db
-    ports:
-      - "27017:27017"
-      - "28017:28017"
+      - mongo_data:/data/db
+    expose:
+      - "27017"
+      - "28017"
   web:
     build:
       context: ./
@@ -16,3 +17,6 @@ services:
       - "3000:3000"
     depends_on:
       - "db"
+
+volumes:
+  mongo_data:
