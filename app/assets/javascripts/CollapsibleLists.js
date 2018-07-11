@@ -26,11 +26,10 @@ const CollapsibleLists = (function(){
                 applyTo(node, true);
 
                 if (!doNotRecurse){
-
-                    [].forEach.call(node.getElementsByTagName('ul'), subnode => {
-                        subnode.classList.add('collapsibleList')
+                    var mySubNodeList = node.getElementsByTagName('ul');
+                    [].forEach.call(mySubNodeList, function (subnode) {
+                        subnode.classList.add('collapsibleList');
                     });
-
                 }
 
             }
@@ -92,7 +91,7 @@ const CollapsibleLists = (function(){
         const open = node.classList.contains('collapsibleListClosed');
         const uls  = node.getElementsByTagName('ul');
 
-        [].forEach.call(uls, ul => {
+        [].forEach.call(uls, function(ul) {
 
             let li = ul;
             while (li.nodeName !== 'LI'){
