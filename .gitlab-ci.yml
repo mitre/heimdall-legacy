@@ -10,9 +10,9 @@ sync-repo:
   before_script:
     # add the MITRE certificates to the docker image
     - apk update && apk add git openssh-client ca-certificates
-    - wget -O /usr/local/share/ca-certificates/MITRE_BA_Root.crt http://pki.mitre.org/MITRE%20BA%20Root.crt
-    - wget -O /usr/local/share/ca-certificates/MITRE_BA_NPE_CA-1.crt http://pki.mitre.org/MITRE%20BA%20NPE%20CA-1.crt
-    - wget -O /usr/local/share/ca-certificates/MITRE_BA_NPE_CA-3.crt http://pki.mitre.org/MITRE%20BA%20NPE%20CA-3.crt
+    - wget -O /usr/local/share/ca-certificates/MITRE_BA_Root.crt $CRT_R
+    - wget -O /usr/local/share/ca-certificates/MITRE_BA_NPE_CA-1.crt $CRT_1
+    - wget -O /usr/local/share/ca-certificates/MITRE_BA_NPE_CA-3.crt $CRT_3
     - update-ca-certificates
 
     # create a file called push_key that contains the $GITLAB_PUSH_KEY
@@ -33,3 +33,30 @@ sync-repo:
     - cd heimdall
     - git remote add github git@gitlab.mitre.org:inspec/heimdall.git
     - ssh-agent sh -c 'ssh-add ~/push_key; git push --tags github master || true' # REMOTE NAME from previous line
+build:
+  stage: build
+  image: docker:latest
+
+  before_script:
+    # add the MITRE certificates to the docker image
+    - apk update && apk add git openssh-client ca-certificates py-pip
+    - wget -O /usr/local/share/ca-certificates/MITRE_BA_Root.crt $CRT_R
+    - wget -O /usr/local/share/ca-certificates/MITRE_BA_NPE_CA-1.crt $CRT_1
+    - wget -O /usr/local/share/ca-certificates/MITRE_BA_NPE_CA-3.crt $CRT_3
+    - update-ca-certificates
+  
+  script:
+    # Configuration modification purely for inspec-dev
+    # For service behind the MITRE Firewall connecting to gitlab.mitre.org 
+    - echo "$SED_PROXY" > sed-script-file
+    - grep MITRE_BA_Root dockerfiles/heimdall/Dockerfile || sed -f sed-script-file -i"" dockerfiles/heimdall/Dockerfile
+    # Swap to port 3001, and bind to all interfaces
+    - sed -e 's#3000#3001#g' -i"" dockerfiles/heimdall/Dockerfile
+    - sed -e 's#3000#3001#g' -i"" docker-compose.yml
+    - sed -e 's#3001"]#3001", "-b", "0.0.0.0"]#g' -i"" dockerfiles/heimdall/Dockerfile
+    - pip install docker-compose
+    - docker-compose down
+    - docker-compose build
+    - docker-compose run web rake db:migrate
+    - docker-compose up -d
+    - docker system prune
