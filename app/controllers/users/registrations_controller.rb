@@ -1,6 +1,9 @@
+require 'securerandom'
+
 class Users::RegistrationsController < Devise::RegistrationsController
   # before_action :configure_sign_up_params, only: [:create]
   # before_action :configure_account_update_params, only: [:update]
+  before_action :set_api_key, only: [:create]
 
   # GET /resource/sign_up
   # def new
@@ -9,9 +12,7 @@ class Users::RegistrationsController < Devise::RegistrationsController
 
   # POST /resource
   def create
-    logger.debug 'CREATE'
     super
-    logger.debug 'AFTER CREATE'
   end
 
   # GET /resource/edit
@@ -59,4 +60,9 @@ class Users::RegistrationsController < Devise::RegistrationsController
   # def after_inactive_sign_up_path_for(resource)
   #   super(resource)
   # end
+  private
+  def set_api_key
+    params[:user][:api_key] = SecureRandom.urlsafe_base64
+  end
+
 end

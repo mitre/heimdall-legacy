@@ -1,9 +1,12 @@
+require 'securerandom'
+
 class User
   include Mongoid::Document
   include Mongoid::Timestamps
   rolify
   include Mongoid::Userstamps::User
   after_create :assign_default_role
+
   # Include default devise modules. Others available are:
   # :confirmable, :lockable, :timeoutable and :omniauthable
   devise :database_authenticatable, :registerable,
@@ -37,6 +40,11 @@ class User
   # field :failed_attempts, type: Integer, default: 0 # Only if lock strategy is :failed_attempts
   # field :unlock_token,    type: String # Only if unlock strategy is :email or :both
   # field :locked_at,       type: Time
+
+  field :first_name,  type: String
+  field :last_name,  type: String
+  field :profile_pic_name,  type: String
+  field :api_key, type: String
 
   # new users get assigned the :editor role by default
   scope :recent, ->(num) { order(created_at: :desc).limit(num) }

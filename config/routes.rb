@@ -11,6 +11,9 @@ Rails.application.routes.draw do
     sessions: 'users/sessions',
     registrations: 'users/registrations'
   }
+  devise_scope :user do
+    get 'users/:id', to: 'users/sessions#show', as: :show_user_session
+  end
   resources :profiles, except: [:new] do
     resources :depends, only: [:create, :destroy]
     resources :supports, only: [:create, :destroy]

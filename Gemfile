@@ -33,6 +33,7 @@ gem 'jbuilder', '~> 2.5'
 
 gem 'mongoid', '~> 6.2.0'
 gem 'mongoid-simple-userstamps'
+gem 'mongoid-encrypted-fields'
 gem 'devise'
 gem "rolify"
 gem 'cancancan', '~> 2.0'

@@ -1,6 +1,8 @@
+require 'securerandom'
+
 class ApplicationController < ActionController::Base
   protect_from_forgery with: :exception
-  before_action :define_userstamps_current, :check_for_admin
+  before_action :define_userstamps_current, :check_for_admin, :check_api_key
 
   protected
 
@@ -15,6 +17,13 @@ class ApplicationController < ActionController::Base
       unless current_user.has_role? :admin
         current_user.add_role :admin
       end
+    end
+  end
+
+  def check_api_key
+    if current_user && current_user.api_key.nil?
+      current_user.api_key = SecureRandom.urlsafe_base64
+      current_user.save
     end
   end
 end
