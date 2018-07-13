@@ -132,7 +132,7 @@
               <div class="timeline-item">
                   <span class="time"><i class="fa fa-clock-o"></i><%= item.created_at.strftime('%H:%M:%S') %></span>
 
-                  <h3 class="timeline-header"><%= item.class %> Added<% unless item.class == User %> by <%=item.created_by.email %><% end %></h3>
+                  <h3 class="timeline-header"><%= item.class %> Added<% unless item.class == User %> by <%=item.created_by.try(:email) %><% end %></h3>
 
                   <div class="timeline-body">
                     <% if item.class == Evaluation %>

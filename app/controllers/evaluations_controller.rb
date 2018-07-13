@@ -119,13 +119,20 @@ class EvaluationsController < ApplicationController
     user = User.where(email: email, api_key: api_key).first
     puts user
     sign_in user
-    authorize! :create, Evaluation
-    
-    if (@eval = Evaluation.parse(JSON.parse(file.read)))
-      @evaluation = Evaluation.find(@eval.id)
-      redirect_to @evaluation, notice: 'Evaluation uploaded.'
-    else
-      redirect_to evaluations_url, notice: 'File does not contain an evaluation.'
+    if current_user
+      puts "current_user: #{current_user.inspect}"
+      authorize! :create, Evaluation
+      
+      if (@eval = Evaluation.parse(JSON.parse(file.read)))
+        @eval.created_by_type = User
+        @eval.created_by_id = current_user.id
+        @eval.created_at = Time.now
+        @eval.save
+        @evaluation = Evaluation.find(@eval.id)
+        redirect_to @evaluation, notice: 'Evaluation uploaded.'
+      else
+        redirect_to evaluations_url, notice: 'File does not contain an evaluation.'
+      end
     end
   end
 
