@@ -117,7 +117,6 @@ class EvaluationsController < ApplicationController
     api_key = params[:api_key]
     email = params[:email]
     user = User.where(email: email, api_key: api_key).first
-    puts user
     sign_in user
     if current_user
       puts "current_user: #{current_user.inspect}"
@@ -129,9 +128,9 @@ class EvaluationsController < ApplicationController
         @eval.created_at = Time.now
         @eval.save
         @evaluation = Evaluation.find(@eval.id)
-        redirect_to @evaluation, notice: 'Evaluation uploaded.'
+        render body: "SUCCESS: Evaluation uploaded"
       else
-        redirect_to evaluations_url, notice: 'File does not contain an evaluation.'
+        render body: "ERROR: Could not upload evaluation'
       end
     end
   end
