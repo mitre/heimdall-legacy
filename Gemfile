@@ -31,8 +31,10 @@ gem 'jbuilder', '~> 2.5'
 # Use Capistrano for deployment
 # gem 'capistrano-rails', group: :development
 
+gem 'gibberish'
 gem 'mongoid', '~> 6.2.0'
 gem 'mongoid-simple-userstamps'
+gem 'mongoid-encrypted-fields'
 gem 'devise'
 gem "rolify"
 gem 'cancancan', '~> 2.0'

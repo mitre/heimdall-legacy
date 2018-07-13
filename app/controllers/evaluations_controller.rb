@@ -1,7 +1,7 @@
 class EvaluationsController < ApplicationController
   load_resource
   authorize_resource only: [:show, :destroy, :filter, :clear_filter]
-  protect_from_forgery
+  protect_from_forgery except: [:upload_api]
 
   # GET /evaluations
   # GET /evaluations.json
@@ -109,6 +109,29 @@ class EvaluationsController < ApplicationController
       redirect_to @evaluation, notice: 'Evaluation uploaded.'
     else
       redirect_to evaluations_url, notice: 'File does not contain an evaluation.'
+    end
+  end
+
+  def upload_api
+    file = params[:file]
+    api_key = params[:api_key]
+    email = params[:email]
+    user = User.where(email: email, api_key: api_key).first
+    sign_in user
+    if current_user
+      puts "current_user: #{current_user.inspect}"
+      authorize! :create, Evaluation
+      
+      if (@eval = Evaluation.parse(JSON.parse(file.read)))
+        @eval.created_by_type = User
+        @eval.created_by_id = current_user.id
+        @eval.created_at = Time.now
+        @eval.save
+        @evaluation = Evaluation.find(@eval.id)
+        render body: "SUCCESS: Evaluation uploaded"
+      else
+        render body: "ERROR: Could not upload evaluation'
+      end
     end
   end
 
