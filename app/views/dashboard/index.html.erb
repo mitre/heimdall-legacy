@@ -8,14 +8,13 @@
   </ol>
 </section>
 
-</section>
 <!-- Main content -->
 <section class="content">
   <!-- Small boxes (Stat box) -->
   <div class="row">
     <div class="col-lg-4 col-xs-6">
       <!-- small box -->
-      <div class="small-box bg-aqua", id="eval_info">
+      <div class="small-box bg-aqua" id="eval_info">
         <div class="inner">
           <h3><%= Evaluation.all.count %></h3>
 
@@ -33,7 +32,7 @@
         </div>
       </div>
       <% if can? :create, Evaluation %>
-        <div class="small-box bg-aqua", style="display:none;", id="upload_eval_form">
+        <div class="small-box bg-aqua" style="display:none;" id="upload_eval_form">
           <div class="inner">
             <h4>Upload Evaluation</h4>
             <%= form_tag(upload_evaluation_path, multipart: true, :html => {class: 'form-control'}) do %>
@@ -56,7 +55,7 @@
     <!-- ./col -->
     <div class="col-lg-4 col-xs-6">
       <!-- small box -->
-      <div class="small-box bg-green", id="profile_info">
+      <div class="small-box bg-green" id="profile_info">
         <div class="inner">
           <h3><%= Profile.all.count %></h3>
 
@@ -75,7 +74,7 @@
 
       </div>
       <% if can? :create, Profile %>
-        <div class="small-box bg-green", style="display:none;", id="upload_profile_form">
+        <div class="small-box bg-green" style="display:none;" id="upload_profile_form">
           <div class="inner">
             <h4>Upload Profile</h4>
             <%= form_tag(upload_profile_path, multipart: true, :html => {class: 'form-control'}) do %>
