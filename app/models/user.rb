@@ -44,8 +44,8 @@ class User
   field :first_name,  type: String
   field :last_name,  type: String
   field :profile_pic_name,  type: String
-  field :api_key, type: String
-
+  field :api_key, type: Mongoid::EncryptedString
+  
   # new users get assigned the :editor role by default
   scope :recent, ->(num) { order(created_at: :desc).limit(num) }
 
