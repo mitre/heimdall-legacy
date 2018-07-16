@@ -44,7 +44,7 @@ gem 'gitlab'
 
 gem 'pdfkit'
 gem 'render_anywhere'
-gem 'wkhtmltopdf-binary'
+gem 'wkhtmltopdf-binary', '0.12.3.1'
 
 # For inspec2ckl
 gem 'nokogiri-happymapper'
