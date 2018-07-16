@@ -1,6 +1,6 @@
 class EvaluationsController < ApplicationController
   load_resource
-  authorize_resource only: [:show, :destroy, :filter, :clear_filter]
+  authorize_resource only: [:show, :destroy, :upload, :filter, :clear_filter]
   protect_from_forgery except: [:upload_api]
 
   # GET /evaluations
@@ -128,9 +128,9 @@ class EvaluationsController < ApplicationController
         @eval.created_at = Time.now
         @eval.save
         @evaluation = Evaluation.find(@eval.id)
-        render body: "SUCCESS: Evaluation uploaded"
+        render body: 'SUCCESS: Evaluation uploaded'
       else
-        render body: "ERROR: Could not upload evaluation'
+        render body: 'ERROR: Could not upload evaluation'
       end
     end
   end

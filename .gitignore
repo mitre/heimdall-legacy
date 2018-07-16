@@ -11,6 +11,8 @@
 /tmp/
 /mongo_data/
 /log/*.log
+config/secrets.yml
+
 rails_best_practices_output.html
 
 # Used by dotenv library to load environment variables.
