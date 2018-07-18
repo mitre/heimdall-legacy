@@ -1,4 +1,4 @@
-version: '3'
+version: '3.5'
 
 services:
   # If you wish to use a db other than mongo, this is 100% wrong
@@ -13,6 +13,15 @@ services:
     build:
       context: ./
       dockerfile: ./dockerfiles/heimdall/Dockerfile
+    
+    environment:
+      RAILS_SERVE_STATIC_FILES: "true"
+      RAILS_ENV: production
+      # The rails relative url is not necessary for all builds it can be fully
+      # removed if you wish to host off of '/'. Also, you will have to remove
+      # the relative url from dockerfiles/heimdall/Dockerfile
+      RAILS_RELATIVE_URL_ROOT: /heimdall
+
     ports:
       - "3000:3000"
     depends_on:

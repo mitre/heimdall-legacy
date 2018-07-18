@@ -2,5 +2,8 @@
 
 set -xe
 
+# build db and web if needed
 docker-compose build
-docker-compose run web rake db:create
+# update db state
+docker-compose run web rake db:migrate
+
