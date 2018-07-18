@@ -46,6 +46,7 @@ build:
     - update-ca-certificates
   
   script:
+    - rsync --exclude=.git --exclude-from=.gitignore --delete -prult ./ /var/www/heimdall
     # Configuration modification purely for inspec-dev
     # For service behind the MITRE Firewall connecting to gitlab.mitre.org 
     - echo "$SED_PROXY" > sed-script-file
@@ -53,10 +54,7 @@ build:
     # Swap to port 3001, and bind to all interfaces
     - sed -e 's#3000#3001#g' -i"" dockerfiles/heimdall/Dockerfile
     - sed -e 's#3000#3001#g' -i"" docker-compose.yml
-    - sed -e 's#3001"]#3001", "-b", "0.0.0.0"]#g' -i"" dockerfiles/heimdall/Dockerfile
     - pip install docker-compose
-    - docker-compose down
-    - docker-compose build
-    - docker-compose run web rake db:migrate
+    - ./docker_build.sh
     - docker-compose up -d
     - docker system prune
