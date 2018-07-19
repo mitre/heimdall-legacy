@@ -34,7 +34,7 @@
                 <th></th>
               </tr>
 
-              <% @evaluations.sort_by{ |t| [t.profiles.map(&:name).join(', '), t.start_time] }.each do |evaluation| %>
+              <% @evaluations.sort_by{ |t| [t.profiles.map(&:name).join(', '), t.start_time.nil? ? 0 : t.start_time.to_i ] }.each do |evaluation| %>
                 <% Rails.logger.debug "can? :read, #{evaluation.profiles.map(&:name).join(', ')} #{can? :read, evaluation}" %>
                 <% Rails.logger.debug "current_user.readable_evaluation?(#{evaluation.id}): #{current_user.readable_evaluation?(evaluation.id)}" %>
                 <% if can?(:read, evaluation) || current_user.readable_evaluation?(evaluation.id) %>
