@@ -39,22 +39,18 @@ build:
 
   before_script:
     # add the MITRE certificates to the docker image
-    - apk update && apk add git openssh-client ca-certificates py-pip
+    - apk update && apk add git openssh-client ca-certificates py-pip bash
     - wget -O /usr/local/share/ca-certificates/MITRE_BA_Root.crt $CRT_R
     - wget -O /usr/local/share/ca-certificates/MITRE_BA_NPE_CA-1.crt $CRT_1
     - wget -O /usr/local/share/ca-certificates/MITRE_BA_NPE_CA-3.crt $CRT_3
     - update-ca-certificates
   
   script:
-    - rsync --exclude=.git --exclude-from=.gitignore --delete -prult ./ /var/www/heimdall
     # Configuration modification purely for inspec-dev
     # For service behind the MITRE Firewall connecting to gitlab.mitre.org 
     - echo "$SED_PROXY" > sed-script-file
     - grep MITRE_BA_Root dockerfiles/heimdall/Dockerfile || sed -f sed-script-file -i"" dockerfiles/heimdall/Dockerfile
-    # Swap to port 3001, and bind to all interfaces
-    - sed -e 's#3000#3001#g' -i"" dockerfiles/heimdall/Dockerfile
-    - sed -e 's#3000#3001#g' -i"" docker-compose.yml
     - pip install docker-compose
+    - chmod +x docker_build.sh
     - ./docker_build.sh
     - docker-compose up -d
-    - docker system prune

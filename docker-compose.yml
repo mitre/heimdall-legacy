@@ -14,6 +14,8 @@ services:
       context: ./
       dockerfile: ./dockerfiles/heimdall/Dockerfile
     
+    volumes:
+      - heimdall_secrets:/srv/secrets
     environment:
       RAILS_SERVE_STATIC_FILES: "true"
       RAILS_ENV: production
@@ -29,3 +31,4 @@ services:
 
 volumes:
   mongo_data:
+  heimdall_secrets:
