@@ -1,5 +1,12 @@
 #!/bin/bash
 
+[[ $1 == --overwrite ]]
+
+# Exit if volume exists
+docker inspect heimdall_heimdall_secrets && [[ $1 == --overwrite ]] || exit 0
+
+docker volume create heimdall_heimdall_secrets
+docker run -v heimdall_heimdall_secrets:/srv/secrets --name helper busybox true
 
 if [[ ! -a config/secrets.yml ]]
 then
@@ -39,5 +46,7 @@ then
 	echo "Config already exists and has keys for production"
 
 fi
+
+docker cp config/secrets.yml helper:/srv/secrets/
 
 chmod 640 config/secrets.yml
