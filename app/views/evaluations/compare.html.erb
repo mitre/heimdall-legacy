@@ -179,7 +179,7 @@ function show_details(control_id) {
         } else {
           profile_id = ct[i][1];
           evaluation_id = ct[i][2];
-          url = '/profiles/' + profile_id + '/controls/' + ct_id + '/details/evaluation/' + evaluation_id;
+          url = "<%= home_path %>" + 'profiles/' + profile_id + '/controls/' + ct_id + '/details/evaluation/' + evaluation_id;
           $.ajax(url, {
               async: false,
               success: function(data) {
