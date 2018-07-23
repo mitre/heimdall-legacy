@@ -1114,7 +1114,7 @@ document.addEventListener("turbolinks:load", function() {
   }
 
   function loadTreemapData(category, status) {
-    api_path = "/evaluations/" + evaluation_id + "/nist";
+    api_path = "<%= home_path %>" + "evaluations/" + evaluation_id + "/nist";
     if (category) {
       api_path += "/category/" + encodeURIComponent(category);
     }
