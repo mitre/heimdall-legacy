@@ -48,3 +48,8 @@ RSpec.configure do |config|
   config.include Devise::Test::ControllerHelpers, type: :view
   config.include Mongoid::Matchers, type: :model
 end
+
+def db_sign_in(user)
+  sign_in user
+  session['user_id'] = session['warden.user.db_user.key'].first.try(:first)
+end

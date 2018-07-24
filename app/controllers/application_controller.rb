@@ -5,7 +5,7 @@ class ApplicationController < ActionController::Base
     render text: exception, status: 500
   end
   rescue_from CanCan::AccessDenied do |exception|
-    redirect_to home_url, alert: exception.message
+    redirect_to root_url, alert: exception.message
   end
   helper_method :current_user
   protect_from_forgery with: :exception

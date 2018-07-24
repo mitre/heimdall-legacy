@@ -1,4 +1,5 @@
 require 'rails_helper'
+require 'support/sign_in_support'
 
 RSpec.describe 'Circles', type: :request do
   describe 'GET /circles' do

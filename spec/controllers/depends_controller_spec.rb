@@ -44,7 +44,7 @@ RSpec.describe DependsController, type: :controller do
   context 'Editor is logged in' do
     let(:user) { FactoryBot.create(:editor) }
     before do
-      sign_in user
+      db_sign_in user
     end
 
     before(:each) do

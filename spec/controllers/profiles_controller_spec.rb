@@ -45,7 +45,7 @@ RSpec.describe ProfilesController, type: :controller do
     let(:admin) { FactoryBot.create(:admin) }
     let(:user) { FactoryBot.create(:editor) }
     before do
-      sign_in user
+      db_sign_in user
     end
 
     describe 'GET #index' do
@@ -177,7 +177,7 @@ RSpec.describe ProfilesController, type: :controller do
   context 'admin is logged in' do
     let(:user) { FactoryBot.create(:admin) }
     before do
-      sign_in user
+      db_sign_in user
     end
 
     describe 'PUT #update' do
