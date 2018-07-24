@@ -1,0 +1,86 @@
+<section class="content-header">
+  <h1>
+    Profile
+  </h1>
+  <ol class="breadcrumb">
+    <li><%= link_to ('<i class="fa fa-dashboard"> </i>Dashboard').html_safe, home_path %></li>
+    <li class="active">Profile</li>
+  </ol>
+</section>
+
+<!-- Main content -->
+<section class="content container-fluid">
+  <div class="row">
+    <div class="box box-primary">
+        <!-- /.box-header -->
+        <div class="col-xl-3 col-lg-4">
+          <div class="text-center card-box">
+            <div class="member-card">
+              <div class="thumb-xl member-thumb m-b-10 center-block">
+                  <% if current_user.profile_pic_name %>
+                    <%= image_tag "profile_pics/" + current_user.profile_pic_name, class: "rounded-circle img-thumbnail" %>
+                  <% else %>
+                    <%= image_tag "default_profile_pic.jpeg", class: "rounded-circle img-thumbnail" %>
+                  <% end %>
+                    <!-- <img src="" class="rounded-circle img-thumbnail" alt="profile-image"> -->
+              </div>
+              <div class="text-left m-t-40">
+                    <p class="text-muted font-13"><strong>Email:</strong>  <span class="m-l-15"><%= current_user.email %></span></p>
+                    <p class="text-muted font-13"><strong>API Key:</strong>  <span class="m-l-15"><%= current_user.api_key %></span></p>
+                    <% if current_user._type == 'DbUser' %>
+                        <p class="text-muted font-13"><%= link_to "Edit Profile", edit_db_user_registration_path(current_user), :class => "btn btn-default btn-flat" %></p>
+                    <% end %>
+              </div>
+            </div>
+          </div> <!-- end card-box -->
+        </div> <!-- end col -->
+        <div class="col-lg-8 col-xl-9">
+            <div class="">
+                <div class="card-box">
+                    <ul class="nav nav-tabs tabs-bordered">
+                        <li class="nav-item">
+                            <a href="#home" data-toggle="tab" aria-expanded="false" class="nav-link">
+                                ABOUT ME
+                            </a>
+                        </li>
+                        <% if @user == current_user %>
+                          <li class="nav-item">
+                              <a href="#settings" data-toggle="tab" aria-expanded="false" class="nav-link">
+                                  SETTINGS
+                              </a>
+                          </li>
+                        <% end %>
+                    </ul>
+                    <div class="tab-content">
+                        <div class="tab-pane" id="home">
+                            <p class="m-b-5"></p>
+
+                            <div class="m-t-30">
+                                <!-- <h5>Experience</h5> -->
+
+                                <!-- <div class=" p-t-10">
+
+                                </div>
+
+                                <hr>
+
+                                <div class="">
+                                    <h6 class="text-primary m-b-5">Senior Graphic Designer</h6>
+                                    <p class="">coderthemes.com</p>
+                                    <p><b>2007-2009</b></p>
+
+                                    <p class="text-muted font-13">Lorem Ipsum is simply dummy text
+                                        of the printing and typesetting industry. Lorem Ipsum has
+                                        been the industry's standard dummy text ever since the
+                                        1500s, when an unknown printer took a galley of type and
+                                        scrambled it to make a type specimen book.
+                                    </p>
+                                </div> -->
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div> <!-- end col -->
+    </div>
+</section>

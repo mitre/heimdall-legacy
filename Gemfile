@@ -36,6 +36,7 @@ gem 'mongoid', '~> 6.2.0'
 gem 'mongoid-simple-userstamps'
 gem 'mongoid-encrypted-fields'
 gem 'devise'
+gem 'devise_ldap_authenticatable'
 gem "rolify"
 gem 'cancancan', '~> 2.0'
 

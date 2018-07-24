@@ -1,4 +1,6 @@
 class CirclesController < ApplicationController
+  authorize_resource
+  protect_from_forgery
   before_action :set_circle, only: [:show, :edit, :update, :destroy,
                                     :members, :remove_member, :owners,
                                     :remove_owner, :evaluations, :remove_evaluation,

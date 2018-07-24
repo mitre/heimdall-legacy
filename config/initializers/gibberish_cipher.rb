@@ -6,7 +6,6 @@ require 'gibberish/aes'
 # Gibberish uses a unique salt for every encryption, but we need the same text to return the same ciphertext
 # so Searching for encrypted field will work
 class GibberishCipher
-
   def initialize(password, salt)
     if defined?(Gibberish::AES::CBC)
       @cipher = Gibberish::AES::CBC.new(password)
@@ -23,7 +22,6 @@ class GibberishCipher
   def decrypt(data)
     @cipher.decrypt(data)
   end
-
 end
 
 # Mongoid::EncryptedFields.cipher = GibberishCipher.new(ENV['MY_PASSWORD'], ENV['MY_SALT'])

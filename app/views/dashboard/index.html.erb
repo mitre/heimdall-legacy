@@ -35,7 +35,7 @@
         <div class="small-box bg-aqua" style="display:none;" id="upload_eval_form">
           <div class="inner">
             <h4>Upload Evaluation</h4>
-            <%= form_tag(upload_evaluation_path, multipart: true, :html => {class: 'form-control'}) do %>
+            <%= form_tag(upload_evaluations_path, multipart: true, :html => {class: 'form-control'}) do %>
               <div class="input-group">
                 <%= file_field_tag :file, :class => "menu-text" %>
               </div>
@@ -77,7 +77,7 @@
         <div class="small-box bg-green" style="display:none;" id="upload_profile_form">
           <div class="inner">
             <h4>Upload Profile</h4>
-            <%= form_tag(upload_profile_path, multipart: true, :html => {class: 'form-control'}) do %>
+            <%= form_tag(upload_profiles_path, multipart: true, :html => {class: 'form-control'}) do %>
               <div class="input-group">
                 <%= file_field_tag :file, :class => "menu-text" %>
               </div>
@@ -105,7 +105,7 @@
         <div class="icon">
           <i class="ion ion-person-add"></i>
         </div>
-        <%= link_to ('More info <i class="fa fa-arrow-circle-right"></i>').html_safe, new_user_registration_path, class: "small-box-footer" %>
+        <%= link_to ('More info <i class="fa fa-arrow-circle-right"></i>').html_safe, new_user_session_path, class: "small-box-footer" %>
       </div>
     </div>
     <!-- ./col -->
@@ -125,21 +125,23 @@
         <!-- /.timeline-label -->
 
         <% items.each do |item| %>
+        <% item_class = item.class %>
+        <% item_class = User if [DbUser, LdapUser].include?(item.class) %>
           <!-- timeline item -->
           <li>
               <!-- timeline icon -->
-              <i class="fa <%= icon(item.class) %> bg-blue"></i>
+              <i class="fa <%= icon(item_class) %> bg-blue"></i>
               <div class="timeline-item">
                   <span class="time"><i class="fa fa-clock-o"></i><%= item.created_at.strftime('%H:%M:%S') %></span>
 
-                  <h3 class="timeline-header"><%= item.class %> Added<% unless item.class == User %> by <%=item.created_by.try(:email) %><% end %></h3>
+                  <h3 class="timeline-header"><%= item.class %> Added<% unless item_class == User  %> by <%=item.created_by.try(:email) %><% end %></h3>
 
                   <div class="timeline-body">
-                    <% if item.class == Evaluation %>
+                    <% if item_class == Evaluation %>
                       Profiles: <%= item.profiles.map(&:name).join(', ') %>, Platform: <%= item.platform_name %>
-                    <% elsif item.class == Profile %>
+                    <% elsif item_class == Profile %>
                       Name: <%= item.name %>, Title: <%= item.title %>, Version: <%= item.version %>
-                    <% elsif item.class == User %>
+                    <% elsif item_class == User %>
                       Email: <%= item.email %>, Roles: <%= item.role_names.join(", ") %>
                     <% end %>
                   </div>

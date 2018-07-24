@@ -78,7 +78,7 @@ var evaluation_id = '<%= @evaluation.id %>';
         <div class="box-body">
           <p>
             <strong>View SSP:</strong>
-            <%= link_to 'SSP', evaluation_ssp_path(@evaluation) %>
+            <%= link_to 'SSP', ssp_evaluation_path(@evaluation) %>
           </p>
           <p>
             <strong>Export CKL:</strong>
@@ -144,7 +144,7 @@ var evaluation_id = '<%= @evaluation.id %>';
                   <li><h3><%= @counts[:not_reviewed] %>&nbsp;</h3></li>
                   <li><h4>Not Reviewed&nbsp;&nbsp;&nbsp;</h4></li>
                 </ul>
-                <p class="small-font">(manual test)</p>
+                <p class="small-font">(can only be tested manually or disabled test)</p>
               </div>
             </div>
           </div>
@@ -157,7 +157,7 @@ var evaluation_id = '<%= @evaluation.id %>';
                   <li><h3><%= @counts[:not_applicable] %>&nbsp;</h3></li>
                   <li><h4>Not Applicable&nbsp;&nbsp;</h4></li>
                 </ul>
-                <p class="small-font">(zero impact)</p>
+                <p class="small-font">(zero impact: exception for this system and/or absent component)</p>
               </div>
             </div>
           </div>
@@ -212,12 +212,12 @@ var evaluation_id = '<%= @evaluation.id %>';
               <span class="span-title">Active Filter:</span></br>
               <h4><%= @filter_label %></h4>
               <br>
-              <%= link_to "Clear Filter", evaluation_clear_filter_path(@evaluation), class: "btn btn-primary" %>
+              <%= link_to "Clear Filter", clear_filter_evaluation_path(@evaluation), class: "btn btn-primary" %>
           <% end %>
         </div>
         <div class="box-body no-top-padding">
           <div class="col-md-4">
-            <%= form_for :filter, url: evaluation_filter_path(@evaluation), remote: true do |form| %>
+            <%= form_for :filter, url: filter_evaluation_path(@evaluation), remote: true do |form| %>
               <div class="row">
                 <div class="box-body">
                   <div class="col-md-2 padded-right">
@@ -252,7 +252,7 @@ var evaluation_id = '<%= @evaluation.id %>';
             <% end %>
           </div>
           <div class="col-md-6">
-            <%= form_for :filter_group, url: evaluation_filter_select_path(@evaluation), remote: true do |form| %>
+            <%= form_for :filter_group, url: filter_select_evaluation_path(@evaluation), remote: true do |form| %>
               <div class="box-body">
                 <p>
                   <h4>Select Filter Group</h4>
@@ -282,7 +282,7 @@ var evaluation_id = '<%= @evaluation.id %>';
         </div>
         <!-- /.box-header -->
         <div class="box-body">
-          <%= form_for :filter, url: evaluation_filter_path(@evaluation), remote: true do |form| %>
+          <%= form_for :filter, url: filter_evaluation_path(@evaluation), remote: true do |form| %>
             <div class="row">
               <div class="col-sm-1">
                 <div class="box-header">
@@ -953,7 +953,7 @@ document.addEventListener("turbolinks:load", function() {
       },
       size:
       {
-          height: 125
+          height: 193
       }
     });
   }

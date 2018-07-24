@@ -67,7 +67,7 @@
             <h3 class="box-title">Upload Profile</h3>
           </div>
           <div class="box-body">
-            <%= form_tag(upload_profile_path, multipart: true, :html => {class: 'form-control'}) do %>
+            <%= form_tag(upload_profiles_path, multipart: true, :html => {class: 'form-control'}) do %>
               <div class="input-group">
                 <%= file_field_tag :file, :class => "menu-text" %>
               </div>

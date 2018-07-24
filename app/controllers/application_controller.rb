@@ -1,8 +1,24 @@
 require 'securerandom'
 
 class ApplicationController < ActionController::Base
+  rescue_from DeviseLdapAuthenticatable::LdapException do |exception|
+    render text: exception, status: 500
+  end
+  rescue_from CanCan::AccessDenied do |exception|
+    redirect_to home_url, alert: exception.message
+  end
+  helper_method :current_user
   protect_from_forgery with: :exception
   before_action :define_userstamps_current, :check_for_admin, :check_api_key
+
+  def current_user
+    if session[:user_id]
+      @current_user ||= User.find_by(id: session[:user_id])
+    else
+      session[:user_id] = nil
+      @current_user = nil
+    end
+  end
 
   protected
 

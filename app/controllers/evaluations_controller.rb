@@ -6,7 +6,7 @@ class EvaluationsController < ApplicationController
   # GET /evaluations
   # GET /evaluations.json
   def index
-    @evaluations = Evaluation.all
+    @evaluations = current_user ? current_user.readable_evaluations : Evaluation.all
   end
 
   # GET /evaluations/1
@@ -119,14 +119,9 @@ class EvaluationsController < ApplicationController
     user = User.where(email: email, api_key: api_key).first
     sign_in user
     if current_user
-      puts "current_user: #{current_user.inspect}"
       authorize! :create, Evaluation
-      
       if (@eval = Evaluation.parse(JSON.parse(file.read)))
-        @eval.created_by_type = User
-        @eval.created_by_id = current_user.id
-        @eval.created_at = Time.now
-        @eval.save
+        @eval.force_created_by(current_user)
         @evaluation = Evaluation.find(@eval.id)
         render body: 'SUCCESS: Evaluation uploaded'
       else

@@ -49,6 +49,13 @@ class Evaluation
     InspecTo.ckl(to_json)
   end
 
+  def force_created_by(user)
+    self.created_by_type = User
+    self.created_by_id = user.id
+    self.created_at = Time.now
+    save
+  end
+
   def status_counts(filters = nil)
     counts = { open: 0, not_a_finding: 0, not_reviewed: 0, not_tested: 0, not_applicable: 0 }
     controls = {}

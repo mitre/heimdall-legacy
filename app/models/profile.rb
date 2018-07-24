@@ -100,7 +100,8 @@ class Profile
   end
 
   def self.find_or_new(profile_hash)
-    profiles = Profile.where(sha256: profile_hash['sha256'])
+    # profiles = Profile.where(sha256: profile_hash['sha256'])
+    profiles = []
     if profiles.empty?
       new_profile_hash, controls = Profile.transform(profile_hash.deep_dup)
       profile = Profile.create(new_profile_hash)
