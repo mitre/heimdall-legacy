@@ -48,5 +48,5 @@ Rails.application.routes.draw do
   match 'evaluations/:id/nist(/category/:category)(/status/:status_symbol)' => 'evaluations#nist', as: :evaluation_nist, :via => :get
   match 'evaluations_compare' => 'evaluations#compare', as: :evaluations_compare, :via => [:get, :post]
 
-  root to: 'dashboard#index', as: :home
+  root to: 'dashboard#index'
 end
