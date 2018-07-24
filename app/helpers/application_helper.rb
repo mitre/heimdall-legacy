@@ -62,4 +62,20 @@ module ApplicationHelper
     when User then 'ion-person-add'
     end
   end
+
+  def destroy_user_session_path(user)
+    case user.class
+    when DbUser then destroy_db_user_session_path
+    when LdapUser then destroy_ldap_user_session_path
+    end
+  end
+
+  def flash_class(level)
+    case level.to_sym
+    when :notice then 'alert alert-info'
+    when :success then 'alert alert-success'
+    when :error then 'alert alert-error'
+    when :alert then 'alert alert-error'
+    end
+  end
 end

@@ -34,11 +34,8 @@
                 <th></th>
               </tr>
 
-              <% @evaluations.sort_by{ |t| [t.profiles.map(&:name).join(', '), t.start_time.nil? ? 0 : t.start_time.to_i ] }.each do |evaluation| %>
-                <% Rails.logger.debug "can? :read, #{evaluation.profiles.map(&:name).join(', ')} #{can? :read, evaluation}" %>
-                <% Rails.logger.debug "current_user.readable_evaluation?(#{evaluation.id}): #{current_user.readable_evaluation?(evaluation.id)}" %>
-                <% if can?(:read, evaluation) || current_user.readable_evaluation?(evaluation.id) %>
-                  <% Rails.logger.debug "show #{evaluation.profiles.map(&:name).join(', ')}" %>
+              <% @evaluations.each do |evaluation| %>
+               <% if can?(:read, evaluation) %>
                   <tr>
                     <td><%= link_to evaluation.profiles.map(&:name).join(', '), evaluation %></td>
                     <td><%= evaluation.start_time %></td>
@@ -88,7 +85,7 @@
             <h3 class="box-title">Upload Evaluation</h3>
           </div>
           <div class="box-body">
-            <%= form_tag(upload_evaluation_path, multipart: true, :html => {class: 'form-control'}) do %>
+            <%= form_tag(upload_evaluations_path, multipart: true, :html => {class: 'form-control'}) do %>
               <div class="input-group">
                 <%= file_field_tag :file, :class => "menu-text" %>
               </div>

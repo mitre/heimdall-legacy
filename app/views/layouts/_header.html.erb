@@ -58,10 +58,10 @@
             <!-- Menu Footer-->
             <li class="user-footer">
                 <div class="pull-left">
-                  <%= link_to "Profile", show_user_session_path(current_user), :class => "btn btn-default btn-flat" %>
+                  <%= link_to "Profile", user_path(current_user), :class => "btn btn-default btn-flat" %>
                 </div>
                 <div class="pull-right">
-                  <%= link_to "Logout", destroy_user_session_path, :method => :delete, :class => "btn btn-default btn-flat" %>
+                  <%= link_to "Logout", destroy_user_session_path(current_user), :method => :delete, :class => "btn btn-default btn-flat" %>
                 </div>
             </li>
           </ul>

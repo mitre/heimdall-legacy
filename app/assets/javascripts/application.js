@@ -29,3 +29,6 @@ function tog(id) {
   else
     el.style.display = 'none';
 }
+document.addEventListener("turbolinks:load", function() {
+  $(".alert" ).fadeOut(3000);
+});

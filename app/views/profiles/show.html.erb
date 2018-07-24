@@ -98,7 +98,7 @@ var loaded = null;
 
 function show_details(profile_id, control_id) {
   hsh = "#" + control_id;
-  url = "<%= home_path %>" + '/profiles/' + profile_id + '/controls/' + control_id + '/details';
+  url = "<%= root_path %>" + '/profiles/' + profile_id + '/controls/' + control_id + '/details';
   var tr = $(hsh);
   if ($('#details_row').length) {
     $('#details_row').remove();

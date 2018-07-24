@@ -38,7 +38,7 @@ RSpec.describe EvaluationsController, type: :controller do
   context 'Editor is logged in' do
     let(:user) { FactoryBot.create(:editor) }
     before do
-      sign_in user
+      db_sign_in user
     end
 
     context 'with imported evaluation' do
@@ -174,15 +174,6 @@ RSpec.describe EvaluationsController, type: :controller do
     end
 
     describe 'DELETE #destroy' do
-      it "is blocked from destroying the evaluation it doesn't own" do
-        evaluation = create :evaluation
-        create :admin
-        user.remove_role :admin
-        expect {
-          delete :destroy, params: { id: evaluation.to_param }, session: valid_session
-        }.to raise_error(CanCan::AccessDenied)
-      end
-
       it 'destroys the owned evaluation' do
         evaluation = create :evaluation, created_by: user
         expect {
@@ -202,7 +193,7 @@ RSpec.describe EvaluationsController, type: :controller do
   context 'An Admin is logged in' do
     let(:admin) { FactoryBot.create(:admin) }
     before do
-      sign_in admin
+      db_sign_in admin
     end
 
     describe 'DELETE #destroy' do

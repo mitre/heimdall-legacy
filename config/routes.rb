@@ -1,4 +1,5 @@
 Rails.application.routes.draw do
+  resources :users
   resources :circles
   resources :filter_groups do
     resources :filters, only: [:update, :destroy]
@@ -7,25 +8,36 @@ Rails.application.routes.draw do
   resources :repos do
     resources :repo_creds, only: [:create, :update, :destroy]
   end
-  devise_for :users, controllers: {
-    sessions: 'users/sessions',
-    registrations: 'users/registrations'
+  devise_for :db_users, controllers: {
+    sessions: 'db_users/sessions',
+    registrations: 'db_users/registrations',
+    passwords: 'db_users/passwords'
   }
-  devise_scope :user do
-    get 'users/:id', to: 'users/sessions#show', as: :show_user_session
-  end
+  devise_for :ldap_users, controllers: {
+    sessions: 'ldap_users/sessions',
+    registrations: 'ldap_users/registrations',
+    passwords: 'ldap_users/passwords'
+  }
   resources :profiles, except: [:new] do
     resources :depends, only: [:create, :destroy]
     resources :supports, only: [:create, :destroy]
     resources :controls, except: [:index]
     resources :profile_attributes, except: [:index]
     resources :groups, except: [:edit, :index]
+    post 'upload', on: :collection
   end
   resources :evaluations, only: [:index, :show, :destroy] do
     resources :results, only: [:index, :show]
     resources :downloads, only: [:show]
+    get 'ssp', on: :member
+    post 'filter', on: :member
+    post 'filter_select', on: :member
+    get 'clear_filter', on: :member
+    post 'upload', on: :collection
+    post 'upload_api', on: :collection
   end
 
+  match 'session/new_session' => 'users#new_session', as: :new_user_session, :via => :get
   match 'circles/:id/members' => 'circles#members', as: :circle_members, :via => :post
   match 'circles/:id/remove_member/:user_id' => 'circles#remove_member', as: :circle_member_remove, :via => :delete
   match 'circles/:id/owners' => 'circles#owners', as: :circle_owners, :via => :post
@@ -38,12 +50,6 @@ Rails.application.routes.draw do
   match 'profiles/:profile_id/groups/:id/add' => 'groups#add', as: :profile_group_add, :via => :patch
   match 'profiles/:profile_id/groups/:id/remove/:control_id' => 'groups#remove', as: :profile_group_remove, :via => :patch
   match 'profiles/:id/nist(/category/:category)' => 'profiles#nist', as: :profile_nist, :via => :get
-  match 'profile_upload' => 'profiles#upload', as: :upload_profile, :via => :post
-  match 'evaluations/:id/ssp' => 'evaluations#ssp', as: :evaluation_ssp, :via => :get
-  match 'evaluations/:id/filter' => 'evaluations#filter', as: :evaluation_filter, :via => :post
-  match 'evaluations/:id/filter_select' => 'evaluations#filter_select', as: :evaluation_filter_select, :via => :post
-  match 'evaluations/:id/clear_filter' => 'evaluations#clear_filter', as: :evaluation_clear_filter, :via => :get
-  match 'evaluation_upload' => 'evaluations#upload', as: :upload_evaluation, :via => :post
   match 'evaluation_upload_api' => 'evaluations#upload_api', as: :upload_evaluation_api, :via => :post
   match 'evaluations/:id/nist(/category/:category)(/status/:status_symbol)' => 'evaluations#nist', as: :evaluation_nist, :via => :get
   match 'evaluations_compare' => 'evaluations#compare', as: :evaluations_compare, :via => [:get, :post]
