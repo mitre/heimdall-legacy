@@ -2,7 +2,7 @@
 <section class="content-header">
   <h1>Evaluation <%= @evaluation.profiles.map(&:name).join(', ') %></h1>
   <ol class="breadcrumb" data-turbolinks="false">
-    <li><%= link_to ('<i class="fa fa-dashboard"> </i>Dashboard').html_safe, home_path %></li>
+    <li><%= link_to ('<i class="fa fa-dashboard"> </i>Dashboard').html_safe, root_path %></li>
     <li><%= link_to 'Evaluations', evaluations_path %>
     <li class="active">Evaluation</li>
   </ol>
