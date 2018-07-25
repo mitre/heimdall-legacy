@@ -210,6 +210,37 @@ RSpec.describe EvaluationsController, type: :controller do
       delete :destroy, params: { id: evaluation.to_param }, session: valid_session
       expect(response).to redirect_to(evaluations_url)
     end
+  end
 
+  context 'No one logged in' do
+    let(:user) { FactoryBot.create(:editor) }
+    let(:ldap_user) { FactoryBot.create(:ldap_editor) }
+    describe 'POST #upload_api' do
+      it 'can upload an evaluation with an api_key' do
+        @file = fixture_file_upload('sample_jsons/good_nginxresults.json', 'text/json')
+        expect {
+          post :upload_api, params: { file: @file, email: user.email, api_key: user.api_key }, session: valid_session
+        }.to change(Evaluation, :count).by(1)
+      end
+
+      it 'can upload an evaluation from an ldap user with an api_key' do
+        @file = fixture_file_upload('sample_jsons/good_nginxresults.json', 'text/json')
+        expect {
+          post :upload_api, params: { file: @file, email: ldap_user.email, api_key: ldap_user.api_key }, session: valid_session
+        }.to change(Evaluation, :count).by(1)
+      end
+
+      it 'cannot upload an evaluation with a bad api_key' do
+        @file = fixture_file_upload('sample_jsons/good_nginxresults.json', 'text/json')
+        post :upload_api, params: { file: @file, email: user.email, api_key: 'bad_key' }, session: valid_session
+        expect(response.body).to eq('ERROR: Could not login User')
+      end
+
+      it 'cannot upload a badly formed evaluation' do
+        @file = fixture_file_upload('spec/support/bad_profile.json', 'text/json')
+        post :upload_api, params: { file: @file, email: user.email, api_key: user.api_key }, session: valid_session
+        expect(response.body).to eq('ERROR: Could not upload evaluation')
+      end
+    end
   end
 end

@@ -114,10 +114,7 @@ class EvaluationsController < ApplicationController
 
   def upload_api
     file = params[:file]
-    api_key = params[:api_key]
-    email = params[:email]
-    user = User.where(email: email, api_key: api_key).first
-    sign_in user
+    sign_in_api_user(params[:email], params[:api_key])
     if current_user
       authorize! :create, Evaluation
       if (@eval = Evaluation.parse(JSON.parse(file.read)))
@@ -127,6 +124,8 @@ class EvaluationsController < ApplicationController
       else
         render body: 'ERROR: Could not upload evaluation'
       end
+    else
+      render body: 'ERROR: Could not login User'
     end
   end
 
@@ -153,6 +152,17 @@ class EvaluationsController < ApplicationController
   end
 
   private
+
+  def sign_in_api_user(email, api_key)
+    if (user = User.where(email: email, api_key: api_key).first)
+      sign_in user
+      if user._type == 'DbUser'
+        session['user_id'] = session['warden.user.db_user.key'].first.try(:first)
+      elsif user._type == 'LdapUser'
+        session['user_id'] = session['warden.user.ldap_user.key'].first.try(:first)
+      end
+    end
+  end
 
   def session_filters
     filters = nil

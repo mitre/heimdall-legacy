@@ -108,8 +108,8 @@ class Profile
       controls.each do |control|
         profile.controls.create(control)
       end
-    else
-      profile = profiles.first
+      # else
+      #  profile = profiles.first
     end
     profile
   end
