@@ -46,6 +46,8 @@ gem 'gitlab'
 gem 'pdfkit'
 gem 'render_anywhere'
 gem 'wkhtmltopdf-binary', '0.12.3.1'
+gem 'rmagick'
+gem 'carrierwave-mongoid', :require => 'carrierwave/mongoid'
 
 # For inspec2ckl
 gem 'nokogiri-happymapper'
