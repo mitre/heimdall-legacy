@@ -173,18 +173,27 @@
 	white-space: nowrap;
 	vertical-align: top;
 }
-
 .cn-msg-table td:not(:first-child),
 .cn-msg-table td.cn-msg-count {
 	padding-left: 0px;
 }
-
 .cn-msg-table td:not(:last-child) {
 	padding-right: 0px;
 }
-
 .cn-msg-bar {
 	height: 11px;
+}
+.image-size {
+  max-width: 200px;
+  max-height: 100px;
+}
+.header-image {
+  float: left;
+  width: 30px !important;;
+  height: 30px !important;;
+  border-radius: 50%;
+  margin-right: 10px;
+  margin-top: -5px !important;;
 }
 #editor {
     top: 0;

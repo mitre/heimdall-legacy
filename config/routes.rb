@@ -1,5 +1,7 @@
 Rails.application.routes.draw do
-  resources :users
+  resources :users do
+    get :image, on: :member
+  end
   resources :circles
   resources :filter_groups do
     resources :filters, only: [:update, :destroy]
@@ -53,6 +55,8 @@ Rails.application.routes.draw do
   match 'evaluation_upload_api' => 'evaluations#upload_api', as: :upload_evaluation_api, :via => :post
   match 'evaluations/:id/nist(/category/:category)(/status/:status_symbol)' => 'evaluations#nist', as: :evaluation_nist, :via => :get
   match 'evaluations_compare' => 'evaluations#compare', as: :evaluations_compare, :via => [:get, :post]
+  match 'users/:id/add_role/:user_id/' => 'users#add_role', as: :user_add_role, :via => :post
+  match 'users/:id/remove_role/:user_id/:role' => 'users#remove_role', as: :user_remove_role, :via => :delete
 
   root to: 'dashboard#index'
 end

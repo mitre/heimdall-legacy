@@ -23,6 +23,9 @@
           <% if can? :read, FilterGroup %>
             <li><%= link_to "Filters", filter_groups_path %></li>
           <% end %>
+          <% if current_user.has_role?(:admin) %>
+            <li><%= link_to "Users", users_path %></li>
+          <% end %>          
         <% end %>
       </ul>
       <!--form class="navbar-form navbar-left" role="search">
@@ -42,6 +45,9 @@
           <a href="#" class="dropdown-toggle" data-toggle="dropdown">
             <!-- The user image in the navbar-->
             <!-- hidden-xs hides the username on small devices so only the image appears. -->
+            <% if current_user.image.present? %>
+              <%= image_tag current_user.image_url(:thumb).to_s, class: "user-image header-image" %>
+            <% end %>
             <span class="hidden-xs"><%= current_user.email %></span>
           </a>
           <ul class="dropdown-menu">
@@ -49,6 +55,11 @@
             <li class="user-header">
               <p>
                 <%= current_user.email %>
+              </p>
+              <p>
+                <% if current_user.image %>
+                  <%= image_tag current_user.image_url.to_s, class: "image-size" %>
+                <% end %>
               </p>
             </li>
             <!-- Menu Body -->
