@@ -1,75 +1,112 @@
-# README
+# Heimdalll
 
-## Run With Docker
-### Building Docker Containers
-_These steps need to be performed the first time you build the docker containers.
-You also need to run these commands if you perform any changes to the code base to rebuild the containers._
+Heimdall is a centralized InSpec evaluations aggregation tool. 
 
-##### Automated Build Steps
-1. Go to the base folder where `docker_build.sh` is located
-2. Run the following command:
-   1. `./docker_build.sh` (may need to first run `chmod +x docker_build.sh` to give the file executable rights)
-3. Jump to [Running Docker Container](#running-docker-container)
+## Description
+Heimdall supports viewing of InSpec profiles and evaluations in a convenient
+interface.  Data uploads can be automated through usage of curl, and added as
+step after an inspec pipeline stage. 
 
-##### Manual Build Steps
-1. Navigate to base folder where `docker-compose.yml` is located
-2. Run the following command in a terminal window:
-   1. `docker-compose build`
-   2. `docker-compose run web rake db:create`
+## Installation 
+### Dependencies
+You can setup a deployment/development environment through bundler or docker
+If you wish to use docker, then the only dependency is: 
+	* Docker
+If you wish to use ruby and are on ubuntu, then the dependencies are:
+	* Ruby 2.4.4
+	* build-essentials (your distributions gcc package)
+	* Bundler
+	* libpq-dev 
+	* nodejs
+
+### Run directly with Ruby
+
+This mode is primarily for developers, production heimdall instances should be
+deployed as containers.
+1. install dependcies
+	On ubuntu: `apt-get install build-essentials libpq-dev nodejs`
+2. install ruby 2.4.4
+3. Run the following in a terminal
+	1. `bundle install`
+	2. `bundle exec rake db:create` 
+	3. `bundle exec rake db:migrate`
+	4. `bundle exec rails s` Start the server on localhost
 4. Jump to [Running Docker Container](#running-docker-container)
 
+### Run With Docker
+#### Building Docker Containers
+_These steps need to be performed the first time you build the docker
+containers, and whenever you edit the code base._
+
+##### Automated Build Steps
+1. Install Docker
+2. Go to the base folder where `docker_build.sh` is located
+3. Run the following command in bash:
+	1. `./docker_build.sh` (may need to first run `chmod +x docker_build.sh` to
+		give the file executable rights)
+4. Generate secrets.yml using secrets.example.yml as a template, OR with
+	`./gen-secrets.sh` which will create a persistent docker volume explicitly
+	for heimdall secret keys.
+5. Jump to [Running Docker Container](#running-docker-container)
+
+##### Manual Build Steps
+1. Install Docker
+2. Navigate to base folder where `docker-compose.yml` is located
+3. Run the following command in a terminal window:
+   1. `docker-compose build`  
+   2. `docker-compose run web rake db:create`
+4. Generate keys for secrets.yml. Use secrets.example.yml for a template.
+	Internally we generate it with `./gen-secrets` through creation of a named
+	volume which is then linked into config/secrets.yml. If you are deploying
+	this container to a docker swarm please use docker secrets as it is far more
+	secure than a named volume.
+5. Jump to [Running Docker Container](#running-docker-container)
+
    
-### Running Docker Container
+##### Running Docker Container
 1. Run the following command in a terminal window:
-   1. `docker-compose up`
+   1. `docker-compose up -d`
 2. Go to `127.0.0.1:3000/heimdall` in a web browser
 
-### Configuration
+##### Stopping the container
+`docker-compose down`
+
+## Usage
+
+You can access a Demo instance if you have access to MITRE's intranet at
+inspec-dev.mitre.org
+
+Once you have an account you can upload json's for evaluations and profiles
+then view them by clicking on the evaluations and profiles tab at the top of
+the page.
+
+To upload through curl you'll need an API key. This is located on your profile
+page which can be reached by clicking on your user name in the top right
+corner, then on profile.
+
+## Configuration
 
 See docker-compose.yml for container configuration
 
-##### Host container off relative url
+#### Host container off relative url
 
-Delete RAILS\_RELATIVE\_URL\_ROOT line from docker-compose.yml and dockerfiles/heimdall/Dockerfile
+Edit RAILS\_RELATIVE\_URL\_ROOT line from docker-compose.yml
 
-##### Switch container to dev mode
+#### Switch container to dev mode
 
-Delete RAILS\_ENV lines from from docker-compose.yml and dockerfiles/heimdall/Dockerfile
+Set RAILS\_ENV = to development in docker-compose.yml
 
-#### Get keys
+## Development
 
-List containers, and take note of the full name of the heimdall\_web image's container. *The container name is the rightmost column NAME.*
+Clone, edit, then please submit a PR with an issue number associated.
 
-``` bash
-docker container ps
-``` 
+## Licensing and Authors
 
-Then copy the secrets file out of the container, replace heimdall\_web\_1 with your container's name.
+### Authors
+	* Robert Thew 
+	* Matthew Dromazos
 
-``` bash
-docker cp heimdall_web_1:/var/www/heimdall/config/secrets.yml  
-```
+### License
+	* This project is dual-licensed under the terms of the Apache license 2.0 (apache-2.0)
+	* This project is dual-licensed under the terms of the Creative Commons Attribution Share Alike 4.0 (cc-by-sa-4.0)
 
-
-This README would normally document whatever steps are necessary to get the
-application up and running.
-
-Things you may want to cover:
-
-* Ruby version
-
-* System dependencies
-
-* Configuration
-
-* Database creation
-
-* Database initialization
-
-* How to run the test suite
-
-* Services (job queues, cache servers, search engines, etc.)
-
-* Deployment instructions
-
-* ...
