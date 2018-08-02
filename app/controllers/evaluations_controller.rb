@@ -6,7 +6,12 @@ class EvaluationsController < ApplicationController
   # GET /evaluations
   # GET /evaluations.json
   def index
-    @evaluations = current_user ? current_user.readable_evaluations : Evaluation.all
+    if current_user
+      @evaluations = current_user.readable_evaluations
+    else
+      @circle = Circle.where(name: 'Public').try(:first)
+      @evaluations = @circle.present? ? @circle.evaluations : []
+    end
   end
 
   # GET /evaluations/1

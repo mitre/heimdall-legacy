@@ -52,7 +52,8 @@
                     <p class="text-muted font-13"><strong>Email:</strong>  <span class="m-l-15"><%= @user.email %></span></p>
                     <p class="text-muted font-13"><strong>First Name:</strong>  <span class="m-l-15"><%= @user.first_name %></span></p>
                     <p class="text-muted font-13"><strong>Last Name:</strong>  <span class="m-l-15"><%= @user.last_name %></span></p>
-                    <p class="text-muted font-13"><strong>Roles:</strong>  <span class="m-l-15"><%= @user.role_names.join(", ") %></span></p>
+                    <p class="text-muted font-13"><strong>Roles:</strong>  <span class="m-l-15"><%= @user.role_names.uniq.join(", ") %></span></p>
+                    <p class="text-muted font-13"><strong>Circles:</strong>  <span class="m-l-15"><%= @user.my_circles.map(&:name).join(", ") %></span></p>
                     <p class="text-muted font-13"><strong>Account Type:</strong>  <span class="m-l-15"><%= @user._type %></span></p>
                     <p class="text-muted font-13"><strong>API Key:</strong>  <span class="m-l-15"><%= @user.api_key %></span></p>
                     <% if @user._type == 'DbUser' && @user == current_user %>

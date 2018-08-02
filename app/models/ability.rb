@@ -38,6 +38,18 @@ class Ability
       if user.has_role?(:admin)
         can :manage, :all
       end
+    else
+      user = User.new
+      circle = Circle.where(name: 'Public').try(:first)
+      if circle.present?
+        can :read, circle
+        can [:read], Evaluation do |evaluation|
+          circle.evaluations.map(&:id).include?(evaluation.id)
+        end
+        can [:read], Profile do |profile|
+          circle.readable_profiles.map(&:id).include?(profile.id)
+        end
+      end
     end
   end
 end

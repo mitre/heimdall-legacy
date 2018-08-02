@@ -23,6 +23,7 @@
               <tr>
                 <th>Name</th>
                 <th>Owner</th>
+                <th>Edit</th>
                 <th></th>
               </tr>
 
@@ -33,6 +34,11 @@
                       <%= link_to circle.name, circle_path(circle) %>
                     <% else %>
                       <%= circle.name %>
+                    <% end %>
+                  </td>
+                  <td>
+                    <% if can? :read, circle %>
+                      <%= link_to 'Edit', edit_circle_path(circle) %>
                     <% end %>
                   </td>
                   <td><%= circle.created_by.try(:email) %></td>

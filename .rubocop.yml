@@ -10,6 +10,7 @@ AllCops:
     - 'lib/bundles/inspec-init/templates/**/*'
     - 'www/demo/**/*'
     - 'bin/*'
+    - 'app/models/ability.rb'
     - 'config/initializers/rolify.rb'
 AlignParameters:
   Enabled: true

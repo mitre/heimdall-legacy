@@ -15,4 +15,10 @@ FactoryBot.define do
       after(:create) { |user| user.add_role(:admin) }
     end
   end
+
+  factory :old_user, class: DbUser do
+    sequence(:email) { |n| "user_#{n}@example.com" }
+    password 'foobar'
+    password_confirmation 'foobar'
+  end
 end

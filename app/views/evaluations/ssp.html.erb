@@ -226,7 +226,7 @@ ul li:hover>ul {
       <% end %>
     <% end %>
   <% end %>
-  
+
   document.addEventListener("turbolinks:load", function() {
     $('li').click(function(ev) {
         $(this).find('>ul').slideToggle();

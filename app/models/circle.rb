@@ -8,6 +8,14 @@ class Circle
   has_and_belongs_to_many :profiles
   validates_presence_of :name
 
+  def readable_profiles
+    retval = profiles
+    evaluations.each do |eval|
+      retval += eval.profiles
+    end
+    retval.uniq(&:id).sort_by(&:name)
+  end
+
   def recents
     recents = {}
     recents = fill_recents(recents, evaluations)

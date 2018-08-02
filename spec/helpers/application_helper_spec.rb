@@ -49,6 +49,15 @@ RSpec.describe ApplicationHelper, type: :helper do
     end
   end
 
+  describe 'flash_class' do
+    it 'get as css label for a flash message' do
+      expect(helper.flash_class('notice')).to eq('alert alert-info')
+      expect(helper.flash_class('success')).to eq('alert alert-success')
+      expect(helper.flash_class('error')).to eq('alert alert-error')
+      expect(helper.flash_class('alert')).to eq('alert alert-error')
+    end
+  end
+
   context 'with findings' do
     let(:findings) { { not_a_finding: 23, open: 43, not_reviewed: 23, not_tested: 10, not_applicable: 18 } }
 
