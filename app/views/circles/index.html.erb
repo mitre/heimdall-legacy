@@ -42,7 +42,7 @@
                     <% end %>
                   </td>
                   <td><%= circle.created_by.try(:email) %></td>
-                  <td><% if can? :delete, circle %><%= link_to 'Destroy', circle, method: :delete, data: { confirm: 'Are you sure?' } %><% end %></td>
+                  <td><% if can?(:delete, circle) && circle.name != 'Public' %><%= link_to 'Destroy', circle, method: :delete, data: { confirm: 'Are you sure?' } %><% end %></td>
                 </tr>
               <% end %>
             </table>
