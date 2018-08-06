@@ -5,7 +5,7 @@ Heimdall is a centralized InSpec evaluations aggregation tool.
 ## Description
 Heimdall supports viewing of InSpec profiles and evaluations in a convenient
 interface.  Data uploads can be automated through usage of curl, and added as
-step after an inspec pipeline stage. 
+a step after an inspec pipeline stage. 
 
 ## Installation 
 ### Dependencies
@@ -16,7 +16,7 @@ If you wish to use docker, then the only dependency is:
 
 If you wish to use ruby and are on ubuntu, then the dependencies are:
   * Ruby 2.4.4
-  * build-essentials (your distributions gcc package)
+  * build-essentials (your distribution's gcc package)
   * Bundler
   * libpq-dev 
   * nodejs
@@ -25,7 +25,7 @@ If you wish to use ruby and are on ubuntu, then the dependencies are:
 
 This mode is primarily for developers, production heimdall instances should be
 deployed as containers.
-1. Install dependcies
+1. Install dependencies
 	On ubuntu: `apt-get install build-essentials libpq-dev nodejs`
 2. Install ruby 2.4.4
 3. Run the following in a terminal
