@@ -5,7 +5,12 @@ class ProfilesController < ApplicationController
   # GET /profiles
   # GET /profiles.json
   def index
-    @profiles = current_user ? current_user.readable_profiles : Profile.all
+    if current_user
+      @profiles = current_user.readable_profiles
+    else
+      @circle = Circle.where(name: 'Public').try(:first)
+      @profiles = @circle.present? ? @circle.readable_profiles : []
+    end
   end
 
   # GET /profiles/1

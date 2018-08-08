@@ -23,6 +23,7 @@
               <tr>
                 <th>Name</th>
                 <th>Owner</th>
+                <th>Edit</th>
                 <th></th>
               </tr>
 
@@ -35,8 +36,13 @@
                       <%= circle.name %>
                     <% end %>
                   </td>
+                  <td>
+                    <% if can? :read, circle %>
+                      <%= link_to 'Edit', edit_circle_path(circle) %>
+                    <% end %>
+                  </td>
                   <td><%= circle.created_by.try(:email) %></td>
-                  <td><% if can? :delete, circle %><%= link_to 'Destroy', circle, method: :delete, data: { confirm: 'Are you sure?' } %><% end %></td>
+                  <td><% if can?(:delete, circle) && circle.name != 'Public' %><%= link_to 'Destroy', circle, method: :delete, data: { confirm: 'Are you sure?' } %><% end %></td>
                 </tr>
               <% end %>
             </table>

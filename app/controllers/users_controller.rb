@@ -51,7 +51,6 @@ class UsersController < ApplicationController
     role_user = User.find(params[:user_id])
     role = params[:role].to_sym
     role_user.remove_role(role)
-    logger.debug "Removing #{role} from #{role_user.email}"
     redirect_to users_url, notice: 'Role was deleted.'
   end
 
@@ -102,7 +101,7 @@ class UsersController < ApplicationController
   private
 
   def must_be_admin
-    unless current_user && current_user.has_role?(:admin)
+    unless current_user&.has_role?(:admin)
       redirect_to root_url, notice: 'Must be admin to access Users page'
     end
   end

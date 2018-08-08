@@ -8,6 +8,14 @@ class Circle
   has_and_belongs_to_many :profiles
   validates_presence_of :name
 
+  def readable_profiles
+    retval = profiles
+    evaluations.each do |eval|
+      retval += eval.profiles
+    end
+    retval.uniq(&:id).sort_by(&:name)
+  end
+
   def recents
     recents = {}
     recents = fill_recents(recents, evaluations)
@@ -26,7 +34,7 @@ class Circle
   def fill_recents(recents, recent_objs)
     recent_objs.each do |obj|
       next if obj.created_at.nil?
-      key = obj.created_at.strftime('%d %b.%Y')
+      key = obj.created_at.beginning_of_day
       recents[key] = [] unless recents.key?(key)
       recents[key] << obj
     end

@@ -16,7 +16,7 @@
       <!-- small box -->
       <div class="small-box bg-aqua" id="eval_info">
         <div class="inner">
-          <h3><%= Evaluation.all.count %></h3>
+          <h3><%= @eval_count %></h3>
 
           <p>Evaluations</p>
         </div>
@@ -57,7 +57,7 @@
       <!-- small box -->
       <div class="small-box bg-green" id="profile_info">
         <div class="inner">
-          <h3><%= Profile.all.count %></h3>
+          <h3><%= @profile_count %></h3>
 
           <p>Profiles</p>
         </div>
@@ -119,7 +119,7 @@
         <!-- timeline time label -->
         <li class="time-label">
             <span class="bg-red">
-                <%= tm %>
+                <%= tm.strftime('%d %b.%Y') %>
             </span>
         </li>
         <!-- /.timeline-label -->
@@ -142,7 +142,7 @@
                     <% elsif item_class == Profile %>
                       Name: <%= item.name %>, Title: <%= item.title %>, Version: <%= item.version %>
                     <% elsif item_class == User %>
-                      Email: <%= item.email %>, Roles: <%= item.role_names.join(", ") %>
+                      Email: <%= item.email %>, Roles: <%= item.role_names.uniq.join(", ") %>
                     <% end %>
                   </div>
 

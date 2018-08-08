@@ -5,18 +5,24 @@ class User
   include Mongoid::Timestamps
   include Mongoid::Userstamps::User
   rolify
-  after_create :assign_default_role
+  after_create :assign_default_role, :add_to_public_circle
 
   field :first_name, type: String
   field :last_name, type: String
   field :api_key, type: Mongoid::EncryptedString
   mount_uploader :image, ImageUploader
-  
-  # new users get assigned the :editor role by default
+
   scope :recent, ->(num) { order(created_at: :desc).limit(num) }
 
+  # new users get assigned the :editor role by default
   def assign_default_role
     add_role(:editor) if roles.blank?
+  end
+
+  # all users get added to the public circle
+  def add_to_public_circle
+    @circle = Circle.where(name: 'Public').try(:first)
+    add_role(:member, @circle) if @circle
   end
 
   # list of a user's role names
@@ -29,17 +35,28 @@ class User
   end
 
   def readable_evaluations
-    retval = Evaluation.where(created_by: id)
-    my_circles.each do |circle|
-      retval += circle.evaluations
+    if has_role?(:admin)
+      retval = Evaluation.all
+    else
+      retval = Evaluation.where(created_by: id)
+      my_circles.each do |circle|
+        retval += circle.evaluations
+      end
     end
     retval.uniq(&:id).sort_by { |t| [t.profiles.map(&:name).join(', '), t.start_time.nil? ? 0 : t.start_time.to_i] }
   end
 
   def readable_profiles
-    retval = Profile.where(created_by: id)
-    my_circles.each do |circle|
-      retval += circle.profiles
+    if has_role?(:admin)
+      retval = Profile.all
+    else
+      retval = Profile.where(created_by: id)
+      readable_evaluations.each do |eval|
+        retval += eval.profiles
+      end
+      my_circles.each do |circle|
+        retval += circle.profiles
+      end
     end
     retval.uniq(&:id).sort_by(&:name)
   end
@@ -53,26 +70,12 @@ class User
   end
 
   def readable_evaluation?(eval_id)
-    Rails.logger.debug "readable_evaluation?(#{eval_id})"
-    ids = Evaluation.where(created_by: id).map(&:id)
-    Rails.logger.debug "ids: #{ids.inspect} - include? #{ids.include? eval_id}"
-    return true if ids.include? eval_id
-    my_circles.each do |circle|
-      ids = circle.evaluations.map(&:id)
-      Rails.logger.debug "circle #{circle.name} #{ids.inspect} - include? #{ids.include? eval_id}"
-    end
+    ids = readable_evaluations.map(&:id)
     ids.include? eval_id
   end
 
   def readable_profile?(profile_id)
-    Rails.logger.debug "readable_profile?(#{profile_id})"
-    ids = Profile.where(created_by: id).map(&:id)
-    Rails.logger.debug "ids: #{ids.inspect} - include? #{ids.include? profile_id}"
-    return true if ids.include? profile_id
-    my_circles.each do |circle|
-      ids = circle.profiles.map(&:id)
-      Rails.logger.debug "circle #{circle.name} #{ids.inspect} - include? #{ids.include? profile_id}"
-    end
+    ids = readable_profiles.map(&:id)
     ids.include? profile_id
   end
 end

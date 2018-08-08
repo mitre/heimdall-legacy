@@ -16,9 +16,11 @@
       <div class="box box-primary shown" id="circle_info">
         <div class="box-header with-border">
           <h3 class="box-title">Circle Information</h3>
-          <%= link_to 'Destroy', @circle, method: :delete, class: "btn btn-danger pull-right", data: { confirm: 'Are you sure?' } %>
-          <button type="button" id="edit_btn" class="btn btn-primary pull-right margin-right"><i class="fa fa-edit"></i> Edit
-          </button>
+          <% unless @circle.name == 'Public' %>
+            <% if can?(:delete, @circle) && @circle.name != 'Public' %><%= link_to 'Destroy', @circle, method: :delete, class: "btn btn-danger pull-right", data: { confirm: 'Are you sure?' } %><% end %>
+            <button type="button" id="edit_btn" class="btn btn-primary pull-right margin-right"><i class="fa fa-edit"></i> Edit
+            </button>
+          <% end %>
         </div>
         <!-- /.box-header -->
 
