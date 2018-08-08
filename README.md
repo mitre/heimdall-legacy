@@ -11,7 +11,7 @@ a step after an inspec pipeline stage.
 ### Dependencies
 You can setup a deployment/development environment through bundler or docker.
 
-If you wish to use docker, then the only dependency is:
+If you wish to use docker, then the dependencies are:
   * Docker
   * docker-compose (installable with pip)
 
@@ -91,6 +91,10 @@ corner, then on profile.
 ## Configuration
 
 See docker-compose.yml for container configuration
+
+#### Build container from behind an Intercepting proxy
+
+Contact us for advice, we'll be able to send most people our setup.
 
 #### Host container off relative url
 
