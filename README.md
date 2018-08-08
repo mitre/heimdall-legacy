@@ -6,10 +6,9 @@ _These steps need to be performed the first time you build the docker containers
 You also need to run these commands if you perform any changes to the code base to rebuild the containers._
 
 ##### Automated Build Steps
-1. Go to the base folder where `docker_build.sh` is located
-2. Run the following command:
+1. Run the following command from the base folder (where it is located:
    1. `./docker_build.sh` (may need to first run `chmod +x docker_build.sh` to give the file executable rights)
-3. Jump to [Running Docker Container](#running-docker-container)
+2. Jump to [Running Docker Container](#running-docker-container)
 
 ##### Manual Build Steps
 1. Navigate to base folder where `docker-compose.yml` is located
