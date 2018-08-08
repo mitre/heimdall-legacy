@@ -60,7 +60,7 @@ which allows anonymous access.
 	If you are deploying this container to a docker swarm please use docker
 	secrets as it is far more secure than a named volume._
 5. Run the following commands in a terminal window from the heimdall source directory:
-   * `docker-compose run web rake db:create`
+	* `docker-compose run web rake db:create`
 	* `docker-compose run web rake db:migrate
 6. Jump to [Running Docker Container](#running-docker-container)
 
@@ -73,7 +73,7 @@ Once you have the container you can run it with:
 2. Go to `127.0.0.1:3000/heimdall` in a web browser
 
 ##### Stopping the Container
-`docker-compose down`
+`docker-compose down` # From the source directory you started from
 
 ## Usage
 
