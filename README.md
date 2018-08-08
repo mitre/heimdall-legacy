@@ -59,9 +59,9 @@ which allows anonymous access.
 	creates a named volume which is symlinked to config/secrets.yml at runtime.
 	If you are deploying this container to a docker swarm please use docker
 	secrets as it is far more secure than a named volume._
-5. Run the following commands in a terminal window from the heimdall source directory:
-	* `docker-compose run web rake db:create`
-	* `docker-compose run web rake db:migrate
+5. Run one of the following commands in a terminal window from the heimdall source directory:
+	* `docker-compose run web rake db:reset` *This destroys and rebuilds the db*
+	* `docker-compose run web rake db:migrate` *This updates the db*
 6. Jump to [Running Docker Container](#running-docker-container)
 
    
@@ -77,12 +77,17 @@ Once you have the container you can run it with:
 
 ## Usage
 
-You can access a Demo instance if you have access to MITRE's intranet at
-inspec-dev.mitre.org
+You can access a Demo instance if you have access to the company's intranet at
+https://inspec-dev.mitre.org
+
+You can login via the company LDAP server, or by creating a new account.
 
 Once you have an account you can upload jsons for evaluations and profiles
 then view them by clicking on the evaluations and profiles tab at the top of
 the page.
+
+*When uploading data you may go to the circles tab, and select public. This will
+allow all vistors to view the profile/evaluation you uploaded.*
 
 To upload through curl you'll need an API key. This is located on your profile
 page which can be reached by clicking on your user name in the top right

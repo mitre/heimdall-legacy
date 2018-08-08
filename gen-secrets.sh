@@ -1,6 +1,6 @@
 #!/bin/bash
 
-[[ "$@" ~= "-h" ]] && cat <<EOF
+[[ "$@" =~ "-h" ]] && cat <<EOF
 ./$0 [[ --overwrite]]
 
 $0 generates a named volume of heimdall_heimdall_secrets which contains random
@@ -11,7 +11,7 @@ directory for ease of use.
 EOF
 
 # Exit if volume exists
-docker inspect heimdall_heimdall_secrets && [[ $1 == --overwrite ]] || exit 0
+docker inspect heimdall_heimdall_secrets >/dev/null 2>/dev/null && [[ $1 != --overwrite ]] && exit 0
 
 docker volume create heimdall_heimdall_secrets
 docker run -v heimdall_heimdall_secrets:/srv/secrets --name helper busybox true
