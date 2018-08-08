@@ -13,6 +13,7 @@ You can setup a deployment/development environment through bundler or docker.
 
 If you wish to use docker, then the only dependency is:
   * Docker
+  * docker-compose (installable with pip)
 
 If you wish to use ruby and are on ubuntu, then the dependencies are:
   * Ruby 2.4.4
@@ -21,10 +22,10 @@ If you wish to use ruby and are on ubuntu, then the dependencies are:
   * libpq-dev 
   * nodejs
 
-### Run directly with Ruby
+### Run directly with Ruby (Instead of Docker)
 
-This mode is primarily for developers, production heimdall instances should be
-deployed as containers.
+This mode is primarily for developers, shared heimdall instances should be
+deployed in production mode.
 1. Install dependencies
 	On ubuntu: `apt-get install build-essentials libpq-dev nodejs`
 2. Install ruby 2.4.4
@@ -39,32 +40,33 @@ deployed as containers.
 _These steps need to be performed the first time you build the docker
 containers, and whenever you edit the code base._
 
-##### Automated Build Steps
-1. Install Docker
-2. Go to the base folder where `docker_build.sh` is located
-3. Run the following command in bash:
-  * `./docker_build.sh` (may need to first run `chmod +x docker_build.sh` to 
-  give the file executable rights)
-4. Generate secrets.yml using secrets.example.yml as a template, OR with
-	`./gen-secrets.sh` which will create a persistent docker volume explicitly
-	for heimdall secret keys.
-5. Jump to [Running Docker Container](#running-docker-container)
+#### Login Configuration
+If you would like to use your organization's internal User authentication
+service, when deploying the dockerized Heimdall instance, you'll need to edit
+config/ldap.yml to point to your organization's LDAP server. *You do not have
+to use your internal LDAP. However, people will have to create an account in
+Heimdall to perform most actions* You may view ldap.example.yml for how
+authentication of people's internal email addresses works with a LDAP server
+which allows anonymous access.
 
-##### Manual Build Steps
+#### Manual Build Steps
 1. Install Docker
-2. Navigate to base folder where `docker-compose.yml` is located
+2. Navigate to the base folder where `docker-compose.yml` is located
 3. Run the following command in a terminal window:
    1. `docker-compose build`  
    2. `docker-compose run web rake db:create`
+	3. `docker-compose run web rake db:migrate
 4. Generate keys for secrets.yml. Use secrets.example.yml for a template.
-	Internally we generate it with `./gen-secrets` through creation of a named
-	volume which is then linked into config/secrets.yml. If you are deploying
+	_Internally we generate it with `./gen-secrets` through creation of a named
+	volume which is then symlinked to config/secrets.yml. If you are deploying
 	this container to a docker swarm please use docker secrets as it is far more
-	secure than a named volume.
+	secure than a named volume._
 5. Jump to [Running Docker Container](#running-docker-container)
 
    
-##### Running Docker Container
+#### Running Docker Container
+Once you have the container you can run it with:
+
 1. Run the following command in a terminal window:
    * `docker-compose up -d`
 2. Go to `127.0.0.1:3000/heimdall` in a web browser
