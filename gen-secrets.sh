@@ -1,6 +1,14 @@
 #!/bin/bash
 
-[[ $1 == --overwrite ]]
+[[ "$@" ~= "-h" ]] && cat <<EOF
+./$0 [[ --overwrite]]
+
+$0 generates a named volume of heimdall_heimdall_secrets which contains random
+keys and other initial secrets. The secrets file is left in the config/
+directory for ease of use.
+
+	--overwrite : Will overwrite an existing set of secrets in the named volume
+EOF
 
 # Exit if volume exists
 docker inspect heimdall_heimdall_secrets && [[ $1 == --overwrite ]] || exit 0
@@ -10,7 +18,8 @@ docker run -v heimdall_heimdall_secrets:/srv/secrets --name helper busybox true
 
 if [[ ! -a config/secrets.yml ]]
 then
-	echo "Generated secrets."
+	echo "Generating secrets."
+	touch config/secrets.yml && chmod 700 config/secrets.yml
 	cat >config/secrets.yml <<EOF 
 development:
   secret_key_base: d26decda541d849368ddc0655d5fd63bfb246935443eedb1ab2fb15762161f6da3ad665aeed166bfd86b6f43ce87f62fabad9523ea5e6a0b29dbd49d6aba7502
@@ -47,6 +56,5 @@ then
 
 fi
 
+echo Copying secrets into named volume.
 docker cp config/secrets.yml helper:/srv/secrets/
-
-chmod 640 config/secrets.yml

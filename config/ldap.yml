@@ -48,7 +48,9 @@ test:
 production:
   host: ldap-user.mitre.org
   port: 636
+# Check if email is in the Account Database
   attribute: mail
+# Allow people in Organization Unit: "People" of Organization: "mitre.org"
   base: ou=People,o=mitre.org
   # ssl: start_tls
   ssl: true

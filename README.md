@@ -52,16 +52,17 @@ which allows anonymous access.
 #### Manual Build Steps
 1. Install Docker
 2. Navigate to the base folder where `docker-compose.yml` is located
-3. Run the following command in a terminal window:
-   1. `docker-compose build`  
-   2. `docker-compose run web rake db:create`
-	3. `docker-compose run web rake db:migrate
+3. Run the following command in a terminal window from the heimdall base directory:
+   * `docker-compose build`  
 4. Generate keys for secrets.yml. Use secrets.example.yml for a template.
-	_Internally we generate it with `./gen-secrets` through creation of a named
-	volume which is then symlinked to config/secrets.yml. If you are deploying
-	this container to a docker swarm please use docker secrets as it is far more
-	secure than a named volume._
-5. Jump to [Running Docker Container](#running-docker-container)
+	_Internally we generate it with the shell script `./gen-secrets.sh` Which
+	creates a named volume which is symlinked to config/secrets.yml at runtime.
+	If you are deploying this container to a docker swarm please use docker
+	secrets as it is far more secure than a named volume._
+5. Run the following commands in a terminal window from the heimdall base directory:
+   * `docker-compose run web rake db:create`
+	* `docker-compose run web rake db:migrate
+6. Jump to [Running Docker Container](#running-docker-container)
 
    
 #### Running Docker Container
