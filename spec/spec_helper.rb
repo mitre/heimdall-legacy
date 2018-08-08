@@ -76,7 +76,7 @@ RSpec.configure do |config|
       .with(headers: { 'Accept'=>'*/*', 'User-Agent'=>'Ruby' })
       .to_return(status: 200, body: 'stubbed response', headers: {})
 
-    stub_request(:get, 'https://gitlab.mitre.org/api/v3/projects')
+    stub_request(:get, 'https://gitlab.company.com/api/v3/projects')
       .with(headers: {
               'Accept'=>'application/json',
               'Authorization'=>'Bearer MyString5345345645766',
@@ -85,7 +85,7 @@ RSpec.configure do |config|
             })
       .to_return(status: 200, body: '', headers: {})
 
-    stub_request(:get, 'https://gitlab.mitre.org/api/v3/projects')
+    stub_request(:get, 'https://gitlab.company.com/api/v3/projects')
       .with(headers: {
               'Accept'=>'application/json',
               'Authorization'=>'Bearer MyString5345345645766',
@@ -112,7 +112,7 @@ RSpec.configure do |config|
               'User-Agent'=>'Octokit Ruby Gem 4.9.0'
             })
       .to_return(status: 200, body: '', headers: {})
-    stub_request(:get, 'https://gitlab.mitre.org/api/v3/projects/12187/repository/tree')
+    stub_request(:get, 'https://gitlab.company.com/api/v3/projects/12187/repository/tree')
       .with(headers: {
               'Accept'=>'application/json',
               'Authorization'=>'Bearer MyString5345345645766',
@@ -123,7 +123,7 @@ RSpec.configure do |config|
            {"id": "d564d0bc3dd917926892c55e3706cc116d5b165e", "name": "libraries", "type": "tree", "path": "libraries", "mode": "040000"},
            {"id": "8e52bbc25b0fe1fec20ba890e0811e529f56b12c", "name": "README.md", "type": "blob", "path": "README.md", "mode": "100644"},
            {"id": "3c969e2cfe52151e7a97e61e95570cd7ae44a663", "name": "inspec.yml", "type": "blob", "path": "inspec.yml", "mode": "100644"}]', headers: {})
-    stub_request(:get, 'https://gitlab.mitre.org/api/v3/projects/12187/repository/tree')
+    stub_request(:get, 'https://gitlab.company.com/api/v3/projects/12187/repository/tree')
       .with(headers: {
               'Accept'=>'application/json',
               'Authorization'=>'Bearer MyString5345345645766',
@@ -134,7 +134,7 @@ RSpec.configure do |config|
             {"id": "d564d0bc3dd917926892c55e3706cc116d5b165e", "name": "libraries", "type": "tree", "path": "libraries", "mode": "040000"},
             {"id": "8e52bbc25b0fe1fec20ba890e0811e529f56b12c", "name": "README.md", "type": "blob", "path": "README.md", "mode": "100644"},
             {"id": "3c969e2cfe52151e7a97e61e95570cd7ae44a663", "name": "inspec.yml", "type": "blob", "path": "inspec.yml", "mode": "100644"}]', headers: {})
-    stub_request(:get, 'https://gitlab.mitre.org/api/v3/projects/11892/repository/tree')
+    stub_request(:get, 'https://gitlab.company.com/api/v3/projects/11892/repository/tree')
       .with(headers: {
               'Accept'=>'application/json',
           'Authorization'=>'Bearer MyString5345345645766',
@@ -142,7 +142,7 @@ RSpec.configure do |config|
           'User-Agent'=>'Gitlab Ruby Gem 4.3.0'
             })
       .to_return(status: 200, body: '', headers: {})
-    stub_request(:get, 'https://gitlab.mitre.org/api/v3/projects/11892/repository/tree')
+    stub_request(:get, 'https://gitlab.company.com/api/v3/projects/11892/repository/tree')
       .with(headers: {
               'Accept'=>'application/json',
           'Authorization'=>'Bearer MyString5345345645766',
@@ -150,7 +150,7 @@ RSpec.configure do |config|
           'User-Agent'=>'Gitlab Ruby Gem 4.4.0'
             })
       .to_return(status: 200, body: '', headers: {})
-    stub_request(:get, 'https://gitlab.mitre.org/api/v3/projects/11870/repository/tree')
+    stub_request(:get, 'https://gitlab.company.com/api/v3/projects/11870/repository/tree')
       .with(headers: {
               'Accept'=>'application/json',
            'Authorization'=>'Bearer MyString5345345645766',
@@ -158,7 +158,7 @@ RSpec.configure do |config|
            'User-Agent'=>'Gitlab Ruby Gem 4.3.0'
             })
       .to_return(status: 200, body: '', headers: {})
-    stub_request(:get, 'https://gitlab.mitre.org/api/v3/projects/11870/repository/tree')
+    stub_request(:get, 'https://gitlab.company.com/api/v3/projects/11870/repository/tree')
       .with(headers: {
               'Accept'=>'application/json',
            'Authorization'=>'Bearer MyString5345345645766',

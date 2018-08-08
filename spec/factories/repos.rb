@@ -1,7 +1,7 @@
 FactoryBot.define do
   factory :repo, class: Repo do
-    name 'GitLab MITRE'
-    api_url 'https://gitlab.mitre.org/api/v3'
+    name 'GitLab Company'
+    api_url 'https://gitlab.company.com/api/v3'
     repo_type 'GitLab'
 
     trait :github do
@@ -10,8 +10,8 @@ FactoryBot.define do
   end
 
   factory :gitlab_repo, class: Repo do
-    name 'GitLab MITRE'
-    api_url 'https://gitlab.mitre.org/api/v3'
+    name 'GitLab Company'
+    api_url 'https://gitlab.company.com/api/v3'
     repo_type 'GitLab'
   end
 
