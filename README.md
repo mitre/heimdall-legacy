@@ -6,7 +6,7 @@ _These steps need to be performed the first time you build the docker containers
 You also need to run these commands if you perform any changes to the code base to rebuild the containers._
 
 ##### Automated Build Steps
-1. Run the following command from the base folder (where it is located:
+1. Run the following command from base folder (where it is located):
    1. `./docker_build.sh` (may need to first run `chmod +x docker_build.sh` to give the file executable rights)
 2. Jump to [Running Docker Container](#running-docker-container)
 
