@@ -49,6 +49,12 @@ Heimdall to perform most actions* You may view ldap.example.yml for how
 authentication of people's internal email addresses works with a LDAP server
 which allows anonymous access.
 
+#### Automated Build Steps
+1. Run the following commands from base folder (where it is located):
+	1. `./gen-secrets.sh ` (Generate Random keys to be stored in a named Docker volume *Do not run if you've ever run it before*)
+   2. `./docker_build.sh` (may need to first run `chmod +x docker_build.sh` to give the file executable rights)
+2. Jump to [Running Docker Container](#running-docker-container)
+
 #### Manual Build Steps
 1. Install Docker
 2. Navigate to the base folder where `docker-compose.yml` is located
