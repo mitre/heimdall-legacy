@@ -43,15 +43,15 @@ containers, and whenever you edit the code base._
 #### Login Configuration
 If you would like to use your organization's internal User authentication
 service, when deploying the dockerized Heimdall instance, you'll need to edit
-config/ldap.yml to point to your organization's LDAP server. *You do not have
+config/ldap.yml to point to your organization's LDAP server. **You do not have
 to use your internal LDAP. However, people will have to create an account in
-Heimdall to perform most actions* You may view ldap.example.yml for how
+Heimdall to perform most actions** You may view ldap.example.yml for how
 authentication of people's internal email addresses works with a LDAP server
 which allows anonymous access.
 
 #### Automated Build Steps
 1. Run the following commands from base folder (where it is located):
-	1. `./gen-secrets.sh ` (Generate Random keys to be stored in a named Docker volume *Do not run if you've ever run it before*)
+	1. `./gen-secrets.sh ` (Generate Random keys to be stored in a named Docker volume **Do not run if you've ever run it before**)
    2. `./docker_build.sh` (may need to first run `chmod +x docker_build.sh` to give the file executable rights)
 2. Jump to [Running Docker Container](#running-docker-container)
 
@@ -66,8 +66,8 @@ which allows anonymous access.
 	If you are deploying this container to a docker swarm please use docker
 	secrets as it is far more secure than a named volume._
 5. Run one of the following commands in a terminal window from the heimdall source directory:
-	* `docker-compose run web rake db:reset` *This destroys and rebuilds the db*
-	* `docker-compose run web rake db:migrate` *This updates the db*
+	* `docker-compose run web rake db:reset` **This destroys and rebuilds the db**
+	* `docker-compose run web rake db:migrate` **This updates the db**
 6. Jump to [Running Docker Container](#running-docker-container)
 
    
@@ -92,8 +92,8 @@ Once you have an account you can upload jsons for evaluations and profiles
 then view them by clicking on the evaluations and profiles tab at the top of
 the page.
 
-*When uploading data you may go to the circles tab, and select public. This will
-allow all vistors to view the profile/evaluation you uploaded.*
+**When uploading data you may go to the circles tab, and select public. This will
+allow all vistors to view the profile/evaluation you uploaded.**
 
 To upload through curl you'll need an API key. This is located on your profile
 page which can be reached by clicking on your user name in the top right
@@ -122,8 +122,10 @@ Clone, edit, then please submit a PR with an issue number associated.
 ## Licensing and Authors
 
 ### Authors
-	* Robert Thew 
+	* Robert Thew
+	* Aaron Lippold
 	* Matthew Dromazos
+	* Luke Malinowski
 
 ### License
 	* This project is dual-licensed under the terms of the Apache license 2.0 (apache-2.0)
