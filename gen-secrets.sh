@@ -18,7 +18,6 @@ docker inspect heimdall_heimdall_secrets >/dev/null 2>/dev/null \
 	&& echo -e "Volume which may hold keys exists. Run '$0 --overwrite' to force generation 
 of new keys. This will break any existing Heimdall database containing users." 1>&2 \
 	&& exit 0
-exit 4
 docker volume create heimdall_heimdall_secrets
 docker run -v heimdall_heimdall_secrets:/srv/secrets --name heim_helper busybox true
 
