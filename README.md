@@ -1,6 +1,6 @@
 # Heimdall
 
-Heimdall is a centralized InSpec evaluations aggregation tool. 
+Heimdall is a centralized aggregation tool for InSpec evaluations . 
 
 ## Description
 Heimdall supports viewing of InSpec profiles and evaluations in a convenient
