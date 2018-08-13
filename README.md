@@ -21,13 +21,14 @@ If you wish to use ruby and are on Ubuntu 16, then the dependencies are:
   * Bundler
   * libpq-dev 
   * nodejs
+  * mongodb
 
 #### Run directly with Ruby (Instead of Docker)
 
 This mode is primarily for developers, shared heimdall instances should be
 deployed in production mode.
 1. Install dependencies
-	- `apt-get install build-essential libpq-dev nodejs libxml2-dev libmagick++-dev -y`
+	- `apt-get install build-essential libpq-dev nodejs libxml2-dev libmagick++-dev mongodb-server -y`
 2. Install ruby 2.4.4
 3. Run the following in a terminal
 	- `bundle install`
