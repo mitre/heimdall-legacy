@@ -27,13 +27,13 @@ If you wish to use ruby and are on Ubuntu 16, then the dependencies are:
 This mode is primarily for developers, shared heimdall instances should be
 deployed in production mode.
 1. Install dependencies
-	`apt-get install build-essential libpq-dev nodejs libxml2-dev libmagick++-dev -y`
+	- `apt-get install build-essential libpq-dev nodejs libxml2-dev libmagick++-dev -y`
 2. Install ruby 2.4.4
 3. Run the following in a terminal
-	1. `bundle install`
-	2. `bundle exec rake db:create` 
-	3. `bundle exec rake db:migrate`
-	4. `bundle exec rails s` Start the server on localhost
+	- `bundle install`
+	- `bundle exec rake db:create` 
+	- `bundle exec rake db:migrate`
+	- `bundle exec rails s` Start the server on localhost
 
 ### Run With Docker
 #### Building Docker Containers
