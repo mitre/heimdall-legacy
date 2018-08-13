@@ -27,7 +27,7 @@ If you wish to use ruby and are on ubuntu, then the dependencies are:
 This mode is primarily for developers, shared heimdall instances should be
 deployed in production mode.
 1. Install dependencies
-	On ubuntu: `apt-get install build-essentials libpq-dev nodejs`
+	On ubuntu: `apt-get install build-essentials libpq-dev nodejs libxml2-dev  imagemagick`
 2. Install ruby 2.4.4
 3. Run the following in a terminal
 	1. `bundle install`
