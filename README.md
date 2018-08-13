@@ -15,7 +15,7 @@ If you wish to use docker, then the dependencies are:
   * Docker
   * docker-compose (installable with pip)
 
-If you wish to use ruby and are on ubuntu, then the dependencies are:
+If you wish to use ruby and are on Ubuntu 16, then the dependencies are:
   * Ruby 2.4.4
   * build-essentials (your distribution's gcc package)
   * Bundler
@@ -27,7 +27,7 @@ If you wish to use ruby and are on ubuntu, then the dependencies are:
 This mode is primarily for developers, shared heimdall instances should be
 deployed in production mode.
 1. Install dependencies
-	On ubuntu 16: `apt-get install build-essential libpq-dev nodejs libxml2-dev libmagick++-dev -y`
+	`apt-get install build-essential libpq-dev nodejs libxml2-dev libmagick++-dev -y`
 2. Install ruby 2.4.4
 3. Run the following in a terminal
 	1. `bundle install`
