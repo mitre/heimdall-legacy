@@ -33,7 +33,7 @@ deployed in production mode.
 	- `bundle install`
 	- `bundle exec rake db:create` 
 	- `bundle exec rake db:migrate`
-	- `bundle exec rails s` Start the server on localhost
+	- `bundle exec rails s` (Start the server on localhost)
 
 ### Run With Docker
 #### Building Docker Containers
