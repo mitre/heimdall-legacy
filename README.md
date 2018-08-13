@@ -22,7 +22,7 @@ If you wish to use ruby and are on Ubuntu 16, then the dependencies are:
   * libpq-dev 
   * nodejs
 
-### Run directly with Ruby (Instead of Docker)
+#### Run directly with Ruby (Instead of Docker)
 
 This mode is primarily for developers, shared heimdall instances should be
 deployed in production mode.
@@ -35,12 +35,12 @@ deployed in production mode.
 	- `bundle exec rake db:migrate`
 	- `bundle exec rails s` (Start the server on localhost)
 
-### Run With Docker
-#### Building Docker Containers
+#### Run With Docker
+##### Building Docker Containers
 _These steps need to be performed the first time you build the docker
 containers, and whenever you edit the code base._
 
-#### Login Configuration
+##### Login Configuration
 If you would like to use your organization's internal User authentication
 service, when deploying the dockerized Heimdall instance, you'll need to edit
 config/ldap.yml to point to your organization's LDAP server. **You do not have
@@ -49,13 +49,13 @@ Heimdall to perform most actions** You may view ldap.example.yml for how
 authentication of people's internal email addresses works with a LDAP server
 which allows anonymous access.
 
-#### Automated Build Steps
+##### Automated Build Steps
 1. Run the following commands from base folder (where it is located):
 	1. `./gen-secrets.sh ` (Generate Random keys to be stored in a named Docker volume **Do not run if you've ever run it before**)
    2. `./docker_build.sh` (may need to first run `chmod +x docker_build.sh` to give the file executable rights)
 2. Jump to [Running Docker Container](#running-docker-container)
 
-#### Manual Build Steps
+##### Manual Build Steps
 1. Install Docker
 2. Navigate to the base folder where `docker-compose.yml` is located
 3. Run the following command in a terminal window from the heimdall source directory:
@@ -71,14 +71,14 @@ which allows anonymous access.
 6. Jump to [Running Docker Container](#running-docker-container)
 
    
-#### Running Docker Container
+##### Running Docker Container
 Once you have the container you can run it with:
 
 1. Run the following command in a terminal window:
    * `docker-compose up -d`
 2. Go to `127.0.0.1:3000/heimdall` in a web browser
 
-##### Stopping the Container
+###### Stopping the Container
 `docker-compose down` # From the source directory you started from
 
 ## Usage
