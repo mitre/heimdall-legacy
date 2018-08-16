@@ -174,7 +174,7 @@ class Evaluation
       hash["platform_#{key}"] = value
     end
     statistics = hash.delete('statistics')
-    statistics.try(:each) do |key, value|
+    statistics&.each do |key, value|
       hash["statistics_#{key}"] = value
     end
     all_profiles, results = Profile.parse hash.delete('profiles')
@@ -205,7 +205,8 @@ class Evaluation
         evaluation.save
       end
       evaluation
-    rescue Mongoid::Errors::UnknownAttribute
+    rescue Mongoid::Errors::UnknownAttribute => e
+      Rails.logger.debug "Mongoid error: #{e.inspect}"
       nil
     end
   end

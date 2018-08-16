@@ -772,7 +772,6 @@ document.addEventListener("turbolinks:load", function() {
     not_find = 0;
     not_test = 0;
     open = 0;
-    ary = [];
     if (d.children) {
       for(var i=0, len=d.children.length; i < len; i++) {
         child1 = d.children[i];
@@ -782,20 +781,17 @@ document.addEventListener("turbolinks:load", function() {
             if (child2.children) {
               for(var k=0, len3=child2.children.length; k < len3; k++) {
                 child3 = child2.children[k];
-                if (!(ary.indexOf(child3.name) >= 0)) {
-                  ary.push(child3.name);
-                  status_value = child3.status_value;
-                  if (status_value == 0.0) {
-                    not_test += 1;
-                  } else if (status_value == 0.2) {
-                    not_app += 1;
-                  } else if (status_value == 0.4) {
-                    not_rev += 1;
-                  } else if (status_value == 0.6) {
-                    not_find += 1;
-                  } else if (status_value == 0.8) {
-                    open += 1;
-                  }
+                status_value = child3.status_value;
+                if (status_value == 0.0) {
+                  not_test += 1;
+                } else if (status_value == 0.2) {
+                  not_app += 1;
+                } else if (status_value == 0.4) {
+                  not_rev += 1;
+                } else if (status_value == 0.6) {
+                  not_find += 1;
+                } else if (status_value == 0.8) {
+                  open += 1;
                 }
               }
             }
