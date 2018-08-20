@@ -1,3 +1,5 @@
+require "inspec_tools"
+
 class Evaluation
   include Mongoid::Document
   include Mongoid::Timestamps
@@ -46,7 +48,13 @@ class Evaluation
   end
 
   def to_ckl
-    InspecTo.ckl(to_json)
+    tool = InspecTools.inspec(to_json)
+    tool.to_ckl
+  end
+
+  def to_xccdf(attribs)
+    tool = InspecTools.inspec(to_json)
+    tool.to_xccdf(attribs)
   end
 
   def force_created_by(user)

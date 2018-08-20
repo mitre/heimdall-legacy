@@ -1,0 +1,176 @@
+<!-- Content Header (Page header) -->
+<section class="content-header">
+  <h1>Evaluation <%= @evaluation.profiles.map(&:name).join(', ') %></h1>
+  <ol class="breadcrumb" data-turbolinks="false">
+    <li><%= link_to ('<i class="fa fa-dashboard"> </i>Dashboard').html_safe, root_path %></li>
+    <li><%= link_to 'Evaluations', evaluations_path %></li>
+    <li><%= link_to 'Evaluation', @evaluation %></li>
+    <li class="active">XCCDF</li>
+  </ol>
+</section>
+
+<section class="content container-fluid">
+  <div class="row">
+    <div class="col-md-6">
+      <div class="box box-primary shown" id="circle_info">
+        <div class="box-header with-border">
+          <h3 class="box-title">XCCDF Attributes</h3>
+          <h5>The XCCDF format contains attributes not present in the InSpec format. To convert to XCCDF you will need to supply these attributes.</h5>
+        </div>
+        <!-- /.box-header -->
+
+        <div class="box-body">
+          <%= form_with(model: @xccdf, url: evaluation_xccdf_path(@evaluation), local: true) do |form| %>
+
+            <div class="form-group">
+              <%= form.label :benchmark_title %>
+              <%= form.text_field :benchmark_title, id: :benchmark_title, class: "form-control"  %>
+            </div>
+
+            <div class="form-group">
+              <%= form.label :benchmark_id %>
+              <%= form.text_field :benchmark_id, id: :benchmark_id, class: "form-control"  %>
+            </div>
+
+            <div class="form-group">
+              <%= form.label :benchmark_description %>
+              <%= form.text_area :benchmark_description, id: :benchmark_description, class: "form-control"  %>
+            </div>
+
+            <div class="form-group">
+              <%= form.label :benchmark_version %>
+              <%= form.text_field :benchmark_version, id: :benchmark_version, class: "form-control"  %>
+            </div>
+
+            <div class="form-group">
+              <%= form.label :benchmark_status %>
+              <%= form.text_field :benchmark_status, id: :benchmark_status, class: "form-control"  %>
+            </div>
+
+            <div class="form-group">
+              <%= form.label :benchmark_status_date %>
+              <%= form.date_field :benchmark_status_date, id: :benchmark_status_date, class: "form-control"  %>
+            </div>
+
+            <div class="form-group">
+              <%= form.label :benchmark_notice%>
+              <%= form.text_field :benchmark_notice, id: :benchmark_notice, class: "form-control"  %>
+            </div>
+
+            <div class="form-group">
+              <%= form.label :benchmark_notice_id, "benchmark.notice.id" %>
+              <%= form.text_field :benchmark_notice_id, id: :benchmark_notice_id, class: "form-control"  %>
+            </div>
+
+            <div class="form-group">
+              <%= form.label :plaintext_notice %>
+              <%= form.text_field :plaintext_notice, id: :plaintext_notice, class: "form-control"  %>
+            </div>
+
+            <div class="form-group">
+              <%= form.label :plaintext_notice_id, "plaintext.notice.id" %>
+              <%= form.text_field :plaintext_notice_id, id: :plaintext_notice_id, class: "form-control"  %>
+            </div>
+
+            <div class="form-group">
+              <%= form.label :reference_href %>
+              <%= form.text_field :reference_href, id: :reference_href, class: "form-control"  %>
+            </div>
+
+            <div class="form-group">
+              <%= form.label :reference_dc_source %>
+              <%= form.text_field :reference_dc_source, id: :reference_dc_source, class: "form-control"  %>
+            </div>
+
+            <div class="form-group">
+              <%= form.label :reference_dc_publisher %>
+              <%= form.text_field :reference_dc_publisher, id: :reference_dc_publisher, class: "form-control"  %>
+            </div>
+
+            <div class="form-group">
+              <%= form.label :reference_dc_title %>
+              <%= form.text_field :reference_dc_title, id: :reference_dc_title, class: "form-control"  %>
+            </div>
+
+            <div class="form-group">
+              <%= form.label :reference_dc_subject %>
+              <%= form.text_field :reference_dc_subject, id: :reference_dc_subject, class: "form-control"  %>
+            </div>
+
+            <div class="form-group">
+              <%= form.label :reference_dc_type %>
+              <%= form.text_field :reference_dc_type, id: :reference_dc_type, class: "form-control"  %>
+            </div>
+
+            <div class="form-group">
+              <%= form.label :reference_dc_identifier %>
+              <%= form.text_field :reference_dc_identifier, id: :reference_dc_identifier, class: "form-control"  %>
+            </div>
+
+            <div class="form-group">
+              <%= form.label :content_ref_href %>
+              <%= form.text_field :content_ref_href, id: :content_ref_href, class: "form-control"  %>
+            </div>
+
+            <div class="form-group">
+              <%= form.label :content_ref_name %>
+              <%= form.text_field :content_ref_name, id: :content_ref_name, class: "form-control"  %>
+            </div>
+
+            <div class="actions">
+              <%= button_tag(type: "submit", class: "btn btn-primary", :formtarget => "_blank") do %>
+                <i class="fa fa-edit"></i> Export 
+              <% end %>
+              <%= link_to ('<i class="fa fa-cancel"></i> Cancel').html_safe, @evaluation, class: "btn btn-info pull-right" %>
+            </div>
+          <% end %>
+
+        </div>
+        <!-- /.box-body -->
+      </div>
+      <!-- /.box -->
+     </div>
+    <!-- /.col 6 -->
+    <div class="col-md-6">
+      <div class="box box-primary">
+        <div class="box-header with-border">
+          <h3 class="box-title">Attributes Example</h3>
+        </div>
+        <!-- /.box-header -->
+        <div class="box-body">
+          <pre>
+            <code class=”language-yaml”>
+              benchmark.title : 'Application 5.x Security Technical Implementation Guide'
+              benchmark.id : "Application_5-x_STIG" 
+
+              benchmark.description : 'This Security Technical Implementation Guide is published as a tool to improve the security of Department of Defense (DoD) information systems. The requirements are derived from the National Institute of Standards and Technology (NIST) 800-53 and related documents. Comments or proposed revisions to this document should be sent via email to the following address: disa.stig_spt@mail.mil.'
+
+              benchmark.version : '1'
+              benchmark.status : 'accepted'
+              benchmark.status.date : "2017-09-27"
+              benchmark.notice : ""
+              benchmark.notice.id : "terms-of-use" 
+              benchmark.plaintext : "Release 1 Benchmark Date 27 Sep 2017"
+              benchmark.plaintext.id : 'release-info'
+
+              reference.href : "http://iase.disa.mil"
+              reference.dc.source : 'STIG.DOD.MIL'
+              reference.dc.publisher : 'DISA'
+              reference.dc.title : 'DPMS Target Application 5.x'
+              reference.dc.subject : 'Application 5.x'
+              reference.dc.type : 'DPMS Target'
+              reference.dc.identifier : '3087'
+
+              content_ref.href : 'DPMS_XCCDF_Benchmark_Application_5-x_STIG.xml'
+              content_ref.name : 'M'
+            </code>
+          </pre>
+        </div>
+        <!-- /.box-body -->
+      </div>
+        <!-- /.box-body -->
+    </div>
+    <!-- /.col 6 -->
+  </div>
+  <!-- /.row -->
+</div>

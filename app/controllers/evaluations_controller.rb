@@ -1,6 +1,6 @@
 class EvaluationsController < ApplicationController
   load_resource
-  authorize_resource only: [:show, :destroy, :upload, :filter, :clear_filter]
+  authorize_resource only: [:show, :destroy, :upload, :filter, :clear_filter, :new_xccdf]
   protect_from_forgery except: [:upload_api]
 
   # GET /evaluations
@@ -156,6 +156,35 @@ class EvaluationsController < ApplicationController
     end
   end
 
+  def xccdf
+    @xccdf = Xccdf.new
+  end
+
+  def create_xccdf
+    @attribs = {}
+    @attribs['benchmark.title'] = xccdf_params[:benchmark_title]
+    @attribs['benchmark.id'] = xccdf_params[:benchmark_id]
+    @attribs['benchmark.descriptiono'] = xccdf_params[:benchmark_description]
+    @attribs['benchmark.version '] = xccdf_params[:benchmark_version]
+    @attribs['benchmark.status'] = xccdf_params[:benchmark_status]
+    @attribs['benchmark.status.date'] = xccdf_params[:benchmark_status_date]
+    @attribs['benchmark.notice'] = xccdf_params[:benchmark_notice]
+    @attribs['benchmark.notice.id'] = xccdf_params[:benchmark_notice_id]
+    @attribs['benchmark.plaintext'] = xccdf_params[:benchmark_plaintext]
+    @attribs['benchmark.plaintext.id'] = xccdf_params[:benchmark_plaintext_id]
+    @attribs['reference.href'] = xccdf_params[:reference_href]
+    @attribs['reference.dc.source'] = xccdf_params[:reference_dc_source]
+    @attribs['reference.dc.publisher'] = xccdf_params[:reference_dc_publisher]
+    @attribs['reference.dc.title'] = xccdf_params[:reference_dc_publisher]
+    @attribs['reference.dc.subject'] = xccdf_params[:reference_dc_subject]
+    @attribs['reference.dc.type'] = xccdf_params[:reference_dc_type]
+    @attribs['reference.dc.identifier'] = xccdf_params[:reference_dc_identifier]
+    @attribs['content_ref.href'] = xccdf_params[:content_ref_href]
+    @attribs['content_ref.name'] = xccdf_params[:content_ref_name]
+    Rails.logger.debug "Attributes: #{@attributes.inspect}"
+    render xml: @evaluation.to_xccdf(@attribs), layout: false
+  end
+
   private
 
   def sign_in_api_user(email, api_key)
@@ -182,5 +211,9 @@ class EvaluationsController < ApplicationController
       filter_label = "#{filter_group.name}: #{filter_group.filters.map(&:to_s).join(', ')}"
     end
     [filters, filter_label]
+  end
+
+  def xccdf_params
+    params.require(:xccdf).permit(:benchmark_title, :benchmark_id, :benchmark_description, :benchmark_version, :benchmark_status, :benchmark_status_date, :benchmark_notice, :benchmark_notice_id, :benchmark_plaintext, :benchmark_plaintext_id, :reference_href, :reference_dc_source, :reference_dc_publisher, :reference_dc_title, :reference_dc_subject, :reference_dc_type, :reference_dc_identifier, :content_ref_href, :content_ref_name)
   end
 end

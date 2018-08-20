@@ -57,7 +57,10 @@ gem 'thor'
 gem 'json'
 gem 'pry'
 
-gem 'inspec_to', :git => "https://gitlab.mitre.org/inspec/inspec_to.git"
+gem 'inspec_tools', :git => "https://github.com/aaronlippold/inspec_tools.git"
+gem 'docsplit'
+gem 'pdftotext'
+gem 'roo'
 
 group :development, :test do
   # Call 'byebug' anywhere in the code to stop execution and get a debugger console

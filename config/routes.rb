@@ -54,6 +54,8 @@ Rails.application.routes.draw do
   match 'profiles/:id/nist(/category/:category)' => 'profiles#nist', as: :profile_nist, :via => :get
   match 'evaluation_upload_api' => 'evaluations#upload_api', as: :upload_evaluation_api, :via => :post
   match 'evaluations/:id/nist(/category/:category)(/status/:status_symbol)' => 'evaluations#nist', as: :evaluation_nist, :via => :get
+  match 'evaluations/:id/xccdf' => 'evaluations#xccdf', as: :evaluation_xccdf, :via => :get
+  match 'evaluations/:id/xccdf' => 'evaluations#create_xccdf', as: :evaluation_create_xccdf, :via => :post
   match 'evaluations_compare' => 'evaluations#compare', as: :evaluations_compare, :via => [:get, :post]
   match 'users/:id/add_role/:user_id/' => 'users#add_role', as: :user_add_role, :via => :post
   match 'users/:id/remove_role/:user_id/:role' => 'users#remove_role', as: :user_remove_role, :via => :delete
