@@ -1,5 +1,4 @@
 .git
 .idea
 .DS_Store
-Gemfile.lock
 dockerfiles

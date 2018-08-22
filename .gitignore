@@ -14,6 +14,7 @@
 config/secrets.yml
 config/ldap.yml
 /public/uploads
+inspec-tools/
 
 rails_best_practices_output.html
 
@@ -49,7 +50,6 @@ build-iPhoneSimulator/
 
 # for a library or gem, you might want to ignore these files since the code is
 # intended to run in multiple environments; otherwise, check them in:
-Gemfile.lock
 .ruby-version
 .ruby-gemset
 

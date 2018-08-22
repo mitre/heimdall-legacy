@@ -50,26 +50,32 @@ Heimdall to perform most actions** You may view ldap.example.yml for how
 authentication of people's internal email addresses works with a LDAP server
 which allows anonymous access.
 
-##### Automated Build Steps
-1. Run the following commands from base folder (where it is located):
-	1. `./gen-secrets.sh ` (Generate Random keys to be stored in a named Docker volume **Do not run if you've ever run it before**)
-   2. `./docker_build.sh` (may need to first run `chmod +x docker_build.sh` to give the file executable rights)
+
+#### Automated Build Steps
+1. Run the following commands from a terminal:
+	1. `git clone https://github.com/aaronlippold/heimdall.git && cd heimdall` # download heimdall and change to it's directory
+	2. `./gen-secrets.sh ` # (Generate Random keys to be stored in a named Docker volume **Do not run if you've ever run it before**)
+  3. `./docker_build.sh` # (may need to first run `chmod +x docker_build.sh` to give the file executable rights)
 2. Jump to [Running Docker Container](#running-docker-container)
 
 ##### Manual Build Steps
 1. Install Docker
-2. Navigate to the base folder where `docker-compose.yml` is located
-3. Run the following command in a terminal window from the heimdall source directory:
+2. Clone this repository
+	* `git clone https://github.com/aaronlippold/heimdall.git`
+3. Navigate to the base folder where `docker-compose.yml` is located
+4. Run the following command in a terminal window from the heimdall source directory:
+   * `git clone https://github.com/aaronlippold/inspec-tools.git`  
+5. Run the following command in a terminal window from the heimdall source directory:
    * `docker-compose build`  
-4. Generate keys for secrets.yml. Use secrets.example.yml for a template.
+6. Generate keys for secrets.yml. Use secrets.example.yml for a template.
 	_Internally we generate it with the shell script `./gen-secrets.sh` Which
 	creates a named volume which is symlinked to config/secrets.yml at runtime.
 	If you are deploying this container to a docker swarm please use docker
 	secrets as it is far more secure than a named volume._
-5. Run one of the following commands in a terminal window from the heimdall source directory:
+7. Run one of the following commands in a terminal window from the heimdall source directory:
 	* `docker-compose run web rake db:reset` **This destroys and rebuilds the db**
 	* `docker-compose run web rake db:migrate` **This updates the db**
-6. Jump to [Running Docker Container](#running-docker-container)
+8. Jump to [Running Docker Container](#running-docker-container)
 
    
 ##### Running Docker Container
