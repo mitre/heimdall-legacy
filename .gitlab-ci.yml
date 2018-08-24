@@ -56,15 +56,21 @@ deploy:
     # The following line implies anonymous ldap authentication
     - sed -i"" -e "/admin_/d" config/ldap.yml
     - pip install docker-compose
-    - chmod +x docker_build.sh
-    - ./docker_build.sh
+    - docker-compose build
+    # Note that we do not reload the schema in the CI tools that will have to
+    # be done manually, by logging into inspec-dev, cloning the repo then
+    # running `docker-compose run web rake db:reset`
+    - docker-compose bundle exec rake db:seed 
+    - docker-compose bundle exec rake db:migrate
     - docker-compose up -d
+
 deploy-swarm:
   stage: deploy 
   image: docker:latest
   only:
     - development
   tags:
+    # These tags imply to use the swarm runner
     - swarm
     - dev
 
