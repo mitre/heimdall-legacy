@@ -57,6 +57,7 @@ Rails.application.routes.draw do
   match 'evaluations/:id/xccdf' => 'evaluations#xccdf', as: :evaluation_xccdf, :via => :get
   match 'evaluations/:id/xccdf' => 'evaluations#create_xccdf', as: :evaluation_create_xccdf, :via => :post
   match 'evaluations_compare' => 'evaluations#compare', as: :evaluations_compare, :via => [:get, :post]
+  match 'evaluations/:id/tag' => 'evaluations#tag', as: :evaluation_tag, :via => :post
   match 'users/:id/add_role/:user_id/' => 'users#add_role', as: :user_add_role, :via => :post
   match 'users/:id/remove_role/:user_id/:role' => 'users#remove_role', as: :user_remove_role, :via => :delete
 

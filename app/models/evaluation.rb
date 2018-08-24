@@ -12,6 +12,7 @@ class Evaluation
   field :statistics_duration, type: String
   field :findings, type: Hash
   field :start_time, type: Time
+  embeds_many :tags, cascade_callbacks: true
   has_many :results, dependent: :destroy
   has_and_belongs_to_many :profiles, dependent: :destroy
   scope :recent, ->(num) { order(created_at: :desc).limit(num) }

@@ -5,4 +5,6 @@ module Constants
     hsh[cf['name']] = cf['children'].size
   end
   NIST_800_53_COUNTS = hsh
+  TAG_NAMES = ['Filename', 'Hostname', 'UUID', 'FISMA System', 'Environment']
+  ENV_TAG_NAMES = %w{sandbox dev test impl prod}
 end

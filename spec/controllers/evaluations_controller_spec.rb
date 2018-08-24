@@ -107,7 +107,7 @@ RSpec.describe EvaluationsController, type: :controller do
     describe 'POST #upload' do
       it 'can upload an evaluation' do
         @file = fixture_file_upload('sample_jsons/good_nginxresults.json', 'text/json')
-        post :upload, params: { file: @file }, session: valid_session
+        post :upload, params: { file: @file,  hostname: 'company.com', environment: 'test' }, session: valid_session
         expect(response).to redirect_to(Evaluation.last)
       end
 
@@ -219,7 +219,7 @@ RSpec.describe EvaluationsController, type: :controller do
       it 'can upload an evaluation with an api_key' do
         @file = fixture_file_upload('sample_jsons/good_nginxresults.json', 'text/json')
         expect {
-          post :upload_api, params: { file: @file, email: user.email, api_key: user.api_key }, session: valid_session
+          post :upload_api, params: { file: @file, email: user.email, api_key: user.api_key, hostname: 'company.com', environment: 'test' }, session: valid_session
         }.to change(Evaluation, :count).by(1)
       end
 
