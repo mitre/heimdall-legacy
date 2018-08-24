@@ -44,6 +44,8 @@ sync-repo:
 deploy:
   stage: deploy 
   image: docker:latest
+  except:
+    - schedules
 
   before_script:
     # add the MITRE certificates to the docker image
