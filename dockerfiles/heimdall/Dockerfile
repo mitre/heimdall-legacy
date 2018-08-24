@@ -1,5 +1,5 @@
-# Use alpine 3.5 as it is the most recent alpine with an old enough imagemagick
 FROM alpine:3.5
+# Use alpine 3.5 as it is the most recent alpine with an old enough imagemagick
 
 # sed is build only should be removed at TODO-remove-at-release
 RUN apk --no-cache update && apk --no-cache  --update add ruby ruby-irb ruby-json ruby-rake \
