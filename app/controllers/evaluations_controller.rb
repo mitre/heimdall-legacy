@@ -1,6 +1,6 @@
 class EvaluationsController < ApplicationController
   load_resource
-  authorize_resource only: [:show, :destroy, :upload, :filter, :clear_filter, :new_xccdf]
+  authorize_resource only: [:show, :destroy, :upload, :filter, :clear_filter, :tag, :new_xccdf]
   protect_from_forgery except: [:upload_api]
 
   # GET /evaluations
@@ -106,11 +106,23 @@ class EvaluationsController < ApplicationController
     redirect_to @evaluation
   end
 
+  def tag
+    @evaluation.tags.where(name: tag_params['name'])&.destroy
+    @evaluation.tags.create(name: tag_params['name'], value: tag_params['value'])
+    redirect_to @evaluation
+  end
+
   def upload
     authorize! :create, Evaluation
     file = params[:file]
     if (@eval = Evaluation.parse(JSON.parse(file.read)))
       @evaluation = Evaluation.find(@eval.id)
+      @evaluation.tags.create(name: 'filename', value: params[:file].original_filename)
+      (Constants::TAG_NAMES - ['Filename']).each do |tag|
+        if params[tag.downcase]
+          @evaluation.tags.create(name: tag.downcase, value: params[tag.downcase])
+        end
+      end
       redirect_to @evaluation, notice: 'Evaluation uploaded.'
     else
       redirect_to evaluations_url, notice: 'File does not contain an evaluation.'
@@ -125,6 +137,12 @@ class EvaluationsController < ApplicationController
       if (@eval = Evaluation.parse(JSON.parse(file.read)))
         @eval.force_created_by(current_user)
         @evaluation = Evaluation.find(@eval.id)
+        @evaluation.tags.create(name: 'filename', value: params[:file].original_filename)
+        (Constants::TAG_NAMES - ['Filename']).each do |tag|
+        if params[tag.downcase]
+          @evaluation.tags.create(name: tag.downcase, value: params[tag.downcase])
+        end
+      end
         render body: 'SUCCESS: Evaluation uploaded'
       else
         render body: 'ERROR: Could not upload evaluation'
@@ -211,6 +229,11 @@ class EvaluationsController < ApplicationController
       filter_label = "#{filter_group.name}: #{filter_group.filters.map(&:to_s).join(', ')}"
     end
     [filters, filter_label]
+  end
+
+
+  def tag_params
+    params.require(:tag).permit(:name, :value)
   end
 
   def xccdf_params
