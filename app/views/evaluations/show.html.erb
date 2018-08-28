@@ -684,7 +684,7 @@ function yesEnhancements() {
 
 function show_details(profile_id, control_id) {
   hsh = "#" + control_id;
-  url = '/profiles/' + profile_id + '/controls/' + control_id + '/details/evaluation/' + evaluation_id;
+  url = '<%= root_path %>' + 'profiles/' + profile_id + '/controls/' + control_id + '/details/evaluation/' + evaluation_id;
   var tr = $(hsh);
   if ($('#details_row').length) {
     $('#details_row').remove();
