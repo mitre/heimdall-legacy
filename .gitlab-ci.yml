@@ -65,7 +65,7 @@ deploy:
     - sed -i"" -e "s#yourdomain.com#mitre.org#g" config/ldap.yml
     # The following line implies anonymous ldap authentication
     - sed -i"" -e "/admin_/d" config/ldap.yml
-    - git clone https://aaronlippold:${GITHUB_ACCESS_TOKEN}@github.com/aaronlippold/inspec-tools inspec-tools 2>/dev/null
+    - git clone https://aaronlippold:${GITHUB_ACCESS_TOKEN}@github.com/aaronlippold/inspec_tools inspec-tools 2>/dev/null
     - sed -i 's/gem .inspec_tools.*$/gem \"inspec_tools\", :path => \"\.\/inspec-tools\"/' Gemfile
     - pip install docker-compose
     - docker-compose build
