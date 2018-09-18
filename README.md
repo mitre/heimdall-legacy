@@ -55,8 +55,10 @@ which allows anonymous access.
 1. Run the following commands from a terminal:
 	1. `git clone https://github.com/aaronlippold/heimdall.git && cd heimdall` # download heimdall and change to it's directory
 	2. `./gen-secrets.sh ` # (Generate Random keys to be stored in a named Docker volume **Do not run if you've ever run it before**)
-  3. `./docker_build.sh` # (may need to first run `chmod +x docker_build.sh` to give the file executable rights)
-2. Jump to [Running Docker Container](#running-docker-container)
+	3. `git clone https://github.com/aaronlippold/inspec_tools.git inspec-tools`
+
+2. `./docker_build.sh` # (may need to first run `chmod +x docker_build.sh` to give the file executable rights)
+3. Jump to [Running Docker Container](#running-docker-container)
 
 ##### Manual Build Steps
 1. Install Docker
@@ -64,7 +66,7 @@ which allows anonymous access.
 	* `git clone https://github.com/aaronlippold/heimdall.git`
 3. Navigate to the base folder where `docker-compose.yml` is located
 4. Run the following command in a terminal window from the heimdall source directory:
-   * `git clone https://github.com/aaronlippold/inspec-tools.git`  
+   * `git clone https://github.com/aaronlippold/inspec_tools.git inspec-tools`
 5. Run the following command in a terminal window from the heimdall source directory:
    * `docker-compose build`  
 6. Generate keys for secrets.yml. Use secrets.example.yml for a template.
