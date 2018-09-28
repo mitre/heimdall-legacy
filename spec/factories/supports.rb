@@ -1,9 +1,11 @@
 FactoryBot.define do
   factory :support, class: Support do
-    os_family 'Windows'
+    name 'os-family'
+    value 'Windows'
   end
 
   factory :invalid_support, class: Support do
-    os_family 'Not Unix'
+    name 'os_family'
+    value 'Not Unix'
   end
 end

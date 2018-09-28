@@ -1,1 +1,1 @@
-json.extract! depend, :name, :path
+json.extract! depend, :name, :path, :url

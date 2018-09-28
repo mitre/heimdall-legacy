@@ -1,6 +1,6 @@
 class EvaluationsController < ApplicationController
   load_resource
-  authorize_resource only: [:show, :destroy, :upload, :filter, :clear_filter, :tag, :new_xccdf]
+  authorize_resource only: [:show, :partition, :destroy, :upload, :filter, :clear_filter, :tag, :new_xccdf]
   protect_from_forgery except: [:upload_api]
 
   # GET /evaluations
@@ -19,7 +19,13 @@ class EvaluationsController < ApplicationController
   def show
     @profiles = @evaluation.profiles
     filters, @filter_label = session_filters
-    @counts, @controls = @evaluation.status_counts(filters)
+    #@counts = Rails.cache.read("counts:#{@evaluation.id}")
+    #@controls = Rails.cache.read("controls:#{@evaluation.id}")
+    #unless @counts
+    #  @counts, @controls = @evaluation.status_counts(filters)
+    #  Rails.cache.write "counts:#{@evaluation.id}", @counts
+    #  Rails.cache.write "controls:#{@evaluation.id}", @controls
+    #end
     @nist_hash = Constants::NIST_800_53
     respond_to do |format|
       format.html { render :show }
@@ -35,6 +41,17 @@ class EvaluationsController < ApplicationController
     respond_to do |format|
       format.html { redirect_to evaluations_url, notice: 'Evaluation was successfully destroyed.' }
       format.json { head :no_content }
+    end
+  end
+
+  def chart
+    if params['chart_type']
+      @chart_type = params['chart_type']
+    else
+      @chart_type = 'treemap'
+    end
+    respond_to do |format|
+      format.js { render layout: false }
     end
   end
 
@@ -70,7 +87,15 @@ class EvaluationsController < ApplicationController
     category = params[:category].downcase if params.key?(:category)
     status_sym = nil
     status_sym = params[:status_symbol].downcase.tr(' ', '_').to_sym if params.key?(:status_symbol)
-    @control_hash = @evaluation.nist_hash category, status_sym, filters
+    ex_ids = params[:ex_ids]
+    ex_ids = [] if ex_ids.nil?
+    #key = "#{params[:id]}#{category}|#{status_sym}|#{filters}"
+    #@control_hash = Rails.cache.read(key)
+    @control_hash = nil
+    unless @control_hash
+      @control_hash = @evaluation.nist_hash category, status_sym, ex_ids, filters
+      #Rails.cache.write key, @control_hash
+    end
     @name = Constants::NIST_800_53['name']
     @families = Constants::NIST_800_53['children']
   end

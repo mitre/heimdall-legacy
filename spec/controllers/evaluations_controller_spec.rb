@@ -43,6 +43,24 @@ RSpec.describe EvaluationsController, type: :controller do
 
     context 'with imported evaluation' do
       let(:eval) { Evaluation.parse(JSON.parse(File.open('spec/support/bad_nginx.json', 'r').read)) }
+
+      describe 'GET #index' do
+        it 'returns a success response' do
+          # create :evaluation, created_by: user
+          get :index, params: {}, session: valid_session
+          expect(response).to be_success
+        end
+      end
+
+      describe 'GET #show' do
+        render_views
+        it 'returns a success response' do
+          # evaluation = create :evaluation, created_by: user
+          get :show, params: { id: eval.to_param }, session: valid_session
+          expect(response).to be_success
+        end
+      end
+
       describe 'GET #ssp' do
         it 'returns a success response' do
           # evaluation = create :evaluation, created_by: user
@@ -83,24 +101,6 @@ RSpec.describe EvaluationsController, type: :controller do
           get :clear_filter, params: { id: eval.to_param }, session: valid_session
           expect(response).to redirect_to(Evaluation.last)
         end
-      end
-
-    end
-
-    describe 'GET #index' do
-      it 'returns a success response' do
-        create :evaluation, created_by: user
-        get :index, params: {}, session: valid_session
-        expect(response).to be_success
-      end
-    end
-
-    describe 'GET #show' do
-      render_views
-      it 'returns a success response' do
-        evaluation = create :evaluation, created_by: user
-        get :show, params: { id: evaluation.to_param }, session: valid_session
-        expect(response).to be_success
       end
     end
 

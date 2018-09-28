@@ -32,6 +32,7 @@ Rails.application.routes.draw do
     resources :results, only: [:index, :show]
     resources :downloads, only: [:show]
     get 'ssp', on: :member
+    get 'partition', on: :member
     post 'filter', on: :member
     post 'filter_select', on: :member
     get 'clear_filter', on: :member
@@ -58,6 +59,7 @@ Rails.application.routes.draw do
   match 'evaluations/:id/xccdf' => 'evaluations#create_xccdf', as: :evaluation_create_xccdf, :via => :post
   match 'evaluations_compare' => 'evaluations#compare', as: :evaluations_compare, :via => [:get, :post]
   match 'evaluations/:id/tag' => 'evaluations#tag', as: :evaluation_tag, :via => :post
+  match 'evaluations/:id/chart' => 'evaluations#chart', as: :evaluation_chart, :via => :get
   match 'users/:id/add_role/:user_id/' => 'users#add_role', as: :user_add_role, :via => :post
   match 'users/:id/remove_role/:user_id/:role' => 'users#remove_role', as: :user_remove_role, :via => :delete
 

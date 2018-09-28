@@ -43,7 +43,7 @@ RSpec.describe Evaluation, type: :model do
     end
 
     it 'get nist_hash' do
-      nist = eval.nist_hash nil, nil
+      nist = eval.nist_hash nil, nil, []
       expect(nist).to_not be_empty
       expect(nist).to have_key('CM-6')
     end
@@ -70,7 +70,7 @@ RSpec.describe Evaluation, type: :model do
     let(:eval) { Evaluation.parse(JSON.parse(File.open('spec/support/ngadev-test1.json', 'r').read)) }
 
     it 'get nist_hash' do
-      nist = eval.nist_hash nil, nil
+      nist = eval.nist_hash nil, nil, []
       expect(nist).to_not be_empty
       expect(nist).to have_key('UM-1')
     end

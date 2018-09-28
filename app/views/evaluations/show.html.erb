@@ -1,3 +1,17 @@
+<style type="text/css">
+
+.chart {
+  display: block;
+  margin: auto;
+  margin-top: 60px;
+  font-size: 11px;
+}
+
+text {
+  pointer-events: none;
+}
+
+</style>
 <!-- Content Header (Page header) -->
 <section class="content-header">
   <h1>Evaluation <%= @evaluation.profiles.map(&:name).join(', ') %></h1>
@@ -48,7 +62,7 @@ var evaluation_id = '<%= @evaluation.id %>';
               <%= form_for @evaluation.tags.new, as: :tag, url: evaluation_tag_path(@evaluation) do |f| %>
                 <div class="form-group">
                   <%= f.label :name %>
-                  <%= f.select :name, Constants::TAG_NAMES, { :prompt => 'Select Tag' }, class: "form-control" %>
+                  <%= f.select :name, Tag.options_for_select, { :prompt => 'Select Tag' }, class: "form-control" %>
                 </div>
                 <div class="form-group">
                   <%= f.label :value %>
@@ -62,6 +76,34 @@ var evaluation_id = '<%= @evaluation.id %>';
                 </div>
               <% end %>
             </div>
+          <% end %>
+        </div>
+      </div>
+    </div>
+    <div class="col-md-3">
+      <div class="box box-primary">
+        <div class="box-header">
+          <h3 class="box-title">Profiles</h3>
+        </div>
+        <!-- /.box-header -->
+        <div class="box-body">
+          <p>
+            <strong>Base Profile:</strong>
+            <%= link_to @evaluation.base_profile&.name, profile_path(@evaluation.base_profile) %></li>
+          </p>
+          <% prof_list = @evaluation.included_profiles %>
+          <% unless prof_list.empty? %>
+            <p>
+              <strong>Included Profiles:</strong>
+              <ul class="horizontal-list">
+              <% prof_list.each do |prof| %>
+                <li>
+                  <%= check_box_tag(prof.id, prof.id, true, :onclick=>"exclude_profile('#{prof.id}');")%>
+                  <%= link_to prof.name, profile_path(prof) %> 
+                </li>
+              <% end %>
+              </ul>
+            </p>
           <% end %>
         </div>
       </div>
@@ -84,8 +126,6 @@ var evaluation_id = '<%= @evaluation.id %>';
           </p>
         </div>
       </div>
-    </div>
-    <div class="col-md-3">
       <div class="box box-primary">
         <div class="box-header">
           <h3 class="box-title">Statistics</h3>
@@ -153,7 +193,7 @@ var evaluation_id = '<%= @evaluation.id %>';
             <div class="small-box bg-green">
               <div class="inner">
                 <ul class="horizontal-list">
-                  <li><h3><%= @counts[:not_a_finding] %>&nbsp;</h3></li>
+                  <li><h3 id="not_a_finding_count"></h3></li>
                   <li><h4>Not a Finding</h4></li>
                 </ul>
                 <p class="small-font">&nbsp;</p>
@@ -166,7 +206,7 @@ var evaluation_id = '<%= @evaluation.id %>';
             <div class="small-box bg-red">
               <div class="inner">
                 <ul class="horizontal-list">
-                  <li><h3><%= @counts[:open] %>&nbsp;</h3></li>
+                  <li><h3 id="open_count"></h3></li>
                   <li><h4>Open&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</h4></li>
                 </ul>
                 <p class="small-font">&nbsp;</p>
@@ -179,7 +219,7 @@ var evaluation_id = '<%= @evaluation.id %>';
             <div class="small-box bg-med-grey">
               <div class="inner">
                 <ul class="horizontal-list">
-                  <li><h3><%= @counts[:not_reviewed] %>&nbsp;</h3></li>
+                  <li><h3 id="not_reviewed_count"></h3></li>
                   <li><h4>Not Reviewed&nbsp;&nbsp;&nbsp;</h4></li>
                 </ul>
                 <p class="small-font">(can only be tested manually or disabled test)</p>
@@ -192,7 +232,7 @@ var evaluation_id = '<%= @evaluation.id %>';
             <div class="small-box bg-aqua">
               <div class="inner">
                 <ul class="horizontal-list">
-                  <li><h3><%= @counts[:not_applicable] %>&nbsp;</h3></li>
+                  <li><h3 id="not_applicable_count"></h3></li>
                   <li><h4>Not Applicable&nbsp;&nbsp;</h4></li>
                 </ul>
                 <p class="small-font">(zero impact: exception for this system and/or absent component)</p>
@@ -205,7 +245,7 @@ var evaluation_id = '<%= @evaluation.id %>';
             <div class="small-box bg-med-grey">
               <div class="inner">
                 <ul class="horizontal-list">
-                  <li><h3><%= @counts[:not_tested] %>&nbsp;</h3></li>
+                  <li><h3 id="not_tested_count"></h3></li>
                   <li><h4>Not Tested&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</h4></li>
                 </ul>
                 <p class="small-font">(profile error)</p>
@@ -529,6 +569,26 @@ var evaluation_id = '<%= @evaluation.id %>';
         </div>
         <!-- /.box-header -->
         <div class="box-body">
+          <ul class="nav nav-tabs tabs-bordered">
+            <li class="nav-item" id="treemap_nav_item">
+              <%= link_to "Treemap Chart", evaluation_path(@evaluation), class: "nav-link", id: 'treemap' %>
+              <!--a href="<%= evaluation_path(@evaluation) %>" id='treemap' data-toggle="tab" aria-expanded="false" class="nav-link">
+                TreeMap Chart
+              </a-->
+            </li>
+            <li class="nav-item" id="partition_nav_item">
+              <%= link_to "Partition Chart", evaluation_path(@evaluation), class: "nav-link", id: 'partition' %>
+              <!--a href="<%= evaluation_path(@evaluation) %>" id='partition' data-toggle="tab" aria-expanded="false" class="nav-link">
+                Partition Chart
+              </a-->
+            </li>
+          </ul>
+          <div class="tab-content" style="display:none;">
+            <div class="tab-pane" id="treemap">
+            </div>
+            <div class="tab-pane" id="partition">
+            </div>
+          </div>
           <div id="chart"></div>
         </div>
       </div>
@@ -541,46 +601,7 @@ var evaluation_id = '<%= @evaluation.id %>';
           <h3 class="box-title">Profile Controls</h3>
         </div>
         <!-- /.box-header -->
-        <div class="box-body" data-turbolinks="false">
-          <table id="controls" class="table table-bordered table-striped">
-            <thead>
-            <tr>
-              <th>Status</th>
-              <th>Title</th>
-              <th>Control ID</th>
-              <th>Severity</th>
-              <th>Run Time</th>
-              <th>NIST Refs</th>
-              <th class="hidden">Details</th>
-            </tr>
-            </thead>
-            <tbody>
-              <% @controls.each do |control_id, hsh| %>
-                <% control = hsh[:control] %>
-                <% sym = hsh[:status_symbol] %>
-                <tr class="<%= control.severity.capitalize %> <%= status_label(sym) %>" id="<%= control.id %>">
-                  <td><button class="<%= status_btn(sym) %>" style="width:120px" onclick="show_details('<%= control.profile_id %>', '<%= control.id %>');"><%= status_label(sym) %></button></td>
-                  <td><%= control.title %></td>
-                  <td><%= link_to control.control_id, profile_control_path(control.profile_id, control.id) %></td>
-                  <td><%= control.severity %></td>
-                  <td><%= control.run_time %></td>
-                  <td><%= control.nist_tags.join(', ') %></td>
-                  <td class="hidden"><%= control.code %></td>
-                </tr>
-              <% end %>
-            </tbody>
-            <tfoot>
-            <tr>
-              <th>Status</th>
-              <th>Title</th>
-              <th>Control ID</th>
-              <th>Severity</th>
-              <th>Run Time</th>
-              <th>NIST Refs</th>
-              <th class="hidden">Details</th>
-            </tr>
-          </tfoot>
-          </table>
+        <div class="box-body" id="controls_table" data-turbolinks="false">
         </div>
       </div>
     </div>
@@ -589,15 +610,109 @@ var evaluation_id = '<%= @evaluation.id %>';
 <!-- /.content -->
 <script>
 
-//var oTable = $('#controls').DataTable();
 var cats = {"High": true, "Medium": true, "Low": true};
 var stats = {"Not A Finding": true, "Not Applicable": true, "Open": true, "Not Reviewed": true, "Not Tested": true};
 var shown_id = null;
 var loaded = null;
 var compliance_count = 0.0;
 var total_count = 0;
+var currentDepth = 0;
+var status_data = {};
 var nist_counts = {"AC": 25, "AU": 16, "AT": 5, "CM": 11, "CP": 13, "IA": 11, "IR": 10, "MA": 6, "MP": 8,
   "PS": 8, "PE": 20, "PL": 9, "PM": 16, "RA": 6, "CA": 9, "SC": 44, "SI": 17, "SA": 22};
+<% if @filter_label %>
+  var filter_label = '<%= @filter_label %>';
+<% else %>
+  var filter_label;
+<% end %>
+var chart_data = null;
+var chartname_id = 'chart_name:' + evaluation_id;
+var chart_name = localStorage.getItem(chartname_id);
+var excluded_profiles = [];
+
+console.log("chart_name1: " + chart_name);
+if (!chart_name) {
+  chart_name = 'treemap';
+  console.log("chart_name2: " + chart_name);
+}
+if (chart_name == 'partition') {
+  $('#partition_nav_item').addClass('active');
+} else {
+  $('#treemap_nav_item').addClass('active');
+}
+
+function load_chart(chart_type) {
+  d3.select("#chart_js").empty();
+  url = "<%= root_path %>" + "evaluations/" + evaluation_id + "/chart.js";
+  if (chart_type) {
+    url += "?chart_type=" + chart_type;
+  }
+  $.ajax(url, {
+    async: false,
+    dataType: "script",
+    success: function(data) {
+      console.log("Loaded chart " + chart_name);
+      if (chart_name == "treemap") {
+        drawTreemap(null);
+      } else {
+        drawPartition(null);
+      }
+    },
+    error: function() {
+      console.log("Error occured");
+    }
+  });
+}
+
+function get_chart_data(category, status) {
+  chart_id = 'chart_data:' + evaluation_id;
+  url = "<%= root_path %>" + "evaluations/" + evaluation_id + "/nist";
+  //url = "<%= root_path %>" + "evaluations/" + evaluation_id + "/nist.json";
+  if (category) {
+    url += "/category/" + encodeURIComponent(category);
+    chart_id += 'category:' + category;
+  }
+  if (status) {
+    url += "/status/" + encodeURIComponent(status);
+    chart_id += 'status:' + status;
+  }
+  url += ".json";
+  for(var i=0, len=excluded_profiles.length; i < len; i++) {
+    if (i == 0) {
+      url += '?'
+      chart_id += 'ex_ids:' + excluded_profiles[i];
+    }
+    else {
+      url += '&'
+      chart_id += ':' + excluded_profiles[i];
+    }
+    url += "ex_ids=" + excluded_profiles[i];
+  }
+
+  if (filter_label) {
+    chart_id += 'filter:' + filter_label;
+  }
+
+  //localStorage.clear();
+  chart_data_str = localStorage.getItem(chart_id);
+  if (chart_data_str) {
+    chart_data = JSON.parse(chart_data_str);
+    console.log("Loaded data for " + chart_id);
+  } else {
+   $.ajax(url, {
+      async: false,
+      success: function(data) {
+        console.log("ajax data: " + data.controls.length);
+        chart_data = data;
+        console.log("Ajaxed data for " + chart_id);
+        localStorage.setItem(chart_id, JSON.stringify(data));
+      },
+      error: function() {
+        console.log("Error occured");
+      }
+    });
+  }
+}
 
 function filterNumbers() {
   count = 0;
@@ -682,6 +797,47 @@ function yesEnhancements() {
   }
 }
 
+function status_btn(symbol) {
+  if (symbol == "Not Applicable")
+    return 'btn btn-info'
+  else if (symbol == 'Open')
+    return 'btn btn-danger'
+  else if (symbol == 'Not A Finding')
+    return 'btn btn-success'
+  else if (symbol == 'Not Reviewed')
+    return 'btn btn-neutral'
+  else
+    return 'btn btn-neutral'
+}
+
+function add_control_table(d) {
+  $('#controls_table').empty();
+  console.log("empty table");
+  header = '<table id="controls" class="table table-bordered table-striped"><thead>';
+  footer = '</tfoot></table>';
+  tr_str = '<tr><th>Status</th><th>Title</th><th>Control ID</th><th>Severity</th><th>Run Time</th><th>NIST Refs</th><th class="hidden">Details</th></tr>';
+  rows = '';
+  root_path = '<%= root_path %>';
+  if (d.controls) {
+    console.log("Add " + d.controls.length + " rows to table");
+    for(var i=0, len=d.controls.length; i < len; i++) {
+      ctl = d.controls[i];
+      ctl_id = ctl.id["$oid"];
+      profile_id = ctl.profile_id["$oid"];
+      rows += '<tr class="' + ctl.severity_cap + ' ' + ctl.status_symbol_title + '" id="' + ctl_id + '">';
+      rows += '<td><button class="' + status_btn(ctl.status_symbol_title) + '" style="width:120px" onclick="show_details(\'' + profile_id + '\', \'' + ctl_id + '\');">' + ctl.status_symbol_title + '</button></td>';
+      rows += '<td>' + ctl.title + '</td>';
+      rows += '<td><a href="' + root_path + '/profiles/' + profile_id + '/controls/' + ctl_id + '">' + ctl.name + '</a></td>';
+      rows += '<td>' + ctl.severity + '</td>';
+      rows += '<td>' + ctl.run_time + '</td>';
+      rows += '<td>' + ctl.nist + '</td>';
+      rows += '<td class="hidden">' + ctl.code + '</td></tr>';
+    }
+  }
+  table_str = header + tr_str + '<tbody>' + rows + '</tbody>' + tr_str + footer;
+  $('#controls_table').html(table_str);
+}
+
 function show_details(profile_id, control_id) {
   hsh = "#" + control_id;
   url = '<%= root_path %>' + 'profiles/' + profile_id + '/controls/' + control_id + '/details/evaluation/' + evaluation_id;
@@ -724,6 +880,181 @@ function filter_table(category, status) {
   }
 }
 
+function exclude_profile(profile_id) {
+  p_index = excluded_profiles.indexOf(profile_id);
+  if (p_index > -1) {
+    excluded_profiles.splice(p_index, 1);
+    localStorage.setItem("excluded_profiles", excluded_profiles);
+  } else {
+    excluded_profiles.push(profile_id);
+    localStorage.setItem("excluded_profiles", excluded_profiles);
+  }
+  reload_views();
+}
+
+function set_counts(d) {
+  not_app = 0;
+  not_rev = 0;
+  not_find = 0;
+  not_test = 0;
+  open = 0;
+  if (d.controls) {
+    for(var i=0, len=d.controls.length; i < len; i++) {
+      symbol = d.controls[i].status_symbol;
+      if (symbol == 'not_tested') {
+        not_test += 1;
+      } else if (symbol == 'not_applicable') {
+        not_app += 1;
+      } else if (symbol == 'not_reviewed') {
+        not_rev += 1;
+      } else if (symbol == 'not_a_finding') {
+        not_find += 1;
+      } else if (symbol == 'open') {
+        open += 1;
+      }
+    }
+  }
+  total_count = not_find + not_rev + open + not_test;
+  compliance_count = (not_find / total_count) * 100;
+  $('#not_a_finding_count').html(not_find);
+  $('#open_count').html(open);
+  $('#not_reviewed_count').html(not_rev);
+  $('#not_applicable_count').html(not_app);
+  $('#not_tested_count').html(not_test);
+  console.log("not_find: " + not_find + ", open: " + open + ", not_rev: " + not_rev + ", not_test: " + not_test + ", total: " + total_count);
+  console.log("compliance_count = " + not_find + " / " + total_count + " = " + compliance_count);
+  status_data = [
+                ['Not A Finding',  not_find],
+                ['Open',           open],
+                ['Not Reviewed',   not_rev],
+                ['Not Applicable', not_app],
+                ['Not Tested',     not_test],
+                ];
+  console.log("status_data = " + status_data);
+}
+
+function draw_status_pie_chart(d) {
+  c3.generate(
+  {
+    bindto: '#status_pie',
+    data: {
+        columns: status_data,
+        type : 'donut',
+        onclick: function (d) {
+          if (currentDepth == 0) {
+            document.getElementById("clear_filters_button").style.visibility = "visible";
+            reload_views(null, d.id);
+          }
+        },
+    },
+    oninit: function () {
+      this.meetsArcLabelThreshold = function (value) { return value > 0; };
+    },
+    color:
+    {
+      pattern: ['rgb(137, 204, 81)', 'rgb(255, 0, 41)', 'rgb(140, 140, 140)', 'rgb(153, 204, 255)', 'rgb(145, 145, 145)']
+    },
+    size:
+    {
+      height: 280
+    },
+    donut: {
+      title: 'Status',
+      label: {
+        format: function (value) { return value; }
+      }
+    }
+  });
+}
+
+function draw_severity_pie_chart(d) {
+  high = 0;
+  medium = 0;
+  low = 0;
+  ary = [];
+  if (d.controls) {
+    for(var i=0, len=d.controls.length; i < len; i++) {
+      impact = d.controls[i].impact;
+      if (impact <= 0.4) {
+        low += 1;
+      } else if (impact < 0.7) {
+        medium += 1;
+      } else if (impact >= 0.7) {
+        high += 1;
+      }
+    }
+  }
+  severity_data = [
+                  ['High',   high],
+                  ['Medium',  medium],
+                  ['Low', low],
+              ];
+
+  c3.generate(
+  {
+    bindto: '#severity_pie',
+
+    data:
+    {
+      columns: severity_data,
+      type : 'donut',
+      onclick: function (d)
+      {
+        if (currentDepth == 0) {
+          document.getElementById("clear_filters_button").style.visibility = "visible";
+          reload_views(d.id, null);
+        }
+      },
+    },
+    color:
+    {
+        pattern: ['#003366', '#0080FF', '#99CCFF']
+    },
+    size:
+    {
+      height: 280
+    },
+    donut:
+    {
+      title: "Severity",
+      label:
+      {
+        format: function (value, ratio, id)
+        {
+          return d3.format()(value);
+        }
+      }
+    }
+  });
+}
+
+function draw_compliance_pie_chart() {
+  compliance_data = [
+                ['Compliance', compliance_count]
+                ];
+  c3.generate({
+    bindto: '#profile_gauge',
+
+    data:
+    {
+      columns: compliance_data,
+      type: 'gauge',
+    },
+
+    color:
+    {
+        pattern: ['#FF0000', '#F97600', '#F6C600', '#60B044'], // the three color levels for the percentage values.
+        threshold: {
+            values: [30, 40, 70, 100]
+        }
+    },
+    size:
+    {
+        height: 193
+    }
+  });
+}
+
 $.fn.dataTableExt.afnFiltering.push(
     function( oSettings, aData, iDataIndex ) {
       var nTr = oSettings.aoData[ iDataIndex ].nTr;
@@ -751,12 +1082,35 @@ $.fn.dataTableExt.afnFiltering.push(
     }
 );
 
+function reload_views(category, status) {
+  get_chart_data(category, status)
+  set_counts(chart_data);
+  load_chart(chart_name);
+  draw_status_pie_chart(chart_data);
+  draw_severity_pie_chart(chart_data);
+  draw_compliance_pie_chart();
+  //filter_table(category, status);
+  add_control_table(chart_data);
+  $('#controls').DataTable().draw();
+  var datatable = $('#controls').dataTable().api();
+  datatable.draw();
+}
+
 document.addEventListener("turbolinks:load", function() {
   if (loaded) {
     return;
   } else {
     loaded = true;
   }
+
+  get_chart_data();
+  set_counts(chart_data);
+  load_chart(chart_name);
+  draw_status_pie_chart(chart_data);
+  draw_severity_pie_chart(chart_data);
+  draw_compliance_pie_chart();
+  add_control_table(chart_data);
+
 
   if($('[id^=controls_wrapper]').length == 0) {
     $('#controls').DataTable({
@@ -768,6 +1122,16 @@ document.addEventListener("turbolinks:load", function() {
       'autoWidth'   : false
     });
   }
+
+  $("#treemap").click(function(event){
+    chartname_id = 'chart_name:' + evaluation_id;
+    localStorage.setItem(chartname_id, 'treemap');
+  });
+  $("#partition").click(function(event){
+    console.log("clicked partition");
+    chartname_id = 'chart_name:' + evaluation_id;
+    localStorage.setItem(chartname_id, 'partition');
+  });
 
   $("#edit_btn").click(function(){
     toggleSections("edit_info", "show_info");
@@ -809,522 +1173,8 @@ document.addEventListener("turbolinks:load", function() {
 
       return string_array.join(' ');
   }
-
-  function draw_status_pie_chart(d)
-  {
-    not_app = 0;
-    not_rev = 0;
-    not_find = 0;
-    not_test = 0;
-    open = 0;
-    if (d.children) {
-      for(var i=0, len=d.children.length; i < len; i++) {
-        child1 = d.children[i];
-        if (child1.children) {
-          for(var j=0, len2=child1.children.length; j < len2; j++) {
-            child2 = child1.children[j];
-            if (child2.children) {
-              for(var k=0, len3=child2.children.length; k < len3; k++) {
-                child3 = child2.children[k];
-                status_value = child3.status_value;
-                if (status_value == 0.0) {
-                  not_test += 1;
-                } else if (status_value == 0.2) {
-                  not_app += 1;
-                } else if (status_value == 0.4) {
-                  not_rev += 1;
-                } else if (status_value == 0.6) {
-                  not_find += 1;
-                } else if (status_value == 0.8) {
-                  open += 1;
-                }
-              }
-            }
-          }
-        }
-      }
-    }
-    //var not_app = accumulate_status(d, 0.2);
-    //var not_rev = accumulate_status(d, 0.4);
-    //var not_find = accumulate_status(d, 0.6);
-    //var open = accumulate_status(d, 0.8);
-    total_count = not_find + not_rev + open + not_test;
-    compliance_count = (not_find / total_count) * 100;
-    console.log("not_find: " + not_find + ", open: " + open + ", not_rev: " + not_rev + ", not_test: " + not_test + ", total: " + total_count);
-    console.log("compliance_count = " + not_find + " / " + total_count + " = " + compliance_count);
-    status_data = [
-                  ['Not A Finding',  not_find],
-                  ['Open',           open],
-                  ['Not Reviewed',   not_rev],
-                  ['Not Applicable', not_app],
-                  ['Not Tested',     not_test],
-                  ];
-    console.log("status_data = " + status_data);
-    c3.generate(
-    {
-      bindto: '#status_pie',
-      data: {
-          columns: status_data,
-          type : 'donut',
-          onclick: function (d) {
-            if (currentDepth == 0) {
-              document.getElementById("clear_filters_button").style.visibility = "visible";
-              reload_views(null, d.id);
-            }
-          },
-      },
-      oninit: function () {
-        this.meetsArcLabelThreshold = function (value) { return value > 0; };
-      },
-      color:
-      {
-        pattern: ['rgb(137, 204, 81)', 'rgb(255, 0, 41)', 'rgb(140, 140, 140)', 'rgb(153, 204, 255)', 'rgb(145, 145, 145)']
-      },
-      size:
-      {
-        height: 280
-      },
-      donut: {
-        title: 'Status',
-        label: {
-          format: function (value) { return value; }
-        }
-      }
-    });
-  }
-
-  function draw_severity_pie_chart(d)
-  {
-    high = 0;
-    medium = 0;
-    low = 0;
-    ary = [];
-    if (d.children) {
-      for(var i=0, len=d.children.length; i < len; i++) {
-        child1 = d.children[i];
-        if (child1.children) {
-          for(var j=0, len2=child1.children.length; j < len2; j++) {
-            child2 = child1.children[j];
-            if (child2.children) {
-              for(var k=0, len3=child2.children.length; k < len3; k++) {
-                child3 = child2.children[k];
-                if (!(ary.indexOf(child3.name) >= 0)) {
-                  ary.push(child3.name);
-                  if (child3.children) {
-                    impact = child3.children[0].impact;
-                    if (impact <= 0.4) {
-                      low += 1;
-                    } else if (impact < 0.7) {
-                      medium += 1;
-                    } else if (impact >= 0.7) {
-                      high += 1;
-                    }
-                  }
-                }
-              }
-            }
-          }
-        }
-      }
-    }
-    severity_data = [
-                    ['High',   high],
-                    ['Medium',  medium],
-                    ['Low', low],
-                ];
-
-    c3.generate(
-    {
-      bindto: '#severity_pie',
-
-      data:
-      {
-        columns: severity_data,
-        type : 'donut',
-        onclick: function (d)
-        {
-          if (currentDepth == 0) {
-            document.getElementById("clear_filters_button").style.visibility = "visible";
-            reload_views(d.id, null);
-          }
-        },
-      },
-      color:
-      {
-          pattern: ['#003366', '#0080FF', '#99CCFF']
-      },
-      size:
-      {
-        height: 280
-      },
-      donut:
-      {
-        title: "Severity",
-        label:
-        {
-          format: function (value, ratio, id)
-          {
-            return d3.format()(value);
-          }
-        }
-      }
-    });
-  }
-
-  function draw_compliance_pie_chart()
-  {
-    compliance_data = [
-                  ['Compliance', compliance_count]
-                  ];
-    c3.generate({
-      bindto: '#profile_gauge',
-
-      data:
-      {
-        columns: compliance_data,
-        type: 'gauge',
-      },
-
-      color:
-      {
-          pattern: ['#FF0000', '#F97600', '#F6C600', '#60B044'], // the three color levels for the percentage values.
-          threshold: {
-              values: [30, 40, 70, 100]
-          }
-      },
-      size:
-      {
-          height: 193
-      }
-    });
-  }
-
-  // functions
-	function initialize(root) {
-		root.x = root.y = 0;
-		root.dx = width;
-		root.dy = height;
-		root.depth = 0;
-	}
-
-  // Aggregate the values for internal nodes. This is normally done by the
-  // treemap layout, but not here because of our custom implementation.
-  // We also take a snapshot of the original children (_children) to avoid
-  // the children being overwritten when when layout is computed.
-  function accumulate(d) {
-		return (d._children = d.children)
-		  // recursion step, note that p and v are defined by reduce
-			? d.value = d.children.reduce(function(p, v) {return p + accumulate(v); }, 0)
-			: d.value
-	}
-
-  // Compute the treemap layout recursively such that each group of siblings
-  // uses the same size (1×1) rather than the dimensions of the parent cell.
-  // This optimizes the layout for the current zoom state. Note that a wrapper
-  // object is created for the parent node for each group of siblings so that
-  // the parent’s dimensions are not discarded as we recurse. Since each group
-  // of sibling was laid out in 1×1, we must rescale to fit using absolute
-  // coordinates. This lets us use a viewport to zoom.
-  function layout(d) {
-		if (d._children) {
-		  // treemap nodes comes from the treemap set of functions as part of d3
-		  treemap.nodes({_children: d._children});
-		  d._children.forEach(function(c) {
-			c.x = d.x + c.x * d.dx;
-			c.y = d.y + c.y * d.dy;
-			c.dx *= d.dx;
-			c.dy *= d.dy;
-			c.parent = d;
-			// recursion
-			layout(c);
-		  });
-		}
-	}
-
-  // Colors are based on the 'impact' at the leaf level. At higher levels, the
-  // average impact of the children is calculated and used in the color range.
-  // If there is no impact, the default color is grey
-  function get_color(obj) {
-    if ("status_value" in obj) {
-      if (obj['status_value'] > 0) {
-        return color(obj['status_value']);
-      }
-    }
-    return "#bbbbbb";
-  }
-
-	function colorIncrements(d){
-		return (colorDomain[colorDomain.length - 1] - colorDomain[0])/18*d + colorDomain[0];
-	}
-
-  // determines if white or black will be better contrasting color
-	function getContrast50(hexcolor){
-		return (parseInt(hexcolor.replace('#', ''), 16) > 0xffffff/3) ? 'black':'white';
-	}
-
-  function showCon(d) {
-    console.log(d.name + ": impact: " + d.impact + ", value:"  + d.value);
-    if (d._children) {
-      d._children.forEach(function(c) {
-        console.log(c.name + ": impact: " + c.impact + ", value:"  + c.value);
-        // recursion
-        showCon(c);
-      });
-    }
-  }
-
-  var obj = document.getElementById('chart');
-	var divWidth = obj.offsetWidth;
-
-	var margin = {top: 30, right: 0, bottom: 20, left: 0},
-		width = divWidth -25,
-		height = 540 - margin.top - margin.bottom,
-    currentDepth = 0,
-		formatNumber = d3.format(",%"),
-		colorDomain = [0.2, 0.4, 0.6, 0.8],
-    //colorRange = ['#dda8db', '#ebf2f7', '#9cbdd9'],
-    colorRange = ['#99CCFF', '#8C8C8C', '#99CC66', '#FF0033'],
-		//colorRange = ['green', 'orange', 'red'],
-    severity = {'low': 1, 'medium': 2, 'high': 3},
-		transitioning,
-    root, dataset;
-
-	// sets x and y scale to determine size of visible boxes
-	var x = d3.scale.linear()
-		.domain([0, width])
-		.range([0, width]);
-
-	var y = d3.scale.linear()
-		.domain([0, height])
-		.range([0, height]);
-
-	// adding a color scale
-	var color = d3.scale.linear()
-		.domain(colorDomain)
-		.range(colorRange);
-
-  var treemap, svg, grandparent, legend;
-
-  drawTreemap(null);
-  //drawLegend();
-
-  function reload_views(category, status) {
-    drawTreemap(category, status);
-    filter_table(category, status);
-    $('#controls').DataTable().draw();
-    var datatable = $('#controls').dataTable().api();
-    //datatable.clear();
-    //datatable.rows.add(dataSet);
-    datatable.draw();
-
-  }
-
-  function drawTreemap(category, status) {
-    console.log("drawTreemap");
-    d3.selectAll("svg").remove();
-  	// introduce color scale here
-  	treemap = d3.layout.treemap()
-  		.children(function(d, depth) { return depth ? null : d._children; })
-  		.sort(function(a, b) { return b.name.localeCompare(a.name); })
-  		.ratio(height / width * 0.5 * (1 + Math.sqrt(5)))
-  		.round(false);
-
-  	svg = d3.select("#chart").append("svg")
-  		.attr("width", width + margin.left + margin.right)
-  		.attr("height", height + margin.bottom + margin.top)
-  		.style("margin-left", -margin.left + "px")
-  		.style("margin.right", -margin.right + "px")
-  	  .append("g")
-  		.attr("transform", "translate(" + margin.left + "," + margin.top + ")")
-  		.style("shape-rendering", "crispEdges");
-
-  	grandparent = svg.append("g")
-  		.attr("class", "grandparent");
-
-  	grandparent.append("rect")
-  		.attr("y", -margin.top)
-  		.attr("width", width)
-  		.attr("height", margin.top);
-
-  	grandparent.append("text")
-  		.attr("x", 6)
-  		.attr("y", 6 - margin.top)
-  		.attr("dy", ".75em");
-
-    loadTreemapData(category, status);
-  }
-
-  function loadTreemapData(category, status) {
-    api_path = "<%= root_path %>" + "evaluations/" + evaluation_id + "/nist";
-    if (category) {
-      api_path += "/category/" + encodeURIComponent(category);
-    }
-    if (status) {
-      api_path += "/status/" + encodeURIComponent(status);
-    }
-    api_path += ".json";
-    console.log("loadTreemapData from " + api_path);
-  	d3.json(api_path, function(data) {
-      root = data
-      initialize(root);
-  	  accumulate(root);
-      draw_status_pie_chart(root);
-      draw_severity_pie_chart(root);
-      draw_compliance_pie_chart();
-  	  layout(root);
-  	  display(root);
-
-  	  function display(d) {
-    		grandparent
-    			.datum(d.parent)
-    			.on("click", transition)
-    		    .select("text")
-    			.text(name(d))
-
-    		// color header based on grandparent's impact
-    		grandparent
-    		  .datum(d.parent)
-    		  .select("rect")
-    		  .attr("fill", function(){ return get_color(d) })
-
-    		var g1 = svg.insert("g", ".grandparent")
-    			.datum(d)
-    			.attr("class", "depth");
-
-    		var g = g1.selectAll("g")
-    			.data(d._children)
-    		    .enter().append("g");
-
-    		g.filter(function(d) { return d._children; })
-    			.classed("children", true)
-    			.on("click", transition);
-
-    		g.selectAll(".child")
-    			.data(function(d) { return d._children || [d]; })
-    		  .enter().append("rect")
-    			.attr("class", "child")
-    			.call(rect);
-
-
-    		g.append("rect")
-    			.attr("class", "parent")
-    			.call(rect)
-    		  .append("title");
-
-    		/* Adding a foreign object instead of a text object, allows for text wrapping */
-    		g.append("foreignObject")
-    				.call(rect)
-    				/* open new window based on the json's URL value for leaf nodes */
-    				/* Firefox displays this on top
-    				.on("click", function(d) {
-    					if(!d.children){
-    						window.open(d.url);
-    				}
-    			})*/
-    			.attr("class","foreignobj")
-    			.append("xhtml:div")
-    			.attr("dy", ".75em")
-    			.html(function(d) {
-            var colr = getContrast50(get_color(d));
-            if (d.desc && width > 750) {
-              return  ' <p class="title" style="color:' + colr + '"> ' + d.name + '</p>' +
-                ' <p style="color:' + colr + '"> ' + d.desc + '</p>';
-            } else {
-              if (d.impact) {
-                return ' <p class="title" style="color:' + colr + '"> ' + d.name + '</p>' +
-                  ' <p style="color:' + colr + '">Title: ' + d.title + '</p>' +
-                  ' <p style="color:' + colr + '">Description: ' + d.description + '</p>' +
-                  ' <p style="color:' + colr + '">Impact: ' + d.impact + '</p>' +
-                  ' <p style="color:' + colr + '">Status: ' + d.status_symbol.titleize() + '</p>' +
-                  ' <p style="color:' + colr + '">Check Text: ' + d.check + '</p>' +
-                  ' <p style="color:' + colr + '">Fix Text: ' + d.fix + '</p>' +
-                  ' <p style="color:' + colr + '">NIST Ref: ' + d.nist + '</p>';
-              } else {
-                return ' <p class="title" style="color:' + colr + '"> ' + d.name + '</p>';
-              }
-            }
-    				;})
-    			.attr("class","textdiv"); //textdiv class allows us to style the text easily with CSS
-
-    		function transition(d) {
-          currentDepth = d.depth;
-    		  if (transitioning || !d) return;
-    		  transitioning = true;
-
-    		  var g2 = display(d),
-    			  t1 = g1.transition().duration(650),
-    			  t2 = g2.transition().duration(650);
-
-    		  // Update the domain only after entering new elements.
-    		  x.domain([d.x, d.x + d.dx]);
-    		  y.domain([d.y, d.y + d.dy]);
-
-    		  // Enable anti-aliasing during the transition.
-    		  svg.style("shape-rendering", null);
-
-    		  // Draw child nodes on top of parent nodes.
-    		  svg.selectAll(".depth").sort(function(a, b) { return a.depth - b.depth; });
-
-    		  // Fade-in entering text.
-    		  g2.selectAll("text").style("fill-opacity", 0);
-    		  g2.selectAll("foreignObject div").style("display", "none"); /*added*/
-
-    		  // Transition to the new view.
-    		  t1.selectAll("text").call(text).style("fill-opacity", 0);
-    		  t2.selectAll("text").call(text).style("fill-opacity", 1);
-    		  t1.selectAll("rect").call(rect);
-    		  t2.selectAll("rect").call(rect);
-
-    		  /* Foreign object */
-    		  t1.selectAll(".textdiv").style("display", "none"); /* added */
-    		  t1.selectAll(".foreignobj").call(foreign); /* added */
-    		  t2.selectAll(".textdiv").style("display", "block"); /* added */
-    		  t2.selectAll(".foreignobj").call(foreign); /* added */
-
-    		  // Remove the old node when the transition is finished.
-    		  t1.remove().each("end", function() {
-    			  svg.style("shape-rendering", "crispEdges");
-    			  transitioning = false;
-    		  });
-    		}
-
-    		return g;
-  	  }
-
-    	function text(text) {
-    		text.attr("x", function(d) { return x(d.x) + 6; })
-    		.attr("y", function(d) { return y(d.y) + 6; });
-    	}
-
-  	  function rect(rect) {
-    		rect.attr("x", function(d) { return x(d.x); })
-    			.attr("y", function(d) { return y(d.y); })
-    			.attr("width", function(d) { return x(d.x + d.dx) - x(d.x); })
-    			.attr("height", function(d) { return y(d.y + d.dy) - y(d.y); })
-    			.attr("fill", function(d){return get_color(d);});
-  	  }
-
-  	  function foreign(foreign){ /* added */
-  			foreign.attr("x", function(d) { return x(d.x); })
-  			.attr("y", function(d) { return y(d.y); })
-  			.attr("width", function(d) { return x(d.x + d.dx) - x(d.x); })
-  			.attr("height", function(d) { return y(d.y + d.dy) - y(d.y); });
-  		}
-
-  	  function name(d) {
-    		return d.parent
-    			? d.name + (d.desc ? ": " + d.desc : "") + " -  Click header to zoom out"
-    			: d.name + (d.desc ? ": " + d.desc : "")  + " -  Click in boxes zoom";
-  	  }
-
-  	  function nameSave(d) {
-    		return d.parent
-    			? name(d.parent) + " - " + d.name + (d.desc ? ": " + d.desc : "") + " -  Click header to zoom out"
-    			: d.name + (d.desc ? ": " + d.desc : "");
-  	  }
-
-  	});
-  }
 });
 
 </script>
+<script id="chart_js"></script>
+

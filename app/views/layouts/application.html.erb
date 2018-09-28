@@ -18,7 +18,7 @@
       <!-- Main Header -->
       <%= render :partial => 'layouts/header' %>
       <!-- Content Wrapper. Contains page content -->
-      <div class="content-wrapper">
+      <div class="content-wrapper" data-turbolinks="false">
         <div class='content'>
           <% flash.each do |key, value| %>
             <div class="<%= flash_class(key) %> fade in alert-dismissible">

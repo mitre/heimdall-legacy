@@ -39,7 +39,7 @@ class SupportsController < ApplicationController
 
   # Never trust parameters from the scary internet, only allow the white list through.
   def support_params
-    params.require(:support).permit(:os_family)
+    params.require(:support).permit(:name, :value)
   end
 
   # convert parameters with hyphen to parameters with underscore.
