@@ -6,3 +6,16 @@ unless Circle.where(name: 'Public').present?
     user.add_role(:member, @circle)
   end
 end
+
+Profile.each do |profile|
+  values = []
+  profile.supports.each do |support|
+    if support.has_attribute?(:os_family)
+      values << support.os_family
+    end
+    support.destroy
+  end
+  values.each do |value|
+    profile.supports.create(name: 'os-family', value: value)
+  end
+end

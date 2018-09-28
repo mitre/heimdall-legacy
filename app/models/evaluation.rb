@@ -1,4 +1,4 @@
-require "inspec_tools"
+require 'inspec_tools'
 
 class Evaluation
   include Mongoid::Document
@@ -24,6 +24,14 @@ class Evaluation
       save
     end
     read_attribute(:findings)
+  end
+
+  def base_profile
+    profiles.where(parent_profile: nil).try(:first)
+  end
+
+  def included_profiles
+    profiles.where(parent_profile: base_profile.name)
   end
 
   def to_jbuilder
@@ -137,13 +145,15 @@ class Evaluation
           "status_symbol": sym, "status_value": status_symbol_value(sym),
           "severity": params[:severity], "description": control.desc,
           "check": control.tag('check'), "fix": control.tag('fix'),
-          "impact": control.impact, "value": 1 }] }
+          "code": control.code, "run_time": control.run_time, "profile_id": control.profile_id,
+          "impact": control.impact, "value": 1, "id": control.id }] }
     end
   end
 
-  def profile_values(cat, params, filters = nil)
+  def profile_values(cat, params, ex_ids, filters = nil)
     nist = {}
     profiles.each do |profile|
+      next if ex_ids.include?(profile.id)
       p_controls = filters.nil? ? profile.controls : profile.filtered_controls(filters)
       p_controls.each do |control|
         params[:ct_results] = params[:cts][control.id]
@@ -163,7 +173,7 @@ class Evaluation
     nist
   end
 
-  def nist_hash(cat, status_symbol, filters = nil)
+  def nist_hash(cat, status_symbol, ex_ids, filters = nil)
     cts = {}
     results.each do |result|
       unless cts.key?(result.control_id)
@@ -172,7 +182,7 @@ class Evaluation
       cts[result.control_id] << result
     end
     params = { status_symbol: status_symbol, cts: cts }
-    profile_values cat, params, filters
+    profile_values cat, params, ex_ids, filters
   end
 
   def self.transform(hash)

@@ -15,9 +15,17 @@ class Tag
         val = val.first.first
         good_values << val
       end
-      good_values
+      good_values.uniq
     else
       []
     end
+  end
+
+  def self.options_for_select
+    options = []
+    Constants::TAG_NAMES.each do |val|
+      options << [val, val.downcase]
+    end
+    options
   end
 end

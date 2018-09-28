@@ -115,9 +115,9 @@
         <div class="box-body">
           <p>
             <ul>
-              <% @profile.supports.where(:os_family.ne => nil).each do |support| %>
+              <% @profile.supports.each do |support| %>
                 <li>
-                  <%= support.os_family %>
+                  <%= support.name %>: <%= support.value %>
                   <span class="pull-right">
                     <%= link_to ('<span class="glyphicon glyphicon-remove red"></span>').html_safe, [@profile, support], :method => :delete, data: { confirm: 'Are you sure?' } %>
                   </span>

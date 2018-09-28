@@ -1,1 +1,1 @@
-json.set!('os-family', support.os_family)
+json.set!(support.name, support.value)

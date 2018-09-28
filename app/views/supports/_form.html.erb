@@ -14,8 +14,13 @@
   <%= form.hidden_field :profile_id, :value => profile.id, :name =>"profile_id" %>
 
   <div class="form-group">
-    <%= form.label :os_family, "OS Family" %>
-    <%= form.text_field :os_family, id: :support_os_family, class: "form-control" %>
+    <%= form.label :name, "Name" %>
+    <%= form.text_field :name, id: :support_name, class: "form-control" %>
+  </div>
+
+  <div class="form-group">
+    <%= form.label :value, "Value" %>
+    <%= form.text_field :value, id: :support_value, class: "form-control" %>
   </div>
 
   <div class="form-group">

@@ -91,7 +91,7 @@ class ProfilesController < ApplicationController
         redirect_to profiles_url, notice: 'Profile was malformed.'
       end
     else
-      redirect_to profiles_url, notice: 'File does not contain an profile.'
+      redirect_to profiles_url, notice: 'File does not contain a profile.'
     end
   end
 

@@ -30,7 +30,7 @@ var changes = [];
   </h1>
   <ol class="breadcrumb">
     <li><%= link_to ('<i class="fa fa-dashboard"> </i>Dashboard').html_safe, root_path %></li>
-    <li><%= link_to 'Evaluations', evaluations_path %></li>
+    <li><%= link_to "Back", :back %></li>
     <li class="active">Evaluation Comparisons</li>
   </ol>
 </section>
@@ -43,7 +43,7 @@ var changes = [];
         </div>
         <!-- /.box-header -->
         <div class="box-body">
-          <div class="svgID"></div>
+          <div id="chart"></div>
         </div>
       </div>
     </div>
@@ -104,31 +104,18 @@ var shown_id = null;
 var filter_off = true;
 var control_table;
 
-var fData = [
-<% @evaluations.each do |eval| %>
-  {"eval_date": '<%=eval.profiles.map(&:name).join(', ') %> - <%= eval.start_time %>',"Not a Finding": <%= eval.findings[:not_a_finding] %>,"Open": <%= eval.findings[:open] %>,"Not Reviewed": <%= eval.findings[:not_reviewed] %>,"Not Applicable": <%= eval.findings[:not_applicable] %>,"Not Tested": <%= eval.findings[:not_tested] %>,"compliance": <%= compliance(eval.findings) %>,"Total_Units":1245},
-<% end %>
-];
-
-var headers = ["Not a Finding", "Open", "Not Reviewed", "Not Applicable", "Not Tested"];
-var colors = ["#00a65a", "#dd4b39", "#8C8C8C", "#00c0ef", "#8C8C8C"];
-var col_index = <%= @evaluations.size * 5 %>;
-var colorScale = d3.scale.ordinal()
-    .domain(headers)
-    .range(colors);
-
 $.fn.dataTableExt.afnFiltering.push(
-    function( oSettings, aData, iDataIndex ) {
-      if (filter_off) {
-        return true;
+  function( oSettings, aData, iDataIndex ) {
+    if (filter_off) {
+      return true;
+    } else {
+      if (changes[aData[0]] == 'false') {
+        return false;
       } else {
-        if (changes[aData[0]] == 'false') {
-          return false;
-        } else {
-          return true;
-        }
+        return true;
       }
     }
+  }
 );
 
 document.addEventListener("turbolinks:load", function() {
@@ -139,7 +126,6 @@ document.addEventListener("turbolinks:load", function() {
   }
 
   if($( "[id^='controls_wrapper']" ).length == 0) {
-    draw_graph();
     control_table = $('#controls').DataTable({
       'paging'      : false,
       'lengthChange': false,
@@ -151,6 +137,39 @@ document.addEventListener("turbolinks:load", function() {
     divstr = 'Filter out Unchanged <input type="checkbox" name="filter" id="filter" onclick="filter_table()">';
     $('#controls_wrapper').children(":first").children(":first").append(divstr);
   }
+
+  var columns = [['x'], ['Not a Finding'], ['Open'], ['Not Applicable'], ['Not Tested'], ['Not Reviewed']];
+  <% @evaluations.each_with_index do |eval, index| %>
+    columns[0].push(<%= index + 1 %>);
+    columns[1].push(<%= eval.findings[:not_a_finding] %>);
+    columns[2].push(<%= eval.findings[:open] %>);
+    columns[3].push(<%= eval.findings[:not_applicable] %>);
+    columns[4].push(<%= eval.findings[:not_tested] %>);
+    columns[5].push(<%= eval.findings[:not_reviewed] %>);
+  <% end %>
+
+  var chart = c3.generate({
+    data: {
+        x : 'x',
+        columns: columns,
+        type: 'bar',
+    },
+    color: {
+      pattern: ['#00a65a', '#dd4b39', '#00c0ef', '#8C8C8C', '#8C8C8C']
+    },
+    bar: {
+        width: {
+            ratio: 0.8 // this makes bar width 50% of length between ticks
+        }
+    },
+    axis: {
+        x: {
+            type: 'category' // this is needed to load string x value
+        }
+    },
+    bindto: '#chart'
+  });
+
 });
 
 function filter_table() {
@@ -207,161 +226,4 @@ function show_details(control_id) {
   }
 }
 
-function wrap(text, width) {
-  text.each(function() {
-    var text = d3.select(this),
-        words = text.text().split(/\s+/).reverse(),
-        word,
-        line = [],
-        lineNumber = 0,
-        lineHeight = 1.1, // ems
-        y = text.attr("y"),
-        dy = parseFloat(text.attr("dy")),
-        tspan = text.text(null).append("tspan").attr("x", 0).attr("y", y).attr("dy", dy + "em");
-    while (word = words.pop()) {
-      line.push(word);
-      tspan.text(line.join(" "));
-      if (tspan.node().getComputedTextLength() > width) {
-        line.pop();
-        tspan.text(line.join(" "));
-        line = [word];
-        tspan = text.append("tspan").attr("x", 0).attr("y", y).attr("dy", ++lineNumber * lineHeight + dy + "em").text(word);
-      }
-    }
-  });
-}
-
-function fill_color(i, x) {
-  col_index -= i;
-  ind = Math.floor( col_index/<%= @evaluations.size %> );
-  cols = ["4682b4", "ffffff", "ffffff", "ffffff", "ffffff", "ffffff"];
-  if (ind == 0)
-    return "4682b4";
-  else
-    return "ffffff";
-}
-
-function draw_graph() {
-  var margin = {top:20, right: 150, bottom: 100, left: 50},
-      width = <%= @evaluations.size < 3 ? 600 : @evaluations.size * 200 %>,
-      height=450;
-  var svg = d3.select(".svgID")
-      .append("svg")
-      .attr("width", width + margin.left + margin.right)
-      .attr("height", height + margin.top + margin.bottom)
-      .append("g")
-      .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
-
-  var layers = d3.layout.stack()(
-     headers.map(function (count) {
-       return fData.map(function (d,i) {
-         return { x: d.eval_date, y: +d[count], z: d.compliance, color:  colorScale(count)};
-       });
-  }));
-
-  //StackedBar Rectangle Max
-  var yStackMax = d3.max(layers, function (layer) { return d3.max(layer, function (d) { return d.y0 + d.y; }); }) + 30;
-  // Set x, y and colors
-  var xScale = d3.scale.ordinal()
-      .domain(layers[0].map(function (d) { return d.x; }))
-      .rangeRoundBands([25, width], .08);
-
-  var y = d3.scale.linear()
-      .domain([0, yStackMax])
-      .range([height, 0]);
-
-  // Define and draw axes
-  var xAxis = d3.svg.axis()
-      .scale(xScale)
-      .tickSize(1)
-      .tickPadding(6)
-      .orient("bottom");
-
-  var yAxis = d3.svg.axis()
-      .scale(y)
-      .orient("left")
-      .tickFormat(d3.format(".2s"))
-
-  var z = d3.scale.ordinal()
-      .range(colors);
-
-  var layer = svg.selectAll(".layer")
-      .data(layers)
-      .enter().append("g")
-      .attr("class", "layer")
-      .style("fill", function (d, i) { return colorScale(i); });
-
-  var rect = layer.selectAll("rect")
-      .data(function (d) { return d; })
-      .enter().append("rect")
-      .attr("x", function (d) { return xScale(d.x); })
-      .attr("y", height)
-      .attr("width", xScale.rangeBand())
-      .attr("height", 0)
-      .attr("class", function (d,i) {
-              return "rect bordered " + "color-" +d.color.substring(1);
-      });
-
-  layer.selectAll("text.rect")
-      .data(function (layer) { return layer; })
-      .enter().append("text")
-      .attr("text-anchor", "middle")
-      .attr("x", function (d) { return xScale(d.x) + xScale.rangeBand() / 2; })
-      .attr("y", function (d) { return y(d.y + d.y0) - 3; })
-      .text(function (d) { return d.z + "%"; })
-      .style("fill", function (d, i) { return fill_color(1, d.x); })
-      .style("font-size", "20px");
-
-  //********** AXES ************
-  svg.append("g")
-      .attr("class", "x axis")
-      .attr("transform", "translate(0," + height + ")")
-      .call(xAxis).selectAll(".tick text")
-      .call(wrap, xScale.rangeBand());
-
-  svg.append("g")
-      .attr("class", "y axis")
-      .attr("transform", "translate(20,0)")
-      .call(yAxis)
-      .append("text")
-      .attr("transform", "rotate(-90)")
-      .attr({ "x": -75, "y": -70 })
-      .attr("dy", ".75em")
-      .style("text-anchor", "end")
-      .text("Profile Results");
-
-  //********** LEGEND ************
-  var legend = svg.selectAll(".legend")
-      .data(headers)
-      .enter().append("g")
-      .attr("class", "legend")
-      .attr("transform", function(d, i) { return "translate(0," + i * 20 + ")"; })
-      .style("font", "10px sans-serif");
-
-  legend.append("rect")
-      .attr("x", width + 18)
-      .attr("width", 18)
-      .attr("height", 18)
-      .attr("fill", z)
-      .on("mouseover", function (d, i) {
-        svg.selectAll("rect.color-" + colors[i].substring(1)).style("stroke", "blue");
-      })
-      .on("mouseout", function (d, i) {
-          svg.selectAll("rect.color-" + colors[i].substring(1)).style("stroke", "white");
-      });
-
-  legend.append("text")
-      .attr("x", width + 84)
-      .attr("y", 9)
-      .attr("dy", ".35em")
-      .attr("text-anchor", "start")
-      .text(function(d) { return d; });
-
-  y.domain([0, yStackMax]);
-
-  rect.attr("y", function (d) { return y(d.y0 + d.y); })
-      .attr("height", function (d) { return y(d.y0) - y(d.y0 + d.y); })
-      .attr("x", function (d) { return xScale(d.x); })
-      .attr("width", xScale.rangeBand());
-}
 </script>

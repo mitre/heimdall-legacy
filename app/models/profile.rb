@@ -151,6 +151,12 @@ class Profile
         attr["option_#{key}"] = value
       end
     end
+    supports = hash.delete('supports')
+    new_supports = []
+    supports.each do |key, value|
+      new_supports << {'name': key, 'value': value}
+    end
+    hash['supports'] = new_supports
     groups = hash.delete('groups')
     new_groups = []
     groups.each do |group|

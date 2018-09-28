@@ -3,6 +3,7 @@ class Depend
   include Mongoid::Timestamps
   field :name, type: String
   field :path, type: String
+  field :url, type: String
   embedded_in :profile, inverse_of: :depends
   validates_presence_of :name
 
