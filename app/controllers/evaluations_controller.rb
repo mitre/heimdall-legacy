@@ -31,6 +31,7 @@ class EvaluationsController < ApplicationController
       format.html { render :show }
       format.json { render :show }
       format.ckl { render :show, layout: false }
+      format.csv { render :show, layout: false }
     end
   end
 

@@ -61,6 +61,11 @@ class Evaluation
     tool.to_ckl
   end
 
+  def to_csv
+    tool = InspecTools.inspec(to_json)
+    tool.to_csv
+  end
+
   def to_xccdf(attribs)
     tool = InspecTools.inspec(to_json)
     tool.to_xccdf(attribs)
@@ -135,18 +140,35 @@ class Evaluation
     symbols
   end
 
+  def result_message(symbol)
+    if symbol == :not_applicable
+      'Justification'
+    elsif symbol == :open
+      'One or more of the automated tests failed or was inconclusive for the control'
+    elsif symbol == :not_a_finding
+      'All Automated tests passed for the control'
+    elsif symbol == :not_reviewed
+      'Automated test skipped due to known accepted condition in the control'
+    else
+      'No test available for this control'
+    end
+  end
+
   def tag_values(tag, control, params, nist)
     tag.good_values.each do |value|
       nist[value] = [] unless nist[value]
-      sym = status_symbol(control, params[:ct_results])
+      ct_results = params[:ct_results]
+      sym = status_symbol(control, ct_results)
       next unless params[:status_symbol].nil? || params[:status_symbol] == sym
+      code_descs = ct_results ? ct_results.map { |result| "#{result.status.upcase} -- #{result.code_desc}" }.join("\n") : ''
       nist[value] << { "name": control.control_id.to_s, "status_value": status_symbol_value(sym), "children":
         [{ "name": control.control_id.to_s, "title": control.title, "nist": control.tag('nist'),
-          "status_symbol": sym, "status_value": status_symbol_value(sym),
+          "family": value, "status_symbol": sym, "status_value": status_symbol_value(sym),
           "severity": params[:severity], "description": control.desc,
-          "check": control.tag('check'), "fix": control.tag('fix'),
+          "check": control.tag('check'), "fix": control.tag('fix'), "start_time": control.start_time,
           "code": control.code, "run_time": control.run_time, "profile_id": control.profile_id,
-          "impact": control.impact, "value": 1, "id": control.id }] }
+          "impact": control.impact, "value": 1, "id": control.id, 
+          "result_message": "#{result_message(sym)}\n\n#{code_descs}"}] }
     end
   end
 

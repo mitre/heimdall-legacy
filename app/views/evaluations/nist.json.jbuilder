@@ -165,16 +165,22 @@ json.status_symbol nist_status_symbol
 json.status_value convert_status_symbol(nist_status_symbol)
 json.controls all_controls.each do |key, ctl|
   json.id key
+  json.family ctl[:family]
   json.profile_id ctl[:profile_id]
   json.name ctl[:name]
   json.title ctl[:title]
+  json.description ctl[:description]
   json.nist ctl[:nist]
   json.status_symbol ctl[:status_symbol]
   json.status_symbol_title ctl[:status_symbol].to_s.titleize
   json.status_value ctl[:status_value]
   json.severity ctl[:severity]
   json.severity_cap ctl[:severity].capitalize
+  json.check ctl[:check]
+  json.fix ctl[:fix]
+  json.result_message ctl[:result_message]
   json.code ctl[:code]
+  json.start_time ctl[:start_time]
   json.run_time ctl[:run_time]
   json.impact ctl[:impact]
 end

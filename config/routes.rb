@@ -57,6 +57,7 @@ Rails.application.routes.draw do
   match 'evaluations/:id/nist(/category/:category)(/status/:status_symbol)' => 'evaluations#nist', as: :evaluation_nist, :via => :get
   match 'evaluations/:id/xccdf' => 'evaluations#xccdf', as: :evaluation_xccdf, :via => :get
   match 'evaluations/:id/xccdf' => 'evaluations#create_xccdf', as: :evaluation_create_xccdf, :via => :post
+  match 'evaluations/:id/csv' => 'evaluations#csv', as: :evaluation_csv, :via => :get
   match 'evaluations_compare' => 'evaluations#compare', as: :evaluations_compare, :via => [:get, :post]
   match 'evaluations/:id/tag' => 'evaluations#tag', as: :evaluation_tag, :via => :post
   match 'evaluations/:id/chart' => 'evaluations#chart', as: :evaluation_chart, :via => :get

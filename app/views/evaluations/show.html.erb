@@ -1,3 +1,5 @@
+<%= javascript_include_tag '/xlsx.full.min.js' %>
+<%= javascript_include_tag '/FileSaver.min.js' %>
 <style type="text/css">
 
 .chart {
@@ -161,6 +163,14 @@ var evaluation_id = '<%= @evaluation.id %>';
           <p>
             <strong>Export XCCDF:</strong>
             <%= link_to 'XCCDF', evaluation_xccdf_path(@evaluation) %>
+          </p>
+          <p>
+            <strong>Export CSV:</strong>
+            <%= link_to 'CSV', evaluation_path(@evaluation, format: :csv), :target => "_blank" %>
+          </p>
+          <p>
+            <strong>Export CAAT:</strong>
+            <%= link_to 'CAAT', '#', :id => "export-caat" %>
           </p>
         </div>
       </div>
@@ -869,17 +879,6 @@ function clear_stat_filter(bool) {
   stats = {"Not A Finding": bool, "Not Applicable": bool, "Open": bool, "Not Reviewed": bool, "Not Tested": bool};
 }
 
-function filter_table(category, status) {
-  if (category) {
-    clear_cat_filter(false);
-    cats[category] = true;
-  }
-  if (status) {
-    clear_stat_filter(false);
-    stats[status] = true;
-  }
-}
-
 function exclude_profile(profile_id) {
   p_index = excluded_profiles.indexOf(profile_id);
   if (p_index > -1) {
@@ -1055,32 +1054,96 @@ function draw_compliance_pie_chart() {
   });
 }
 
-$.fn.dataTableExt.afnFiltering.push(
-    function( oSettings, aData, iDataIndex ) {
-      var nTr = oSettings.aoData[ iDataIndex ].nTr;
-      var cats_bool = true;
-      var stats_bool = true;
-      if ($(nTr).hasClass('High')) {
-        cats_bool = cats['High'];
-      } else if ($(nTr).hasClass('Medium')) {
-        cats_bool = cats['Medium'];
-      } else if ($(nTr).hasClass('Low')) {
-        cats_bool = cats['Low'];
+$("#export-caat").click(function(event) {
+  event.preventDefault();
+
+  //dataSet = filterDataset();
+  //controls = getAllNistControls(dataSet);
+  controls = chart_data.controls
+
+  var caat = [['Control Number','Finding Title','Date Identified','Finding ID','Information System or Program Name','Repeat Findings','Repeat Finding Weakness ID','Finding Description','Weakness Description','Control Weakness Type','Source','Assessment/Audit Company','Test Method','Test Objective','Test Result Description','Test Result','Recommended Corrective Action(s)','Effect on Business','Likelihood','Impact']];
+  vulnList = [];
+
+  for(var i=0, len=controls.length; i < len; i++) {
+    control = controls[i];
+    field = [];
+    impact = parseFloat(control.impact);
+
+    if (impact != 0.0 && !vulnList.includes(control.name)) {
+      vulnList.push(control.name)
+      field.push(control.family);              // Control Number
+      field.push(br2nl(control.title));        // Finding Title
+
+      field.push(convertDate(new Date(control.start_time),'/')); // Date Identified
+      field.push('');
+
+      field.push('');                          // Finding ID
+      field.push('');                          // Information System or Program Name
+      field.push('');                          // Repeat Findings
+      field.push('');                          // Repeat Finding CFACTS Weakness ID
+      field.push(br2nl(control.title));        // Finding Description
+      field.push(br2nl(control.description));  // Weakness Description
+      field.push('Security');                  // Control Weakness Type
+      field.push('Self-Assessment ');          // Source
+      field.push('InSpec');                    // Assessment/Audit Company
+      field.push('Test');                      // Test Method
+      field.push(br2nl(control.check)) ;       // Test Objective
+      field.push(br2nl(control.result_message)); // Test Result Description
+      result = control.status_symbol == "not_a_finding" ? 'Satisfied' : 'Other Than Satisfied';
+      field.push(result);                      // Test Result
+      field.push(br2nl(control.fix));          // Recommended Corrective Action(s)
+      field.push('');                          // Effect on Business
+      field.push('');                          // Likelihood
+
+      if (impact >= 0.1 && impact <= 0.3) {    // Impact
+        field.push('Low');                   
+      } else if (impact >= 0.4 && impact <= 0.6) {
+        field.push('Moderate');
+      } else if (impact >= 0.7 && impact <= 1.0) {
+        field.push('High');
       }
-      if ($(nTr).hasClass('Not A Finding')) {
-        stats_bool = stats['Not A Finding'];
-      } else if ($(nTr).hasClass('Not Applicable')) {
-        stats_bool = stats['Not Applicable'];
-      } else if ($(nTr).hasClass('Open')) {
-        stats_bool = stats['Open'];
-      } else if ($(nTr).hasClass('Not Reviewed')) {
-        stats_bool = stats['Not Reviewed'];
-      } else if ($(nTr).hasClass('Not Tested')) {
-        stats_bool = stats['Not Tested'];
-      }
-      return cats_bool && stats_bool;
+      caat.push(field);
     }
-);
+  }
+
+  function convertDate(inputFormat,delimiter) {
+    function pad(s) { return (s < 10) ? '0' + s : s; }
+    var d = new Date(inputFormat);
+    return [pad(d.getMonth()+1), pad(d.getDate()), d.getFullYear()].join(delimiter);
+  }
+
+  function br2nl(str) {
+    if (str == null)
+      return 'Not Available';
+    return str.replace(/<br ?\/?>/g, "\r\n").substring(0,32767);
+  }
+
+  var wb = XLSX.utils.book_new();
+
+  wb.Props = {
+            Title: "Compliance Assessment/Audit Tracking (CAAT) Spreadsheet",
+            Subject: "Assessment Data",
+            Author: "Heimdall",
+            CreatedDate: new Date()
+  };
+
+  wb.SheetNames.push("Assessment Data");
+
+  var ws = XLSX.utils.aoa_to_sheet(caat);
+  wb.Sheets["Assessment Data"] = ws;
+
+  var wbout = XLSX.write(wb, {bookType:'xlsx',  type: 'binary'});
+
+  function s2ab(s) { 
+            var buf = new ArrayBuffer(s.length); //convert s to arrayBuffer
+            var view = new Uint8Array(buf);  //create uint8array as viewer
+            for (var i=0; i<s.length; i++) view[i] = s.charCodeAt(i) & 0xFF; //convert to octet
+            return buf;    
+  }
+
+  saveAs(new Blob([s2ab(wbout)],{type:"application/octet-stream"}), 'CAAT-'+ convertDate(new Date(),'-')+ '.xlsx');
+});
+
 
 function reload_views(category, status) {
   get_chart_data(category, status)
@@ -1089,7 +1152,6 @@ function reload_views(category, status) {
   draw_status_pie_chart(chart_data);
   draw_severity_pie_chart(chart_data);
   draw_compliance_pie_chart();
-  //filter_table(category, status);
   add_control_table(chart_data);
   $('#controls').DataTable().draw();
   var datatable = $('#controls').dataTable().api();
