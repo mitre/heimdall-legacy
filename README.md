@@ -17,7 +17,7 @@ There two versions of the MITRE Heimdall Viewer - the full [Heimdall](https://gi
 |:--------------------------------------------------------------------------|:--------------|:-------------------------------------|
 | Installation Requirements | any web server | rails 5.x Server <br /> MongoDB instance |
 | Overview Dashboard & Counts | x | x |
-| 800-53 Partition and Tree-View | x | x |
+| 800-53 Partition and TreeMap View | x | x |
 | Data Table / Control Summary  | x | x |
 | InSpec Code / Control Viewer | x | x |
 | SSP Content Generator | x | x |
