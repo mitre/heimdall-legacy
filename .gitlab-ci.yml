@@ -2,7 +2,7 @@ stages:
   # Do not put sync at the beginning, this will have the unintuitive
   # consequence of each sync triggering a build/deploy on the **same** commit
   # as the sync ran on, instead of the new HEAD. Additionally the new HEAD will
-  # already have been triggered by the push which happens in sync 
+  # already have been triggered by the push which happens in sync
   - deploy
   - sync
 
@@ -42,7 +42,7 @@ sync-repo:
     - git remote add github git@gitlab.mitre.org:inspec/heimdall.git
     - ssh-agent sh -c 'ssh-add ~/push_key; git push --tags github master || true' # REMOTE NAME from previous line
 deploy:
-  stage: deploy 
+  stage: deploy
   image: docker:latest
   except:
     - schedules
@@ -54,10 +54,10 @@ deploy:
     - wget -O /usr/local/share/ca-certificates/MITRE_BA_NPE_CA-1.crt $CRT_1
     - wget -O /usr/local/share/ca-certificates/MITRE_BA_NPE_CA-3.crt $CRT_3
     - update-ca-certificates
-  
+
   script:
     # Configuration modification purely for inspec-dev
-    # For service behind the MITRE Firewall connecting to gitlab.mitre.org 
+    # For service behind the MITRE Firewall connecting to gitlab.mitre.org
     - echo "$SED_PROXY" > sed-script-file
     - grep MITRE_BA_Root dockerfiles/heimdall/Dockerfile || sed -f sed-script-file -i"" dockerfiles/heimdall/Dockerfile
     - cp config/ldap.example.yml config/ldap.yml
@@ -65,19 +65,19 @@ deploy:
     - sed -i"" -e "s#yourdomain.com#mitre.org#g" config/ldap.yml
     # The following line implies anonymous ldap authentication
     - sed -i"" -e "/admin_/d" config/ldap.yml
-    - git clone https://aaronlippold:${GITHUB_ACCESS_TOKEN}@github.com/aaronlippold/inspec_tools inspec-tools 2>/dev/null
-    - sed -i 's/gem .inspec_tools.*$/gem \"inspec_tools\", :path => \"\.\/inspec-tools\"/' Gemfile
+    # - git clone https://aaronlippold:${GITHUB_ACCESS_TOKEN}@github.com/aaronlippold/inspec_tools inspec-tools 2>/dev/null
+    # - sed -i 's/gem .inspec_tools.*$/gem \"inspec_tools\", :path => \"\.\/inspec-tools\"/' Gemfile
     - pip install docker-compose
     - docker-compose build
     # Note that we do not reload the schema in the CI tools that will have to
     # be done manually, by logging into inspec-dev, cloning the repo then
     # running `docker-compose run web rake db:reset`
-    - docker-compose run web bundle exec rake db:seed 
+    - docker-compose run web bundle exec rake db:seed
     - docker-compose run web bundle exec rake db:migrate
     - docker-compose up -d
 
 deploy-swarm:
-  stage: deploy 
+  stage: deploy
   image: docker:latest
   only:
     - development
@@ -93,10 +93,10 @@ deploy-swarm:
     - wget -O /usr/local/share/ca-certificates/MITRE_BA_NPE_CA-1.crt $CRT_1
     - wget -O /usr/local/share/ca-certificates/MITRE_BA_NPE_CA-3.crt $CRT_3
     - update-ca-certificates
-  
+
   script:
     # Configuration modification purely for inspec-dev
-    # For service behind the MITRE Firewall connecting to gitlab.mitre.org 
+    # For service behind the MITRE Firewall connecting to gitlab.mitre.org
     - echo "$SED_PROXY" > sed-script-file
     - grep MITRE_BA_Root dockerfiles/heimdall/Dockerfile.swarm || sed -f sed-script-file -i"" dockerfiles/heimdall/Dockerfile.swarm
     - cp config/ldap.example.yml config/ldap.yml

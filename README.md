@@ -8,12 +8,12 @@ interface.  Data uploads can be automated through usage of curl, and added as
 a step after an inspec pipeline stage.
 
 ## Versioning and State of Development
-This project uses the [Semantic Versioning Policy](https://semver.org/). 
+This project uses the [Semantic Versioning Policy](https://semver.org/).
 
 ### Branches
-The master branch contains the latest version of the software leading up to a new release. 
+The master branch contains the latest version of the software leading up to a new release.
 
-Other branches contain feature-specific updates. 
+Other branches contain feature-specific updates.
 
 ### Tags
 Tags indicate official releases of the project.
@@ -68,7 +68,7 @@ If you wish to use ruby and are on Ubuntu 16, then the dependencies are:
   * Ruby 2.4.4
   * build-essentials (your distribution's gcc package)
   * Bundler
-  * libpq-dev 
+  * libpq-dev
   * nodejs
   * mongodb
 
@@ -81,7 +81,7 @@ deployed in production mode.
 2. Install ruby 2.4.4
 3. Run the following in a terminal
 	- `bundle install`
-	- `bundle exec rake db:create` 
+	- `bundle exec rake db:create`
 	- `bundle exec rake db:migrate`
 	- `bundle exec rails s` (Start the server on localhost)
 
@@ -128,7 +128,7 @@ which allows anonymous access.
 	* `docker-compose run web rake db:migrate` **This updates the db**
 8. Jump to [Running Docker Container](#running-docker-container)
 
-   
+
 ##### Running Docker Container
 Once you have the container you can run it with:
 
@@ -195,7 +195,7 @@ Please feel free to contact us by **opening an issue** on the issue board, or, a
 * Matthew Dromazos
 * Luke Malinowski
 
-### NOTICE 
+### NOTICE
 
 © 2018 The MITRE Corporation.
 
@@ -205,6 +205,6 @@ Approved for Public Release; Distribution Unlimited. Case Number 18-3678.
 
 This software was produced for the U. S. Government under Contract Number HHSM-500-2012-00008I, and is subject to Federal Acquisition Regulation Clause 52.227-14, Rights in Data-General.  
 
-No other use other than that granted to the U. S. Government, or to those acting on behalf of the U. S. Government under that Clause is authorized without the express written permission of The MITRE Corporation. 
+No other use other than that granted to the U. S. Government, or to those acting on behalf of the U. S. Government under that Clause is authorized without the express written permission of The MITRE Corporation.
 
 For further information, please contact The MITRE Corporation, Contracts Management Office, 7515 Colshire Drive, McLean, VA  22102-7539, (703) 983-6000.  
