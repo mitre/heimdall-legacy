@@ -7,6 +7,19 @@ Heimdall supports viewing of InSpec profiles and evaluations in a convenient
 interface.  Data uploads can be automated through usage of curl, and added as
 a step after an inspec pipeline stage.
 
+## Versioning and State of Development
+This project uses the [Semantic Versioning Policy](https://semver.org/). 
+
+### Branches
+The master branch contains the latest version of the software leading up to a new release. 
+
+Other branches contain feature-specific updates. 
+
+### Tags
+Tags indicate official releases of the project.
+
+Please note 0.x releases are works in progress (WIP) and may change at any time.   
+
 ## Heimdall vs Heimdall-Lite
 
 There two versions of the MITRE Heimdall Viewer - the full [Heimdall](https://github.com/mitre/inspec/heimdall/) and the [Heimdall-Lite](https://github.com/mitre/inspec/heimdall-lite/)  version. We produced each to meet different needs and use-cases.
