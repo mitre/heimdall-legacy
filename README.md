@@ -22,11 +22,11 @@ Please note 0.x releases are works in progress (WIP) and may change at any time.
 
 ## Heimdall vs Heimdall-Lite
 
-There two versions of the MITRE Heimdall Viewer - the full [Heimdall](https://github.com/mitre/inspec/heimdall/) and the [Heimdall-Lite](https://github.com/mitre/inspec/heimdall-lite/)  version. We produced each to meet different needs and use-cases.
+There two versions of the MITRE Heimdall Viewer - the full [Heimdall](https://github.com/mitre/heimdall/) and the [Heimdall-Lite](https://github.com/mitre/heimdall-lite/)  version. We produced each to meet different needs and use-cases.
 
 ### Features
 
-|  | [Heimdall-Lite](https://github.com/mitre/inspec/heimdall-lite/) | [Heimdall](https://github.com/mitre/inspec/heimdall/) |
+|  | [Heimdall-Lite](https://github.com/mitre/heimdall-lite/) | [Heimdall](https://github.com/mitre/heimdall/) |
 |:--------------------------------------------------------------------------|:--------------|:-------------------------------------|
 | Installation Requirements | any web server | rails 5.x Server <br /> MongoDB instance |
 | Overview Dashboard & Counts | x | x |
@@ -46,7 +46,7 @@ There two versions of the MITRE Heimdall Viewer - the full [Heimdall](https://gi
 
 ### Use Cases
 
-| [Heimdall-Lite](https://github.com/mitre/inspec/heimdall-lite/) | [Heimdall](https://github.com/mitre/inspec/heimdall/) |
+| [Heimdall-Lite](https://github.com/mitre/heimdall-lite/) | [Heimdall](https://github.com/mitre/heimdall/) |
 |:------------------------------------|:--------------------------------------------------------|
 | Ship the App & Data via simple Email | Multiple Teams Support |
 | Minimal Footprint & Deployment Time | Timeline and Report History |
