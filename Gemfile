@@ -5,7 +5,6 @@ git_source(:github) do |repo_name|
   "https://github.com/#{repo_name}.git"
 end
 
-
 # Bundle edge Rails instead: gem 'rails', github: 'rails/rails'
 gem 'rails', '~> 5.1.4'
 # Use Puma as the app server
@@ -57,7 +56,8 @@ gem 'thor'
 gem 'json'
 gem 'pry'
 
-gem 'inspec_tools', :git => "https://github.com/aaronlippold/inspec_tools.git"
+gem 'inspec_tools', :git => "https://github.com/mitre/inspec_tools.git"
+# gem 'inspec_tools'
 gem 'docsplit'
 gem 'pdftotext'
 gem 'roo'

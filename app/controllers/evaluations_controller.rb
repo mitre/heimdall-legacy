@@ -225,7 +225,7 @@ class EvaluationsController < ApplicationController
     @attribs['reference.dc.identifier'] = xccdf_params[:reference_dc_identifier]
     @attribs['content_ref.href'] = xccdf_params[:content_ref_href]
     @attribs['content_ref.name'] = xccdf_params[:content_ref_name]
-    Rails.logger.debug "Attributes: #{@attributes.inspect}"
+    Rails.logger.debug "Attributes: #{@attribs.inspect}"
     render xml: @evaluation.to_xccdf(@attribs), layout: false
   end
 
@@ -263,6 +263,6 @@ class EvaluationsController < ApplicationController
   end
 
   def xccdf_params
-    params.require(:xccdf).permit(:benchmark_title, :benchmark_id, :benchmark_description, :benchmark_version, :benchmark_status, :benchmark_status_date, :benchmark_notice, :benchmark_notice_id, :benchmark_plaintext, :benchmark_plaintext_id, :reference_href, :reference_dc_source, :reference_dc_publisher, :reference_dc_title, :reference_dc_subject, :reference_dc_type, :reference_dc_identifier, :content_ref_href, :content_ref_name)
+    params.require(:xccdf).permit(:benchmark_title, :benchmark_id, :benchmark_description, :benchmark_version, :benchmark_status, :benchmark_status_date, :benchmark_notice, :benchmark_notice_id, :benchmark_plaintext, :benchmark_plaintext_id, :reference_href, :reference_dc_source, :reference_dc_publisher, :reference_dc_title, :reference_dc_subject, :reference_dc_type, :reference_dc_identifier, :content_ref_href, :content_ref_name, :plaintext_notice, :plaintext_notice_id)
   end
 end

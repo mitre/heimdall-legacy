@@ -31,7 +31,7 @@ RUN rm config/secrets.yml
 # assumes the secret is mounted explicitly at run time.
 # RUN bash -c "[[ -n \"$DOCKER_SECRETS\" ]] || { mkdir -p /srv/secrets/ && touch /srv/secrets/secrets.yml && ln -s /srv/secrets/secrets.yml config/secrets.yml  && rm -rfv /srv/secrets ; }"
 RUN useradd -r -u 80 www
-RUN chown -R www /var/www/heimdall 
+RUN chown -R www /var/www/heimdall
 EXPOSE 3000
 
 ENTRYPOINT ["bundle", "exec"]

@@ -13,19 +13,19 @@ RUN mkdir -p $RAILS_ROOT/tmp/pids
 WORKDIR $RAILS_ROOT
 
 # TODO-remove-at-release
-COPY inspec-tools/ inspec-tools/
+# COPY inspec-tools/ inspec-tools/
 
 COPY Gemfile Gemfile
 
 # Edit inspec_tools to use a locally downloaded gem
-RUN sed -i"" -e 's#.inspec_tools.*:git.*$#"inspec_tools", :path => "./inspec-tools"#g' Gemfile
+# RUN sed -i"" -e 's#.inspec_tools.*:git.*$#"inspec_tools", :path => "./inspec-tools"#g' Gemfile
 
 # Ensure we never install docs
 RUN echo "gem: --no-rdoc --no-ri" >> ~/.gemrc
 
 # Install and remove build dependencies. Single line implies single layer so
 # the final image does not have any of the build dependencies. TODO use
-# --deployment once Gemfile.lock has been commited
+# --deployment once Gemfile.lock has been committed
 RUN apk --no-cache --update add --virtual build-dependencies build-base ruby-dev  \
     postgresql-dev libc-dev linux-headers git libxml2-dev 'imagemagick-dev<7.0.0.0' pkgconf && \
     gem install bundler --no-rdoc --no-ri && \
@@ -41,7 +41,7 @@ RUN mv config/mongoid.yml config/mongoid.yml.orig
 RUN mv config/mongoid.yml.docker config/mongoid.yml
 
 # Edit inspec_tools to use a locally downloaded gem
-RUN sed -i"" -e 's#.inspec_tools.*:git.*$#"inspec_tools", :path => "./inspec-tools"#g' Gemfile
+# RUN sed -i"" -e 's#.inspec_tools.*:git.*$#"inspec_tools", :path => "./inspec-tools"#g' Gemfile
 
 # precompile is only necessary for production builds
 RUN cp config/secrets.example.yml config/secrets.yml
@@ -51,7 +51,7 @@ RUN rm config/secrets.yml
 # Setup broken symlink, which fixed at run time by a volume mount
 RUN mkdir -p /srv/secrets/
 RUN touch /srv/secrets/secrets.yml
-RUN ln -s /srv/secrets/secrets.yml config/secrets.yml 
+RUN ln -s /srv/secrets/secrets.yml config/secrets.yml
 RUN rm -rfv /srv/secrets
 
 EXPOSE 3000
