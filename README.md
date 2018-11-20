@@ -5,7 +5,7 @@ Heimdall is a centralized aggregation tool for InSpec evaluations
 ## Description
 Heimdall supports viewing of InSpec profiles and evaluations in a convenient
 interface.  Data uploads can be automated through usage of curl, and added as
-a step after an inspec pipeline stage.
+a step after an InSpec pipeline stage.
 
 ## Versioning and State of Development
 This project uses the [Semantic Versioning Policy](https://semver.org/).
@@ -151,11 +151,17 @@ then view them by clicking on the evaluations and profiles tab at the top of
 the page.
 
 **When uploading data you may go to the circles tab, and select public. This will
-allow all vistors to view the profile/evaluation you uploaded.**
+allow all visitors to view the profile/evaluation you uploaded.**
 
 To upload through curl you'll need an API key. This is located on your profile
 page which can be reached by clicking on your user name in the top right
 corner, then on profile.
+
+The upload API takes three parameters: the file, your email address, and your API key.
+
+```
+curl -F "file=@FILE_PATH" -F email=EMAIL -F api_key=API_KEY http://localhost:3000/evaluation_upload_api
+```
 
 ## Configuration
 
@@ -181,11 +187,11 @@ Clone, edit, then please submit a PR with an issue number associated.
 
 ## Contributing
 
-Please feel free to look through our issues, make a fork and submit *PRs* and improvements. We love hearing from our end-users and the communitity and will be happy to enguage with you on suggestions, updates, fixes or new capabilies.
+Please feel free to look through our issues, make a fork and submit *PRs* and improvements. We love hearing from our end-users and the community and will be happy to engage with you on suggestions, updates, fixes or new capabilities.
 
 ## Issues and Support
 
-Please feel free to contact us by **opening an issue** on the issue board, or, at [inspec@mitre.org](mailto:inspec@mitre.org) should you have any suggestions, quesions or issues. If you have more general questions about the use of our software or other concerns, please contact us at [opensource@mitre.org](mailto:opensource@mitre.org).
+Please feel free to contact us by **opening an issue** on the issue board, or, at [inspec@mitre.org](mailto:inspec@mitre.org) should you have any suggestions, questions or issues. If you have more general questions about the use of our software or other concerns, please contact us at [opensource@mitre.org](mailto:opensource@mitre.org).
 
 ## Licensing and Authors
 
