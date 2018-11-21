@@ -208,7 +208,7 @@ class EvaluationsController < ApplicationController
     @attribs = {}
     @attribs['benchmark.title'] = xccdf_params[:benchmark_title]
     @attribs['benchmark.id'] = xccdf_params[:benchmark_id]
-    @attribs['benchmark.descriptiono'] = xccdf_params[:benchmark_description]
+    @attribs['benchmark.description'] = xccdf_params[:benchmark_description]
     @attribs['benchmark.version '] = xccdf_params[:benchmark_version]
     @attribs['benchmark.status'] = xccdf_params[:benchmark_status]
     @attribs['benchmark.status.date'] = xccdf_params[:benchmark_status_date]
