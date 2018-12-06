@@ -1,7 +1,7 @@
 class LdapUser < User
   # Include default devise modules. Others available are:
   # :confirmable, :lockable, :timeoutable and :omniauthable
-  devise :ldap_authenticatable, :rememberable, :trackable, :validatable
+  devise :ldap_authenticatable, :trackable, :validatable
 
   ## Database authenticatable
   field :email,              type: String, default: ''
