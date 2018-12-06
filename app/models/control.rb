@@ -10,6 +10,7 @@ class Control
   field :refs, type: Array, default: []
   field :code, type: String
   field :control_id, type: String
+  field :descriptions, type: Array, default: []
   embeds_many :tags, cascade_callbacks: true
   field :sl_ref, type: String
   field :sl_line, type: Integer

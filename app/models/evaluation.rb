@@ -167,7 +167,7 @@ class Evaluation
           "severity": params[:severity], "description": control.desc,
           "check": control.tag('check'), "fix": control.tag('fix'), "start_time": control.start_time,
           "code": control.code, "run_time": control.run_time, "profile_id": control.profile_id,
-          "impact": control.impact, "value": 1, "id": control.id, 
+          "impact": control.impact, "value": 1, "id": control.id,
           "result_message": "#{result_message(sym)}\n\n#{code_descs}"}] }
     end
   end
