@@ -18,9 +18,10 @@ sync-repo:
   before_script:
     # add the MITRE certificates to the docker image
     - apk update && apk add git openssh-client ca-certificates
-    - wget -O /usr/local/share/ca-certificates/MITRE_BA_Root.crt $CRT_R
-    - wget -O /usr/local/share/ca-certificates/MITRE_BA_NPE_CA-1.crt $CRT_1
-    - wget -O /usr/local/share/ca-certificates/MITRE_BA_NPE_CA-3.crt $CRT_3
+    - wget -O /usr/local/share/ca-certificates/MITRE_BA_Root.crt "http://pki.mitre.org/MITRE%20BA%20ROOT.crt"
+    - wget -O /usr/local/share/ca-certificates/MITRE_BA_NPE_CA-3.crt "http://pki.mitre.org/MITRE%20BA%20NPE%20CA-3.crt"
+    - wget -O /usr/local/share/ca-certificates/MITRE_BA_NPE_CA-31.crt "http://pki.mitre.org/MITRE%20BA%20NPE%20CA-3(1).crt"
+    - wget -O /usr/local/share/ca-certificates/MITRE_BA_NPE_CA-4.crt "http://pki.mitre.org/MITRE%20BA%20NPE%20CA-4.crt"
     - update-ca-certificates
 
     # create a file called push_key that contains the $GITLAB_PUSH_KEY
@@ -50,9 +51,10 @@ deploy:
   before_script:
     # add the MITRE certificates to the docker image
     - apk update && apk add git openssh-client ca-certificates py-pip bash
-    - wget -O /usr/local/share/ca-certificates/MITRE_BA_Root.crt $CRT_R
-    - wget -O /usr/local/share/ca-certificates/MITRE_BA_NPE_CA-1.crt $CRT_1
-    - wget -O /usr/local/share/ca-certificates/MITRE_BA_NPE_CA-3.crt $CRT_3
+    - wget -O /usr/local/share/ca-certificates/MITRE_BA_Root.crt "http://pki.mitre.org/MITRE%20BA%20ROOT.crt"
+    - wget -O /usr/local/share/ca-certificates/MITRE_BA_NPE_CA-3.crt "http://pki.mitre.org/MITRE%20BA%20NPE%20CA-3.crt"
+    - wget -O /usr/local/share/ca-certificates/MITRE_BA_NPE_CA-31.crt "http://pki.mitre.org/MITRE%20BA%20NPE%20CA-3(1).crt"
+    - wget -O /usr/local/share/ca-certificates/MITRE_BA_NPE_CA-4.crt "http://pki.mitre.org/MITRE%20BA%20NPE%20CA-4.crt"
     - update-ca-certificates
 
   script:
@@ -89,9 +91,10 @@ deploy-swarm:
   before_script:
     # add the MITRE certificates to the docker image
     - apk update && apk add git openssh-client ca-certificates py-pip bash
-    - wget -O /usr/local/share/ca-certificates/MITRE_BA_Root.crt $CRT_R
-    - wget -O /usr/local/share/ca-certificates/MITRE_BA_NPE_CA-1.crt $CRT_1
-    - wget -O /usr/local/share/ca-certificates/MITRE_BA_NPE_CA-3.crt $CRT_3
+    - wget -O /usr/local/share/ca-certificates/MITRE_BA_Root.crt "http://pki.mitre.org/MITRE%20BA%20ROOT.crt"
+    - wget -O /usr/local/share/ca-certificates/MITRE_BA_NPE_CA-3.crt "http://pki.mitre.org/MITRE%20BA%20NPE%20CA-3.crt"
+    - wget -O /usr/local/share/ca-certificates/MITRE_BA_NPE_CA-31.crt "http://pki.mitre.org/MITRE%20BA%20NPE%20CA-3(1).crt"
+    - wget -O /usr/local/share/ca-certificates/MITRE_BA_NPE_CA-4.crt "http://pki.mitre.org/MITRE%20BA%20NPE%20CA-4.crt"
     - update-ca-certificates
 
   script:
