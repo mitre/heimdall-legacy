@@ -979,9 +979,9 @@ function draw_severity_pie_chart(d) {
         low += 1;
       } else if (impact == 'medium') {
         medium += 1;
-      } else if (impact >= 'high') {
+      } else if (impact == 'high') {
         high += 1;
-      } else if (impact >= 'critical') {
+      } else if (impact == 'critical') {
         critical += 1;
       }
     }
@@ -1071,7 +1071,7 @@ $("#export-caat").click(function(event) {
   for(var i=0, len=controls.length; i < len; i++) {
     control = controls[i];
     field = [];
-    impact = parseFloat(control.impact);
+    //impact = parseFloat(control.impact);
 
     if (impact != 0.0 && !vulnList.includes(control.name)) {
       vulnList.push(control.name)
@@ -1098,14 +1098,7 @@ $("#export-caat").click(function(event) {
       field.push(br2nl(control.fix));          // Recommended Corrective Action(s)
       field.push('');                          // Effect on Business
       field.push('');                          // Likelihood
-
-      if (impact >= 0.1 && impact <= 0.3) {    // Impact
-        field.push('Low');
-      } else if (impact >= 0.4 && impact <= 0.6) {
-        field.push('Moderate');
-      } else if (impact >= 0.7 && impact <= 1.0) {
-        field.push('High');
-      }
+      field.push(impact)                       // Impact
       caat.push(field);
     }
   }

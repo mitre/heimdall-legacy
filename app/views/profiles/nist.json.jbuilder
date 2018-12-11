@@ -30,11 +30,13 @@ json.children @families do |family|
       json.children @control_hash[control['name']].each do |child|
         json.name child[:name]
         json.severity child[:severity]
-        json.impact child[:impact]
+        json.impact convert_impact(child[:impact])
         json.value 1
+        Rails.logger.debug "child[:impact]: #{child[:impact]}"
         if child[:impact]
           control_total_children += 1
           control_total_impact += convert_impact(child[:impact])
+          Rails.logger.debug "control_total_impact += #{convert_impact(child[:impact])}: #{control_total_impact}"
         end
       end
     end

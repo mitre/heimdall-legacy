@@ -1,5 +1,5 @@
 FactoryBot.define do
   factory :filter_group, class: FilterGroup do
-    name 'MyGroup'
+    name { 'MyGroup' }
   end
 end

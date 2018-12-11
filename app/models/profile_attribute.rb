@@ -3,6 +3,7 @@ class ProfileAttribute
   include Mongoid::Timestamps
   field :name, type: String
   field :option_description, type: String
+  field :option_type, type: String
   field :option_default, type: Array, default: []
   field :option_required, type: Boolean
   embedded_in :profile, inverse_of: :profile_attributes
@@ -20,6 +21,7 @@ class ProfileAttribute
     Jbuilder.new do |json|
       json.extract! self, :name
       json.options do
+        json.type option_type
         json.description option_description
         if option_default.size == 1
           if option_default.first.numeric?
