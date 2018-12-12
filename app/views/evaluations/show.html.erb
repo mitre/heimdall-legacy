@@ -1071,16 +1071,12 @@ $("#export-caat").click(function(event) {
   for(var i=0, len=controls.length; i < len; i++) {
     control = controls[i];
     field = [];
-    //impact = parseFloat(control.impact);
 
-    if (impact != 0.0 && !vulnList.includes(control.name)) {
+    if (impact != 'none' && !vulnList.includes(control.name)) {
       vulnList.push(control.name)
       field.push(control.family);              // Control Number
       field.push(br2nl(control.title));        // Finding Title
-
       field.push(convertDate(new Date(control.start_time),'/')); // Date Identified
-      field.push('');
-
       field.push('');                          // Finding ID
       field.push('');                          // Information System or Program Name
       field.push('');                          // Repeat Findings

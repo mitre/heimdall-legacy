@@ -56,9 +56,7 @@ gem 'thor'
 gem 'json'
 gem 'pry'
 
-gem 'inspec_tools', '~> 1.1.4', :git => "https://github.com/mitre/inspec_tools.git"
-gem 'docsplit'
-gem 'pdftotext'
+gem 'inspec_tools', '~> 1.1.5', :git => "https://github.com/mitre/inspec_tools.git"
 gem 'roo'
 
 group :development, :test do
