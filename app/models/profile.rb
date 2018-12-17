@@ -12,6 +12,7 @@ class Profile
   field :summary, type: String
   field :version, type: String
   field :parent_profile, type: String
+  field :status, type: String
   field :sha256, type: String
   embeds_many :depends, cascade_callbacks: true
   embeds_many :supports, cascade_callbacks: true

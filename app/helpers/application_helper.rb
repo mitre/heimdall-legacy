@@ -1,10 +1,12 @@
 module ApplicationHelper
   def category_button(impact)
-    if impact <= 0.3
+    if impact == 'low'
       'btn btn-category-iii'
-    elsif impact <= 0.6
+    elsif impact == 'medium'
       'btn btn-category-ii'
-    elsif impact <= 0.9
+    elsif impact == 'high'
+      'btn btn-category-i'
+    elsif impact == 'critical'
       'btn btn-category-i'
     end
   end

@@ -101,7 +101,7 @@ var evaluation_id = '<%= @evaluation.id %>';
               <% prof_list.each do |prof| %>
                 <li>
                   <%= check_box_tag(prof.id, prof.id, true, :onclick=>"exclude_profile('#{prof.id}');")%>
-                  <%= link_to prof.name, profile_path(prof) %> 
+                  <%= link_to prof.name, profile_path(prof) %>
                 </li>
               <% end %>
               </ul>
@@ -283,7 +283,7 @@ var evaluation_id = '<%= @evaluation.id %>';
     <div class="col-lg-4">
       <div class="box box-primary">
         <div class="box-header with-border">
-          <h3 class="box-title">Control Severity</h3>
+          <h3 class="box-title">Control Impact</h3>
         </div>
         <button id="clear_filters_button" type="button" class="btn btn-primary floating">Clear Filters</button>
         <!-- /.box-header -->
@@ -825,7 +825,7 @@ function add_control_table(d) {
   console.log("empty table");
   header = '<table id="controls" class="table table-bordered table-striped"><thead>';
   footer = '</tfoot></table>';
-  tr_str = '<tr><th>Status</th><th>Title</th><th>Control ID</th><th>Severity</th><th>Run Time</th><th>NIST Refs</th><th class="hidden">Details</th></tr>';
+  tr_str = '<tr><th>Status</th><th>Title</th><th>Control ID</th><th>Impact</th><th>Run Time</th><th>NIST Refs</th><th class="hidden">Details</th></tr>';
   rows = '';
   root_path = '<%= root_path %>';
   if (d.controls) {
@@ -838,7 +838,7 @@ function add_control_table(d) {
       rows += '<td><button class="' + status_btn(ctl.status_symbol_title) + '" style="width:120px" onclick="show_details(\'' + profile_id + '\', \'' + ctl_id + '\');">' + ctl.status_symbol_title + '</button></td>';
       rows += '<td>' + ctl.title + '</td>';
       rows += '<td><a href="' + root_path + '/profiles/' + profile_id + '/controls/' + ctl_id + '">' + ctl.name + '</a></td>';
-      rows += '<td>' + ctl.severity + '</td>';
+      rows += '<td>' + ctl.impact + '</td>';
       rows += '<td>' + ctl.run_time + '</td>';
       rows += '<td>' + ctl.nist + '</td>';
       rows += '<td class="hidden">' + ctl.code + '</td></tr>';
@@ -967,6 +967,7 @@ function draw_status_pie_chart(d) {
 }
 
 function draw_severity_pie_chart(d) {
+  critical = 0;
   high = 0;
   medium = 0;
   low = 0;
@@ -974,18 +975,21 @@ function draw_severity_pie_chart(d) {
   if (d.controls) {
     for(var i=0, len=d.controls.length; i < len; i++) {
       impact = d.controls[i].impact;
-      if (impact <= 0.4) {
+      if (impact == 'low') {
         low += 1;
-      } else if (impact < 0.7) {
+      } else if (impact == 'medium') {
         medium += 1;
-      } else if (impact >= 0.7) {
+      } else if (impact == 'high') {
         high += 1;
+      } else if (impact == 'critical') {
+        critical += 1;
       }
     }
   }
   severity_data = [
-                  ['High',   high],
-                  ['Medium',  medium],
+                  ['Critical', critical],
+                  ['High', high],
+                  ['Medium', medium],
                   ['Low', low],
               ];
 
@@ -1007,7 +1011,7 @@ function draw_severity_pie_chart(d) {
     },
     color:
     {
-        pattern: ['#003366', '#0080FF', '#99CCFF']
+        pattern: ['#FF0029', '#003366', '#0080FF', '#99CCFF']
     },
     size:
     {
@@ -1015,7 +1019,7 @@ function draw_severity_pie_chart(d) {
     },
     donut:
     {
-      title: "Severity",
+      title: "Impact",
       label:
       {
         format: function (value, ratio, id)
@@ -1067,16 +1071,12 @@ $("#export-caat").click(function(event) {
   for(var i=0, len=controls.length; i < len; i++) {
     control = controls[i];
     field = [];
-    impact = parseFloat(control.impact);
 
-    if (impact != 0.0 && !vulnList.includes(control.name)) {
+    if (impact != 'none' && !vulnList.includes(control.name)) {
       vulnList.push(control.name)
       field.push(control.family);              // Control Number
       field.push(br2nl(control.title));        // Finding Title
-
       field.push(convertDate(new Date(control.start_time),'/')); // Date Identified
-      field.push('');
-
       field.push('');                          // Finding ID
       field.push('');                          // Information System or Program Name
       field.push('');                          // Repeat Findings
@@ -1094,14 +1094,7 @@ $("#export-caat").click(function(event) {
       field.push(br2nl(control.fix));          // Recommended Corrective Action(s)
       field.push('');                          // Effect on Business
       field.push('');                          // Likelihood
-
-      if (impact >= 0.1 && impact <= 0.3) {    // Impact
-        field.push('Low');                   
-      } else if (impact >= 0.4 && impact <= 0.6) {
-        field.push('Moderate');
-      } else if (impact >= 0.7 && impact <= 1.0) {
-        field.push('High');
-      }
+      field.push(impact)                       // Impact
       caat.push(field);
     }
   }
@@ -1134,11 +1127,11 @@ $("#export-caat").click(function(event) {
 
   var wbout = XLSX.write(wb, {bookType:'xlsx',  type: 'binary'});
 
-  function s2ab(s) { 
+  function s2ab(s) {
             var buf = new ArrayBuffer(s.length); //convert s to arrayBuffer
             var view = new Uint8Array(buf);  //create uint8array as viewer
             for (var i=0; i<s.length; i++) view[i] = s.charCodeAt(i) & 0xFF; //convert to octet
-            return buf;    
+            return buf;
   }
 
   saveAs(new Blob([s2ab(wbout)],{type:"application/octet-stream"}), 'CAAT-'+ convertDate(new Date(),'-')+ '.xlsx');
@@ -1239,4 +1232,3 @@ document.addEventListener("turbolinks:load", function() {
 
 </script>
 <script id="chart_js"></script>
-

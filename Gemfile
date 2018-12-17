@@ -56,16 +56,14 @@ gem 'thor'
 gem 'json'
 gem 'pry'
 
-gem 'inspec_tools', :git => "https://github.com/mitre/inspec_tools.git"
-gem 'docsplit'
-gem 'pdftotext'
+gem 'inspec_tools', '~> 1.1.5', :git => "https://github.com/mitre/inspec_tools.git"
 gem 'roo'
-
 
 group :development, :test do
   # Call 'byebug' anywhere in the code to stop execution and get a debugger console
   gem 'byebug', platforms: [:mri, :mingw, :x64_mingw]
   gem 'rspec-rails', '~> 3.6'
+  gem 'rubocop-rspec'
   gem 'factory_bot_rails'
   gem 'database_cleaner', '~> 1.6', '>= 1.6.1'
   gem 'simplecov'

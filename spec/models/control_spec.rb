@@ -3,7 +3,7 @@ require 'rails_helper'
 RSpec.describe Control, type: :model do
   context 'with Control' do
     let(:control) { FactoryBot.build(:control) }
-    let(:bad_code) { "control \"V-71849\" do\n  title \"The file permissions, ownership, and group membership of system files and\ncommands must match the vendor values.\"\n  desc  \"\n    Discretionary access control is weakened if a user or group has access\npermissions to system files and directories greater than the default.\n\n    Satisfies: SRG-OS-000257-GPOS-00098, SRG-OS-000278-GPOS-0010.\n  \"\n  impact \"nada\"\n  tag \"severity\": \"high\"\n  tag \"gtitle\": \"SRG-OS-000257-GPOS-00098\"\n  tag \"gid\": \"V-71849\"\n  tag \"rid\": \"SV-86473r2_rule\"\n  tag \"stig_id\": \"RHEL-07-010010\"\n  tag \"cci\": \"CCI-001494\"\n  tag \"nist\": [\"AU-9\", \"Rev_4\"]\n  tag \"cci\": \"CCI-001496\"\n  tag \"nist\": [\"AU-9 (3)\", \"Rev_4\"]\n  tag \"check\": \"Verify the file permissions, ownership, and group membership of\nsystem files and commands match the vendor values.\n\nCheck the file permissions, ownership, and group membership of system files and\ncommands with the following command:\n\n# rpm -Va | grep '^.M'\n\nIf there is any output from the command indicating that the ownership or group of a\nsystem file or command, or a system file, has permissions less restrictive than the\ndefault, this is a finding.\"\n\n  tag \"fix\": \"Run the following command to determine which package owns the file:\n\n# rpm -qf <filename>\n\nReset the permissions of files within a package with the following command:\n\n#rpm --setperms <packagename>\n\nReset the user and group ownership of files within a package with the following\ncommand:\n\n#rpm --setugids <packagename>\"\n\n  # @todo add puppet content to fix any rpms that get out of wack\n  describe command(\"rpm -Va | grep '^.M' | wc -l\") do\n    its('stdout.strip') { should eq '0' }\n  end\n\nend\n" }
+    let(:bad_code) { "control \"V-71849\" do\n  title \"The file permissions, ownership, and group membership of system files and\ncommands must match the vendor values.\"\n  desc  \"\n    Discretionary access control is weakened if a user or group has access\npermissions to system files and directories greater than the default.\n\n    Satisfies: SRG-OS-000257-GPOS-00098, SRG-OS-000278-GPOS-0010.\n  \"\n  impact \"nada\"\n  tag \"severity\": \"high\"\n  tag \"gtitle\": \"SRG-OS-000257-GPOS-00098\"\n  tag: \"V-71849\"\n  tag \"rid\": \"SV-86473r2_rule\"\n  tag \"stig_id\": \"RHEL-07-010010\"\n  tag \"cci\": \"CCI-001494\"\n  tag \"nist\": [\"AU-9\", \"Rev_4\"]\n  tag \"cci\": \"CCI-001496\"\n  tag \"nist\": [\"AU-9 (3)\", \"Rev_4\"]\n  tag \"check\": \"Verify the file permissions, ownership, and group membership of\nsystem files and commands match the vendor values.\n\nCheck the file permissions, ownership, and group membership of system files and\ncommands with the following command:\n\n# rpm -Va | grep '^.M'\n\nIf there is any output from the command indicating that the ownership or group of a\nsystem file or command, or a system file, has permissions less restrictive than the\ndefault, this is a finding.\"\n\n  tag \"fix\": \"Run the following command to determine which package owns the file:\n\n# rpm -qf <filename>\n\nReset the permissions of files within a package with the following command:\n\n#rpm --setperms <packagename>\n\nReset the user and group ownership of files within a package with the following\ncommand:\n\n#rpm --setugids <packagename>\"\n\n  # @todo add puppet content to fix any rpms that get out of wack\n  describe command(\"rpm -Va | grep '^.M' | wc -l\") do\n    its('stdout.strip') { should eq '0' }\n  end\n\nend\n" }
 
     let(:wrong_code) {
       "package recaster;
@@ -42,17 +42,17 @@ RSpec.describe Control, type: :model do
     end
 
     it 'get low severity' do
-      control.impact = 0.2
+      control.impact = 'low'
       expect(control.severity).to eq 'low'
     end
 
     it 'get medium severity' do
-      control.impact = 0.5
+      control.impact = 'medium'
       expect(control.severity).to eq 'medium'
     end
 
     it 'get high severity' do
-      control.impact = 0.9
+      control.impact = 'high'
       expect(control.severity).to eq 'high'
     end
 

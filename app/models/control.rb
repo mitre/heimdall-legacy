@@ -6,12 +6,13 @@ class Control
   include Mongoid::Userstamps::Model
   field :title, type: String
   field :desc, type: String
-  field :impact, type: Float
+  field :impact, type: String
   field :refs, type: Array, default: []
   field :code, type: String
   field :control_id, type: String
   field :descriptions, type: Array, default: []
   embeds_many :tags, cascade_callbacks: true
+  embeds_many :descriptions, cascade_callbacks: true
   field :sl_ref, type: String
   field :sl_line, type: Integer
   belongs_to :profile, inverse_of: :controls
@@ -73,10 +74,7 @@ class Control
   end
 
   def severity
-    if impact <= 0.3 then 'low'
-    elsif impact <= 0.6 then 'medium'
-    elsif impact <= 0.9 then 'high'
-    end
+    impact.downcase
   end
 
   def parse_nist_tag(nist_tag)
@@ -127,12 +125,29 @@ class Control
         new_tags << { "name": key.to_s, "value": value }
       end
       control['tags'] = new_tags
+      control['impact'] = Control.parse_impact(control['impact'])
       source_location = control.delete('source_location')
       source_location.try(:each) do |key, value|
         control["sl_#{key}"] = value
       end
     end
     controls
+  end
+
+  def self.parse_impact(value)
+    if value.nil?
+      'none'
+    elsif value.numeric?
+      impact = value.to_f
+      if impact < 0.1 then 'none'
+      elsif impact < 0.4 then 'low'
+      elsif impact < 0.7 then 'medium'
+      elsif impact < 0.9 then 'high'
+      elsif impact >= 0.9 then 'critical'
+      end
+    else
+      value.downcase
+    end
   end
 
   def self.parse(code)
@@ -178,7 +193,7 @@ class Control
     when 'desc'
       self.desc = cmd[2][1][0][1][1][1]
     when 'impact'
-      self.impact = Float(cmd[2][1][0][1])
+      self.impact = Control.parse_impact(cmd[2][1][0][1][1][1])
     when 'tag'
       parse_tag cmd
     end

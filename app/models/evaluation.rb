@@ -57,17 +57,17 @@ class Evaluation
   end
 
   def to_ckl
-    tool = InspecTools.inspec(to_json)
+    tool = InspecTools::Inspec.new(to_json)
     tool.to_ckl
   end
 
   def to_csv
-    tool = InspecTools.inspec(to_json)
+    tool = InspecTools::Inspec.new(to_json)
     tool.to_csv
   end
 
   def to_xccdf(attribs)
-    tool = InspecTools.inspec(to_json)
+    tool = InspecTools::Inspec.new(to_json)
     tool.to_xccdf(attribs)
   end
 
@@ -101,7 +101,7 @@ class Evaluation
   end
 
   def status_symbol(control, ct_results)
-    if control.impact.zero?
+    if control.impact == 'none'
       :not_applicable
     elsif ct_results.nil?
       :not_tested

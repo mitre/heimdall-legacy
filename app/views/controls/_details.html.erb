@@ -29,8 +29,17 @@
     <table class="table table-bordered table-striped">
       <tr><td>Control:</td><td><%= control.control_id %></td></tr>
       <tr><td>Title:</td><td><%= control.title %></td></tr>
-      <tr><td>Desc:</td><td><%= control.desc %></td></tr>
-      <tr><td>Severity:</td><td><%= control.severity %></td></tr>
+      <% if control.descriptions.present? %>
+        <tr><td>Descriptions:</td>
+          <td><ul>
+            <% control.descriptions.each do |desc| %>
+              <li><%= desc.label %>: <%= desc.data %></li>
+            <% end %>
+          </ul></td>
+        </tr>
+      <% else %>
+        <tr><td>Desc:</td><td><%= control.desc %></td></tr>
+      <% end %>
       <tr><td>Impact:</td><td><%= control.impact %></td></tr>
       <% if nist = control.tag('nist') %>
         <tr><td>NIST Ref:</td><td><%= nist %></td></tr>
