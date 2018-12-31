@@ -837,7 +837,7 @@ function add_control_table(d) {
       rows += '<tr class="' + ctl.severity_cap + ' ' + ctl.status_symbol_title + '" id="' + ctl_id + '">';
       rows += '<td><button class="' + status_btn(ctl.status_symbol_title) + '" style="width:120px" onclick="show_details(\'' + profile_id + '\', \'' + ctl_id + '\');">' + ctl.status_symbol_title + '</button></td>';
       rows += '<td>' + ctl.title + '</td>';
-      rows += '<td><a href="' + root_path + '/profiles/' + profile_id + '/controls/' + ctl_id + '">' + ctl.name + '</a></td>';
+      rows += '<td><a href="' + root_path + 'profiles/' + profile_id + '/controls/' + ctl_id + '">' + ctl.name + '</a></td>';
       rows += '<td>' + ctl.impact + '</td>';
       rows += '<td>' + ctl.run_time + '</td>';
       rows += '<td>' + ctl.nist + '</td>';
