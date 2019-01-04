@@ -17,9 +17,6 @@ WORKDIR $RAILS_ROOT
 
 COPY Gemfile Gemfile
 
-# Edit inspec_tools to use a locally downloaded gem
-# RUN sed -i"" -e 's#.inspec_tools.*:git.*$#"inspec_tools", :path => "./inspec-tools"#g' Gemfile
-
 # Ensure we never install docs
 RUN echo "gem: --no-rdoc --no-ri" >> ~/.gemrc
 
@@ -39,9 +36,6 @@ ARG RAILS_RELATIVE_URL_ROOT=/heimdall
 COPY . .
 RUN mv config/mongoid.yml config/mongoid.yml.orig
 RUN mv config/mongoid.yml.docker config/mongoid.yml
-
-# Edit inspec_tools to use a locally downloaded gem
-# RUN sed -i"" -e 's#.inspec_tools.*:git.*$#"inspec_tools", :path => "./inspec-tools"#g' Gemfile
 
 # precompile is only necessary for production builds
 RUN cp config/secrets.example.yml config/secrets.yml
