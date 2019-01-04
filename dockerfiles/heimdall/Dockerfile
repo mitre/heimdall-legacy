@@ -3,7 +3,7 @@ FROM alpine:3.5
 
 # sed is build only should be removed at TODO-remove-at-release
 RUN apk --no-cache update && apk --no-cache  --update add ruby ruby-irb ruby-json ruby-rake \
-    ruby-bigdecimal ruby-io-console libstdc++ tzdata nodejs sed libressl \
+    ruby-bigdecimal ruby-io-console libstdc++ tzdata nodejs sed libressl ruby-rdoc ruby-bundler\
 	 libxml2 'imagemagick<7.0.0.0'
 
 ENV RAILS_ROOT /var/www/heimdall
@@ -25,7 +25,6 @@ RUN echo "gem: --no-rdoc --no-ri" >> ~/.gemrc
 # --deployment once Gemfile.lock has been committed
 RUN apk --no-cache --update add --virtual build-dependencies build-base ruby-dev  \
     postgresql-dev libc-dev linux-headers git libxml2-dev 'imagemagick-dev<7.0.0.0' pkgconf && \
-    gem install bundler --no-rdoc --no-ri && \
     bundle install --retry 5 --no-cache --jobs 20 --without development test && \
     apk del build-dependencies
 

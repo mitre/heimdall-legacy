@@ -56,7 +56,7 @@ gem 'thor'
 gem 'json'
 gem 'pry'
 
-gem 'inspec_tools', '~> 1.1.5', :git => "https://github.com/mitre/inspec_tools.git"
+gem 'inspec_tools', '~> 1.2', :git => "https://github.com/mitre/inspec_tools.git"
 gem 'roo'
 
 group :development, :test do
