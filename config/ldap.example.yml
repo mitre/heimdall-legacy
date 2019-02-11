@@ -33,7 +33,7 @@ development:
   attribute: mail
   base: ou=People,o=yourdomain.com
   admin_user: cn=admin,dc=test,dc=com
-  admin_password: credentials
+  admin_password: "credentials"
   ssl: true
   # <<: *AUTHORIZATIONS
 
@@ -43,7 +43,7 @@ test:
   attribute: cn
   base: ou=people,dc=test,dc=com
   admin_user: cn=admin,dc=test,dc=com
-  admin_password: credentials
+  admin_password: "credentials"
   ssl: simple_tls
   # <<: *AUTHORIZATIONS
 
@@ -53,6 +53,6 @@ production:
   attribute: mail
   base: ou=People,o=yourdomain.com
   admin_user: cn=admin,dc=test,dc=com
-  admin_password: credentials
+  admin_password: "credentials"
   ssl: true
   # <<: *AUTHORIZATIONS
