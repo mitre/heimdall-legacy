@@ -2,6 +2,8 @@
 
 Heimdall is a centralized aggregation tool for InSpec evaluations
 
+Test for mirroring
+
 ## Description
 Heimdall supports viewing of InSpec profiles and evaluations in a convenient
 interface.  Data uploads can be automated through usage of curl, and added as
