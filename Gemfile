@@ -1,10 +1,13 @@
 source 'https://rubygems.org'
 
+#ruby '2.4'
+
 git_source(:github) do |repo_name|
   repo_name = "#{repo_name}/#{repo_name}" unless repo_name.include?("/")
   "https://github.com/#{repo_name}.git"
 end
 
+gem 'tzinfo-data'
 # Bundle edge Rails instead: gem 'rails', github: 'rails/rails'
 gem 'rails', '~> 5.1.4'
 # Use Puma as the app server
@@ -50,13 +53,13 @@ gem 'carrierwave-mongoid', :require => 'carrierwave/mongoid'
 
 # For inspec2ckl
 gem 'nokogiri-happymapper'
-gem 'happymapper'
+#gem 'happymapper'
 gem 'nokogiri', '~> 1.8.1'
 gem 'thor'
 gem 'json'
 gem 'pry'
 
-gem 'inspec_tools', '~> 1.2', :git => "https://github.com/mitre/inspec_tools.git"
+gem 'inspec_tools', '~> 1.2.1'
 gem 'roo'
 
 group :development, :test do
@@ -74,7 +77,7 @@ end
 
 group :test do
   gem 'capybara', '~> 2.14'
-  gem 'mongoid-rspec', git: 'https://github.com/mongoid-rspec/mongoid-rspec.git'
+  gem 'mongoid-rspec'
   gem 'email_spec', '~> 2.1'
   gem 'rails-controller-testing'
   gem 'webmock'

@@ -15,7 +15,6 @@ config/secrets.yml
 config/ldap.yml
 /public/uploads
 inspec-tools/
-Gemfile.lock
 
 rails_best_practices_output.html
 
@@ -61,3 +60,4 @@ build-iPhoneSimulator/
 .rvmrc
 
 .kitchen/
+results/
