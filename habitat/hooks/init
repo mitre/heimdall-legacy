@@ -1,0 +1,19 @@
+#!/bin/sh
+set -e
+
+# Set envvars based on rendered config.
+# This might be redundant, but doing it again doesn't hurt anything
+#source {{$svc_config_path}}/app_env.sh
+
+# initialize DB. Normal logic applies here, non-zero means failure.
+#pg_isready -d {{pkg.env.DATABASE_URL}}
+#if [ $? -eq 1 ]
+#then
+  #heimdall-rake secrets:setup
+  heimdall-rake db:create
+  heimdall-rake db:setup
+  heimdall-rake db:seed
+  heimdall-rake db:migrate
+#else
+  echo "Database is ready! Skipping create..."
+#fi

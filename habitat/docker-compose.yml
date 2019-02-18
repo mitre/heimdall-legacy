@@ -1,0 +1,24 @@
+version: '3'
+services:
+  db:
+    image: core/mongodb
+    volumes:
+      - "./habitat/default.toml:/default.toml"
+  railsapp:
+    image: mitre/heimdall
+    links:
+    - db
+    command: --peer db --bind database:mongodb.default
+
+    environment:
+      RAILS_SERVE_STATIC_FILES: "true"
+      RAILS_ENV: production
+      # The rails relative url is not necessary for all builds it can be fully
+      # removed if you wish to host off of '/'. Also, you will have to remove
+      # the relative url from dockerfiles/heimdall/Dockerfile
+      RAILS_RELATIVE_URL_ROOT: /heimdall
+
+    ports:
+      - "3000:3000"
+    depends_on:
+      - "db"

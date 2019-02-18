@@ -1,0 +1,13 @@
+version: '3'
+services:
+  db:
+    image: core/mongodb
+    volumes:
+      - "./habitat/default.toml:/default.toml"
+  railsapp:
+    image: heimdall/heimdall
+    ports:
+      - 3000:3000
+    links:
+    - db
+    command: --peer db --bind database:mongodb.default

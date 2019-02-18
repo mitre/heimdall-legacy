@@ -1,0 +1,10 @@
+{
+	"mongodb": {
+		{{~#eachAlive bind.database.members as |member|}}
+		{{#if @first}}
+		"host" : "{{member.sys.ip}}",
+		"port"   : "{{member.cfg.port}}"
+		{{/if}}
+		{{~/eachAlive}}
+	}
+}

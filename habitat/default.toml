@@ -1,0 +1,13 @@
+# Use this file to templatize your application's native configuration files.
+# See the docs at https://www.habitat.sh/docs/create-packages-configure/.
+# You can safely delete this file if you don't need it.
+
+#secret_key_base = '9bbc27e4ee9ca09cf378cb3c86bc46aab85d1d7b54b90b3f8301fd4e50ba4d20fd409b9df0e7757c056efdc759878138bcd1479f1d5f9dbe82775e182e20d4e8'
+
+secret_key_base = "d38c41e73a35da4b0ab8c999d9cfa396df1b54e4316279e3cd784fbd74c8e76c9d1fc68a55a69db4908991cb850f28e7cbfd6ed3c0af0b679eabbaf28b618c4f"
+
+rails_env = 'production'
+ 
+[mongodb]
+host = "127.0.0.1"
+port = "27017"
