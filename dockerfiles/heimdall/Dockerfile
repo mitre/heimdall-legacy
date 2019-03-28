@@ -15,7 +15,7 @@ WORKDIR $RAILS_ROOT
 # TODO-remove-at-release
 # COPY inspec-tools/ inspec-tools/
 
-COPY Gemfile Gemfile
+COPY Gemfile Gemfile.lock ./
 
 # Ensure we never install docs
 RUN echo "gem: --no-rdoc --no-ri" >> ~/.gemrc
