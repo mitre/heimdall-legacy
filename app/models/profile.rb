@@ -141,7 +141,7 @@ class Profile
       options = attr.delete('options')
       next unless options
       options.each do |key, value|
-        if key == 'default'
+        if ['default', 'value'].include?(key)
           unless value.is_a?(Array)
             unless value.is_a?(String)
               value = value.to_s
@@ -152,13 +152,13 @@ class Profile
         attr["option_#{key}"] = value
       end
     end
-    supports = hash.delete('supports')
+    supports = hash.delete('supports') || []
     new_supports = []
     supports.each do |key, value|
       new_supports << {'name': key, 'value': value}
     end
     hash['supports'] = new_supports
-    groups = hash.delete('groups')
+    groups = hash.delete('groups') || []
     new_groups = []
     groups.each do |group|
       if group['title'].present? and group['controls'].size > 1

@@ -82,11 +82,16 @@ class ProfilesController < ApplicationController
     if contents.key? 'name'
       profile_hash, controls = Profile.transform(contents)
       begin
-        @profile = Profile.create(profile_hash)
-        controls.each do |control|
-          @profile.controls.create(control)
+        @profile = Profile.new(profile_hash)
+        if @profile.save
+          controls.each do |control|
+            @profile.controls.create(control)
+          end
+          redirect_to @profile, notice: 'Profile uploaded.'
+        else
+          logger.debug "ERROR #{@profile.errors.inspect}"
+          redirect_to profiles_url, error: 'Profile was not successfully created.'
         end
-        redirect_to @profile, notice: 'Profile uploaded.'
       rescue Mongoid::Errors::InvalidValue
         redirect_to profiles_url, notice: 'Profile was malformed.'
       end
