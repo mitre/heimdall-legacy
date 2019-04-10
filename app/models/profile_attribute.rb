@@ -5,6 +5,7 @@ class ProfileAttribute
   field :option_description, type: String
   field :option_type, type: String
   field :option_default, type: Array, default: []
+  field :option_value, type: Array, default: []
   field :option_required, type: Boolean
   embedded_in :profile, inverse_of: :profile_attributes
   validates_presence_of :name
@@ -15,6 +16,14 @@ class ProfileAttribute
 
   def option_default_list
     option_default.join(', ')
+  end
+
+  def option_value_list=(arg)
+    self.option_value = arg.split(',').map(&:strip)
+  end
+
+  def option_value_list
+    option_value.join(', ')
   end
 
   def to_jbuilder
@@ -31,6 +40,15 @@ class ProfileAttribute
           end
         else
           json.default option_default
+        end
+        if option_value.size == 1
+          if option_value.first.numeric?
+            json.default Float(option_value.first)
+          else
+            json.default option_value.first
+          end
+        else
+          json.default option_value
         end
       end
     end
