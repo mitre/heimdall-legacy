@@ -6,4 +6,4 @@ before:
   - mkdir -p /tmp/db
   - /usr/bin/mongod --dbpath /tmp/db --fork --syslog
 targets:
-  centos-7:
+  - centos-7:
