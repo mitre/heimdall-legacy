@@ -1,0 +1,9 @@
+build_dependencies:
+  - mongodb-server
+dependencies:
+  - mongodb-org-server
+before:
+  - mkdir -p /tmp/db
+  - /usr/bin/mongod --dbpath /tmp/db --fork --syslog
+targets:
+  centos-7:
