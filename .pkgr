@@ -15,8 +15,18 @@ build_dependencies:
 dependencies:
   - mongodb-org-server
   - ImageMagick
+  - libxml2
+  - ImageMagick-c++
+  - libxslt
 build_dependencies:
   - ImageMagick-devel
+  - libxml2-devel
+  - libxslt-devel
+  - gcc
+  - make
+  - automake
+# libxml2 libxml2-devel libxslt libxslt-devel
+#  build-essential libpq-dev nodejs libxml2-dev libmagick++-dev mongodb-server
 before:
   - mkdir -p /tmp/db
   - /usr/bin/mongod --dbpath /tmp/db --fork --syslog
