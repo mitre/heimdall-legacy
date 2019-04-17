@@ -1,34 +1,20 @@
-# dependencies:
-#  - default-dependency-1
-#  - default-dependency-2
-#targets:
-#  ubuntu-12.04:
-# overwrite dependencies only for ubuntu-12.04
-#    dependencies:
-#      - other-dependency-1
-#      - other-dependency-2
-#  ubuntu-14.04:
-#  debian-7:
-
-build_dependencies:
-  - mongodb-server
-dependencies:
-  - mongodb-org-server
-  - ImageMagick
-  - libxml2
-  - ImageMagick-c++
-  - libxslt
-build_dependencies:
+--- 
+before: 
+  - "mkdir -p /tmp/db"
+  - "/usr/bin/mongod --dbpath /tmp/db --fork --syslog"
+build_dependencies: 
   - ImageMagick-devel
   - libxml2-devel
   - libxslt-devel
   - gcc
   - make
   - automake
-# libxml2 libxml2-devel libxslt libxslt-devel
-#  build-essential libpq-dev nodejs libxml2-dev libmagick++-dev mongodb-server
-before:
-  - mkdir -p /tmp/db
-  - /usr/bin/mongod --dbpath /tmp/db --fork --syslog
+dependencies: 
+  - mongodb-org-server
+  - ImageMagick
+  - libxml2
+  - ImageMagick-c++
+  - libxslt
 targets:
-  - centos-7:
+  centos-7:
+  
