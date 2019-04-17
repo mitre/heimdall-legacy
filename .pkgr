@@ -1,7 +1,22 @@
+# dependencies:
+#  - default-dependency-1
+#  - default-dependency-2
+#targets:
+#  ubuntu-12.04:
+# overwrite dependencies only for ubuntu-12.04
+#    dependencies:
+#      - other-dependency-1
+#      - other-dependency-2
+#  ubuntu-14.04:
+#  debian-7:
+
 build_dependencies:
   - mongodb-server
 dependencies:
   - mongodb-org-server
+  - ImageMagick
+build_dependencies:
+  - ImageMagick-devel
 before:
   - mkdir -p /tmp/db
   - /usr/bin/mongod --dbpath /tmp/db --fork --syslog
