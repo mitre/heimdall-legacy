@@ -11,7 +11,6 @@
 /tmp/
 /mongo_data/
 /log/*.log
-config/secrets.yml
 config/ldap.yml
 /public/uploads
 inspec-tools/
@@ -50,7 +49,6 @@ build-iPhoneSimulator/
 
 # for a library or gem, you might want to ignore these files since the code is
 # intended to run in multiple environments; otherwise, check them in:
-.ruby-version
 .ruby-gemset
 
 # Ignore Mac DS_Store files
@@ -61,3 +59,6 @@ build-iPhoneSimulator/
 
 .kitchen/
 results/
+
+# Hide docker secrets file from repository
+.env-prod

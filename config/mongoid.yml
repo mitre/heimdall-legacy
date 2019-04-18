@@ -9,7 +9,7 @@ development:
       # Provides the hosts the default client can connect to. Must be an array
       # of host:port pairs. (required)
       hosts:
-        - localhost:27017
+        - <%= ENV.fetch('MONGO_TCP_ADDR', '127.0.0.1') %>:<%= ENV.fetch('MONGO_TCP_PORT', '27017') %>
       options:
         # Change the default write concern. (default = { w: 1 })
         # write:
@@ -150,7 +150,7 @@ test:
     default:
       database: dashboard_test
       hosts:
-        - localhost:27017
+        - <%= ENV.fetch('MONGO_TCP_ADDR', '127.0.0.1') %>:<%= ENV.fetch('MONGO_TCP_PORT', '27017') %>
       options:
         raise_not_found_error: false
         read:
@@ -167,7 +167,7 @@ production:
       # server setup, and at least 3 for a replica set. Hosts must be
       # an array of host:port pairs. This session is single server.
       hosts:
-        - localhost:27017
+        - <%= ENV.fetch('MONGO_TCP_ADDR', '127.0.0.1') %>:<%= ENV.fetch('MONGO_TCP_PORT', '27017') %>
       # Define the default database name.
       database: heimdall2_production
       # Since this database points at a session connected to MongoHQ, we must

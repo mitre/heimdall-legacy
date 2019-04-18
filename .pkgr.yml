@@ -1,20 +1,16 @@
---- 
-before: 
-  - "mkdir -p /tmp/db"
-  - "/usr/bin/mongod --dbpath /tmp/db --fork --syslog"
-build_dependencies: 
+---
+before:
+  - 'export SECRET_KEY_BASE=xxx'
+after_install: 'setup-secrets.sh'
+build_dependencies:
   - ImageMagick-devel
   - libxml2-devel
   - libxslt-devel
   - gcc
   - make
   - automake
-dependencies: 
+dependencies:
   - mongodb-org-server
   - ImageMagick
-  - libxml2
-  - ImageMagick-c++
-  - libxslt
 targets:
   centos-7:
-  

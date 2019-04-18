@@ -18,7 +18,7 @@ Other branches contain feature-specific updates.
 ### Tags
 Tags indicate official releases of the project.
 
-Please note 0.x releases are works in progress (WIP) and may change at any time.   
+Please note 0.x releases are works in progress (WIP) and may change at any time.
 
 ## Heimdall vs Heimdall-Lite
 
@@ -75,20 +75,19 @@ If you wish to use ruby and are on Ubuntu 16, then the dependencies are:
 #### Run directly with Ruby (Instead of Docker)
 
 This mode is primarily for developers, shared heimdall instances should be
-deployed in production mode.
+deployed in production mode. Since this is a Ruby application it is suggested to use
+Rbenv or RVM for ruby version management.
+1. Install rbenv or RVM
 1. Install dependencies
 	- `apt-get install build-essential libpq-dev nodejs libxml2-dev libmagick++-dev mongodb-server -y`
-2. Install ruby 2.4.4
-3. Run the following in a terminal
+1. Install ruby by running `rbenv install` or `rvm install $(cat .ruby-version)` from the root directory of this project
+1. Run the following in a terminal
 	- `bundle install`
 	- `bundle exec rake db:create`
 	- `bundle exec rake db:migrate`
 	- `bundle exec rails s` (Start the server on localhost)
 
 #### Run With Docker
-##### Building Docker Containers
-_These steps need to be performed the first time you build the docker
-containers, and whenever you edit the code base._
 
 ##### Login Configuration
 If you would like to use your organization's internal User authentication
@@ -99,39 +98,38 @@ Heimdall to perform most actions** You may view ldap.example.yml for how
 authentication of people's internal email addresses works with a LDAP server
 which allows anonymous access.
 
+##### Setup Docker Container
+These steps need to be performed once per machine in order to prepare your machine to run heimdall in Docker.
 
-#### Automated Build Steps
-1. Run the following commands from a terminal:
-	1. `git clone https://github.com/mitre/heimdall.git && cd heimdall` # download heimdall and change to it's directory
-	2. `./gen-secrets.sh ` # (Generate Random keys to be stored in a named Docker volume **Do not run if you've ever run it before**)
-
-2. `./docker_build.sh` # (may need to first run `chmod +x docker_build.sh` to give the file executable rights)
-3. Jump to [Running Docker Container](#running-docker-container)
-
-##### Manual Build Steps
 1. Install Docker
-2. Clone this repository
-	* `git clone https://github.com/mitre/heimdall.git`
+2. Download heimdall by running `git clone https://github.com/mitre/heimdall.git`.
 3. Navigate to the base folder where `docker-compose.yml` is located
-5. Run the following command in a terminal window from the heimdall source directory:
-   * `docker-compose build`  
-6. Generate keys for secrets.yml. Use secrets.example.yml for a template.
-	_Internally we generate it with the shell script `./gen-secrets.sh` Which
-	creates a named volume which is symlinked to config/secrets.yml at runtime.
-	If you are deploying this container to a docker swarm please use docker
-	secrets as it is far more secure than a named volume._
-7. Run one of the following commands in a terminal window from the heimdall source directory:
+4. Run the following commands in a terminal window from the heimdall source directory:
+   * `./setup-docker-secrets.sh`
+   * `docker-compose up -d`
+
+
+##### Managing Docker Container
+The following commands are useful for managing the data in your docker container:
 	* `docker-compose run web rake db:reset` **This destroys and rebuilds the db**
 	* `docker-compose run web rake db:migrate` **This updates the db**
-8. Jump to [Running Docker Container](#running-docker-container)
 
 
 ##### Running Docker Container
-Once you have the container you can run it with:
+Make sure you have run the setup steps at least once before following these steps!
 
 1. Run the following command in a terminal window:
    * `docker-compose up -d`
 2. Go to `127.0.0.1:3000/heimdall` in a web browser
+
+##### Updating Docker Container
+A new version of the docker container can be retrieved by running
+
+    docker-compose pull
+    docker-compose up -d
+    docker-compose run web bundle exec rake db:migrate
+
+This will fetch the latest version of the container, redeploy if a newer version exists, and then apply any database migrations if applicable. No data should be lost by this operation.
 
 ###### Stopping the Container
 `docker-compose down` # From the source directory you started from
@@ -202,15 +200,15 @@ Please feel free to contact us by **opening an issue** on the issue board, or, a
 
 © 2018 The MITRE Corporation.
 
-Approved for Public Release; Distribution Unlimited. Case Number 18-3678.  
+Approved for Public Release; Distribution Unlimited. Case Number 18-3678.
 
 ## NOTICE
 MITRE hereby grants express written permission to use, reproduce, distribute, modify, and otherwise leverage this software to the extent permitted by the licensed terms provided in the LICENSE.md file included with this project.
 
 ### NOTICE
 
-This software was produced for the U. S. Government under Contract Number HHSM-500-2012-00008I, and is subject to Federal Acquisition Regulation Clause 52.227-14, Rights in Data-General.  
+This software was produced for the U. S. Government under Contract Number HHSM-500-2012-00008I, and is subject to Federal Acquisition Regulation Clause 52.227-14, Rights in Data-General.
 
 No other use other than that granted to the U. S. Government, or to those acting on behalf of the U. S. Government under that Clause is authorized without the express written permission of The MITRE Corporation.
 
-For further information, please contact The MITRE Corporation, Contracts Management Office, 7515 Colshire Drive, McLean, VA  22102-7539, (703) 983-6000.  
+For further information, please contact The MITRE Corporation, Contracts Management Office, 7515 Colshire Drive, McLean, VA  22102-7539, (703) 983-6000.
