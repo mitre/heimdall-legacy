@@ -3,7 +3,7 @@ services:
   db:
     image: core/mongodb
     volumes:
-      - "./habitat/default.toml:/default.toml"
+      - "./default.toml:/default.toml"
   railsapp:
     image: mitre/heimdall
     links:
