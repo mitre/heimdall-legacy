@@ -16,6 +16,7 @@ class Repo
 
   def projects(repo_cred)
     return [] unless repo_cred&.token?
+
     if repo_type == 'GitLab'
       begin
         api = Git::GitLabProxy.new(api_url, repo_cred.token)

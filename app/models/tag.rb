@@ -10,8 +10,10 @@ class Tag
       good_values = []
       value.each do |value|
         next if value.include?('Rev')
+
         val = value.scan(/([A-Z]{2,}-\d+)/)
         next if val.empty?
+
         val = val.first.first
         good_values << val
       end

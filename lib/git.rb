@@ -18,8 +18,10 @@ module Git
           repo = gitlab_proj.to_hash
           next unless repo['default_branch']
           next unless (tree = Gitlab.tree(repo['id']))
+
           tree.each do |file_hsh|
             next unless file_hsh.to_hash['name'] == 'inspec.yml'
+
             repo_proj = {}
             repo_proj[:name] = repo['name_with_namespace']
             repo_proj[:description] = repo['description']

@@ -30,6 +30,7 @@ class DashboardController < ApplicationController
       recent_objs.each do |obj|
         next if obj.created_at.nil?
         next unless clss == User || can?(:read, obj)
+
         # key = obj.created_at.strftime('%d %b.%Y')
         key = obj.created_at.beginning_of_day
         recents[key] = [] unless recents.key?(key)

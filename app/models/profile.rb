@@ -30,6 +30,7 @@ class Profile
 
   def filtered_controls(filters = nil)
     return controls if filters.nil?
+
     filtered_list = controls.select do |control|
       keep = false
       filters.each do |filter|
@@ -63,7 +64,7 @@ class Profile
     to_jbuilder.attributes!
   end
 
-  def to_json
+  def to_json(*_args)
     to_jbuilder.target!
   end
 
@@ -91,6 +92,7 @@ class Profile
     controls.each do |control|
       severity = control.severity
       next unless severity && (cat.nil? || cat == severity)
+
       control.tags.where(name: 'nist').each do |tag|
         tag.good_values.each do |value|
           nist[value] = [] unless nist[value]
@@ -140,8 +142,9 @@ class Profile
     hash['profile_attributes'].try(:each) do |attr|
       options = attr.delete('options')
       next unless options
+
       options.each do |key, value|
-        if ['default', 'value'].include?(key)
+        if %w{default value}.include?(key)
           unless value.is_a?(Array)
             unless value.is_a?(String)
               value = value.to_s
@@ -155,7 +158,7 @@ class Profile
     supports = hash.delete('supports') || []
     new_supports = []
     supports.each do |key, value|
-      new_supports << {'name': key, 'value': value}
+      new_supports << { 'name': key, 'value': value }
     end
     hash['supports'] = new_supports
     groups = hash.delete('groups') || []

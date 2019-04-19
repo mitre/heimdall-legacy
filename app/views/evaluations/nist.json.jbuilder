@@ -38,28 +38,29 @@ json.name @name
 nist_status_symbol = :not_reviewed
 json.children @families do |family|
   next if family['name'] == 'UM' && @control_hash['UM-1'].nil?
+
   cf_total_impact = 0.0
   cf_total_children = 0
   json.name family['name']
   json.desc family['desc']
   fam_status_symbol = :not_reviewed
-  #Rails.logger.debug "#{family['name']}"
+  # Rails.logger.debug "#{family['name']}"
   json.children family['children'] do |control|
     control_total_impact = 0.0
     control_total_children = 0
     json.name control['name']
     sub_fam_status_symbol = :not_reviewed
-    #Rails.logger.debug "#{control['name']}"
+    # Rails.logger.debug "#{control['name']}"
     if @control_hash[control['name']]
       child_hsh = {}
       status_symbol = :not_reviewed
-      #json.children @control_hash[control['name']].each do |child|
+      # json.children @control_hash[control['name']].each do |child|
       @control_hash[control['name']].each do |child|
-        #Rails.logger.debug "child: #{child.inspect}"
+        # Rails.logger.debug "child: #{child.inspect}"
         childf = child[:children].first
-        #Rails.logger.debug "children: #{child[:children].inspect}"
-        #Rails.logger.debug "childf: #{childf.inspect}"
-        #Rails.logger.debug "#{control['name']} keys: #{child_hsh.keys} includes #{childf[:status_symbol]}? #{child_hsh.key?(childf[:status_symbol])}"
+        # Rails.logger.debug "children: #{child[:children].inspect}"
+        # Rails.logger.debug "childf: #{childf.inspect}"
+        # Rails.logger.debug "#{control['name']} keys: #{child_hsh.keys} includes #{childf[:status_symbol]}? #{child_hsh.key?(childf[:status_symbol])}"
         unless child_hsh.key?(childf[:status_symbol])
           child_hsh[childf[:status_symbol]] = []
         end
@@ -73,9 +74,9 @@ json.children @families do |family|
           end
         end
       end
-      #Rails.logger.debug "#{control['name']} status_symbol: #{status_symbol}"
+      # Rails.logger.debug "#{control['name']} status_symbol: #{status_symbol}"
       json.children child_hsh.each do |key, value|
-        #Rails.logger.debug "Key #{key} values: #{value}"
+        # Rails.logger.debug "Key #{key} values: #{value}"
         uniques = {}
         value.uniq.each do |v|
           uniques[v] = 0
@@ -84,12 +85,12 @@ json.children @families do |family|
         value.each do |v|
           uniques[v] += 1
         end
-        #Rails.logger.debug "Key #{key} uniques #{uniques}"
+        # Rails.logger.debug "Key #{key} uniques #{uniques}"
         json.name key
         json.status_symbol key
         json.status_value convert_status_symbol(key)
         json.desc value.size
-        #json.value 1
+        # json.value 1
         if uniques.keys.size > 5
           json.children uniques.keys.each_slice(5) do |slice_keys|
             json.name "#{slice_keys.first}...#{slice_keys.last}"
@@ -105,7 +106,7 @@ json.children @families do |family|
           end
         else
           json.children uniques.each do |slice_key, slice_count|
-            json.name "#{slice_key}"
+            json.name slice_key.to_s
             json.desc slice_count
             json.status_symbol key
             json.status_value convert_status_symbol(key)
@@ -116,7 +117,7 @@ json.children @families do |family|
       json.status_symbol status_symbol
       json.status_value convert_status_symbol(status_symbol)
       json.what_level_is_this 3
-      #Rails.logger.debug "#{control['name']} status_symbol: #{status_symbol}, status_value: #{convert_status_symbol(status_symbol)}"
+      # Rails.logger.debug "#{control['name']} status_symbol: #{status_symbol}, status_value: #{convert_status_symbol(status_symbol)}"
       unless sub_fam_status_symbol == :open
         if status_symbol == :open
           sub_fam_status_symbol = :open
@@ -128,10 +129,10 @@ json.children @families do |family|
       json.value 1
       json.status_symbol :not_reviewed
       json.status_value convert_status_symbol(:not_reviewed)
-      #Rails.logger.debug "#{control['name']} status_symbol: :not_reviewed, status_value: #{convert_status_symbol(:not_reviewed)}"
+      # Rails.logger.debug "#{control['name']} status_symbol: :not_reviewed, status_value: #{convert_status_symbol(:not_reviewed)}"
     end
-    #Rails.logger.debug "#{family['name']} status_symbol: #{sub_fam_status_symbol}"
-    #json.status_value control_total_impact == 0.0 ? 0.0 : control_total_impact/control_total_children
+    # Rails.logger.debug "#{family['name']} status_symbol: #{sub_fam_status_symbol}"
+    # json.status_value control_total_impact == 0.0 ? 0.0 : control_total_impact/control_total_children
     json.status_symbol sub_fam_status_symbol
     json.status_value convert_status_symbol(sub_fam_status_symbol)
     json.what_level_is_this 2
@@ -144,12 +145,12 @@ json.children @families do |family|
         fam_status_symbol = :not_a_finding
       end
     end
-    #Rails.logger.debug "#{family['name']} status_symbol: #{fam_status_symbol}, status_value: #{convert_status_symbol(fam_status_symbol)}"
+    # Rails.logger.debug "#{family['name']} status_symbol: #{fam_status_symbol}, status_value: #{convert_status_symbol(fam_status_symbol)}"
   end
   json.status_symbol fam_status_symbol
   json.status_value convert_status_symbol(fam_status_symbol)
   json.what_level_is_this 1
-  #json.status_value cf_total_impact == 0.0 ? 0.0 : cf_total_impact/cf_total_children
+  # json.status_value cf_total_impact == 0.0 ? 0.0 : cf_total_impact/cf_total_children
   total_impact += cf_total_impact
   total_children += cf_total_children
   unless nist_status_symbol == :open
@@ -160,7 +161,7 @@ json.children @families do |family|
     end
   end
 end
-#json.status_value total_impact == 0.0 ? 0.0 : total_impact/total_children
+# json.status_value total_impact == 0.0 ? 0.0 : total_impact/total_children
 json.status_symbol nist_status_symbol
 json.status_value convert_status_symbol(nist_status_symbol)
 json.controls all_controls.each do |key, ctl|
@@ -184,4 +185,3 @@ json.controls all_controls.each do |key, ctl|
   json.run_time ctl[:run_time]
   json.impact ctl[:impact]
 end
-

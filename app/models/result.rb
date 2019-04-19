@@ -28,7 +28,7 @@ class Result
     to_jbuilder.attributes!
   end
 
-  def to_json
+  def to_json(*_args)
     to_jbuilder.target!
   end
 

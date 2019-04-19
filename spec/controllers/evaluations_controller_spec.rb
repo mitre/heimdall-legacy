@@ -107,7 +107,7 @@ RSpec.describe EvaluationsController, type: :controller do
     describe 'POST #upload' do
       it 'can upload an evaluation' do
         @file = fixture_file_upload('sample_jsons/good_nginxresults.json', 'text/json')
-        post :upload, params: { file: @file,  hostname: 'company.com', environment: 'test' }, session: valid_session
+        post :upload, params: { file: @file, hostname: 'company.com', environment: 'test' }, session: valid_session
         expect(response).to redirect_to(Evaluation.last)
       end
 

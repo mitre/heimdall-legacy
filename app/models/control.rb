@@ -44,7 +44,7 @@ class Control
     to_jbuilder.attributes!
   end
 
-  def to_json
+  def to_json(*_args)
     to_jbuilder.target!
   end
 
@@ -152,12 +152,15 @@ class Control
 
   def self.parse(code)
     return nil if code.nil?
+
     control = nil
     tokens = Ripper.sexp(code)
     return nil unless tokens
+
     begin
       contrl_cmd = tokens[1][0][1]
       return nil unless contrl_cmd[1][1] == 'control'
+
       control = Control.new(control_id: contrl_cmd[2][1][0][1][1][1])
       do_block = tokens[1][0][2]
       cmds = do_block[2].select { |block| block[0] == :command }

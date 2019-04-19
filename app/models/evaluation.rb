@@ -52,7 +52,7 @@ class Evaluation
     to_jbuilder.attributes!
   end
 
-  def to_json
+  def to_json(*_args)
     to_jbuilder.target!
   end
 
@@ -160,6 +160,7 @@ class Evaluation
       ct_results = params[:ct_results]
       sym = status_symbol(control, ct_results)
       next unless params[:status_symbol].nil? || params[:status_symbol] == sym
+
       code_descs = ct_results ? ct_results.map { |result| "#{result.status.upcase} -- #{result.code_desc}" }.join("\n") : ''
       nist[value] << { "name": control.control_id.to_s, "status_value": status_symbol_value(sym), "children":
         [{ "name": control.control_id.to_s, "title": control.title, "nist": control.tag('nist'),
@@ -168,7 +169,7 @@ class Evaluation
           "check": control.tag('check'), "fix": control.tag('fix'), "start_time": control.start_time,
           "code": control.code, "run_time": control.run_time, "profile_id": control.profile_id,
           "impact": control.impact, "value": 1, "id": control.id,
-          "result_message": "#{result_message(sym)}\n\n#{code_descs}"}] }
+          "result_message": "#{result_message(sym)}\n\n#{code_descs}" }] }
     end
   end
 
@@ -176,11 +177,13 @@ class Evaluation
     nist = {}
     profiles.each do |profile|
       next if ex_ids.include?(profile.id)
+
       p_controls = filters.nil? ? profile.controls : profile.filtered_controls(filters)
       p_controls.each do |control|
         params[:ct_results] = params[:cts][control.id]
         severity = control.severity
         next unless severity && (cat.nil? || cat == severity)
+
         params[:severity] = severity
         nist_tags = control.tags.where(name: 'nist')
         if nist_tags.empty?

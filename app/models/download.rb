@@ -18,6 +18,7 @@ class Download
     @profiles.each do |profile|
       families, nist = profile.control_families
       next if families.empty?
+
       @nist_hash['children'].each do |cf|
         family_value = 0
         cf['children'].each do |control|
