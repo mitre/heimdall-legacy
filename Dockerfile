@@ -17,7 +17,7 @@ RUN echo "gem: --no-rdoc --no-ri" >> ~/.gemrc
 RUN apk --no-cache --update add build-base \
     libc-dev libxml2-dev imagemagick6 imagemagick6-dev pkgconf nodejs
 
-RUN bundle install --without development test -j4 --retry 3
+RUN gem install bundler && bundle install --without development test -j4 --retry 3
 
 COPY . .
 
@@ -41,7 +41,7 @@ WORKDIR $RAILS_ROOT
 COPY --from=Builder /usr/local/bundle/ /usr/local/bundle/
 COPY --from=Builder $RAILS_ROOT $RAILS_ROOT
 
-RUN apk --no-cache --update add nodejs imagemagick6
+RUN apk --no-cache --update add nodejs imagemagick6 && gem install bundler
 
 EXPOSE 3000
 

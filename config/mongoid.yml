@@ -5,11 +5,7 @@ development:
     default:
       # Defines the name of the default database that Mongoid can connect to.
       # (required).
-      database: dashboard_development
-      # Provides the hosts the default client can connect to. Must be an array
-      # of host:port pairs. (required)
-      hosts:
-        - <%= ENV.fetch('MONGO_TCP_ADDR', '127.0.0.1') %>:<%= ENV.fetch('MONGO_TCP_PORT', '27017') %>
+      uri: <%= ENV.fetch('MONGODB_URI', 'mongodb://127.0.0.1:27017/dashboard_development') %>
       options:
         # Change the default write concern. (default = { w: 1 })
         # write:
@@ -148,9 +144,7 @@ development:
 test:
   clients:
     default:
-      database: dashboard_test
-      hosts:
-        - <%= ENV.fetch('MONGO_TCP_ADDR', '127.0.0.1') %>:<%= ENV.fetch('MONGO_TCP_PORT', '27017') %>
+      uri: <%= ENV.fetch('MONGODB_URI', 'mongodb://127.0.0.1:27017/dashboard_test') %>
       options:
         raise_not_found_error: false
         read:
@@ -166,10 +160,7 @@ production:
       # A session can have any number of hosts. Usually 1 for a single
       # server setup, and at least 3 for a replica set. Hosts must be
       # an array of host:port pairs. This session is single server.
-      hosts:
-        - <%= ENV.fetch('MONGO_TCP_ADDR', '127.0.0.1') %>:<%= ENV.fetch('MONGO_TCP_PORT', '27017') %>
-      # Define the default database name.
-      database: heimdall2_production
+      uri: <%= ENV.fetch('MONGODB_URI', 'mongodb://127.0.0.1:27017/heimdall2_production') %>
       # Since this database points at a session connected to MongoHQ, we must
       # provide the authentication details.
       #username: user
