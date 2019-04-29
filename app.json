@@ -1,6 +1,6 @@
 {
 	"description": "InSpec Results Viewer",
-	"name": "heimdall",
+	"name": "mitre-heimdall",
 	"env": {
 		"HEROKU_APP_NAME": {
 			"required": true
