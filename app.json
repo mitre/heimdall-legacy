@@ -1,0 +1,67 @@
+{
+  "addons": [
+    "mongolab",
+    "tunemygc"
+  ],
+  "buildpacks": [
+    {
+      "url": "https://github.com/ello/heroku-buildpack-cmake.git"
+    },
+    {
+      "url": "heroku/ruby"
+    }
+  ],
+  "description": "A InSpec Results Viewer",
+  "env": {
+    "CIPHER_PASSWORD": {
+      "generator": "secret"
+    },
+    "CIPHER_SALT": {
+      "generator": "secret"
+    },
+    "HEROKU_APP_NAME": {
+      "required": true
+    },
+    "LANG": {
+      "required": true
+    },
+    "MONGODB_URI": {
+      "required": true
+    },
+    "RACK_ENV": {
+      "required": true
+    },
+    "RAILS_ENV": {
+      "required": true
+    },
+    "RAILS_LOG_TO_STDOUT": {
+      "required": true
+    },
+    "RAILS_SERVE_STATIC_FILES": {
+      "required": true
+    },
+    "RUBY_GC_SPY": {
+      "required": true
+    },
+    "RUBY_GC_TOKEN": {
+      "required": true
+    },
+    "RUBY_GC_TUNE": {
+      "required": true
+    },
+    "SECRET_KEY_BASE": {
+      "generator": "secret"
+    }
+  },
+  "formation": {
+    "web": {
+      "quantity": 1
+    }
+  },
+  "name": "mitre-heimdall",
+  "scripts": {
+    "postdeploy": "bundle exec rake db:setup",
+    "pr-predestroy": "bundle exec rake db:drop"
+  },
+  "stack": "heroku-18"
+}
