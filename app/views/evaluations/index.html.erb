@@ -58,7 +58,7 @@
                     </label>
                   </div>
                 </td>
-                <td><%= evaluation.created_by.try(:email) %></td>
+                <td><%= @users[evaluation.created_by_id].try(:email) %></td>
                 <td><% if can? :delete, evaluation %><%= link_to 'Destroy', evaluation, method: :delete, data: { confirm: 'Are you sure?' } %><% end %></td>
               </tr>
             <% end %>

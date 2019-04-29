@@ -36,9 +36,9 @@ class User
 
   def readable_evaluations
     if has_role?(:admin)
-      retval = Evaluation.all
+      retval = Evaluation.includes(:profiles).all
     else
-      retval = Evaluation.where(created_by: id)
+      retval = Evaluation.includes(:profiles).where(created_by: id)
       my_circles.each do |circle|
         retval += circle.evaluations
       end

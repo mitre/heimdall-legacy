@@ -12,6 +12,9 @@ class EvaluationsController < ApplicationController
       @circle = Circle.where(name: 'Public').try(:first)
       @evaluations = @circle.present? ? @circle.evaluations : []
     end
+    user_ids = @evaluations.map(&:created_by_id)
+    @users = User.in(id: user_ids)
+    @users = @users.index_by(&:id)
   end
 
   # GET /evaluations/1
