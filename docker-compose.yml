@@ -9,7 +9,7 @@ services:
     expose:
       - "27017"
   web:
-    image: rbclark/heimdall:latest
+    image: mitre/heimdall:latest
     environment:
       MONGO_TCP_ADDR: db
       MONGO_TCP_PORT: 27017
