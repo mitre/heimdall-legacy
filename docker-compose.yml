@@ -1,0 +1,27 @@
+version: '3.5'
+
+services:
+  # If you wish to use a db other than mongo, this is 100% wrong
+  db:
+    image: mongo:latest
+    volumes:
+      - mongo_data:/data/db
+    expose:
+      - "27017"
+  web:
+    image: mitre/heimdall:latest
+    environment:
+      MONGO_TCP_ADDR: db
+      MONGO_TCP_PORT: 27017
+      MONGODB_URI: mongodb://db:27017/heimdall2_production
+      RAILS_SERVE_STATIC_FILES: "true"
+      RAILS_ENV: production
+    env_file: .env-prod
+    command: /bin/sh -c "rm -f tmp/pids/server.pid && bundle exec rails s -p 3000 -b '0.0.0.0'"
+    ports:
+      - "3000:3000"
+    depends_on:
+      - "db"
+
+volumes:
+  mongo_data:

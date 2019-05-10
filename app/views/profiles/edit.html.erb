@@ -1,0 +1,248 @@
+<!-- Content Header (Page header) -->
+<section class="content-header">
+  <h1>
+    Profile <%= link_to @profile.title, profile_path(@profile) %>
+  </h1>
+  <ol class="breadcrumb">
+    <li><%= link_to ('<i class="fa fa-dashboard"> </i>Dashboard').html_safe, root_path %></li>
+    <li><%= link_to 'Profiles', profiles_path %></li>
+    <li><%= link_to 'Profile', profile_path(@profile) %></li>
+    <li class="active">Edit</li>
+  </ol>
+</section>
+
+<!-- Main content -->
+<section class="content container-fluid">
+  <div class="row">
+    <div class="col-md-6">
+      <div class="box box-primary shown" id="profile_info">
+        <div class="box-header with-border">
+          <h3 class="box-title">Profile Information</h3>
+          <%= link_to 'Destroy', @profile, method: :delete, class: "btn btn-danger pull-right", data: { confirm: 'Are you sure?' } %>
+          <button type="button" id="edit_btn" class="btn btn-primary pull-right margin-right"><i class="fa fa-edit"></i> Edit
+          </button>
+        </div>
+        <!-- /.box-header -->
+        <div class="box-body">
+          <p>
+            <strong>Name:</strong>
+            <%= @profile.name %>
+          </p>
+
+          <p>
+            <strong>Title:</strong>
+            <%= @profile.title %>
+          </p>
+
+          <p>
+            <strong>Maintainer:</strong>
+            <%= @profile.maintainer %>
+          </p>
+
+          <p>
+            <strong>Copyright:</strong>
+            <%= @profile.copyright %>
+          </p>
+
+          <p>
+            <strong>Copyright email:</strong>
+            <%= @profile.copyright_email %>
+          </p>
+
+          <p>
+            <strong>License:</strong>
+            <%= @profile.license %>
+          </p>
+
+          <p>
+            <strong>Summary:</strong>
+            <%= @profile.summary %>
+          </p>
+
+          <p>
+            <strong>Version:</strong>
+            <%= @profile.version %>
+          </p>
+
+          <p>
+            <strong>Sha256:</strong>
+            <span class="text-muted"><%= @profile.sha256 %></span>
+          </p>
+        </div>
+        <!-- /.box-body -->
+      </div>
+      <!-- /.box -->
+      <div class="box box-primary" id="edit_form", style="display:none;">
+        <%= render 'form', profile: @profile %>
+      </div>
+    </div>
+    <!-- /.col 6 -->
+    <div class="col-md-6">
+      <div class="box box-primary">
+        <div class="box-header with-border">
+          <h3 class="box-title">Dependencies</h3>
+        </div>
+        <!-- /.box-header -->
+        <div class="box-body">
+          <p>
+            <ul>
+              <% @profile.depends.where(:name.ne => nil).each do |depend| %>
+              <li>
+                <strong>Name:</strong> <%= depend.name %>, <strong>Path:</strong> <%= depend.path %>
+                <span class="pull-right">
+                  <%= link_to ('<span class="glyphicon glyphicon-remove red"></span>').html_safe, [@profile, depend], :method => :delete, data: { confirm: 'Are you sure?' } %>
+                </span>
+              </li>
+              <% end %>
+            </ul>
+          </p>
+          <div id="add_depend_link">
+            <button type="button" id="add_depend_btn" class="btn btn-primary"><i class="fa fa-edit"></i> Add Dependency
+            </button>
+          </div>
+          <div id="add_depend_form", style="display:none;">
+            <%= render 'depends/form', depend: @profile.depends.new, profile: @profile %>
+          </div>
+        </div>
+        <!-- /.box-body -->
+      </div>
+      <!-- /.box -->
+      <div class="box box-primary">
+        <div class="box-header with-border">
+          <h3 class="box-title">Supports</h3>
+        </div>
+        <!-- /.box-header -->
+        <div class="box-body">
+          <p>
+            <ul>
+              <% @profile.supports.each do |support| %>
+                <li>
+                  <%= support.name %>: <%= support.value %>
+                  <span class="pull-right">
+                    <%= link_to ('<span class="glyphicon glyphicon-remove red"></span>').html_safe, [@profile, support], :method => :delete, data: { confirm: 'Are you sure?' } %>
+                  </span>
+                </li>
+              <% end %>
+            </ul>
+          </p>
+          <div id="add_support_link">
+            <button type="button" id="add_support_btn" class="btn btn-primary"><i class="fa fa-edit"></i> Add Support
+            </button>
+          </div>
+          <div id="add_support_form", style="display:none;">
+            <%= render 'supports/form', support: @profile.supports.new, profile: @profile %>
+          </div>
+        </div>
+        <!-- /.box-body -->
+      </div>
+    </div>
+    <!-- /.col 6 -->
+  </div>
+  <!-- /.row -->
+  <div class="row">
+    <div class="col-md-12">
+      <div class="box box-primary">
+        <div class="box-header with-border">
+          <h3 class="box-title">Controls</h3>
+        </div>
+        <!-- /.box-header -->
+        <div class="box-body">
+          <p>
+            <ul class="list-unstyled column-6">
+              <% @profile.controls.each do |control| %>
+                <li>
+                  <%= link_to control.control_id, profile_control_path(@profile.id, control.id) %>
+                  <span class="margin-left">
+                    <%= link_to ('<span class="glyphicon glyphicon-remove red"></span>').html_safe, [@profile, control], :method => :delete, data: { confirm: 'Are you sure?' } %>
+                  </span>
+                </li>
+              <% end %>
+            </ul>
+          </p>
+          <p>
+            <%= link_to ('<i class="fa fa-edit"> </i>Add Control').html_safe, new_profile_control_path(@profile.id), class: "btn btn-primary" %>
+          </p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="row">
+    <div class="col-md-12">
+      <div class="box box-primary">
+        <div class="box-header with-border">
+          <h3 class="box-title">Groups</h3>
+        </div>
+        <!-- /.box-header -->
+        <div class="box-body">
+          <p>
+            <ul class="list-unstyled column-4">
+              <% @profile.groups.where(:title.ne => nil).each do |gr| %>
+                <li>
+                  <%= link_to gr.title, profile_group_path(@profile.id, gr.id) %>
+                  <span class="margin-left">
+                    <%= link_to ('<span class="glyphicon glyphicon-remove red"></span>').html_safe, [@profile, gr], :method => :delete, data: { confirm: 'Are you sure?' } %>
+                  </span>
+                </li>
+              <% end %>
+            </ul>
+          </p>
+          <p>
+            <%= link_to ('<i class="fa fa-edit"> </i>Add Group').html_safe, new_profile_group_path(@profile.id), class: "btn btn-primary" %>
+          </p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="row">
+    <div class="col-md-12">
+      <div class="box box-primary">
+        <div class="box-header with-border">
+          <h3 class="box-title">Attributes</h3>
+        </div>
+        <!-- /.box-header -->
+        <div class="box-body">
+          <p>
+            <ul class="list-unstyled column-2">
+              <% @profile.profile_attributes.each do |pa| %>
+                <li>
+                  <%= link_to "#{pa.name}: #{pa.option_description}", profile_profile_attribute_path(@profile.id, pa.id) %>
+                  <span class="margin-left">
+                    <%= link_to ('<span class="glyphicon glyphicon-remove red"></span>').html_safe, [@profile, pa], :method => :delete, data: { confirm: 'Are you sure?' } %>
+                  </span>
+                </li>
+              <% end %>
+            </ul>
+          </p>
+          <p>
+            <%= link_to ('<i class="fa fa-edit"> </i>Add Attribute').html_safe, new_profile_profile_attribute_path(@profile.id), class: "btn btn-primary" %>
+          </p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+<!-- /.content -->
+<script>
+$(document).ready(function(){
+  $("#edit_btn").click(function(){
+    toggleSections("edit_form", "profile_info");
+  });
+  $("#cancel_btn").click(function(){
+    toggleSections("profile_info", "edit_form");
+  });
+  $("#add_depend_btn").click(function(){
+    toggleSections("add_depend_form", "add_depend_link");
+  });
+  $("#depend_cancel_btn").click(function(){
+    toggleSections("add_depend_link", "add_depend_form");
+  });
+  $("#add_support_btn").click(function(){
+    toggleSections("add_support_form", "add_support_link");
+  });
+  $("#support_cancel_btn").click(function(){
+    toggleSections("add_support_link", "add_support_form");
+  });
+});
+</script>

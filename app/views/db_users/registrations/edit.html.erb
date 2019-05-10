@@ -1,0 +1,75 @@
+<!-- Content Header (Page header) -->
+<section class="content-header">
+  <h1>
+    Edit
+  </h1>
+</section>
+
+<!-- Main content -->
+<section class="content container-fluid">
+  <div class="row">
+    <div class="col-md-6">
+      <!-- Horizontal Form -->
+      <div class="box box-info">
+        <div class="box-header with-border">
+          <h3 class="box-title">Edit</h3>
+        </div>
+        <!-- /.box-header -->
+        <!-- form start -->
+        <%= form_for(resource, as: resource_name, url: registration_path(resource_name), html: { method: :put, class: 'form-horizontal' }) do |f| %>
+          <%= devise_error_messages! %>
+
+          <div class="box-body">
+            <div class="form-group  has-feedback">
+              <label for="inputEmail3" class="col-sm-2 control-label">Email</label>
+
+              <div class="col-sm-10">
+                <%= f.email_field :email, autofocus: true, :id =>"inputEmail3", :class => "form-control", :placeholder => "Email" %>
+                <span class="glyphicon glyphicon-envelope form-control-feedback"></span>
+              </div>
+            </div>
+            <div class="form-group has-feedback">
+              <label for="inputPassword3" class="col-sm-2 control-label">Password</label>
+              <div class="col-sm-10">
+                <%= f.password_field :password, autocomplete: "off", :id =>"inputPassword3", :class => "form-control" %>
+                <span class="glyphicon glyphicon-lock form-control-feedback"></span>
+              </div>
+            </div>
+            <div class="form-group has-feedback">
+              <label for="inputPassword4" class="col-sm-2 control-label">Password Confirmation</label>
+
+              <div class="col-sm-10">
+                <%= f.password_field :password_confirmation, autocomplete: "off", :id =>"inputPassword4", :class => "form-control" %>
+                <span class="glyphicon glyphicon-lock form-control-feedback"></span>
+              </div>
+            </div>
+            <div class="form-group has-feedback">
+              <label for="inputPassword3" class="col-sm-2 control-label">Current Password <i>(we need your current password to confirm your changes)</i></label>
+              <div class="col-sm-10">
+                <%= f.password_field :current_password, autocomplete: "off", :id =>"inputPassword5", :class => "form-control" %>
+                <span class="glyphicon glyphicon-lock form-control-feedback"></span>
+              </div>
+            </div>
+          </div>
+          <!-- /.box-body -->
+          <div class="box-footer">
+            <%= f.submit "Update", :class => "btn btn-primary btn-block btn-flat" %>
+          </div>
+          <!-- /.box-footer -->
+        <% end %>
+        <div class="box-body">
+          <div class="form-group">
+            <h3>Cancel my account</h3>
+            <p>Unhappy? <%= button_to "Cancel my account", registration_path(resource_name), data: { confirm: "Are you sure?" }, method: :delete %></p>
+          </div>
+          <div class="form-group">
+            <%= link_to "Back", :back %>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <!-- /.login-box-body -->
+
+</section>
+<!-- /.content -->

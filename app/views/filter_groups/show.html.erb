@@ -1,0 +1,90 @@
+<section class="content-header">
+  <h1>
+    Filter Group
+  </h1>
+  <ol class="breadcrumb">
+    <li><%= link_to ('<i class="fa fa-dashboard"> </i>Dashboard').html_safe, root_path %></li>
+    <li><%= link_to 'Filter Groups', filter_groups_path %></li>
+    <li class="active">Filter Group</li>
+  </ol>
+</section>
+
+<!-- Main content -->
+<section class="content container-fluid">
+  <div class="row">
+    <div class="col-md-12">
+      <div class="box box-primary">
+        <div class="box-header">
+          <h3 class="box-title">Filter Group</h3>
+          <% if can? :read, FilterGroup %>
+            <%= link_to 'Destroy', @filter_group, :method => :delete, class: "btn btn-danger pull-right", data: { confirm: 'Are you sure?' } %>
+            <%= link_to ('<i class="fa fa-edit"></i> Edit').html_safe, edit_filter_group_path(@filter_group), class: "btn btn-primary pull-right margin-right" %>
+          <% end %>
+        </div>
+        <!-- /.box-header -->
+        <div class="box-body">
+          <p>
+            <strong>Name:</strong>
+            <%= @filter_group.name %>
+          </p>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="row">
+    <div class="col-md-12">
+      <div class="box box-primary">
+        <div class="box-header with-border">
+          <h3 class="box-title">Filters</h3>
+        </div>
+        <div class="box-body">
+          <strong>Add Filter:</strong>
+          <%  #form_with(model: @filter_group, url: filter_group_add_filter_path(@filter_group), local: true) do |form| %>
+          <%= form_with(model: @filter_group, local: true) do |form| %>
+          <p>
+            <%= form.fields_for :filter_ids do |ff| %>
+              <%= ff.select :id, Filter.all.collect {|u| [u.to_s, u.id]}, { :prompt => 'Select Filter' } %>
+            <% end %>
+            <%= button_tag(type: "submit", class: "btn btn-primary margin-right") do %>
+              <i class="fa fa-edit"></i> Add
+            <% end %>
+          </p>
+          <% end %>
+        </div>
+        <div class="box-body table-responsive no-padding">
+          <table class="table table-hover">
+            <tr>
+              <th>Filter</th>
+              <th>Family</th>
+              <th>Number</th>
+              <th>Part</th>
+              <th>Sub-Part</th>
+              <th>Enhancement</th>
+              <th>Part</th>
+              <th>Sub-Part</th>
+              <th colspan="2"></th>
+            </tr>
+            <% @filter_group.filters.each do |filter| %>
+              <tr>
+                <td><%= link_to filter.to_s, filter %></td>
+                <td><%= ary_to_s(filter.family) %></td>
+                <td><%= ary_to_s(filter.number) %></td>
+                <td><%= ary_to_s(filter.sub_fam) %></td>
+                <td><%= ary_to_s(filter.sub_num) %></td>
+                <td><%= ary_to_s(filter.enhancement) %></td>
+                <td><%= ary_to_s(filter.enh_sub_fam) %></td>
+                <td><%= ary_to_s(filter.enh_sub_num) %></td>
+                <td>
+                  <%= link_to 'Remove', filter_group_filter_path(@filter_group, filter), :method => :delete, data: { confirm: 'Are you sure?' } %>
+                </td>
+              </tr>
+            <% end %>
+          </table>
+        </div>
+        <div class="box-body">
+          <%= link_to 'Create New Filter', new_filter_path, class: "btn btn-info" %>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>

@@ -1,0 +1,171 @@
+<!-- Content Header (Page header) -->
+<section class="content-header">
+  <h1>
+    <%= link_to @circle.name, circle_path(@circle) %>
+  </h1>
+  <ol class="breadcrumb">
+    <li><%= link_to ('<i class="fa fa-dashboard"> </i>Dashboard').html_safe, root_path %></li>
+    <li><%= link_to 'Circles', circles_path %></li>
+    <li class="active">Circle</li>
+  </ol>
+</section>
+
+<section class="content container-fluid">
+  <div class="row">
+    <div class="col-md-6">
+      <div class="box box-primary shown" id="circle_info">
+        <div class="box-header with-border">
+          <h3 class="box-title">Circle Information</h3>
+          <% unless @circle.name == 'Public' %>
+            <% if can?(:delete, @circle) && @circle.name != 'Public' %><%= link_to 'Destroy', @circle, method: :delete, class: "btn btn-danger pull-right", data: { confirm: 'Are you sure?' } %><% end %>
+            <button type="button" id="edit_btn" class="btn btn-primary pull-right margin-right"><i class="fa fa-edit"></i> Edit
+            </button>
+          <% end %>
+        </div>
+        <!-- /.box-header -->
+
+        <div class="box-body" id='members'>
+          <%= render 'members', circle: @circle %>
+        </div>
+        <!-- /.box-body -->
+      </div>
+      <!-- /.box -->
+      <div class="box box-primary" id="edit_form", style="display:none;">
+        <%= render 'form', circle: @circle %>
+      </div>
+    </div>
+    <!-- /.col 6 -->
+    <div class="col-md-6">
+      <% if current_user.has_role?(:owner, @circle) %>
+      <div class="box box-primary">
+        <div class="box-header with-border">
+          <h3 class="box-title">Add Owners</h3>
+        </div>
+        <!-- /.box-header -->
+        <div class="box-body">
+          <%= form_for :user, url: circle_owners_path(@circle), remote: true do |form| %>
+            <div class="box-body">
+              <p>
+                <h4>Add Owner</h4>
+                <%= form.select :id, User.all.collect {|u| [u.email, u.id]}, { :prompt => 'Select' } %>
+                <br>
+              </p>
+              <%= button_tag(type: "submit", class: "btn btn-primary") do %>
+                <i class="fa fa-edit"></i> Add
+              <% end %>
+            </div>
+          <% end %>
+        </div>
+        <!-- /.box-body -->
+      </div>
+      <% end %>
+      <div class="box box-primary">
+        <div class="box-header with-border">
+          <h3 class="box-title">Add Members</h3>
+        </div>
+        <!-- /.box-header -->
+        <div class="box-body">
+          <%= form_for :user, url: circle_members_path(@circle), remote: true do |form| %>
+            <div class="box-body">
+              <p>
+                <h4>Add Member</h4>
+                <%= form.select :id, User.all.collect {|u| [u.email, u.id]}, { :prompt => 'Select' } %>
+                <br>
+              </p>
+              <%= button_tag(type: "submit", class: "btn btn-primary") do %>
+                <i class="fa fa-edit"></i> Add
+              <% end %>
+            </div>
+          <% end %>
+        </div>
+        <!-- /.box-body -->
+      </div>
+      <!-- /.box -->
+    </div>
+    <!-- /.col 6 -->
+  </div>
+  <!-- /.row -->
+  <div class="row">
+    <div class="col-md-6">
+      <div class="box box-primary">
+        <div class="box-header with-border">
+          <h3 class="box-title">Evaluations</h3>
+        </div>
+        <!-- /.box-header -->
+        <div class="box-body" id='evaluations'>
+          <%= render 'evaluations', circle: @circle %>
+        </div>
+      </div>
+    </div>
+    <div class="col-md-6">
+      <div class="box box-primary">
+        <div class="box-header with-border">
+          <h3 class="box-title">Add Evaluations</h3>
+        </div>
+        <!-- /.box-header -->
+        <div class="box-body">
+          <%= form_for :evaluation, url: circle_evals_path(@circle), remote: true do |form| %>
+            <div class="box-body">
+              <p>
+                <h4>Add Evaluation</h4>
+                <%= form.select :id, current_user.my_evaluations.collect {|u| ["#{u.profiles.map(&:name).join(', ')}: #{u.start_time}", u.id]}, { :prompt => 'Select' } %>
+                <br>
+              </p>
+              <%= button_tag(type: "submit", class: "btn btn-primary") do %>
+                <i class="fa fa-edit"></i> Add
+              <% end %>
+            </div>
+          <% end %>
+        </div>
+        <!-- /.box-body -->
+      </div>
+    </div>
+  </div>
+  <div class="row">
+    <div class="col-md-6">
+      <div class="box box-primary">
+        <div class="box-header with-border">
+          <h3 class="box-title">Profiles</h3>
+        </div>
+        <!-- /.box-header -->
+        <div class="box-body" id='profiles'>
+          <%= render 'profiles', circle: @circle %>
+        </div>
+      </div>
+    </div>
+    <div class="col-md-6">
+      <div class="box box-primary">
+        <div class="box-header with-border">
+          <h3 class="box-title">Add Profiles</h3>
+        </div>
+        <!-- /.box-header -->
+        <div class="box-body">
+          <%= form_for :profile, url: circle_profiles_path(@circle), remote: true do |form| %>
+            <div class="box-body">
+              <p>
+                <h4>Add Profile</h4>
+                <%= form.select :id, current_user.my_profiles.collect {|u| [u.name, u.id]}, { :prompt => 'Select' } %>
+                <br>
+              </p>
+              <%= button_tag(type: "submit", class: "btn btn-primary") do %>
+                <i class="fa fa-edit"></i> Add
+              <% end %>
+            </div>
+          <% end %>
+        </div>
+        <!-- /.box-body -->
+      </div>
+    </div>
+  </div>
+</div>
+<script>
+
+$(document).ready(function(){
+  $("#edit_btn").click(function(){
+    toggleSections("edit_form", "circle_info");
+  });
+  $("#cancel_btn").click(function(){
+    toggleSections("circle_info", "edit_form");
+  });
+});
+</script>

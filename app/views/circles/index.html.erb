@@ -1,0 +1,59 @@
+<!-- Content Header (Page header) -->
+<section class="content-header">
+  <h1>
+    Circles
+  </h1>
+  <ol class="breadcrumb">
+    <li><%= link_to ('<i class="fa fa-dashboard"> </i>Dashboard').html_safe, root_path %></li>
+    <li class="active">Circles</li>
+  </ol>
+</section>
+
+<section class="content container-fluid">
+  <div class="row">
+    <div class="col-xs-12">
+      <div class="box box-primary">
+        <div class="box-header with-border">
+          <h3 class="box-title">Circles</h3>
+        </div>
+        <!-- /.box-header -->
+        <% if can? :read, Circle %>
+          <div class="box-body table-responsive no-padding">
+            <table class="table table-hover">
+              <tr>
+                <th>Name</th>
+                <th>Owner</th>
+                <th>Edit</th>
+                <th></th>
+              </tr>
+
+              <% @circles.sort_by{ |t| [t.name] }.each do |circle| %>
+                <tr>
+                  <td>
+                    <% if can? :read, circle %>
+                      <%= link_to circle.name, circle_path(circle) %>
+                    <% else %>
+                      <%= circle.name %>
+                    <% end %>
+                  </td>
+                  <td>
+                    <% if can? :read, circle %>
+                      <%= link_to 'Edit', edit_circle_path(circle) %>
+                    <% end %>
+                  </td>
+                  <td><%= circle.created_by.try(:email) %></td>
+                  <td><% if can?(:delete, circle) && circle.name != 'Public' %><%= link_to 'Destroy', circle, method: :delete, data: { confirm: 'Are you sure?' } %><% end %></td>
+                </tr>
+              <% end %>
+            </table>
+          </div>
+        <% end %>
+      </div>
+      <% if can? :create, Circle %>
+        <div class="box-body">
+          <%= link_to 'New Circle', new_circle_path, class: "btn btn-info" %>
+        </div>
+      <% end %>
+    </div>
+  </div>
+</section>

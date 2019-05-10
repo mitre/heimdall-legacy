@@ -1,0 +1,35 @@
+<%= form_with(model: [ profile, group ], local: true) do |form| %>
+  <% if group.errors.any? %>
+    <div id="error_explanation">
+      <h2><%= pluralize(group.errors.count, "error") %> prohibited this group from being saved:</h2>
+
+      <ul>
+      <% group.errors.full_messages.each do |message| %>
+        <li><%= message %></li>
+      <% end %>
+      </ul>
+    </div>
+  <% end %>
+
+  <div class="form-group">
+    <%= form.label :title %>
+    <%= form.text_field :title, id: :group_title, class: "form-control" %>
+  </div>
+
+  <div class="form-group">
+    <%= form.label :controls %>
+    <%= form.text_field :controls_list, id: :group_controls, class: "form-control" %>
+  </div>
+
+  <div class="form-group">
+    <%= form.label :control_id %>
+    <%= form.text_field :control_id, id: :group_control_id, class: "form-control" %>
+  </div>
+
+  <div class="actions">
+    <%= button_tag(type: "submit", class: "btn btn-primary") do %>
+      <i class="fa fa-edit"></i> Save
+    <% end %>
+    <%= link_to ('<i class="fa fa-cancel"></i> Cancel').html_safe, edit_profile_path(profile.id), class: "btn btn-info pull-right" %>
+  </div>
+<% end %>

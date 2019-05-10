@@ -1,0 +1,203 @@
+/*
+ * This is a manifest file that'll be compiled into application.css, which will include all the files
+ * listed below.
+ *
+ * Any CSS and SCSS file within this directory, lib/assets/stylesheets, or any plugin's
+ * vendor/assets/stylesheets directory can be referenced here using a relative path.
+ *
+ * You're free to add application-wide styles to this file and they'll appear at the bottom of the
+ * compiled file so the styles you add here take precedence over styles defined in any other CSS/SCSS
+ * files in this directory. Styles in this file should be added after the last require_* statement.
+ * It is generally better to create a new file per style scope.
+ *
+ *= require_tree .
+ *= require_self
+ */
+
+.white-text {
+  color: #ffffff;
+}
+.grey-text {
+  color: #777777;
+}
+
+.menu-text {
+  color: #8aa4af;
+}
+.treeview-menu > li > form {
+  padding: 5px 5px 5px 15px;
+  display: block;
+  font-size: 14px;
+}
+.red {
+  color: #d9534f;
+}
+.blue {
+  color: #337ab7;
+}
+.bg-light-grey {
+  background-color: #D8D8D8 !important;
+}
+.bg-med-grey {
+  background-color: #8C8C8C !important;
+}
+.hidden {
+  display: none;
+}
+.shown {
+  display: block;
+}
+.horizontal-list {
+  padding: 0;
+	list-style: none;
+}
+.horizontal-list > li {
+  display: inline-block;
+}
+.a-left {
+  text-align: left;
+}
+.small-font {
+    font-size: 10px !important;
+}
+.padded {
+  padding: 5px;
+  font-size: 70px;
+}
+.padded-right {
+  padding-right: 35px;
+}
+.no-top-padding {
+  padding-top: 0px;
+  padding-bottom: 5px;
+}
+.little_wider {
+    min-width: 200px;
+}
+.span-title {
+    font-size: 18px;
+    margin: 0;
+    line-height: 1;
+}
+.column-2 {
+  -webkit-columns: 100px 2; /* Chrome, Safari, Opera */
+  -moz-columns: 100px 2; /* Firefox */
+  columns: 100px 2;
+}
+.column-3 {
+  -webkit-columns: 100px 3; /* Chrome, Safari, Opera */
+  -moz-columns: 100px 3; /* Firefox */
+  columns: 100px 3;
+}
+.column-4 {
+  -webkit-columns: 100px 4; /* Chrome, Safari, Opera */
+  -moz-columns: 100px 4; /* Firefox */
+  columns: 100px 4;
+}
+.column-5 {
+  -webkit-columns: 100px 5; /* Chrome, Safari, Opera */
+  -moz-columns: 100px 5; /* Firefox */
+  columns: 100px 5;
+}
+.column-6 {
+  -webkit-columns: 100px 6; /* Chrome, Safari, Opera */
+  -moz-columns: 100px 6; /* Firefox */
+  columns: 100px 6;
+}
+.header-container {
+  margin-left: 0px;
+  padding-left: 0px;
+}
+.sidebar {
+  position: fixed;
+  width: 23%;
+}
+.margin-right {
+  margin-right: 5px;
+}
+.margin-small-left {
+  margin-left: 5px;
+}
+.margin-left {
+  margin-left: 15px;
+}
+.margin-bottom {
+  margin-bottom: 5px;
+}
+.big-margin-bottom {
+  margin-bottom: 25px;
+}
+.btn-category-i {
+  background-color: #003366;
+  border-color: #004386;
+  color: #efeeee;
+}
+.btn-category-i:hover,
+.btn-category-i:active,
+.btn-category-i.hover {
+  background-color: #004386;
+  color: #fff;
+}
+.btn-category-ii {
+  background-color: #0080FF;
+  border-color: #0060BF;
+  color: #efeeee;
+}
+.btn-category-ii:hover,
+.btn-category-ii:active,
+.btn-category-ii.hover {
+  background-color: #0060BF;
+  color: #fff;
+}
+.btn-category-iii {
+  background-color: #99CCFF;
+  border-color: #397CBF;
+  color: #000000;
+}
+.btn-category-iii:hover,
+.btn-category-iii:active,
+.btn-category-iii.hover {
+  background-color: #397CBF;
+  color: #fff;
+}
+.btn-neutral {
+  background-color: #A5A5A5;
+  border-color: #727272;
+}
+.btn-neutral:hover,
+.btn-neutral:active,
+.btn-neutral.hover {
+  background-color: #8C8C8C;
+}
+.cn-msg-table td {
+	white-space: nowrap;
+	vertical-align: top;
+}
+.cn-msg-table td:not(:first-child),
+.cn-msg-table td.cn-msg-count {
+	padding-left: 0px;
+}
+.cn-msg-table td:not(:last-child) {
+	padding-right: 0px;
+}
+.cn-msg-bar {
+	height: 11px;
+}
+.image-size {
+  max-width: 200px;
+  max-height: 100px;
+}
+.header-image {
+  float: left;
+  width: 30px !important;;
+  height: 30px !important;;
+  border-radius: 50%;
+  margin-right: 10px;
+  margin-top: -5px !important;;
+}
+#editor {
+    top: 0;
+    right: 0;
+    bottom: 0;
+    left: 0;
+}

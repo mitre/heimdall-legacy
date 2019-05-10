@@ -1,0 +1,84 @@
+<!-- Content Header (Page header) -->
+<section class="content-header">
+  <h1>
+    Control
+  </h1>
+  <ol class="breadcrumb">
+    <li><%= link_to ('<i class="fa fa-dashboard"> </i>Dashboard').html_safe, root_path %></li>
+    <li><%= link_to 'Profiles', profiles_path %></li>
+    <li><%= link_to 'Profile', profile_path(@control.profile.id) %></li>
+    <li class="active">Control</li>
+  </ol>
+</section>
+
+<!-- Main content -->
+<section class="content container-fluid">
+  <div class="row">
+    <div class="col-xs-12">
+      <div class="box box-primary">
+        <div class="box-header">
+          <h3 class="box-title">Control Information</h3>
+          <% if @profile.is_editable? && can?(:edit, @profile) %>
+            <%= link_to 'Destroy', [@profile, @control], :method => :delete, class: "btn btn-danger pull-right", data: { confirm: 'Are you sure?' } %>
+            <%= link_to ('<i class="fa fa-edit"></i> Edit').html_safe, edit_profile_control_path(@profile.id, @control), class: "btn btn-primary pull-right margin-right" %>
+          <% end %>
+        </div>
+        <!-- /.box-header -->
+        <div class="box-body">
+          <p>
+            <strong>Title:</strong>
+            <%= @control.title %>
+          </p>
+
+          <p>
+            <strong>Desc:</strong>
+            <%= @control.desc %>
+          </p>
+
+          <p>
+            <strong>Impact:</strong>
+            <%= @control.impact %>
+          </p>
+
+          <p>
+            <strong>Refs:</strong>
+            <%= @control.refs_list %>
+          </p>
+
+          <p>
+            <strong>Tags:</strong>
+            <ul>
+              <% @control.tags.each do |tag| %>
+              <li><strong><%= tag.name %>:</strong> <%= tag.value %></li>
+              <% end %>
+            </ul>
+          </p>
+
+          <p>
+            <strong>Source Location:</strong>
+            <ul>
+              <li><strong>Ref:</strong> <%= @control.sl_ref %></li>
+              <li><strong>Line:</strong> <%= @control.sl_line %></li>
+            </ul>
+          </p>
+
+          <p>
+            <strong>ID:</strong>
+            <%= @control.control_id; %>
+          </p>
+
+          <p>
+            <strong>Code:</strong>
+            <pre><code class=”language-ruby”><%= @control.code %></code></pre>
+          </p>
+
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+<script>
+document.addEventListener("turbolinks:load", function() {
+    Prism.highlightAll();
+});
+</script>

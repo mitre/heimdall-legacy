@@ -1,0 +1,33 @@
+<p>
+  <strong>Name:</strong>
+  <%= circle.name %>
+</p>
+
+<p>
+  <strong>Owners:</strong>
+  <% owners = User.with_role(:owner, circle) %>
+  <% owners.each do |user| %>
+  <li>
+    <%= user.email %>
+    <% if owners.size > 1 %>
+      <span class="pull-right">
+        <%= link_to ('<span class="glyphicon glyphicon-remove red"></span>').html_safe, circle_owner_remove_path(circle, user), :method => :delete, remote: true %>
+      </span>
+    <% end %>
+  </li>
+  <% end %>
+</p>
+
+<p>
+  <strong>Members:</strong>
+  <% User.with_role(:member, circle).each do |user| %>
+  <li>
+    <%= user.email %>
+    <% if can?(:delete, circle) && circle.name != 'Public' %>
+      <span class="pull-right">
+        <%= link_to ('<span class="glyphicon glyphicon-remove red"></span>').html_safe, circle_member_remove_path(circle, user), :method => :delete, remote: true %>
+      </span>
+    <% end %>
+  </li>
+  <% end %>
+</p>

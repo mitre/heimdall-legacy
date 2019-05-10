@@ -1,0 +1,57 @@
+<!-- Content Header (Page header) -->
+<section class="content-header">
+  <h1>
+    Results
+  </h1>
+  <ol class="breadcrumb">
+    <li><%= link_to ('<i class="fa fa-dashboard"> </i>Dashboard').html_safe, root_path %></li>
+    <li><%= link_to "Evaluation", evaluation_path(@evaluation) %></li>
+    <li class="active">Results</li>
+  </ol>
+</section>
+
+<!-- Main content -->
+<section class="content container-fluid">
+  <div class="row">
+    <div class="col-xs-12">
+      <div class="box box-primary">
+        <div class="box-header with-border">
+          <h3 class="box-title">Results</h3>
+        </div>
+        <!-- /.box-header -->
+        <% if can? :read, Result %>
+          <div class="box-body table-responsive no-padding">
+            <table>
+              <thead>
+                <tr>
+                  <th>Status</th>
+                  <th>Code desc</th>
+                  <th>Skip message</th>
+                  <th>Resource</th>
+                  <th>Run time</th>
+                  <th>Start time</th>
+                </tr>
+              </thead>
+
+              <tbody>
+                <% @results.each do |result| %>
+                  <tr>
+                    <td><%= link_to result.status, evaluation_result_path(@evaluation, result) %></td>
+                    <td><%= result.code_desc %></td>
+                    <td><%= result.skip_message %></td>
+                    <td><%= result.resource %></td>
+                    <td><%= result.run_time %></td>
+                    <td><%= result.start_time %></td>
+                  </tr>
+                <% end %>
+              </tbody>
+            </table>
+          </div>
+        <% end %>
+        <!-- /.box-body -->
+      </div>
+      <!-- /.box -->
+    </div>
+  </div>
+</section>
+<!-- /.content -->

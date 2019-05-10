@@ -1,0 +1,140 @@
+<!-- Content Header (Page header) -->
+<section class="content-header">
+  <h1>
+    Group
+  </h1>
+  <ol class="breadcrumb">
+    <li><%= link_to ('<i class="fa fa-dashboard"> </i>Dashboard').html_safe, root_path %></li>
+    <li><%= link_to 'Profiles', profiles_path %></li>
+    <li><%= link_to 'Profile', profile_path(@profile.id) %></li>
+    <li class="active">Group</li>
+  </ol>
+</section>
+
+<!-- Main content -->
+<section class="content container-fluid">
+  <div class="row">
+    <div class="col-md-6">
+      <div class="box box-primary shown" id="show_form">
+        <div class="box-header">
+          <h3 class="box-title">Group Information</h3>
+          <%= link_to 'Destroy', [@profile, @group], method: :delete, class: "btn btn-danger pull-right", data: { confirm: 'Are you sure?' } %>
+          <button type="button" id="edit_btn" class="btn btn-primary pull-right margin-right"><i class="fa fa-edit"></i> Edit
+          </button>
+
+        </div>
+        <!-- /.box-header -->
+        <div class="box-body">
+          <p>
+            <strong>Title:</strong>
+            <%= @group.title %>
+          </p>
+
+          <p>
+            <strong>Control ID:</strong>
+            <%= @group.control_id %>
+          </p>
+        </div>
+      </div>
+      <div class="box box-primary" id="edit_form", style="display:none;">
+        <div class="box-header with-border">
+          <h3 class="box-title">Edit Group Information</h3>
+          <button type="reset" id="cancel_btn" class="btn btn-info pull-right">
+            <i class="fa fa-cancel"></i> Cancel
+          </button>
+          <%= button_tag(type: "submit", class: "btn btn-primary pull-right margin-right", id: 'edit_btn') do %>
+            <i class="fa fa-edit"></i> Save
+          <% end %>
+        </div>
+        <div class="box-body">
+          <%= form_with(model: [ @profile, @group ], local: true) do |form| %>
+            <div class="form-group">
+              <%= form.label :title %>
+              <%= form.text_field :title, id: :group_title, class: "form-control" %>
+            </div>
+
+            <div class="form-group" style="display:none">
+              <%= form.hidden_field :controls_list, id: :group_controls_list, class: "form-control" %>
+            </div>
+
+            <div class="form-group">
+              <%= form.label :control_id, "Control ID (filename)" %>
+              <%= form.text_field :control_id, id: :group_control_id, class: "form-control" %>
+            </div>
+          </div>
+        <% end %>
+      </div>
+    </div>
+    <div class="col-md-6">
+      <div class="box box-primary">
+        <div class="box-header with-border">
+          <h3 class="box-title">Controls</h3>
+        </div>
+        <!-- /.box-header -->
+        <div class="box-body">
+          <%= form_with(model: [ @profile, @group ], local: true) do |form| %>
+            <%= form.hidden_field :title, id: :group_title, class: "form-control" %>
+            <%= form.hidden_field :controls_list, id: :group_controls_list, class: "form-control" %>
+            <%= form.hidden_field :control_id, id: :group_control_id, class: "form-control" %>
+          <p>
+            <ul>
+              <% @group.controls.each do |control_id| %>
+              <li>
+                <%= control_id %>
+                <span class="pull-right">
+                  <%= link_to ('<span class="glyphicon glyphicon-remove red"></span>').html_safe, profile_group_remove_path(@profile, @group, control_id), :method => :patch, data: { confirm: 'Are you sure?' } %>
+                </span>
+              </li>
+              <% end %>
+            </ul>
+          </p>
+          <% end %>
+        </div>
+        <!-- /.box-body -->
+      </div>
+    </div>
+  </div>
+  <div class="row">
+    <div class="col-md-6">
+      <div class="box box-primary">
+        <div class="box-header">
+          <h3 class="box-title">Add Control</h3>
+        </div>
+        <!-- /.box-header -->
+        <div class="box-body">
+          <%= form_with(model: [ @profile, @group ], url: profile_group_add_path(@profile, @group), local: true, id: "add_form") do |form| %>
+          <p>
+            <%= form.select :controls, @profile.controls.collect {|u| ["#{u.control_id}: #{u.short_title}", u.control_id]}, {}, :id => "add_control_list", :prompt => 'Select' %>
+            <button type="button" id="add_btn" class="btn btn-primary pull-right margin-right"><i class="fa fa-edit"></i> Add
+            </button>
+          </p>
+          <% end %>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+<script>
+$(document).ready(function(){
+  $("#edit_btn").click(function(){
+    toggleSections("edit_form", "show_form");
+  });
+  $("#cancel_btn").click(function(){
+    toggleSections("show_form", "edit_form");
+  });
+  $("#add_btn").click(function(){
+    var c_list = document.getElementById("group_controls_list");
+    var a_list = document.getElementById("add_control_list");
+    var control_id = a_list.options[a_list.selectedIndex].value;
+    if (c_list.value == "")
+      c_list.value = control_id;
+    else {
+      if (c_list.value.indexOf(control_id) == -1)
+        c_list.value = c_list.value + "," + control_id;
+    }
+    console.log("control_list: " + document.getElementById("add_control_list").value);
+    var form = document.getElementById("add_form");
+    form.submit();
+  });
+});
+</script>

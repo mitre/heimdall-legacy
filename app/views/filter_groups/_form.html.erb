@@ -1,0 +1,24 @@
+<%= form_with(model: filter_group, local: true) do |form| %>
+  <% if filter_group.errors.any? %>
+    <div id="error_explanation">
+      <h2><%= pluralize(filter_group.errors.count, "error") %> prohibited this filter_group from being saved:</h2>
+
+      <ul>
+      <% filter_group.errors.full_messages.each do |message| %>
+        <li><%= message %></li>
+      <% end %>
+      </ul>
+    </div>
+  <% end %>
+
+  <div class="field">
+    <%= form.label :name %>
+    <%= form.text_field :name, id: :filter_group_name %>
+  </div>
+  <br>
+  <div class="actions">
+    <%= button_tag(type: "submit", class: "btn btn-primary") do %>
+      <i class="fa fa-edit"></i> Save
+    <% end %>
+  </div>
+<% end %>

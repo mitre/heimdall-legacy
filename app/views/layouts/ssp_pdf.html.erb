@@ -1,0 +1,16 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8" />
+  <meta name="ROBOTS" content="NOODP" />
+  <meta name="viewport" content="initial-scale=1" />
+  <style>
+    <%= Rails.application.assets.find_asset('ssp_pdf').to_s %>
+  </style>
+</head>
+<body>
+  <div class="container">
+    <%= yield %>
+  </div>
+</body>
+</html>

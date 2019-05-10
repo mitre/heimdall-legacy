@@ -1,0 +1,176 @@
+<!-- Content Header (Page header) -->
+<section class="content-header">
+  <h1>
+    Welcome to Heimdall, an InSpec results viewer
+  </h1>
+  <ol class="breadcrumb">
+    <li class="active"><%= link_to ('<i class="fa fa-dashboard"> </i>Dashboard').html_safe, root_path %></li>
+  </ol>
+</section>
+
+<!-- Main content -->
+<section class="content">
+  <!-- Small boxes (Stat box) -->
+  <div class="row">
+    <div class="col-lg-4 col-xs-6">
+      <!-- small box -->
+      <div class="small-box bg-aqua" id="eval_info">
+        <div class="inner">
+          <h3><%= @eval_count %></h3>
+
+          <p>Evaluations</p>
+        </div>
+        <div class="icon">
+          <i class="ion ion-pie-graph"></i>
+        </div>
+        <div class="small-box-footer">
+          <% if can? :create, Evaluation %>
+            <%= link_to ('Upload <i class="fa fa-upload"></i>').html_safe, "#",id: "upload_eval_btn", class: "white-text" %>
+            &nbsp;&nbsp;&nbsp;&nbsp;
+          <% end %>
+          <%= link_to ('More info <i class="fa fa-arrow-circle-right"></i>').html_safe, evaluations_path, class: "white-text" %>
+        </div>
+      </div>
+      <% if can? :create, Evaluation %>
+        <div class="small-box bg-aqua" style="display:none;" id="upload_eval_form">
+          <div class="inner">
+            <h4>Upload Evaluation</h4>
+            <%= form_tag(upload_evaluations_path, multipart: true, :html => {class: 'form-control'}) do %>
+              <div class="input-group">
+                <%= file_field_tag :file, :class => "menu-text" %>
+              </div>
+              <br>
+              <div class="actions">
+                <%= submit_tag 'Upload', :class => "btn btn-primary" %>
+                <button type="reset" id="cancel_eval_btn" class="btn btn-info pull-right">
+                  <i class="fa fa-cancel"></i> Cancel
+                </button>
+              </div>
+            <% end %>
+          </div>
+        </div>
+      <% end %>
+
+    </div>
+    <!-- ./col -->
+    <div class="col-lg-4 col-xs-6">
+      <!-- small box -->
+      <div class="small-box bg-green" id="profile_info">
+        <div class="inner">
+          <h3><%= @profile_count %></h3>
+
+          <p>Profiles</p>
+        </div>
+        <div class="icon">
+          <i class="ion ion-ios-folder"></i>
+        </div>
+        <div class="small-box-footer">
+          <% if can? :create, Profile %>
+            <%= link_to ('Upload <i class="fa fa-upload"></i>').html_safe, "#", id: "upload_profile_btn", class: "white-text" %>
+            &nbsp;&nbsp;&nbsp;&nbsp;
+          <% end %>
+          <%= link_to ('More info <i class="fa fa-arrow-circle-right"></i>').html_safe, profiles_path, class: "white-text" %>
+        </div>
+
+      </div>
+      <% if can? :create, Profile %>
+        <div class="small-box bg-green" style="display:none;" id="upload_profile_form">
+          <div class="inner">
+            <h4>Upload Profile</h4>
+            <%= form_tag(upload_profiles_path, multipart: true, :html => {class: 'form-control'}) do %>
+              <div class="input-group">
+                <%= file_field_tag :file, :class => "menu-text" %>
+              </div>
+              <br>
+              <div class="actions">
+                <%= submit_tag 'Upload', :class => "btn btn-primary" %>
+                <button type="reset" id="cancel_profile_btn" class="btn btn-info pull-right">
+                  <i class="fa fa-cancel"></i> Cancel
+                </button>
+              </div>
+            <% end %>
+          </div>
+        </div>
+      <% end %>
+    </div>
+    <!-- ./col -->
+    <div class="col-lg-4 col-xs-6">
+      <!-- small box -->
+      <div class="small-box bg-yellow">
+        <div class="inner">
+          <h3><%= User.all.count %></h3>
+
+          <p>User Registrations</p>
+        </div>
+        <div class="icon">
+          <i class="ion ion-person-add"></i>
+        </div>
+        <%= link_to ('More info <i class="fa fa-arrow-circle-right"></i>').html_safe, new_user_session_path, class: "small-box-footer" %>
+      </div>
+    </div>
+    <!-- ./col -->
+  </div>
+  <h2>
+    Timeline
+  </h2>
+  <div class="row">
+    <ul class="timeline">
+      <% @recents.each do |tm, items| %>
+        <!-- timeline time label -->
+        <li class="time-label">
+            <span class="bg-red">
+                <%= tm.strftime('%d %b.%Y') %>
+            </span>
+        </li>
+        <!-- /.timeline-label -->
+
+        <% items.each do |item| %>
+        <% item_class = item.class %>
+        <% item_class = User if [DbUser, LdapUser].include?(item.class) %>
+          <!-- timeline item -->
+          <li>
+              <!-- timeline icon -->
+              <i class="fa <%= icon(item_class) %> bg-blue"></i>
+              <div class="timeline-item">
+                  <span class="time"><i class="fa fa-clock-o"></i><%= item.created_at.strftime('%H:%M:%S') %></span>
+
+                  <h3 class="timeline-header"><%= item.class %> Added<% unless item_class == User  %> by <%=item.created_by.try(:email) %><% end %></h3>
+
+                  <div class="timeline-body">
+                    <% if item_class == Evaluation %>
+                      Profiles: <%= item.profiles.map(&:name).join(', ') %>, Platform: <%= item.platform_name %>
+                    <% elsif item_class == Profile %>
+                      Name: <%= item.name %>, Title: <%= item.title %>, Version: <%= item.version %>
+                    <% elsif item_class == User %>
+                      Email: <%= item.email %>, Roles: <%= item.role_names.uniq.join(", ") %>
+                    <% end %>
+                  </div>
+
+              </div>
+          </li>
+          <!-- END timeline item -->
+        <% end %>
+      <% end %>
+
+    </ul>
+  </div>
+</section>
+<!-- /.content -->
+<script>
+$(document).ready(function(){
+  $("#upload_eval_btn").click(function(event) {
+    event.preventDefault(); // Prevent link from following its href
+    toggleSections("upload_eval_form", "eval_info");
+  });
+  $("#cancel_eval_btn").click(function() {
+    toggleSections("eval_info", "upload_eval_form");
+  });
+  $("#upload_profile_btn").click(function(event) {
+    event.preventDefault(); // Prevent link from following its href
+    toggleSections("upload_profile_form", "profile_info");
+  });
+  $("#cancel_profile_btn").click(function() {
+    toggleSections("profile_info", "upload_profile_form");
+  });
+});
+</script>

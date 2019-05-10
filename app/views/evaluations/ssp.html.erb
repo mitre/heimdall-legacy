@@ -1,0 +1,260 @@
+<style>
+.scroll-nav {
+  position: absolute;
+}
+.scroll-nav.fixed .scroll-nav__wrapper {
+  position: fixed;
+  top: 60px;
+}
+
+.scroll-nav__wrapper {
+  border: 1px solid #006f99;
+  background-color: #1e8cb7;
+  border-radius: 6px;
+  padding: 10px 5px;
+}
+
+.scroll-nav__heading {
+  border-bottom: 2px solid #fff;
+  color: #fff;
+  display: block;
+  font-family: "Alfa Slab One", Georgia, serif;
+  font-size: 1.2em;
+  margin-bottom: 15px;
+  overflow: hidden;
+  padding-bottom: 10px;
+  padding-top: 10px;
+  text-align: center;
+  text-shadow: 0 -1px 0 #006186;
+  width: 40px;
+}
+.scroll-nav__heading:before {
+  font-size: 40px;
+}
+
+.scroll-nav__list {
+  margin-bottom: 0;
+}
+
+.scroll-nav__item {
+  font-weight: 600;
+  font-size: 30px;
+  line-height: 1.2em;
+  margin: 0 auto;
+  overflow: hidden;
+  width: 40px;
+}
+.scroll-nav__item:before {
+  color: #fff;
+  display: block;
+  position: absolute;
+  pointer-events: none;
+  text-align: center;
+  width: 40px;
+}
+.scroll-nav__item.active {
+  -webkit-transform: scale(1.3, 1.3);
+  -moz-transform: scale(1.3, 1.3);
+  -ms-transform: scale(1.3, 1.3);
+  -o-transform: scale(1.3, 1.3);
+  transform: scale(1.3, 1.3);
+  font-weight: 800;
+}
+.scroll-nav__item.active a:hover {
+  font-weight: 800;
+}
+
+.scroll-nav__link {
+  color: #fff;
+  display: block;
+  margin: 0 auto;
+  padding-left: 42px;
+}
+.scroll-nav__link:hover {
+  color: #fff;
+}
+.scroll-nav__wrapper {
+  padding: 15px 10px;
+}
+
+.scroll-nav__heading {
+  font-size: 1.7em;
+  text-indent: -16px;
+  width: 170px;
+}
+.scroll-nav__heading:before {
+  font-size: 1.654411765em;
+  position: relative;
+  right: -0.30em;
+  top: -0.07em;
+}
+
+.scroll-nav__item {
+  font-size: 19px;
+  line-height: 1.4em;
+  overflow: visible;
+  width: 170px;
+}
+.scroll-nav__item.active {
+  -webkit-transform: scale(1.2, 1.2);
+  -moz-transform: scale(1.2, 1.2);
+  -ms-transform: scale(1.2, 1.2);
+  -o-transform: scale(1.2, 1.2);
+  transform: scale(1.2, 1.2);
+  padding-left: 0.5em;
+}
+.scroll-nav__item:before {
+  width: 30px;
+}
+.scroll-nav__link {
+  padding-left: 30px;
+}
+ul {
+  margin:3px;
+}
+ul ul {
+    display:none;
+}
+ul li:hover>ul {
+    /*display:block;   */
+}
+</style>
+<!-- Content Header (Page header) -->
+<section class="content-header">
+  <h1>Evaluation <%= link_to @evaluation.profiles.map(&:name).join(', '), evaluation_path(@evaluation.id) %></h1>
+  <ol class="breadcrumb" data-turbolinks="false">
+    <li><%= link_to ('<i class="fa fa-dashboard"> </i>Dashboard').html_safe, root_path %></li>
+    <li><%= link_to 'Evaluations', evaluations_path %></li>
+    <li><%= link_to 'Evaluation', evaluation_path(@evaluation.id) %></li>
+    <li class="active">SSP</li>
+  </ol>
+</section>
+
+<!-- Main content -->
+<section class="content container-fluid">
+  <div class="row body">
+    <div class="col-md-9">
+      <div class="box box-primary">
+        <div class="box-header with-border">
+          <h1 class="box-title">SSP Ready Control Implementation Details and Status</h1>
+        </div>
+        <!-- /.box-header -->
+        <div class="box-body">
+          <% counts, _ = @evaluation.status_counts %>
+          <% total_count = counts[:open] + counts[:not_a_finding] + counts[:not_reviewed] + counts[:not_tested] %>
+          <% compliance_level = ((counts[:not_a_finding]).to_f / total_count) * 100 %>
+          <h2>Compliance Level: <%= compliance_level.round(1) %>%</h2>
+          <div class="container-fluid">
+            <div class="row">
+              <div class="col-xs-3">
+                <h4>Not a Finding: <%= counts[:not_a_finding] %></h4>
+                <h4>Open: <%= counts[:open] %></h4>
+              </div>
+              <div class="col-xs-3">
+                <h4>Not Reviewed: <%= counts[:not_reviewed] %></h4>
+                <h4>Not Tested: <%= counts[:not_tested] %></h4>
+              </div>
+              <div class="col-xs-3">
+                <h4>Not Applicable: <%= counts[:not_applicable] %></h4>
+              </div>
+            </div>
+          </div>
+          <% @nist_hash["children"].each do |family| %>
+            <% if family["value"] > 0 %>
+              <h2 id="<%= family['name'] %>"><%= family["name"] %>: <%= family["desc"] %></h2>
+              <div class="container-fluid">
+                <% family["children"].each do |cf| %>
+                  <% if cf["value"] > 0 %>
+                    <% cf_name = cf['name'] %>
+                    <h3 id="<%= cf_name %>" onclick="togAll('<%= cf_name %>')"><%= cf_name %></h3>
+                    <div class="container-fluid big-margin-bottom">
+                      <% cf["controls"].each_with_index do |control, index| %>
+                        <h4><button class="<%= status_btn(@symbols[control.control_id]) %>" onclick="$('#<%= control.control_id %>').toggle()"><%= @symbols[control.control_id].to_s.titleize %></button> <%= index+1 %>. <%= control.title %></h4>
+                        <div id="<%= control.control_id %>" class="container-fluid big-margin-bottom" style="display: none">
+                          <%= control.desc %>
+                          <h4>Check Text</h4> <pre><%= control.tag('check') %></pre>
+                          <h4>Fix Text</h4> <pre><%= control.tag('fix') %></pre>
+                        </div>
+                      <% end %>
+                    </div>
+                  <% end %>
+                <% end %>
+              </div>
+            <% end %>
+          <% end %>
+        </div>
+      </div>
+    </div>
+    <div class="col-md-3">
+      <div id="sidebar" class="box box-primary">
+        <div class="box-body">
+          <h4><%= link_to "Download as PDF",
+            evaluation_download_path(@evaluation, format: "pdf"),
+            target: "_blank",
+            class: "download" %>
+          </h4>
+        </div>
+      </div>
+      <div id="sidebar" class="box box-primary sidebar">
+        <ul id="sspList" class="list-unstyled">
+          <li onclick='$(window).scrollTop(0);'>Scroll to Top</li>
+          <% @nist_hash["children"].each do |family| %>
+            <% if family["value"] > 0 %>
+              <li id="<%= family['name'] %>">
+                <%= family["name"] %>: <%= family["desc"] %>
+                <ul class="list-unstyled">
+                  <% family["children"].each do |cf| %>
+                    <% if cf["value"] > 0 %>
+                      <li id="<%= cf['name'] %>"><%= cf["name"] %> <span class="grey-text margin-left">Controls: <%= cf["value"] %></span></li>
+                    <% end %>
+                  <% end %>
+                </ul>
+              </li>
+            <% end %>
+          <% end %>
+        </ul>
+      </div>
+    </div>
+  </div>
+</section>
+<script>
+  var families = {};
+  <% @nist_hash["children"].each do |family| %>
+    <% family["children"].each do |cf| %>
+      <% if cf["value"] > 0 %>
+        families["<%= cf['name'] %>"] = ["<%= raw cf["controls"].map(&:control_id).join('","') %>"];
+      <% end %>
+    <% end %>
+  <% end %>
+
+  document.addEventListener("turbolinks:load", function() {
+    $('li').click(function(ev) {
+        $(this).find('>ul').slideToggle();
+        ev.stopPropagation();
+        if (this.id) {
+          elem = "#" + this.id;
+          $(elem).scrollView();
+        }
+    });
+    Prism.highlightAll();
+    document.body.scrollTop = 0;
+  });
+
+  $.fn.scrollView = function () {
+    return this.each(function () {
+      $('html, body').animate({
+        scrollTop: $(this).offset().top
+      }, 1000);
+    });
+  }
+
+  function togAll(id) {
+    console.log("togAll " + id);
+    for (ct in families[id]) {
+      console.log("control " + families[id][ct]);
+      idStr = "#" + families[id][ct];
+      $(idStr).toggle();
+    }
+  }
+
+</script>

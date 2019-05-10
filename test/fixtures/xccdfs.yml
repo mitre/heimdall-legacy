@@ -1,0 +1,47 @@
+# Read about fixtures at http://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
+
+one:
+  benchmark_title: MyString
+  benchmark_id: MyString
+  benchmark_description: MyString
+  benchmark_version: MyString
+  benchmark_status: MyString
+  benchmark_status_date,: MyString
+  type: 
+  Date: MyString
+  benchmark_notice: MyString
+  benchmark_notice_id: MyString
+  benchmark_plaintext: MyString
+  benchmark_plaintext_id: MyString
+  reference_href: MyString
+  reference_dc_source: MyString
+  reference_dc_publisher: MyString
+  reference_dc_title: MyString
+  reference_dc_subject: MyString
+  reference_dc_type: MyString
+  reference_dc_identifier: MyString
+  content_ref_href: MyString
+  content_ref_name: MyString
+
+two:
+  benchmark_title: MyString
+  benchmark_id: MyString
+  benchmark_description: MyString
+  benchmark_version: MyString
+  benchmark_status: MyString
+  benchmark_status_date,: MyString
+  type: 
+  Date: MyString
+  benchmark_notice: MyString
+  benchmark_notice_id: MyString
+  benchmark_plaintext: MyString
+  benchmark_plaintext_id: MyString
+  reference_href: MyString
+  reference_dc_source: MyString
+  reference_dc_publisher: MyString
+  reference_dc_title: MyString
+  reference_dc_subject: MyString
+  reference_dc_type: MyString
+  reference_dc_identifier: MyString
+  content_ref_href: MyString
+  content_ref_name: MyString

@@ -1,0 +1,46 @@
+<!-- Content Header (Page header) -->
+<section class="content-header">
+  <h1>
+    Login
+  </h1>
+</section>
+
+<!-- Main content -->
+<section class="content container-fluid">
+  <div class="row">
+    <div class="col-md-6">
+      <!-- Horizontal Form -->
+
+      <div class="box box-info">
+        <div class="box-header with-border">
+          <h3 class="box-title">Forgot your password?</h3>
+        </div>
+        <!-- /.box-header -->
+        <!-- form start -->
+        <%= form_for(resource, as: resource_name, url: password_path(resource_name), :html => { method: :post, class: 'form-horizontal'}) do |f| %>
+          <div class="box-body">
+            <div class="form-group  has-feedback">
+              <label for="inputEmail3" class="col-sm-2 control-label">Email</label>
+              <div class="col-sm-10">
+                <%= f.email_field :email, autofocus: true, :id =>"inputEmail3", :class => "form-control", :placeholder => "Email" %>
+                <span class="glyphicon glyphicon-envelope form-control-feedback"></span>
+              </div>
+            </div>
+          <!-- /.box-body -->
+          <div class="box-footer">
+            <%= f.submit "Send me reset password instructions", :class => "btn btn-primary btn-block btn-flat" %>
+          </div>
+          <!-- /.box-footer -->
+        <% end %>
+        <div class="box-body">
+          <div class="form-group">
+            <%= render "db_users/shared/links" %>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <!-- /.login-box-body -->
+
+</section>
+<!-- /.content -->

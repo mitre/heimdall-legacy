@@ -1,0 +1,71 @@
+<!-- Content Header (Page header) -->
+<section class="content-header">
+  <h1>
+    Users
+  </h1>
+  <ol class="breadcrumb">
+    <li><%= link_to ('<i class="fa fa-dashboard"> </i>Dashboard').html_safe, root_path %></li>
+    <li class="active">Users</li>
+  </ol>
+</section>
+
+<section class="content container-fluid">
+  <div class="row">
+    <div class="col-xs-12">
+      <div class="box box-primary">
+        <div class="box-header with-border">
+          <h3 class="box-title">Users</h3>
+        </div>
+        <!-- /.box-header -->
+        <% if can? :read, User %>
+          <div class="box-body table-responsive no-padding">
+            <table class="table table-hover">
+              <tr>
+                <th>Email</th>
+                <th>Type</th>
+                <th>First Name</th>
+                <th>Last Name</th>
+                <th colspan='2'>Roles</th>
+                <th></th>
+              </tr>
+              <% single_admin = @users.map{|user| user.roles.map(&:name)}.flatten.count('admin') == 1 %>
+              <% @users.each do |user| %>
+                <tr>
+                  <td><%= link_to user.email, user_path(user) %></td>
+                  <td><%= user._type %></td>
+                  <td><%= user.first_name %></td>
+                  <td><%= user.last_name %></td>
+                  <td>
+                    <ul>
+                      <% user.roles.each do |role| %>
+                        <li>
+                          <%= role.name %>
+                          <%= link_to ('<span class="glyphicon glyphicon-remove red"></span>').html_safe, user_remove_role_path(current_user, user, role.name), :method => :delete, data: { confirm: 'Are you sure?' } %>
+                        </li>
+                      <% end %>
+                    </ul>
+                  </td>
+                  <td>
+                    <%= form_for :user, url: user_add_role_path(current_user, user), remote: true do |form| %>
+                      <%= form.select :role, ['admin', 'editor'], { :prompt => 'Select' } %>
+                      <%= button_tag(type: "submit") do %>
+                          Add Role
+                      <% end %>
+                      </div>
+                    <% end %>
+                  </td>
+                  <td>
+                    <% unless user.has_role?(:admin) && single_admin %>
+                      <%= link_to 'Destroy', user_path(user), method: :delete, data: { confirm: 'Are you sure?' } %>
+                    <% end %>
+                  </td>
+                </tr>
+              <% end %>
+            </table>
+          </div>
+        <% end %>
+      </div>
+    </div>
+  </div>
+</section>
+<!-- /.content -->

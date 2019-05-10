@@ -1,0 +1,44 @@
+<!-- Content Header (Page header) -->
+<section class="content-header">
+  <h1>
+    Attribute
+  </h1>
+  <ol class="breadcrumb">
+    <li><%= link_to ('<i class="fa fa-dashboard"> </i>Dashboard').html_safe, root_path %></li>
+    <li><%= link_to 'Profiles', profiles_path %></li>
+    <li><%= link_to 'Profile', profile_path(@profile.id) %></li>
+    <li class="active">Attribute</li>
+  </ol>
+</section>
+
+<!-- Main content -->
+<section class="content container-fluid">
+  <div class="row">
+    <div class="col-xs-12">
+      <div class="box box-primary">
+        <div class="box-header">
+          <h3 class="box-title">Attribute Information</h3>
+          <%= link_to 'Destroy', [@profile, @profile_attribute], :method => :delete, class: "btn btn-danger pull-right", data: { confirm: 'Are you sure?' } %>
+          <%= link_to ('<i class="fa fa-edit"></i> Edit').html_safe, edit_profile_profile_attribute_path(@profile.id, @profile_attribute), class: "btn btn-primary pull-right margin-right" %>
+        </div>
+        <!-- /.box-header -->
+        <div class="box-body">
+          <p>
+            <strong>Name:</strong>
+            <%= @profile_attribute.name %>
+          </p>
+
+          <p>
+            <strong>Option Description:</strong>
+            <%= @profile_attribute.option_description %>
+          </p>
+
+          <p>
+            <strong>Option Default:</strong>
+            <%= @profile_attribute.option_default_list %>
+          </p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
