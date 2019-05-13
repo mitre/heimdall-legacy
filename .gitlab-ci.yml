@@ -1,0 +1,118 @@
+stages:
+  # Do not put sync at the beginning, this will have the unintuitive
+  # consequence of each sync triggering a build/deploy on the **same** commit
+  # as the sync ran on, instead of the new HEAD. Additionally the new HEAD will
+  # already have been triggered by the push which happens in sync
+  - deploy
+  - sync
+
+sync-repo:
+  stage: sync
+  image: alpine:latest
+
+  # allow us to run pipelines manually online or with a CI schedule
+  only:
+    - web
+    - schedules
+
+  before_script:
+    # add the MITRE certificates to the docker image
+    - apk update && apk add git openssh-client ca-certificates
+    - wget -O /usr/local/share/ca-certificates/MITRE_BA_Root.crt "http://pki.mitre.org/MITRE%20BA%20ROOT.crt"
+    - wget -O /usr/local/share/ca-certificates/MITRE_BA_NPE_CA-3.crt "http://pki.mitre.org/MITRE%20BA%20NPE%20CA-3.crt"
+    - wget -O /usr/local/share/ca-certificates/MITRE_BA_NPE_CA-31.crt "http://pki.mitre.org/MITRE%20BA%20NPE%20CA-3(1).crt"
+    - wget -O /usr/local/share/ca-certificates/MITRE_BA_NPE_CA-4.crt "http://pki.mitre.org/MITRE%20BA%20NPE%20CA-4.crt"
+    - update-ca-certificates
+
+    # create a file called push_key that contains the $GITLAB_PUSH_KEY
+    - mkdir -p /root/.ssh
+    - echo "$GITLAB_PUSH_KEY" > ~/push_key
+    - chmod 600 ~/push_key
+
+    # configure git
+    - git config --global user.email 'deployer@mitre.org' # Normally this is associated with the $GITLAB_PUSH_KEY
+    - git config --global user.name 'inspec-dev Deployer' # Normally this is associated with the $GITLAB_PUSH_KEY
+
+    # add gitlab.mitre.org to known_hosts to avoid "host key verification failed" error
+    - touch ~/.ssh/known_hosts
+    - echo $GITLAB_KEYSCAN >> ~/.ssh/known_hosts
+
+  script:
+    - git clone https://github.com/mitre/heimdall.git heimdall >/dev/null 2>/dev/null
+    - cd heimdall
+    - git remote add github git@gitlab.mitre.org:inspec/heimdall.git
+    - ssh-agent sh -c 'ssh-add ~/push_key; git push --tags github master || true' # REMOTE NAME from previous line
+deploy:
+  stage: deploy
+  image: docker:latest
+  except:
+    - schedules
+
+  before_script:
+    # add the MITRE certificates to the docker image
+    - apk update && apk add git openssh-client ca-certificates py-pip bash
+    - wget -O /usr/local/share/ca-certificates/MITRE_BA_Root.crt "http://pki.mitre.org/MITRE%20BA%20ROOT.crt"
+    - wget -O /usr/local/share/ca-certificates/MITRE_BA_NPE_CA-3.crt "http://pki.mitre.org/MITRE%20BA%20NPE%20CA-3.crt"
+    - wget -O /usr/local/share/ca-certificates/MITRE_BA_NPE_CA-31.crt "http://pki.mitre.org/MITRE%20BA%20NPE%20CA-3(1).crt"
+    - wget -O /usr/local/share/ca-certificates/MITRE_BA_NPE_CA-4.crt "http://pki.mitre.org/MITRE%20BA%20NPE%20CA-4.crt"
+    - update-ca-certificates
+
+  script:
+    # Configuration modification purely for inspec-dev
+    # For service behind the MITRE Firewall connecting to gitlab.mitre.org
+    - echo "$SED_PROXY" > sed-script-file
+    - grep MITRE_BA_Root dockerfiles/heimdall/Dockerfile || sed -f sed-script-file -i"" dockerfiles/heimdall/Dockerfile
+    - cp config/ldap.example.yml config/ldap.yml
+    - sed -i"" -e "s#host.yourdomain.com#uds.mitre.org#g" config/ldap.yml
+    - sed -i"" -e "s#ou=People,o=yourdomain.com#ou=people,dc=mitre,dc=org#g" config/ldap.yml
+    - sed -i"" -e "s#cn=admin,dc=test,dc=com#CN=$LDAP_ADMIN_USER,OU=IDM_MANAGED,OU=Application Accounts,dc=mitre,dc=org#g" config/ldap.yml
+    - sed -i"" -e "s#credentials#$LDAP_ADMIN_PASSWORD#g" config/ldap.yml
+    # The following line implies anonymous ldap authentication
+    # - sed -i"" -e "/admin_/d" config/ldap.yml
+    # - git clone https://aaronlippold:${GITHUB_ACCESS_TOKEN}@github.com/aaronlippold/inspec_tools inspec-tools 2>/dev/null
+    # - sed -i 's/gem .inspec_tools.*$/gem \"inspec_tools\", :path => \"\.\/inspec-tools\"/' Gemfile
+    - pip install docker-compose
+    - docker-compose build
+    # Note that we do not reload the schema in the CI tools that will have to
+    # be done manually, by logging into inspec-dev, cloning the repo then
+    # running `docker-compose run web rake db:reset`
+    - docker-compose run web bundle exec rake db:seed
+    - docker-compose run web bundle exec rake db:migrate
+    - docker-compose up -d
+
+deploy-swarm:
+  stage: deploy
+  image: docker:latest
+  only:
+    - development
+  tags:
+    # These tags imply to use the swarm runner
+    - swarm
+    - dev
+
+  before_script:
+    # add the MITRE certificates to the docker image
+    - apk update && apk add git openssh-client ca-certificates py-pip bash
+    - wget -O /usr/local/share/ca-certificates/MITRE_BA_Root.crt "http://pki.mitre.org/MITRE%20BA%20ROOT.crt"
+    - wget -O /usr/local/share/ca-certificates/MITRE_BA_NPE_CA-3.crt "http://pki.mitre.org/MITRE%20BA%20NPE%20CA-3.crt"
+    - wget -O /usr/local/share/ca-certificates/MITRE_BA_NPE_CA-31.crt "http://pki.mitre.org/MITRE%20BA%20NPE%20CA-3(1).crt"
+    - wget -O /usr/local/share/ca-certificates/MITRE_BA_NPE_CA-4.crt "http://pki.mitre.org/MITRE%20BA%20NPE%20CA-4.crt"
+    - update-ca-certificates
+
+  script:
+    # Configuration modification purely for inspec-dev
+    # For service behind the MITRE Firewall connecting to gitlab.mitre.org
+    - echo "$SED_PROXY" > sed-script-file
+    - grep MITRE_BA_Root dockerfiles/heimdall/Dockerfile.swarm || sed -f sed-script-file -i"" dockerfiles/heimdall/Dockerfile.swarm
+    - cp config/ldap.example.yml config/ldap.yml
+    - sed -i"" -e "s#host.yourdomain.com#uds.mitre.org#g" config/ldap.yml
+    - sed -i"" -e "s#ou=People,o=yourdomain.com#ou=people,dc=mitre,dc=org#g" config/ldap.yml
+    - sed -i"" -e "s#cn=admin,dc=test,dc=com#CN=$LDAP_ADMIN_USER,OU=IDM_MANAGED,OU=Application Accounts,dc=mitre,dc=org#g" config/ldap.yml
+    - sed -i"" -e "s#credentials#$LDAP_ADMIN_PASSWORD#g" config/ldap.yml
+    - pip install docker-compose
+    - chmod +x gen-swarm-secrets.sh
+    - ./gen-swarm-secrets.sh
+    - docker-compose -f docker-compose.yml.swarm build
+    - docker-compose -f docker-compose.yml.swarm push
+    - docker stack deploy -c docker-compose.yml.swarm
+    - docker-compose -f docker-compose.yml.swarm run web rake db:reset || docker-compose -f docker-compose.yml.swarm run web rake db:migrate

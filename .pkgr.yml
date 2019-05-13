@@ -1,0 +1,16 @@
+---
+before:
+  - 'export SECRET_KEY_BASE=xxx'
+after_install: 'setup-secrets.sh'
+build_dependencies:
+  - ImageMagick-devel
+  - libxml2-devel
+  - libxslt-devel
+  - gcc
+  - make
+  - automake
+dependencies:
+  - mongodb-org-server
+  - ImageMagick
+targets:
+  centos-7:
