@@ -22,9 +22,9 @@ class Result < ApplicationRecord
 
   def status_symbol
     if status.include?('failed')
-      :open
+      :failed
     elsif status.include?('passed')
-      :not_a_finding
+      :passed
     elsif status.include?('skipped')
       :not_reviewed
     else

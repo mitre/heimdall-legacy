@@ -8,7 +8,7 @@ class DashboardController < ApplicationController
       recents = get_recents([Evaluation, Profile, User])
       recents = Hash[recents.sort_by { |key, _| key }]
       recents.each do |tl, ary|
-        @recents[tl] = ary.sort
+        @recents[tl] = ary
       end
     else
       @circle = Circle.where(name: 'Public').try(:first)

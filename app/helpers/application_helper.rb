@@ -18,8 +18,8 @@ module ApplicationHelper
   def status_btn(symbol)
     case symbol
     when :not_applicable then 'btn btn-info'
-    when :open then 'btn btn-danger'
-    when :not_a_finding then 'btn btn-success'
+    when :failed then 'btn btn-danger'
+    when :passed then 'btn btn-success'
     when :not_reviewed then 'btn btn-neutral'
     else
       'btn btn-neutral'
@@ -29,9 +29,9 @@ module ApplicationHelper
   def result_message(symbol)
     if symbol == :not_applicable
       'Justification'
-    elsif symbol == :open
+    elsif symbol == :failed
       'One or more of the automated tests failed or was inconclusive for the control'
-    elsif symbol == :not_a_finding
+    elsif symbol == :passed
       'All Automated tests passed for the control'
     elsif symbol == :not_reviewed
       'Automated test skipped due to known accepted condition in the control'
@@ -48,8 +48,8 @@ module ApplicationHelper
 
   def pass_pixels(findings)
     Rails.logger.debug "FINDINGS: #{findings}"
-    if findings and findings[:not_a_finding] != 0
-      (findings[:not_a_finding] / (findings[:open] + findings[:not_a_finding] + findings[:not_tested] + findings[:not_reviewed]).to_f * 200.0).round
+    if findings and findings[:passed] != 0
+      (findings[:passed] / (findings[:failed] + findings[:passed] + findings[:not_tested] + findings[:not_reviewed]).to_f * 200.0).round
     else
       0
     end
@@ -60,7 +60,7 @@ module ApplicationHelper
   end
 
   def compliance(findings)
-    (findings[:not_a_finding] / (findings[:open] + findings[:not_a_finding] + findings[:not_tested] + findings[:not_reviewed]).to_f * 100.0).round(2)
+    (findings[:passed] / (findings[:failed] + findings[:passed] + findings[:not_tested] + findings[:not_reviewed]).to_f * 100.0).round(2)
   end
 
   def icon(clss)

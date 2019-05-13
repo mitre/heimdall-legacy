@@ -138,7 +138,7 @@
 
                   <div class="timeline-body">
                     <% if item_class == Evaluation %>
-                      Profiles: <%= item.profiles.map(&:name).join(', ') %>, Platform: <%= item.platform_name %>
+                      Profiles: <%= item.profiles.map(&:name).join(', ') %>, Platform: <%= item.platform[:name] %>
                     <% elsif item_class == Profile %>
                       Name: <%= item.name %>, Title: <%= item.title %>, Version: <%= item.version %>
                     <% elsif item_class == User %>

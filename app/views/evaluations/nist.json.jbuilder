@@ -24,8 +24,8 @@ def convert_status_symbol(symbol)
   case symbol
   when :not_applicable then 0.2
   when :not_reviewed then 0.4
-  when :not_a_finding then 0.6
-  when :open then 0.8
+  when :passed then 0.6
+  when :failed then 0.8
   else
     0.0
   end
@@ -66,11 +66,11 @@ json.children @families do |family|
         end
         child_hsh[childf[:status_symbol]] << childf[:name]
         all_controls[childf[:id]] = childf
-        unless status_symbol == :open
-          if childf[:status_symbol] == :open
-            status_symbol = :open
-          elsif childf[:status_symbol] == :not_a_finding
-            status_symbol = :not_a_finding
+        unless status_symbol == :failed
+          if childf[:status_symbol] == :failed
+            status_symbol = :failed
+          elsif childf[:status_symbol] == :passed
+            status_symbol = :passed
           end
         end
       end
@@ -118,11 +118,11 @@ json.children @families do |family|
       json.status_value convert_status_symbol(status_symbol)
       json.what_level_is_this 3
       # Rails.logger.debug "#{control['name']} status_symbol: #{status_symbol}, status_value: #{convert_status_symbol(status_symbol)}"
-      unless sub_fam_status_symbol == :open
-        if status_symbol == :open
-          sub_fam_status_symbol = :open
-        elsif status_symbol == :not_a_finding
-          sub_fam_status_symbol = :not_a_finding
+      unless sub_fam_status_symbol == :failed
+        if status_symbol == :failed
+          sub_fam_status_symbol = :failed
+        elsif status_symbol == :passed
+          sub_fam_status_symbol = :passed
         end
       end
     else
@@ -138,11 +138,11 @@ json.children @families do |family|
     json.what_level_is_this 2
     cf_total_impact += control_total_impact
     cf_total_children += control_total_children
-    unless fam_status_symbol == :open
-      if sub_fam_status_symbol == :open
-        fam_status_symbol = :open
-      elsif sub_fam_status_symbol == :not_a_finding
-        fam_status_symbol = :not_a_finding
+    unless fam_status_symbol == :failed
+      if sub_fam_status_symbol == :failed
+        fam_status_symbol = :failed
+      elsif sub_fam_status_symbol == :passed
+        fam_status_symbol = :passed
       end
     end
     # Rails.logger.debug "#{family['name']} status_symbol: #{fam_status_symbol}, status_value: #{convert_status_symbol(fam_status_symbol)}"
@@ -153,11 +153,11 @@ json.children @families do |family|
   # json.status_value cf_total_impact == 0.0 ? 0.0 : cf_total_impact/cf_total_children
   total_impact += cf_total_impact
   total_children += cf_total_children
-  unless nist_status_symbol == :open
-    if fam_status_symbol == :open
-      nist_status_symbol = :open
-    elsif fam_status_symbol == :not_a_finding
-      nist_status_symbol = :not_a_finding
+  unless nist_status_symbol == :failed
+    if fam_status_symbol == :failed
+      nist_status_symbol = :failed
+    elsif fam_status_symbol == :passed
+      nist_status_symbol = :passed
     end
   end
 end

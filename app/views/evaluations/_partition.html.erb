@@ -10,8 +10,8 @@
       "not_tested": "#8C8C8C",
       "not_reviewed": "#8C8C8C",
       "not_applicable": "#00c0ef",
-      "open": "#dd4b39",
-      "not_a_finding": "#00a65a"
+      "failed": "#dd4b39",
+      "passed": "#00a65a"
     }
 
     function get_color(obj) {
@@ -72,7 +72,7 @@
 
     d3.select(window)
         .on("click", function() { click(root); })
-    
+
 
     function click(d) {
       if (!d.children) return;

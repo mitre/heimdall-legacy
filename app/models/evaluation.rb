@@ -4,7 +4,7 @@ class Evaluation < ApplicationRecord
   store :platform, accessors: [ :name, :release ], coder: JSON
   serialize :other_checks
   store :statistics, accessors: [ :duration ], coder: JSON
-  store :findings, accessors: [ :open, :not_a_finding, :not_reviewed, :not_tested, :not_applicable ], coder: JSON
+  store :findings, accessors: [ :failed, :passed, :not_reviewed, :not_tested, :not_applicable ], coder: JSON
   has_many :tags, as: :tagger
   has_and_belongs_to_many :profiles, dependent: :destroy
   belongs_to :created_by, class_name: 'User', foreign_key: 'created_by_id'
@@ -85,7 +85,7 @@ class Evaluation < ApplicationRecord
 
   def status_counts(filters = nil)
     Rails.logger.debug "Getting status_counts"
-    counts = { open: 0, not_a_finding: 0, not_reviewed: 0, not_tested: 0, not_applicable: 0 }
+    counts = { failed: 0, passed: 0, not_reviewed: 0, not_tested: 0, not_applicable: 0 }
     controls = {}
     start_times = []
     profiles.each do |profile|
@@ -116,9 +116,9 @@ class Evaluation < ApplicationRecord
     else
       status_list = ct_results.map(&:status).uniq
       if status_list.include?('failed')
-        :open
+        :failed
       elsif status_list.include?('passed')
-        :not_a_finding
+        :passed
       elsif status_list.include?('skipped')
         :not_reviewed
       else
@@ -131,8 +131,8 @@ class Evaluation < ApplicationRecord
     case symbol
     when :not_applicable then 0.2
     when :not_reviewed then 0.4
-    when :not_a_finding then 0.6
-    when :open then 0.8
+    when :passed then 0.6
+    when :failed then 0.8
     else
       0.0
     end
@@ -151,9 +151,9 @@ class Evaluation < ApplicationRecord
   def result_message(symbol)
     if symbol == :not_applicable
       'Justification'
-    elsif symbol == :open
+    elsif symbol == :failed
       'One or more of the automated tests failed or was inconclusive for the control'
-    elsif symbol == :not_a_finding
+    elsif symbol == :passed
       'All Automated tests passed for the control'
     elsif symbol == :not_reviewed
       'Automated test skipped due to known accepted condition in the control'

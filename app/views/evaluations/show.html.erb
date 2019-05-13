@@ -201,8 +201,8 @@ var evaluation_id = '<%= @evaluation.id %>';
             <div class="small-box bg-green">
               <div class="inner">
                 <ul class="horizontal-list">
-                  <li><h3 id="not_a_finding_count"></h3></li>
-                  <li><h4>Not a Finding</h4></li>
+                  <li><h3 id="passed_count"></h3></li>
+                  <li><h4>Passed</h4></li>
                 </ul>
                 <p class="small-font">&nbsp;</p>
               </div>
@@ -214,8 +214,8 @@ var evaluation_id = '<%= @evaluation.id %>';
             <div class="small-box bg-red">
               <div class="inner">
                 <ul class="horizontal-list">
-                  <li><h3 id="open_count"></h3></li>
-                  <li><h4>Open&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</h4></li>
+                  <li><h3 id="failed_count"></h3></li>
+                  <li><h4>Failed&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</h4></li>
                 </ul>
                 <p class="small-font">&nbsp;</p>
               </div>
@@ -619,7 +619,7 @@ var evaluation_id = '<%= @evaluation.id %>';
 <script>
 
 var cats = {"High": true, "Medium": true, "Low": true};
-var stats = {"Not A Finding": true, "Not Applicable": true, "Open": true, "Not Reviewed": true, "Not Tested": true};
+var stats = {"Passed": true, "Not Applicable": true, "Failed": true, "Not Reviewed": true, "Not Tested": true};
 var shown_id = null;
 var loaded = null;
 var compliance_count = 0.0;
@@ -808,9 +808,9 @@ function yesEnhancements() {
 function status_btn(symbol) {
   if (symbol == "Not Applicable")
     return 'btn btn-info'
-  else if (symbol == 'Open')
+  else if (symbol == 'Failed')
     return 'btn btn-danger'
-  else if (symbol == 'Not A Finding')
+  else if (symbol == 'Passed')
     return 'btn btn-success'
   else if (symbol == 'Not Reviewed')
     return 'btn btn-neutral'
@@ -830,8 +830,8 @@ function add_control_table(d) {
     console.log("Add " + d.controls.length + " rows to table");
     for(var i=0, len=d.controls.length; i < len; i++) {
       ctl = d.controls[i];
-      ctl_id = ctl.id["$oid"];
-      profile_id = ctl.profile_id["$oid"];
+      ctl_id = ctl.id;
+      profile_id = ctl.profile_id;
       rows += '<tr class="' + ctl.severity_cap + ' ' + ctl.status_symbol_title + '" id="' + ctl_id + '">';
       rows += '<td><button class="' + status_btn(ctl.status_symbol_title) + '" style="width:120px" onclick="show_details(\'' + profile_id + '\', \'' + ctl_id + '\');">' + ctl.status_symbol_title + '</button></td>';
       rows += '<td>' + ctl.title + '</td>';
@@ -874,7 +874,7 @@ function clear_cat_filter(bool) {
 }
 
 function clear_stat_filter(bool) {
-  stats = {"Not A Finding": bool, "Not Applicable": bool, "Open": bool, "Not Reviewed": bool, "Not Tested": bool};
+  stats = {"Passed": bool, "Not Applicable": bool, "Failed": bool, "Not Reviewed": bool, "Not Tested": bool};
 }
 
 function exclude_profile(profile_id) {
@@ -892,9 +892,9 @@ function exclude_profile(profile_id) {
 function set_counts(d) {
   not_app = 0;
   not_rev = 0;
-  not_find = 0;
+  passed = 0;
   not_test = 0;
-  open = 0;
+  failed = 0;
   if (d.controls) {
     for(var i=0, len=d.controls.length; i < len; i++) {
       symbol = d.controls[i].status_symbol;
@@ -904,30 +904,27 @@ function set_counts(d) {
         not_app += 1;
       } else if (symbol == 'not_reviewed') {
         not_rev += 1;
-      } else if (symbol == 'not_a_finding') {
-        not_find += 1;
-      } else if (symbol == 'open') {
-        open += 1;
+      } else if (symbol == 'passed') {
+        passed += 1;
+      } else if (symbol == 'failed') {
+        failed += 1;
       }
     }
   }
-  total_count = not_find + not_rev + open + not_test;
-  compliance_count = (not_find / total_count) * 100;
-  $('#not_a_finding_count').html(not_find);
-  $('#open_count').html(open);
+  total_count = passed + not_rev + failed + not_test;
+  compliance_count = (passed / total_count) * 100;
+  $('#passed_count').html(passed);
+  $('#failed_count').html(failed);
   $('#not_reviewed_count').html(not_rev);
   $('#not_applicable_count').html(not_app);
   $('#not_tested_count').html(not_test);
-  console.log("not_find: " + not_find + ", open: " + open + ", not_rev: " + not_rev + ", not_test: " + not_test + ", total: " + total_count);
-  console.log("compliance_count = " + not_find + " / " + total_count + " = " + compliance_count);
   status_data = [
-                ['Not A Finding',  not_find],
-                ['Open',           open],
+                ['Passed',  passed],
+                ['Failed',           failed],
                 ['Not Reviewed',   not_rev],
                 ['Not Applicable', not_app],
                 ['Not Tested',     not_test],
                 ];
-  console.log("status_data = " + status_data);
 }
 
 function draw_status_pie_chart(d) {
@@ -1087,7 +1084,7 @@ $("#export-caat").click(function(event) {
       field.push('Test');                      // Test Method
       field.push(br2nl(control.check)) ;       // Test Objective
       field.push(br2nl(control.result_message)); // Test Result Description
-      result = control.status_symbol == "not_a_finding" ? 'Satisfied' : 'Other Than Satisfied';
+      result = control.status_symbol == "passed" ? 'Satisfied' : 'Other Than Satisfied';
       field.push(result);                      // Test Result
       field.push(br2nl(control.fix));          // Recommended Corrective Action(s)
       field.push('');                          // Effect on Business
