@@ -195,7 +195,7 @@ class Evaluation < ApplicationRecord
         params[:severity] = severity
         nist_tag = control.tag('nist', true)
         if nist_tag.empty?
-          tag_values Tag.new(name: 'nist', value: ['UM-1']), control, params, nist
+          tag_values ['UM-1'], control, params, nist
         else
           tag_values nist_tag, control, params, nist
         end

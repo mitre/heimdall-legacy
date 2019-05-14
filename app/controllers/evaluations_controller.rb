@@ -23,8 +23,8 @@ class EvaluationsController < ApplicationController
     respond_to do |format|
       format.html { render :show }
       format.json { render :show }
-      #format.ckl { render :show, layout: false }
-      #format.csv { render :show, layout: false }
+      format.ckl { render :show, layout: false }
+      format.csv { render :show, layout: false }
     end
   end
 

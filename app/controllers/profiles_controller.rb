@@ -80,19 +80,39 @@ class ProfilesController < ApplicationController
     file = params[:file]
     contents = JSON.parse(file.read)
     if contents.key? 'name'
-      profile_hash, controls = Profile.transform(contents)
+      profile_hash = Profile.transform(contents)
       begin
+        #groups = profile_hash.delete(:groups_attributes)
+        #controls = profile_hash.delete(:controls_attributes)
+        profile_hash['created_by_id'] = current_user.id
+        Rails.logger.debug "Profile Hash keys: #{profile_hash.keys}"
         @profile = Profile.new(profile_hash)
+        Rails.logger.debug "New Profile: #{@profile.inspect}"
         if @profile.save
-          controls.each do |control|
-            @profile.controls.create(control)
-          end
+          Rails.logger.debug "Save profile"
+          #controls.each do |control_hash|
+          #  control = @profile.controls.create(control_hash)
+          #  if control.errors.present?
+          #    Rails.logger.debug "Control error: #{control.errors.inspect}"
+          #  end
+          #end
+          #groups.each do |group_hash|
+          #  Rails.logger.debug "Create Group #{group_hash}"
+          #  controls = group_hash.delete('controls')
+          #  group = @profile.groups.create(group_hash)
+          #  Rails.logger.debug "Created Group #{group.inspect}"
+          #  controls.each do |control_id|
+          #    control = @profile.controls.where(control_id: control_id).first
+          #    group.controls << control if control.errors.empty?
+          #  end
+          #end
           redirect_to @profile, notice: 'Profile uploaded.'
         else
           logger.debug "ERROR #{@profile.errors.inspect}"
           redirect_to profiles_url, error: 'Profile was not successfully created.'
         end
-      rescue Mongoid::Errors::InvalidValue
+      rescue Exception => e
+        logger.debug "Import error: #{e.inspect}"
         redirect_to profiles_url, notice: 'Profile was malformed.'
       end
     else
@@ -104,6 +124,6 @@ class ProfilesController < ApplicationController
 
   # Never trust parameters from the scary internet, only allow the white list through.
   def profile_params
-    params.require(:profile).permit(:id, :name, :title, :maintainer, :copyright, :copyright_email, :license, :summary, :version, :sha256, :depends, :supports, :controls, :groups, :profile_attributes)
+    params.require(:profile).permit(:id, :name, :title, :maintainer, :copyright, :copyright_email, :license, :summary, :version, :sha256, :supports, :controls, :groups, :aspects)
   end
 end

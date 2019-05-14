@@ -969,7 +969,7 @@ function draw_severity_pie_chart(d) {
   ary = [];
   if (d.controls) {
     for(var i=0, len=d.controls.length; i < len; i++) {
-      impact = d.controls[i].impact;
+      var impact = d.controls[i].impact;
       if (impact == 'low') {
         low += 1;
       } else if (impact == 'medium') {
@@ -1058,14 +1058,15 @@ $("#export-caat").click(function(event) {
 
   //dataSet = filterDataset();
   //controls = getAllNistControls(dataSet);
-  controls = chart_data.controls
+  var controls = chart_data.controls
 
   var caat = [['Control Number','Finding Title','Date Identified','Finding ID','Information System or Program Name','Repeat Findings','Repeat Finding Weakness ID','Finding Description','Weakness Description','Control Weakness Type','Source','Assessment/Audit Company','Test Method','Test Objective','Test Result Description','Test Result','Recommended Corrective Action(s)','Effect on Business','Likelihood','Impact']];
-  vulnList = [];
+  var vulnList = [];
 
   for(var i=0, len=controls.length; i < len; i++) {
-    control = controls[i];
-    field = [];
+    var control = controls[i];
+    var impact = control.impact;
+    var field = [];
 
     if (impact != 'none' && !vulnList.includes(control.name)) {
       vulnList.push(control.name)

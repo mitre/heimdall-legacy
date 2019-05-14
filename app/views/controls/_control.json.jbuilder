@@ -6,8 +6,8 @@ json.tags do
 end
 json.extract! control, :code
 json.source_location do
-  json.ref control.sl_ref
-  json.line control.sl_line
+  json.ref control.source_location.ref
+  json.line control.source_location.line
 end
 json.id control.control_id
 if control.results.present?

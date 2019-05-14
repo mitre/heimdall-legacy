@@ -1,5 +1,5 @@
 class Group < ApplicationRecord
-  has_many :controls
+  serialize :controls
   belongs_to :profile, inverse_of: :groups
   validates_presence_of :title
 
@@ -18,11 +18,4 @@ class Group < ApplicationRecord
     to_jbuilder.target!
   end
 
-  def controls_list=(arg)
-    self.controls = arg.split(',').map(&:strip)
-  end
-
-  def controls_list
-    controls.join(', ')
-  end
 end

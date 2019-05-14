@@ -26,6 +26,7 @@ ActiveRecord::Schema.define(version: 2019_05_08_150124) do
 
   create_table "circles", force: :cascade do |t|
     t.string "name"
+    t.integer "created_by_id"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
   end
@@ -94,6 +95,7 @@ ActiveRecord::Schema.define(version: 2019_05_08_150124) do
 
   create_table "filter_groups", force: :cascade do |t|
     t.string "name"
+    t.integer "created_by_id"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
   end
@@ -107,13 +109,16 @@ ActiveRecord::Schema.define(version: 2019_05_08_150124) do
     t.string "sub_enh"
     t.string "sub_enh_num"
     t.bigint "filter_group_id"
+    t.integer "created_by_id"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.index ["filter_group_id"], name: "index_filters_on_filter_group_id"
   end
 
   create_table "groups", force: :cascade do |t|
-    t.string "path_id"
+    t.string "title"
+    t.string "control_id"
+    t.text "controls"
     t.bigint "profile_id"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false

@@ -54,9 +54,9 @@
                     <p class="text-muted font-13"><strong>Last Name:</strong>  <span class="m-l-15"><%= @user.last_name %></span></p>
                     <p class="text-muted font-13"><strong>Roles:</strong>  <span class="m-l-15"><%= @user.role_names.uniq.join(", ") %></span></p>
                     <p class="text-muted font-13"><strong>Circles:</strong>  <span class="m-l-15"><%= @user.my_circles.map(&:name).join(", ") %></span></p>
-                    <p class="text-muted font-13"><strong>Account Type:</strong>  <span class="m-l-15"><%= @user._type %></span></p>
+                    <p class="text-muted font-13"><strong>Account Type:</strong>  <span class="m-l-15"><%= @user.type %></span></p>
                     <p class="text-muted font-13"><strong>API Key:</strong>  <span class="m-l-15"><%= @user.api_key %></span></p>
-                    <% if @user._type == 'DbUser' && @user == current_user %>
+                    <% if @user.type == 'DbUser' && @user == current_user %>
                       <p><button type="button" id="edit_btn" class="btn btn-primary margin-right"><i class="fa fa-edit"></i> Edit Profile</button></p>
                       <p class="text-muted font-13"><%= link_to "Change Password", edit_db_user_registration_path(@user), :class => "btn btn-primary margin-right" %></p>
                     <% end %>

@@ -11,8 +11,6 @@ class Control < ApplicationRecord
   accepts_nested_attributes_for :descriptions
   accepts_nested_attributes_for :source_location
   accepts_nested_attributes_for :results
-  #validates_presence_of :control_id
-  #validate :code_is_valid
 
   def to_jbuilder
     Jbuilder.new do |json|
@@ -24,8 +22,8 @@ class Control < ApplicationRecord
       end
       json.extract! self, :code
       json.source_location do
-        json.ref sl_ref
-        json.line sl_line
+        json.ref source_location.ref
+        json.line source_location.line
       end
       json.id control_id
       if results.present?
@@ -40,18 +38,6 @@ class Control < ApplicationRecord
 
   def to_json(*_args)
     to_jbuilder.target!
-  end
-
-  def is_editable?
-    results.empty?
-  end
-
-  def refs_list=(arg)
-    self.refs = arg.split(',').map(&:strip)
-  end
-
-  def refs_list
-    refs.join(', ')
   end
 
   def start_time
@@ -77,12 +63,6 @@ class Control < ApplicationRecord
   end
 
   def severity
-    #if impact < 0.1 then 'none'
-    #elsif impact < 0.4 then 'low'
-    #elsif impact < 0.7 then 'medium'
-    #elsif impact < 0.9 then 'high'
-    #elsif impact >= 0.9 then 'critical'
-    #end
     impact
   end
 
@@ -104,7 +84,8 @@ class Control < ApplicationRecord
   def nist_tags
     values = []
     if (nist_tags = tag('nist'))
-      nist_tags.split(',').map(&:strip).each do |nist_tag|
+      Rails.logger.debug "nist_tags: #{nist_tags}"
+      nist_tags.map(&:strip).each do |nist_tag|
         values << parse_nist_tag(nist_tag)
       end
     end
@@ -138,6 +119,8 @@ class Control < ApplicationRecord
       control[:source_location_attributes] = source_location
       results = control.delete('results')
       control[:results_attributes] = results || []
+      descriptions = control.delete('descriptions')
+      control[:descriptions_attributes] = descriptions || []
     end
     controls
   end
@@ -146,7 +129,7 @@ class Control < ApplicationRecord
     if value.nil?
       'none'
     else
-      if value.class == Float
+      if [Float, Integer].include?(value.class)
         impact = value
       elsif value.numeric?
         impact = value.to_f
@@ -160,63 +143,4 @@ class Control < ApplicationRecord
     end
   end
 
-  def self.parse(code)
-    return nil if code.nil?
-
-    control = nil
-    tokens = Ripper.sexp(code)
-    return nil unless tokens
-
-    begin
-      contrl_cmd = tokens[1][0][1]
-      return nil unless contrl_cmd[1][1] == 'control'
-
-      control = Control.new(control_id: contrl_cmd[2][1][0][1][1][1])
-      do_block = tokens[1][0][2]
-      cmds = do_block[2].select { |block| block[0] == :command }
-      cmds.each do |cmd|
-        control.parse_field cmd
-      end
-    rescue TypeError
-      logger.debug "Couldn't parse control code #{code}"
-      control = nil
-    end
-    control
-  end
-
-  def parse_tag(cmd)
-    tag_name = cmd[2][1][0][1][0][1][1][1][1]
-    tag_value = nil
-    tag_content = cmd[2][1][0][1][0][2]
-    if tag_content[0] == :string_literal
-      tag_value = tag_content[1][1][1]
-    elsif tag_content[0] == :array
-      tag_value = []
-      tag_content[1].each do |string_content|
-        tag_value << string_content[1][1][1]
-      end
-    end
-    tags << Tag.new(name: tag_name, value: tag_value)
-  end
-
-  def parse_field(cmd)
-    case cmd[1][1]
-    when 'title'
-      self.title = cmd[2][1][0][1][1][1]
-    when 'desc'
-      self.desc = cmd[2][1][0][1][1][1]
-    when 'impact'
-      self.impact = Control.parse_impact(cmd[2][1][0][1][1][1])
-    when 'tag'
-      parse_tag cmd
-    end
-  end
-
-  private
-
-  def code_is_valid
-    if code && Ripper.sexp(code).nil?
-      errors.add(:code, 'is not valid ruby')
-    end
-  end
 end

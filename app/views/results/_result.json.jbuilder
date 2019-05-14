@@ -1,5 +1,5 @@
 json.ignore_nil! true
 json.extract! result, :status, :code_desc, :skip_message, :resource, :run_time, :start_time, :message, :exception
-unless result.backtrace.empty?
+unless result.backtrace.nil?
   json.extract! result, :backtrace
 end

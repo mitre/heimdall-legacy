@@ -7,6 +7,7 @@ class Filter < ApplicationRecord
   serialize :enh_sub_fam
   serialize :enh_sub_num
   has_and_belongs_to_many :filter_groups
+  belongs_to :created_by, class_name: 'User', foreign_key: 'created_by_id'
 
   def self.valid_filter(params)
     %w{family number sub_fam sub_num enhancement enh_sub_fam enh_sub_num}.each do |field|

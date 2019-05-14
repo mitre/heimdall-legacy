@@ -76,6 +76,6 @@ class FilterGroupsController < ApplicationController
 
   # Never trust parameters from the scary internet, only allow the white list through.
   def filter_group_params
-    params.require(:filter_group).permit(:name, { filter_ids: [:id] })
+    params.require(:filter_group).permit(:name, :created_by_id, { filter_ids: [:id] })
   end
 end

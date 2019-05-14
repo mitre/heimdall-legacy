@@ -9,6 +9,7 @@ class CreateFilters < ActiveRecord::Migration[5.2]
       t.string :sub_enh
       t.string :sub_enh_num
       t.references :filter_group, foreign_key: true
+      t.integer :created_by_id
 
       t.timestamps
     end

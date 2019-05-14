@@ -1,31 +1,31 @@
 class Aspect < ApplicationRecord
   belongs_to :profile
-  store :options, accessors: [ :description, :value, :type ], coder: JSON
+  store :options, accessors: [ :default, :description, :value, :type, :required ], coder: JSON
   validates_presence_of :name
 
   def to_jbuilder
     Jbuilder.new do |json|
       json.extract! self, :name
       json.options do
-        json.type option_type
-        json.description option_description
-        if option_default.size == 1
-          if option_default.first.numeric?
-            json.default Float(option_default.first)
+        json.type options[:type]
+        json.description options[:description]
+        if options[:default]&.size == 1
+          if options[:default].first.numeric?
+            json.default Float(options[:default].first)
           else
-            json.default option_default.first
+            json.default options[:default].first
           end
         else
-          json.default option_default
+          json.default options[:default]
         end
-        if option_value.size == 1
-          if option_value.first.numeric?
-            json.default Float(option_value.first)
+        if options[:value]&.size == 1
+          if options[:value].first.numeric?
+            json.default Float(options[:value].first)
           else
-            json.default option_value.first
+            json.default options[:value].first
           end
         else
-          json.default option_value
+          json.default options[:value]
         end
       end
     end

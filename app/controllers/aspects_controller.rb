@@ -1,8 +1,6 @@
-class GroupsController < ApplicationController
-  before_action :set_group, only: [:show]
+class AspectsController < ApplicationController
+  before_action :set_aspect, only: [:show]
 
-  # GET /groups/1
-  # GET /groups/1.json
   def show
     authorize! :read, @profile
   end
@@ -10,9 +8,9 @@ class GroupsController < ApplicationController
   private
 
   # Use callbacks to share common setup or constraints between actions.
-  def set_group
+  def set_aspect
     @profile = Profile.find(params[:profile_id])
-    @group = @profile.groups.find(params[:id])
+    @aspect = @profile.aspects.find(params[:id])
   end
 
 end

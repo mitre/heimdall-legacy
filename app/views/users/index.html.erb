@@ -32,7 +32,7 @@
               <% @users.each do |user| %>
                 <tr>
                   <td><%= link_to user.email, user_path(user) %></td>
-                  <td><%= user._type %></td>
+                  <td><%= user.type %></td>
                   <td><%= user.first_name %></td>
                   <td><%= user.last_name %></td>
                   <td>

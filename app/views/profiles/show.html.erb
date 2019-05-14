@@ -1,11 +1,7 @@
 <!-- Content Header (Page header) -->
 <section class="content-header">
   <h1>
-    <% if @profile.is_editable? && current_user %>
-      Profile <%= link_to @profile.title, edit_profile_path(@profile) %>
-    <% else %>
-      Profile <%= @profile.title %>
-    <% end %>
+    Profile <%= link_to @profile.title, details_profile_path(@profile) %>
   </h1>
   <ol class="breadcrumb" data-turbolinks="false">
     <li><%= link_to ('<i class="fa fa-dashboard"> </i>Dashboard').html_safe, root_path %></li>
@@ -191,14 +187,16 @@ document.addEventListener("turbolinks:load", function() {
                 child3 = child2.children[k];
                 if (!(ary.indexOf(child3.name) >= 0)) {
                   ary.push(child3.name);
-                  if (child3.impact > 0 && child3.impact < 0.4) {
-                    low += 1;
-                  } else if (child3.impact < 0.7) {
-                    medium += 1;
-                  } else if (child3.impact < 0.9) {
-                    high += 1;
-                  } else if (child3.impact >= 0.9) {
-                    critical += 1;
+                  if (child3.impact > 0.01) {
+                    if (child3.impact < 0.4) {
+                      low += 1;
+                    } else if (child3.impact < 0.7) {
+                      medium += 1;
+                    } else if (child3.impact < 0.9) {
+                      high += 1;
+                    } else if (child3.impact >= 0.9) {
+                      critical += 1;
+                    }
                   }
                 }
               }

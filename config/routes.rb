@@ -18,15 +18,14 @@ Rails.application.routes.draw do
     passwords: 'ldap_users/passwords'
   }
   resources :profiles, except: [:new] do
-    resources :depends, only: [:create, :destroy]
     resources :supports, only: [:create, :destroy]
     resources :controls, except: [:index]
-    resources :profile_attributes, except: [:index]
+    resources :aspects, except: [:index]
     resources :groups, except: [:edit, :index]
+    get 'details', on: :member
     post 'upload', on: :collection
   end
   resources :evaluations, only: [:index, :show, :destroy] do
-    resources :results, only: [:index, :show]
     resources :downloads, only: [:show]
     get 'ssp', on: :member
     get 'partition', on: :member

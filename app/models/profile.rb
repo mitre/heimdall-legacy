@@ -36,11 +36,10 @@ class Profile < ApplicationRecord
     Jbuilder.new do |json|
       json.extract! self, :name, :title, :maintainer, :copyright,
                     :copyright_email, :license, :summary, :version
-      json.depends depends, :name, :path
       json.supports(supports.collect { |support| support.to_jbuilder.attributes! })
       json.controls(controls.collect { |control| control.to_jbuilder.attributes! })
       json.groups(groups.collect { |group| group.to_jbuilder.attributes! })
-      json.attributes(aspects.collect { |profile_attribute| aspects.to_jbuilder.attributes! })
+      json.aspects(aspects.collect { |aspect| aspect.to_jbuilder.attributes! })
       json.extract! self, :sha256
     end
   end
@@ -61,12 +60,10 @@ class Profile < ApplicationRecord
     families = []
     nist = {}
     controls.each do |control|
-      control.tags.where(name: 'nist').each do |tag|
-        tag.good_values.each do |value|
-          nist[value] = [] unless nist[value]
-          nist[value] << control
-          families << value
-        end
+      control.tag('nist', true).each do |value|
+        nist[value] = [] unless nist[value]
+        nist[value] << control
+        families << value
       end
     end
     [families, nist]
@@ -78,11 +75,9 @@ class Profile < ApplicationRecord
       severity = control.severity
       next unless severity && (cat.nil? || cat == severity)
 
-      control.tags.where(name: 'nist').each do |tag|
-        tag.good_values.each do |value|
-          nist[value] = [] unless nist[value]
-          nist[value] << { "name": control.control_id.to_s, "severity": severity, "impact": control.impact, "value": 1 }
-        end
+      control.tag('nist', true).each do |value|
+        nist[value] = [] unless nist[value]
+        nist[value] << { "name": control.control_id.to_s, "severity": severity, "impact": control.impact, "value": 1 }
       end
     end
     nist
@@ -92,8 +87,6 @@ class Profile < ApplicationRecord
     all_profiles = []
     profiles.try(:each) do |profile_hash|
       new_profile_hash = Profile.transform(profile_hash.deep_dup)
-      aspects = new_profile_hash.delete('aspects') || []
-      new_profile_hash[:aspects_attributes] = aspects
       all_profiles << new_profile_hash
     end
     all_profiles
@@ -103,6 +96,8 @@ class Profile < ApplicationRecord
     hash = hash.deep_transform_keys { |key| key.to_s.tr('-', '_').gsub(/\battributes\b/, 'aspects').gsub(/\bid\b/, 'control_id') }
     controls = Control.transform(hash.delete('controls'))
     hash[:controls_attributes] = controls
+    aspects = hash.delete('aspects') || []
+    hash[:aspects_attributes] = aspects
     supports = hash.delete('supports') || []
     new_supports = []
     supports.each do |key, value|

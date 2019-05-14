@@ -11,7 +11,7 @@ end
 json.groups profile.groups.where(:title.nin => [nil, '']) do |group|
   json.partial! 'groups/group', group: group
 end
-json.attributes profile.profile_attributes do |profile_attribute|
-  json.partial! 'profile_attributes/profile_attribute', profile_attribute: profile_attribute
+json.attributes profile.aspects do |aspect|
+  json.partial! 'aspects/aspect', aspect: aspect
 end
 json.extract! profile, :sha256

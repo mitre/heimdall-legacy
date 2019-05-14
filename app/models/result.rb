@@ -6,7 +6,7 @@ class Result < ApplicationRecord
     Jbuilder.new do |json|
       json.ignore_nil! true
       json.extract! self, :status, :code_desc, :skip_message, :resource, :run_time, :start_time, :message, :exception
-      unless backtrace.empty?
+      unless backtrace.nil?
         json.extract! self, :backtrace
       end
     end

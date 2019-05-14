@@ -20,6 +20,7 @@
       </ul>
     </div>
   <% end %>
+  <% form.hidden_field :created_by_id, value: current_user.id %>
 
   <div class="form-group">
     <%= form.label :name %>
