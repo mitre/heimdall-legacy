@@ -1,4 +1,4 @@
-FROM ruby:2.4.6-alpine as Builder
+FROM ruby:2.6.0-alpine as Builder
 
 ENV RAILS_ROOT /var/www/heimdall
 
@@ -15,7 +15,7 @@ COPY Gemfile Gemfile.lock ./
 RUN echo "gem: --no-rdoc --no-ri" >> ~/.gemrc
 
 RUN apk --no-cache --update add build-base \
-    libc-dev libxml2-dev imagemagick6 imagemagick6-dev pkgconf nodejs
+    libc-dev libxml2-dev imagemagick6 imagemagick6-dev pkgconf nodejs postgresql-dev tzdata
 
 RUN gem install bundler && bundle install --without development test -j4 --retry 3
 
@@ -30,7 +30,7 @@ RUN rm -rf tmp/cache spec /usr/local/bundle/cache && find /usr/local/bundle/gems
 # The container above is only used for building. Once the source code is built we copy
 # the required artifacts out of the build above and put them in a clean container.
 # This allows our image size to be much smaller.
-FROM ruby:2.4.6-alpine
+FROM ruby:2.6.0-alpine
 
 ENV RAILS_ROOT /var/www/heimdall
 
@@ -41,7 +41,7 @@ WORKDIR $RAILS_ROOT
 COPY --from=Builder /usr/local/bundle/ /usr/local/bundle/
 COPY --from=Builder $RAILS_ROOT $RAILS_ROOT
 
-RUN apk --no-cache --update add nodejs imagemagick6 && gem install bundler
+RUN apk --no-cache --update add nodejs imagemagick6 postgresql-dev tzdata && gem install bundler
 
 EXPOSE 3000
 
