@@ -3,17 +3,15 @@ version: '3.5'
 services:
   # If you wish to use a db other than mongo, this is 100% wrong
   db:
-    image: mongo:latest
+    image: postgres:latest
     volumes:
-      - mongo_data:/data/db
+      - heimdall_dbdata:/var/lib/postgresql/data
     expose:
-      - "27017"
+      - "5432"
   web:
-    image: mitre/heimdall:latest
+    image: mitre/heimdall_postgres:latest
     environment:
-      MONGO_TCP_ADDR: db
-      MONGO_TCP_PORT: 27017
-      MONGODB_URI: mongodb://db:27017/heimdall2_production
+      POSTGRES_TCP_ADDR: db
       RAILS_SERVE_STATIC_FILES: "true"
       RAILS_ENV: production
     env_file: .env-prod
@@ -24,4 +22,4 @@ services:
       - "db"
 
 volumes:
-  mongo_data:
+  heimdall_dbdata:

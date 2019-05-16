@@ -81,5 +81,5 @@ test:
 production:
   <<: *default
   database: heimdall_postgres_production
-  username: heimdall_postgres
-  password: <%= ENV['HEIMDALL_POSTGRES_DATABASE_PASSWORD'] %>
+  host: <%= ENV['POSTGRES_TCP_ADDR'] %>
+  username: postgres
