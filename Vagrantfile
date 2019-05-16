@@ -1,19 +1,10 @@
 $script = <<~SCRIPT
-  cat >/etc/yum.repos.d/mongodb-org-4.0.repo <<EOF
-  [mongodb-org-4.0]
-  name=MongoDB Repository
-  baseurl=https://repo.mongodb.org/yum/redhat/\\$releasever/mongodb-org/4.0/x86_64/
-  gpgcheck=1
-  enabled=1
-  gpgkey=https://www.mongodb.org/static/pgp/server-4.0.asc
-  EOF
+  curl -o /etc/yum.repos.d/heimdall.repo https://dl.packager.io/srv/mitre/heimdall_activerecord/master/installer/el/7.repo
 
-  curl -o /etc/yum.repos.d/heimdall.repo https://dl.packager.io/srv/mitre/heimdall/master/installer/el/7.repo
+  yum install -y heimdall-activerecord
 
-  yum install -y heimdall
-
-  systemctl start mongod
-  systemctl enable mongod
+  systemctl start postgresql
+  systemctl enable postgresql
 
   heimdall scale web=1
 SCRIPT
