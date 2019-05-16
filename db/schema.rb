@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2019_05_08_150124) do
+ActiveRecord::Schema.define(version: 2019_05_15_184344) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -63,6 +63,19 @@ ActiveRecord::Schema.define(version: 2019_05_08_150124) do
     t.bigint "control_id", null: false
     t.index ["control_id", "group_id"], name: "index_controls_groups_on_control_id_and_group_id"
     t.index ["group_id", "control_id"], name: "index_controls_groups_on_group_id_and_control_id"
+  end
+
+  create_table "depends", force: :cascade do |t|
+    t.string "name"
+    t.string "path"
+    t.string "url"
+    t.string "status"
+    t.string "git"
+    t.string "branch"
+    t.bigint "profile_id"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["profile_id"], name: "index_depends_on_profile_id"
   end
 
   create_table "descriptions", force: :cascade do |t|
@@ -254,6 +267,7 @@ ActiveRecord::Schema.define(version: 2019_05_08_150124) do
 
   add_foreign_key "aspects", "profiles"
   add_foreign_key "controls", "profiles"
+  add_foreign_key "depends", "profiles"
   add_foreign_key "descriptions", "controls"
   add_foreign_key "evaluations", "profiles"
   add_foreign_key "filters", "filter_groups"

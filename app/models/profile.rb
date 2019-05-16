@@ -4,12 +4,14 @@ class Profile < ApplicationRecord
   has_many :controls, dependent: :destroy
   has_and_belongs_to_many :evaluations
   has_many :groups
+  has_many :depends
   has_many :aspects
   belongs_to :created_by, class_name: 'User', foreign_key: 'created_by_id'
   accepts_nested_attributes_for :controls
   accepts_nested_attributes_for :supports
   accepts_nested_attributes_for :groups
   accepts_nested_attributes_for :aspects
+  accepts_nested_attributes_for :depends
   #validates_presence_of :name, :title, :sha256
   scope :recent, ->(num) { order(created_at: :desc).limit(num) }
 
@@ -39,6 +41,7 @@ class Profile < ApplicationRecord
       json.supports(supports.collect { |support| support.to_jbuilder.attributes! })
       json.controls(controls.collect { |control| control.to_jbuilder.attributes! })
       json.groups(groups.collect { |group| group.to_jbuilder.attributes! })
+      json.depends(depends.collect { |depend| depend.to_jbuilder.attributes! })
       json.aspects(aspects.collect { |aspect| aspect.to_jbuilder.attributes! })
       json.extract! self, :sha256
     end
@@ -60,10 +63,16 @@ class Profile < ApplicationRecord
     families = []
     nist = {}
     controls.each do |control|
-      control.tag('nist', true).each do |value|
-        nist[value] = [] unless nist[value]
-        nist[value] << control
-        families << value
+      nist_tags = control.tag('nist', true)
+      if nist_tags != ''
+        nist_tags.each do |value|
+          nist[value] = [] unless nist[value]
+          nist[value] << control
+          families << value
+        end
+      else
+        nist['UM-1'] = [] unless nist['UM-1']
+        nist['UM-1'] << control
       end
     end
     [families, nist]
@@ -74,10 +83,15 @@ class Profile < ApplicationRecord
     controls.each do |control|
       severity = control.severity
       next unless severity && (cat.nil? || cat == severity)
-
-      control.tag('nist', true).each do |value|
-        nist[value] = [] unless nist[value]
-        nist[value] << { "name": control.control_id.to_s, "severity": severity, "impact": control.impact, "value": 1 }
+      nist_tags = control.tag('nist', true)
+      if nist_tags != ''
+        nist_tags.each do |value|
+          nist[value] = [] unless nist[value]
+          nist[value] << { "name": control.control_id.to_s, "severity": severity, "impact": control.impact, "value": 1 }
+        end
+      else
+        nist['UM-1'] = [] unless nist['UM-1']
+        nist['UM-1'] << { "name": control.control_id.to_s, "severity": severity, "impact": control.impact, "value": 1 }
       end
     end
     nist
@@ -96,6 +110,8 @@ class Profile < ApplicationRecord
     hash = hash.deep_transform_keys { |key| key.to_s.tr('-', '_').gsub(/\battributes\b/, 'aspects').gsub(/\bid\b/, 'control_id') }
     controls = Control.transform(hash.delete('controls'))
     hash[:controls_attributes] = controls
+    depends = hash.delete('depends') || []
+    hash[:depends_attributes] = depends
     aspects = hash.delete('aspects') || []
     hash[:aspects_attributes] = aspects
     supports = hash.delete('supports') || []

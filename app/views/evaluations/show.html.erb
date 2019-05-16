@@ -685,17 +685,20 @@ function get_chart_data(category, status) {
     chart_id += 'status:' + status;
   }
   url += ".json";
-  for(var i=0, len=excluded_profiles.length; i < len; i++) {
-    if (i == 0) {
-      url += '?'
-      chart_id += 'ex_ids:' + excluded_profiles[i];
-    }
-    else {
-      url += '&'
-      chart_id += ':' + excluded_profiles[i];
-    }
-    url += "ex_ids=" + excluded_profiles[i];
-  }
+  var ex_ids = excluded_profiles.join(',');
+  url += '?ex_ids=' + ex_ids;
+  chart_id += 'ex_ids:' + ex_ids;
+  //for(var i=0, len=excluded_profiles.length; i < len; i++) {
+  //  if (i == 0) {
+  //    url += '?'
+  //    chart_id += 'ex_ids:' + excluded_profiles[i];
+  //  }
+  //  else {
+  //    url += '&'
+  //    chart_id += ':' + excluded_profiles[i];
+  //  }
+  //  url += "ex_ids=" + excluded_profiles[i];
+  //}
 
   if (filter_label) {
     chart_id += 'filter:' + filter_label;

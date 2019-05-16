@@ -83,7 +83,8 @@ class Control < ApplicationRecord
 
   def nist_tags
     values = []
-    if (nist_tags = tag('nist'))
+    nist_tags = tag('nist')
+    if nist_tags != ''
       Rails.logger.debug "nist_tags: #{nist_tags}"
       nist_tags.map(&:strip).each do |nist_tag|
         values << parse_nist_tag(nist_tag)

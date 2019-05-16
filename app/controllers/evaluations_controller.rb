@@ -83,7 +83,13 @@ class EvaluationsController < ApplicationController
     status_sym = nil
     status_sym = params[:status_symbol].downcase.tr(' ', '_').to_sym if params.key?(:status_symbol)
     ex_ids = params[:ex_ids]
-    ex_ids = [] if ex_ids.nil?
+    Rails.logger.debug "ex_ids: #{ex_ids}, class: #{ex_ids.class}"
+    if ex_ids.nil?
+      ex_ids = []
+    else
+      ex_ids = ex_ids.split(',').map{|ex_id| ex_id.to_i}
+    end
+    Rails.logger.debug "ex_ids: #{ex_ids}"
     # key = "#{params[:id]}#{category}|#{status_sym}|#{filters}"
     # @control_hash = Rails.cache.read(key)
     @control_hash = nil

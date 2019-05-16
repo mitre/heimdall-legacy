@@ -73,6 +73,30 @@
     </div>
     <!-- /.col 6 -->
     <div class="col-md-6">
+      <div class="box box-primary">
+        <div class="box-header with-border">
+          <h3 class="box-title">Dependencies</h3>
+        </div>
+        <!-- /.box-header -->
+        <div class="box-body">
+          <p>
+            <ul>
+              <% @profile.depends.each do |depend| %>
+              <li>
+                <strong>Name:</strong> <%= depend.name %>,
+                <% if depend.path.nil? %>
+                  <strong>URL:</strong> <%= depend.url %>
+                <% else %>
+                  <strong>Path:</strong> <%= depend.path %>
+                <% end %>
+              </li>
+              <% end %>
+            </ul>
+          </p>
+        </div>
+        <!-- /.box-body -->
+      </div>
+    <div class="col-md-6">
       <!-- /.box -->
       <div class="box box-primary">
         <div class="box-header with-border">

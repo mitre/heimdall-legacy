@@ -19,21 +19,23 @@
         <!-- /.box-header -->
         <div class="box-body table-responsive no-padding">
           <%= form_for :evaluation, url: evaluations_compare_path do |form| %>
-          <table class="table table-hover">
-            <tr>
-              <th>Profiles</th>
-              <th>Filename</th>
-              <th>Start Time</th>
-              <th>Duration</th>
-              <th>InSpec Version</th>
-              <th>Platform Name</th>
-              <th>Platform Release</th>
-              <th>Compliance</th>
-              <th>Compare</th>
-              <th>Owner</th>
-              <th></th>
-            </tr>
-
+          <table id="evaluations-datatable" class="table table-hover">
+            <thead>
+              <tr>
+                <th>Profiles</th>
+                <th>Filename</th>
+                <th>Start Time</th>
+                <th>Duration</th>
+                <th>InSpec Version</th>
+                <th>Platform Name</th>
+                <th>Platform Release</th>
+                <th>Compliance</th>
+                <th>Compare</th>
+                <th>Owner</th>
+                <th>Action</th>
+              </tr>
+            </thead>
+            <tbody>
             <% @evaluations.each do |evaluation| %>
               <tr>
                 <td><%= link_to evaluation.profiles.map(&:name).join(', '), evaluation %></td>
@@ -62,16 +64,13 @@
                 <td><% if can? :delete, evaluation %><%= link_to 'Destroy', evaluation, method: :delete, data: { confirm: 'Are you sure?' } %><% end %></td>
               </tr>
             <% end %>
-            <tr>
-              <td colspan='7'></td>
-              <td>
-                <%= button_tag(type: "submit", class: "btn btn-primary") do %>
-                  <i class="fa fa-edit"></i> Compare
-                <% end %>
-              </td>
-              <td colspan='2'></td>
-            </tr>
+          </tbody>
           </table>
+          <div>
+            <%= button_tag(type: "submit", class: "btn btn-primary") do %>
+              <i class="fa fa-edit"></i> Compare
+            <% end %>
+          </div>
           <% end %>
         </div>
       </div>
@@ -109,3 +108,17 @@
   </div>
 </section>
 <!-- /.content -->
+<script>
+  jQuery(document).ready(function() {
+    console.log("Hello");
+    $('#evaluations-datatable').dataTable({
+      "iDisplayLength": 25,
+      "processing": true,
+      "serverSide": false,
+      "pagingType": "full_numbers"
+      // pagingType is optional, if you want full pagination controls.
+      // Check dataTables documentation to learn more about
+      // available options.
+    });
+  });
+</script>
