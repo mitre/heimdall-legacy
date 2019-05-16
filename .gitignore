@@ -12,7 +12,6 @@
 /mongo_data/
 /log/*.log
 config/ldap.yml
-config/database.yml
 /public/uploads
 inspec-tools/
 
