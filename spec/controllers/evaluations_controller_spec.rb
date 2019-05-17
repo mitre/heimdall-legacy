@@ -42,13 +42,13 @@ RSpec.describe EvaluationsController, type: :controller do
     end
 
     context 'with imported evaluation' do
-      let(:eval) { Evaluation.parse(JSON.parse(File.open('spec/support/bad_nginx.json', 'r').read)) }
+      let(:eval) { Evaluation.parse(JSON.parse(File.open('spec/support/bad_nginx.json', 'r').read), user) }
 
       describe 'GET #index' do
         it 'returns a success response' do
           # create :evaluation, created_by: user
           get :index, params: {}, session: valid_session
-          expect(response).to be_success
+          expect(response).to be_successful
         end
       end
 
@@ -57,7 +57,7 @@ RSpec.describe EvaluationsController, type: :controller do
         it 'returns a success response' do
           # evaluation = create :evaluation, created_by: user
           get :show, params: { id: eval.to_param }, session: valid_session
-          expect(response).to be_success
+          expect(response).to be_successful
         end
       end
 
@@ -65,7 +65,7 @@ RSpec.describe EvaluationsController, type: :controller do
         it 'returns a success response' do
           # evaluation = create :evaluation, created_by: user
           get :ssp, params: { id: eval.to_param }, session: valid_session
-          expect(response).to be_success
+          expect(response).to be_successful
         end
       end
 
@@ -80,7 +80,7 @@ RSpec.describe EvaluationsController, type: :controller do
         render_views
         it 'returns a success response' do
           get :show, params: { id: eval.to_param }, session: filter_session
-          expect(response).to be_success
+          expect(response).to be_successful
         end
       end
 
@@ -91,7 +91,7 @@ RSpec.describe EvaluationsController, type: :controller do
           filter = create :filter_simple, created_by: user
           filter_group.filters << filter
           get :show, params: { id: eval.to_param }, session: { filter_group: filter_group }
-          expect(response).to be_success
+          expect(response).to be_successful
         end
       end
 
@@ -156,12 +156,12 @@ RSpec.describe EvaluationsController, type: :controller do
     end
 
     context 'with imported evaluation' do
-      let(:eval1) { Evaluation.parse(JSON.parse(File.open('spec/support/ngadev-test1.json', 'r').read)) }
-      let(:eval2) { Evaluation.parse(JSON.parse(File.open('spec/support/ngadev-test2.json', 'r').read)) }
+      let(:eval1) { Evaluation.parse(JSON.parse(File.open('spec/support/ngadev-test1.json', 'r').read), user) }
+      let(:eval2) { Evaluation.parse(JSON.parse(File.open('spec/support/ngadev-test2.json', 'r').read), user) }
       describe 'POST #compare' do
         it 'returns a success response' do
           post :compare, params: { evaluation: { eval_ids: [eval1.to_param, eval2.to_param] } }, session: valid_session
-          expect(response).to be_success
+          expect(response).to be_successful
         end
       end
 

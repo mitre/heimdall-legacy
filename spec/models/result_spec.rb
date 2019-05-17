@@ -10,12 +10,12 @@ RSpec.describe Result, type: :model do
 
     it 'get open status_symbol' do
       result.status = 'failed'
-      expect(result.status_symbol).to eq :open
+      expect(result.status_symbol).to eq :failed
     end
 
     it 'get passed status_symbol' do
       result.status = 'passed'
-      expect(result.status_symbol).to eq :not_a_finding
+      expect(result.status_symbol).to eq :passed
     end
 
     it 'get skipped status_symbol' do

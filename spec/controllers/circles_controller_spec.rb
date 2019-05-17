@@ -51,7 +51,7 @@ RSpec.describe CirclesController, type: :controller do
       it 'returns a success response' do
         create :circle, created_by: user
         get :index, params: {}, session: valid_session
-        expect(response).to be_success
+        expect(response).to be_successful
       end
     end
 
@@ -59,14 +59,14 @@ RSpec.describe CirclesController, type: :controller do
       it 'returns a success response' do
         circle = create :circle, created_by: user
         get :show, params: { id: circle.to_param }, session: valid_session
-        expect(response).to be_success
+        expect(response).to be_successful
       end
     end
 
     describe 'GET #new' do
       it 'returns a success response' do
         get :new, params: {}, session: valid_session
-        expect(response).to be_success
+        expect(response).to be_successful
       end
     end
 
@@ -74,28 +74,33 @@ RSpec.describe CirclesController, type: :controller do
       it 'returns a success response' do
         circle = create :circle, created_by: user
         get :edit, params: { id: circle.to_param }, session: valid_session
-        expect(response).to be_success
+        expect(response).to be_successful
       end
     end
 
     describe 'POST #create' do
       context 'with valid params' do
+        let(:new_attributes) {
+          { name: 'New Name', created_by_id: user.id }
+        }
+
         it 'creates a new Circle' do
           expect {
-            post :create, params: { circle: valid_attributes }, session: valid_session
+            post :create, params: { circle: new_attributes}, session: valid_session
           }.to change(Circle, :count).by(1)
         end
 
         it 'redirects to the created circle' do
-          post :create, params: { circle: valid_attributes }, session: valid_session
+          valid_attributes[created_by_id: user.id]
+          post :create, params: { circle: new_attributes }, session: valid_session
           expect(response).to redirect_to(Circle.last)
         end
       end
 
       context 'with invalid params' do
         it "returns a success response (i.e. to display the 'new' template)" do
-          post :create, params: { circle: invalid_attributes }, session: valid_session
-          expect(response).to be_success
+          post :create, params: { circle: invalid_attributes, created_by: user }, session: valid_session
+          expect(response).to be_successful
         end
       end
     end
@@ -103,7 +108,7 @@ RSpec.describe CirclesController, type: :controller do
     describe 'PUT #update' do
       context 'with valid params' do
         let(:new_attributes) {
-          { name: 'New Name' }
+          { name: 'New Name', created_by_id: user.id }
         }
 
         it 'updates the requested circle' do
@@ -115,7 +120,7 @@ RSpec.describe CirclesController, type: :controller do
 
         it 'redirects to the circle' do
           circle = create :circle, created_by: user
-          put :update, params: { id: circle.to_param, circle: valid_attributes }, session: valid_session
+          put :update, params: { id: circle.to_param, circle: new_attributes }, session: valid_session
           expect(response).to redirect_to(circle)
         end
       end
@@ -124,7 +129,7 @@ RSpec.describe CirclesController, type: :controller do
         it "returns a success response (i.e. to display the 'edit' template)" do
           circle = create :circle, created_by: user
           put :update, params: { id: circle.to_param, circle: invalid_attributes }, session: valid_session
-          expect(response).to be_success
+          expect(response).to be_successful
         end
       end
     end
@@ -146,8 +151,8 @@ RSpec.describe CirclesController, type: :controller do
 
     context 'With another User is logged in' do
       let(:another_user) { FactoryBot.create(:editor) }
-      let(:profile) { FactoryBot.create(:profile) }
-      let(:evaluation) { FactoryBot.create(:evaluation) }
+      let(:profile) { FactoryBot.create(:profile, created_by: user) }
+      let(:evaluation) { FactoryBot.create(:evaluation, created_by: user) }
 
       describe 'Manage members' do
         it 'adds a member to the circle' do

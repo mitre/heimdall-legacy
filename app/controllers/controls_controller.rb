@@ -1,67 +1,9 @@
 class ControlsController < ApplicationController
-  before_action :set_control, only: [:show, :edit, :update, :destroy, :details]
+  before_action :set_control, only: [:show, :details]
 
   # GET /controls/1
   # GET /controls/1.json
   def show
-  end
-
-  # GET /controls/:profile_id/new
-  def new
-    @profile = Profile.find(params[:profile_id])
-    authorize! :create, @profile
-    @control = @profile.controls.new
-  end
-
-  # GET /controls/1/edit
-  def edit
-    authorize! :edit, @profile
-  end
-
-  # POST /controls/:profile_id
-  # POST /controls.json
-  def create
-    @profile = Profile.find(params[:profile_id])
-    authorize! :create, @profile
-    respond_to do |format|
-      begin
-        @control = @profile.controls.new(control_params)
-        @profile.save
-        format.html { redirect_to @profile, notice: 'Control was successfully created.' }
-        format.json { render :show, status: :created, location: @control }
-      rescue Mongoid::Errors::InvalidValue
-        format.html { redirect_to @profile, error: 'Control was not successfully created.' }
-        format.json { render json: @control.errors, status: :unprocessable_entity }
-      end
-    end
-  end
-
-  # PATCH/PUT /controls/1
-  # PATCH/PUT /controls/1.json
-  def update
-    authorize! :update, @profile
-    respond_to do |format|
-      begin
-        @control.parse_update(control_params)
-        @control.save
-        format.html { redirect_to profile_control_url(@profile, @control), notice: 'Control was successfully updated.' }
-        format.json { render :show, status: :ok, location: @control }
-      rescue Mongoid::Errors::InvalidValue
-        format.html { render :edit }
-        format.json { render json: @control.errors, status: :unprocessable_entity }
-      end
-    end
-  end
-
-  # DELETE /controls/1
-  # DELETE /controls/1.json
-  def destroy
-    authorize! :destroy, @profile
-    @control.destroy
-    respond_to do |format|
-      format.html { redirect_to @profile, notice: 'Control was successfully destroyed.' }
-      format.json { head :no_content }
-    end
   end
 
   def details

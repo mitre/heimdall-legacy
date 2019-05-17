@@ -52,7 +52,7 @@ RSpec.describe ProfilesController, type: :controller do
       it 'returns a success response' do
         create :profile, created_by: user
         get :index, params: {}, session: valid_session
-        expect(response).to be_success
+        expect(response).to be_successful
       end
     end
 
@@ -60,7 +60,7 @@ RSpec.describe ProfilesController, type: :controller do
       it 'returns a success response' do
         profile = create :profile, created_by: user
         get :show, params: { id: profile.to_param }, session: valid_session
-        expect(response).to be_success
+        expect(response).to be_successful
       end
     end
 
@@ -68,7 +68,7 @@ RSpec.describe ProfilesController, type: :controller do
       it 'returns a success response' do
         profile = create :profile, created_by: user
         get :edit, params: { id: profile.to_param }, session: valid_session
-        expect(response).to be_success
+        expect(response).to be_successful
       end
     end
 
@@ -121,38 +121,8 @@ RSpec.describe ProfilesController, type: :controller do
       context 'with invalid params' do
         it "returns a success response (i.e. to display the 'new' template)" do
           post :create, params: { profile: invalid_attributes }, session: valid_session
-          expect(response).to_not be_success
+          expect(response).to_not be_successful
           expect(response).to redirect_to(profiles_path)
-        end
-      end
-    end
-
-    describe 'PUT #update' do
-      context 'with valid params' do
-        let(:new_attributes) {
-          FactoryBot.build(:profile2).attributes
-        }
-
-        it 'updates the requested profile' do
-          profile = create :profile, created_by: user
-          title = profile.title
-          put :update, params: { id: profile.to_param, profile: new_attributes }, session: valid_session
-          profile.reload
-          expect(profile.title).to_not eq(title)
-        end
-
-        it 'redirects to the profile' do
-          profile = create :profile, created_by: user
-          put :update, params: { id: profile.to_param, profile: valid_attributes }, session: valid_session
-          expect(response).to redirect_to(profile)
-        end
-      end
-
-      context 'with invalid params' do
-        it "returns a success response (i.e. to display the 'edit' template)" do
-          profile = create :profile, created_by: user
-          put :update, params: { id: profile.to_param, profile: invalid_attributes }, session: valid_session
-          expect(response).to render_template(:edit)
         end
       end
     end
@@ -178,36 +148,6 @@ RSpec.describe ProfilesController, type: :controller do
     let(:user) { FactoryBot.create(:admin) }
     before do
       db_sign_in user
-    end
-
-    describe 'PUT #update' do
-      context 'with valid params' do
-        let(:new_attributes) {
-          FactoryBot.build(:profile2).attributes
-        }
-
-        it 'updates the requested profile' do
-          profile = create :profile
-          title = profile.title
-          put :update, params: { id: profile.to_param, profile: new_attributes }, session: valid_session
-          profile.reload
-          expect(profile.title).to_not eq(title)
-        end
-
-        it 'redirects to the profile' do
-          profile = create :profile
-          put :update, params: { id: profile.to_param, profile: valid_attributes }, session: valid_session
-          expect(response).to redirect_to(profile)
-        end
-      end
-
-      context 'with invalid params' do
-        it "returns a success response (i.e. to display the 'edit' template)" do
-          profile = create :profile
-          put :update, params: { id: profile.to_param, profile: invalid_attributes }, session: valid_session
-          expect(response).to render_template(:edit)
-        end
-      end
     end
 
     describe 'DELETE #destroy' do

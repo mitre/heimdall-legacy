@@ -2,16 +2,13 @@ require 'rails_helper'
 
 RSpec.describe Profile, type: :model do
   context 'Profile imported' do
+    let(:user) { FactoryBot.create(:user) }
     before do
       profile_hash, controls = Profile.transform(JSON.parse(File.open('spec/support/nginx_profile.json', 'r').read))
       @profile = Profile.new(profile_hash)
       controls.each do |control|
         @profile.controls.new(control)
       end
-    end
-
-    it 'get is_editable?' do
-      expect(@profile.is_editable?).to eq true
     end
 
     it 'get control_families' do

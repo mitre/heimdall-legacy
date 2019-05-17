@@ -119,7 +119,7 @@ ActiveRecord::Schema.define(version: 2019_05_15_184344) do
     t.string "sub_fam"
     t.string "sub_num"
     t.string "enhancement"
-    t.string "sub_enh"
+    t.string "sub_enh_fam"
     t.string "sub_enh_num"
     t.bigint "filter_group_id"
     t.integer "created_by_id"

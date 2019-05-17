@@ -51,7 +51,7 @@ RSpec.describe FilterGroupsController, type: :controller do
       it 'returns a success response' do
         create :filter_group, created_by: user
         get :index, params: {}, session: valid_session
-        expect(response).to be_success
+        expect(response).to be_successful
       end
     end
 
@@ -59,14 +59,14 @@ RSpec.describe FilterGroupsController, type: :controller do
       it 'returns a success response' do
         filter_group = create :filter_group, created_by: user
         get :show, params: { id: filter_group.to_param }, session: valid_session
-        expect(response).to be_success
+        expect(response).to be_successful
       end
     end
 
     describe 'GET #new' do
       it 'returns a success response' do
         get :new, params: {}, session: valid_session
-        expect(response).to be_success
+        expect(response).to be_successful
       end
     end
 
@@ -74,7 +74,7 @@ RSpec.describe FilterGroupsController, type: :controller do
       it 'returns a success response' do
         filter_group = create :filter_group, created_by: user
         get :edit, params: { id: filter_group.to_param }, session: valid_session
-        expect(response).to be_success
+        expect(response).to be_successful
       end
     end
 
@@ -95,7 +95,7 @@ RSpec.describe FilterGroupsController, type: :controller do
       context 'with invalid params' do
         it "returns a success response (i.e. to display the 'new' template)" do
           post :create, params: { filter_group: invalid_attributes }, session: valid_session
-          expect(response).to be_success
+          expect(response).to be_successful
         end
       end
     end
@@ -124,7 +124,7 @@ RSpec.describe FilterGroupsController, type: :controller do
         it "returns a success response (i.e. to display the 'edit' template)" do
           filter_group = create :filter_group, created_by: user
           put :update, params: { id: filter_group.to_param, filter_group: invalid_attributes }, session: valid_session
-          expect(response).to be_success
+          expect(response).to be_successful
         end
       end
     end

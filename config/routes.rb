@@ -18,7 +18,6 @@ Rails.application.routes.draw do
     passwords: 'ldap_users/passwords'
   }
   resources :profiles, except: [:new] do
-    resources :supports, only: [:create, :destroy]
     resources :controls, except: [:index]
     resources :aspects, except: [:index]
     resources :groups, except: [:edit, :index]

@@ -229,22 +229,13 @@ class Evaluation < ApplicationRecord
       if profiles.empty?
         evaluation = nil
       else
-        #Rails.logger.debug "Evaluation.create"
         hash['created_by_id'] = user.id
         evaluation = Evaluation.create(hash)
-        #Rails.logger.debug "Evaluation: #{evaluation.inspect}"
-        #Rails.logger.debug "Errors: #{evaluation.errors.inspect}"
         evaluation.save
-        #Rails.logger.debug "Saved Evaluation: #{evaluation.inspect}"
-        #Rails.logger.debug "Profile.parse"
         all_profiles = Profile.parse(profiles)
         all_profiles.each do |profile|
-          #controls_attributes = profile.delete(:controls_attributes)
           profile['created_by_id'] = user.id
-          #Rails.logger.debug "Profile.create: #{profile.inspect}"
-          proj_obj = evaluation.profiles.create(profile)
-          #Rails.logger.debug "Created Profile: #{proj_obj.inspect}"
-          #Rails.logger.debug "Profile Errors: #{proj_obj.errors.inspect}"
+          evaluation.profiles.create(profile)
         end
       end
       evaluation

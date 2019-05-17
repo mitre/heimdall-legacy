@@ -28,15 +28,6 @@ RSpec.describe Control, type: :model do
       }"
     }
 
-    it 'get is_editable?' do
-      expect(control.is_editable?).to eq true
-    end
-
-    it 'set refs_list' do
-      control.refs_list='ref1, ref2'
-      expect(control.refs).to eq %w{ref1 ref2}
-    end
-
     it 'get short title' do
       expect(control.short_title).to eq 'The file permissions, ownership, and group membersh...'
     end
@@ -65,15 +56,6 @@ RSpec.describe Control, type: :model do
       expect(control.as_json).to have_key('title')
     end
 
-    it 'parse bad code' do
-      code = Control.parse bad_code
-      expect(code).to eq nil
-    end
-
-    it "can't save bad code" do
-      control.code = wrong_code
-      expect(control.save).to eq false
-    end
   end
 
   context 'Evaluation imported' do

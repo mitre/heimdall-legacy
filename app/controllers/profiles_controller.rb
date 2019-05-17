@@ -1,6 +1,6 @@
 class ProfilesController < ApplicationController
   load_resource
-  authorize_resource only: [:show, :edit, :destroy, :upload]
+  authorize_resource only: [:show, :details, :destroy, :upload]
 
   # GET /profiles
   # GET /profiles.json
@@ -16,29 +16,13 @@ class ProfilesController < ApplicationController
   # GET /profiles/1
   # GET /profiles/1.json
   def show
-    # respond_to do |format|
-    #   format.html { render :show }
-    #   format.json { render json: @profile.to_json}
-    # end
-  end
-
-  # GET /profiles/1/edit
-  def edit
-  end
-
-  # POST /profiles
-  # POST /profiles.json
-  def create
-    @profile = Profile.new(profile_params)
     respond_to do |format|
-      if @profile.save
-        format.html { redirect_to @profile, notice: 'Profile was successfully created.' }
-        format.json { render :show, status: :created, location: @profile }
-      else
-        format.html { redirect_to profiles_url, error: 'Profile was not successfully created.' }
-        format.json { render json: @profile.errors, status: :unprocessable_entity }
-      end
+      format.html { render :show }
+      format.json { render json: @profile.to_json}
     end
+  end
+
+  def details
   end
 
   # PATCH/PUT /profiles/1
@@ -90,22 +74,6 @@ class ProfilesController < ApplicationController
         Rails.logger.debug "New Profile: #{@profile.inspect}"
         if @profile.save
           Rails.logger.debug "Save profile"
-          #controls.each do |control_hash|
-          #  control = @profile.controls.create(control_hash)
-          #  if control.errors.present?
-          #    Rails.logger.debug "Control error: #{control.errors.inspect}"
-          #  end
-          #end
-          #groups.each do |group_hash|
-          #  Rails.logger.debug "Create Group #{group_hash}"
-          #  controls = group_hash.delete('controls')
-          #  group = @profile.groups.create(group_hash)
-          #  Rails.logger.debug "Created Group #{group.inspect}"
-          #  controls.each do |control_id|
-          #    control = @profile.controls.where(control_id: control_id).first
-          #    group.controls << control if control.errors.empty?
-          #  end
-          #end
           redirect_to @profile, notice: 'Profile uploaded.'
         else
           logger.debug "ERROR #{@profile.errors.inspect}"

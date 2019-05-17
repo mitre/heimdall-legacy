@@ -40,7 +40,7 @@ RSpec.describe DashboardController, type: :controller do
     describe 'GET #index' do
       it 'returns a success response' do
         get :index, params: {}, session: valid_session
-        expect(response).to be_success
+        expect(response).to be_successful
       end
     end
   end
@@ -58,7 +58,7 @@ RSpec.describe DashboardController, type: :controller do
         user.api_key = nil
         user.save
         get :index, params: {}, session: valid_session
-        expect(response).to be_success
+        expect(response).to be_successful
         expect(User.last.api_key).to_not be_nil
       end
     end

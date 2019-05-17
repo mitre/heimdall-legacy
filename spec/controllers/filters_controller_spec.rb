@@ -47,7 +47,7 @@ RSpec.describe FiltersController, type: :controller do
       it 'returns a success response' do
         create :filter, created_by: user
         get :index, params: {}, session: valid_session
-        expect(response).to be_success
+        expect(response).to be_successful
       end
     end
 
@@ -55,14 +55,14 @@ RSpec.describe FiltersController, type: :controller do
       it 'returns a success response' do
         filter = create :filter, created_by: user
         get :show, params: { id: filter.to_param }, session: valid_session
-        expect(response).to be_success
+        expect(response).to be_successful
       end
     end
 
     describe 'GET #new' do
       it 'returns a success response' do
         get :new, params: {}, session: valid_session
-        expect(response).to be_success
+        expect(response).to be_successful
       end
     end
 
@@ -70,7 +70,7 @@ RSpec.describe FiltersController, type: :controller do
       it 'returns a success response' do
         filter = create :filter, created_by: user
         get :edit, params: { id: filter.to_param }, session: valid_session
-        expect(response).to be_success
+        expect(response).to be_successful
       end
     end
 

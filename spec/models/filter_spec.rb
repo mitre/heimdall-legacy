@@ -1,7 +1,6 @@
 require 'rails_helper'
 
 RSpec.describe Filter, type: :model do
-  it { is_expected.to be_mongoid_document }
   it { is_expected.to have_and_belong_to_many(:filter_groups).of_type(FilterGroup) }
 
   it 'creates a regex' do

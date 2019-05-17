@@ -2,14 +2,15 @@ require 'rails_helper'
 
 RSpec.describe Evaluation, type: :model do
   context 'Evaluation imported' do
-    let(:eval) { Evaluation.parse(JSON.parse(File.open('spec/support/bad_nginx.json', 'r').read)) }
+    let(:user) { FactoryBot.create(:user) }
+    let(:eval) { Evaluation.parse(JSON.parse(File.open('spec/support/bad_nginx.json', 'r').read), user) }
 
     it 'get findings' do
       findings = eval.findings
       expect(findings).to_not be_empty
       expect(findings).to include(
-        open:           3,
-        not_a_finding:  33,
+        failed:           3,
+        passed:  33,
         not_reviewed:   3,
         not_tested:     1,
         not_applicable: 1,
@@ -20,8 +21,8 @@ RSpec.describe Evaluation, type: :model do
       counts, controls = eval.status_counts
       expect(counts).to_not be_empty
       expect(counts).to include(
-        open:           3,
-        not_a_finding:  33,
+        failed:           3,
+        passed:  33,
         not_reviewed:   3,
         not_tested:     1,
         not_applicable: 1,
@@ -34,9 +35,9 @@ RSpec.describe Evaluation, type: :model do
       expect(value).to eq 0.2
       value = eval.status_symbol_value :not_reviewed
       expect(value).to eq 0.4
-      value = eval.status_symbol_value :not_a_finding
+      value = eval.status_symbol_value :passed
       expect(value).to eq 0.6
-      value = eval.status_symbol_value :open
+      value = eval.status_symbol_value :failed
       expect(value).to eq 0.8
       value = eval.status_symbol_value nil
       expect(value).to eq 0.0
