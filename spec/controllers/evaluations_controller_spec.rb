@@ -29,8 +29,6 @@ RSpec.describe EvaluationsController, type: :controller do
   # in order to pass any filters (e.g. authentication) defined in
   # EvaluationsController. Be sure to keep this updated too.
   let(:valid_session) { {} }
-  let(:filter_session) { { filter: FactoryBot.create(:filter) } }
-  let(:filter_group_session) { { filter_group: FactoryBot.create(:filter_group) } }
   let(:filter_attributes) {
     FactoryBot.build(:filter_no_enh).attributes
   }
@@ -79,7 +77,8 @@ RSpec.describe EvaluationsController, type: :controller do
       describe 'GET #show with filter' do
         render_views
         it 'returns a success response' do
-          get :show, params: { id: eval.to_param }, session: filter_session
+          filter_session = create :filter, created_by: user
+          get :show, params: { id: eval.to_param }, session: { filter: filter_session }
           expect(response).to be_successful
         end
       end
@@ -108,7 +107,7 @@ RSpec.describe EvaluationsController, type: :controller do
       it 'can upload an evaluation' do
         @file = fixture_file_upload('sample_jsons/good_nginxresults.json', 'text/json')
         post :upload, params: { file: @file, hostname: 'company.com', environment: 'test' }, session: valid_session
-        expect(response).to redirect_to(Evaluation.last)
+        expect(response).to redirect_to(evaluations_path)
       end
 
       it 'rejects a malformed evaluation' do
@@ -198,7 +197,7 @@ RSpec.describe EvaluationsController, type: :controller do
 
     describe 'DELETE #destroy' do
       it 'destroys the requested evaluation' do
-        evaluation = create :evaluation
+        evaluation = create :evaluation, created_by: admin
         expect {
           delete :destroy, params: { id: evaluation.to_param }, session: valid_session
         }.to change(Evaluation, :count).by(-1)
@@ -206,7 +205,7 @@ RSpec.describe EvaluationsController, type: :controller do
     end
 
     it 'redirects to the evaluations list' do
-      evaluation = create :evaluation
+      evaluation = create :evaluation, created_by: admin
       delete :destroy, params: { id: evaluation.to_param }, session: valid_session
       expect(response).to redirect_to(evaluations_url)
     end

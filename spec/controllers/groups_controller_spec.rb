@@ -32,10 +32,6 @@ RSpec.describe GroupsController, type: :controller do
     FactoryBot.build(:group).attributes
   }
 
-  let(:invalid_attributes) {
-    { title: 'MyString2', controls: 'MyString2', control_id: 'MyString2' }
-  }
-
   # This should return the minimal set of values that should be in the session
   # in order to pass any filters (e.g. authentication) defined in
   # GroupsController. Be sure to keep this updated too.

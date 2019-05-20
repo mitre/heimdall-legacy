@@ -4,8 +4,9 @@ RSpec.describe User, type: :model do
 
   context 'with User' do
     let(:user) { FactoryBot.create(:user) }
-    let(:evaluation) { FactoryBot.build(:evaluation) }
-    let(:profile) { FactoryBot.build(:profile) }
+    let(:admin) { FactoryBot.create(:admin) }
+    let(:evaluation) { FactoryBot.create(:evaluation, created_by: admin) }
+    let(:profile) { FactoryBot.build(:profile, created_by: admin) }
 
     it 'get readability from circle' do
       circle = create :circle, created_by: user

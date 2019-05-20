@@ -28,9 +28,10 @@ class FilterGroupsController < ApplicationController
   # POST /filter_groups.json
   def create
     @filter_group = FilterGroup.new(filter_group_params)
-
+    @filter_group.created_by = current_user
     respond_to do |format|
       if @filter_group.save
+        print
         format.html { redirect_to @filter_group, notice: 'Filter group was successfully created.' }
         format.json { render :show, status: :created, location: @filter_group }
       else
@@ -76,6 +77,6 @@ class FilterGroupsController < ApplicationController
 
   # Never trust parameters from the scary internet, only allow the white list through.
   def filter_group_params
-    params.require(:filter_group).permit(:name, :created_by_id, { filter_ids: [:id] })
+    params.require(:filter_group).permit(:name, { filter_ids: [:id] })
   end
 end

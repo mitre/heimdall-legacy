@@ -28,13 +28,6 @@ RSpec.describe ProfilesController, type: :controller do
   # This should return the minimal set of attributes required to create a valid
   # Profile. As you add validations to Profile, be sure to
   # adjust the attributes here as well.
-  let(:valid_attributes) {
-    FactoryBot.build(:profile).attributes
-  }
-
-  let(:invalid_attributes) {
-    FactoryBot.build(:invalid_profile).attributes
-  }
 
   # This should return the minimal set of values that should be in the session
   # in order to pass any filters (e.g. authentication) defined in
@@ -64,21 +57,19 @@ RSpec.describe ProfilesController, type: :controller do
       end
     end
 
-    describe 'GET #edit' do
+    describe 'GET #details' do
       it 'returns a success response' do
         profile = create :profile, created_by: user
-        get :edit, params: { id: profile.to_param }, session: valid_session
+        get :details, params: { id: profile.to_param }, session: valid_session
         expect(response).to be_successful
       end
     end
 
     describe 'GET #nist' do
       it 'returns a success response' do
-        profile_hash, controls = Profile.transform(JSON.parse(File.open('spec/support/nginx_profile.json', 'r').read))
+        profile_hash = Profile.transform(JSON.parse(File.open('spec/support/nginx_profile.json', 'r').read))
+        profile_hash[:created_by_id] = user.id
         profile = Profile.create(profile_hash)
-        controls.each do |control|
-          profile.controls.create(control)
-        end
         get :nist, params: { format: 'json', id: profile.to_param, category: 'Medium' }, session: valid_session
         expect(response.content_type).to eq('application/json')
       end
@@ -101,29 +92,6 @@ RSpec.describe ProfilesController, type: :controller do
         @file = fixture_file_upload('spec/support/bad_profile2.json', 'text/json')
         post :upload, params: { file: @file }, session: valid_session
         expect(response).to redirect_to(profiles_path)
-      end
-    end
-
-    describe 'POST #create' do
-      context 'with valid params' do
-        it 'creates a new Profile' do
-          expect {
-            post :create, params: { profile: valid_attributes }, session: valid_session
-          }.to change(Profile, :count).by(1)
-        end
-
-        it 'redirects to the created profile' do
-          post :create, params: { profile: valid_attributes }, session: valid_session
-          expect(response).to redirect_to(Profile.last)
-        end
-      end
-
-      context 'with invalid params' do
-        it "returns a success response (i.e. to display the 'new' template)" do
-          post :create, params: { profile: invalid_attributes }, session: valid_session
-          expect(response).to_not be_successful
-          expect(response).to redirect_to(profiles_path)
-        end
       end
     end
 
@@ -152,14 +120,14 @@ RSpec.describe ProfilesController, type: :controller do
 
     describe 'DELETE #destroy' do
       it 'destroys the requested profile' do
-        profile = create :profile
+        profile = create :profile, created_by: user
         expect {
           delete :destroy, params: { id: profile.to_param }, session: valid_session
         }.to change(Profile, :count).by(-1)
       end
 
       it 'redirects to the profiles list' do
-        profile = create :profile
+        profile = create :profile, created_by: user
         delete :destroy, params: { id: profile.to_param }, session: valid_session
         expect(response).to redirect_to(profiles_url)
       end

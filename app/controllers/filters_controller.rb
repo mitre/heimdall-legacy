@@ -28,6 +28,7 @@ class FiltersController < ApplicationController
   # POST /filters.json
   def create
     @filter = Filter.valid_filter filter_params
+    @filter.created_by = current_user
     @filter.save
     respond_to do |format|
       format.html { redirect_to Filter.find(@filter.id), notice: 'Filter was successfully created.' }
@@ -68,6 +69,7 @@ class FiltersController < ApplicationController
 
   # Never trust parameters from the scary internet, only allow the white list through.
   def filter_params
-    params.require(:filter).permit(:created_by_id, family: [], number: [], sub_fam: [], sub_num: [], enhancement: [], enh_sub_fam: [], enh_sub_num: [])
+    params.require(:filter).permit(family: [], number: [], sub_fam: [], sub_num: [], enhancement: [], enh_sub_fam: [], enh_sub_num: [])
   end
+
 end

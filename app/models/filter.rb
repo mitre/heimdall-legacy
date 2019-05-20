@@ -1,4 +1,5 @@
 class Filter < ApplicationRecord
+  resourcify
   serialize :family
   serialize :number
   serialize :sub_fam

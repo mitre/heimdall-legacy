@@ -19,6 +19,7 @@ class DbUsers::SessionsController < Devise::SessionsController
   # DELETE /resource/sign_out
   def destroy
     super
+    redirect_to root_url
   end
 
   # protected

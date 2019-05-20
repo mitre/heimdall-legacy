@@ -21,9 +21,11 @@ class Control < ApplicationRecord
         end
       end
       json.extract! self, :code
-      json.source_location do
-        json.ref source_location.ref
-        json.line source_location.line
+      if source_location.present?
+        json.source_location do
+          json.ref source_location.ref
+          json.line source_location.line
+        end
       end
       json.id control_id
       if results.present?

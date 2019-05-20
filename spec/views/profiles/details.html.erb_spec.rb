@@ -11,7 +11,7 @@ RSpec.describe 'profiles/details', type: :view do
 
     it 'renders the profile details' do
       render
-      expect(rendered).to match(/Finding Details/)
+      expect(rendered).to match(/Profile Information/)
     end
   end
 end

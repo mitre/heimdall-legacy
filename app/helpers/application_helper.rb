@@ -64,10 +64,12 @@ module ApplicationHelper
   end
 
   def icon(clss)
-    case clss
-    when Evaluation then 'ion-pie-graph'
-    when Profile then 'ion-ios-folder'
-    when User then 'ion-person-add'
+    if clss == Evaluation
+      'ion-pie-graph'
+    elsif clss == Profile
+      'ion-ios-folder'
+    elsif clss == User
+      'ion-person-add'
     end
   end
 

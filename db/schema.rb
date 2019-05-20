@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2019_05_15_184344) do
+ActiveRecord::Schema.define(version: 2019_05_20_174005) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -113,19 +113,22 @@ ActiveRecord::Schema.define(version: 2019_05_15_184344) do
     t.datetime "updated_at", null: false
   end
 
+  create_table "filter_groups_filters", id: false, force: :cascade do |t|
+    t.bigint "filter_group_id", null: false
+    t.bigint "filter_id", null: false
+  end
+
   create_table "filters", force: :cascade do |t|
     t.string "family"
     t.string "number"
     t.string "sub_fam"
     t.string "sub_num"
     t.string "enhancement"
-    t.string "sub_enh_fam"
-    t.string "sub_enh_num"
-    t.bigint "filter_group_id"
+    t.string "enh_sub_fam"
+    t.string "enh_sub_num"
     t.integer "created_by_id"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
-    t.index ["filter_group_id"], name: "index_filters_on_filter_group_id"
   end
 
   create_table "groups", force: :cascade do |t|
@@ -270,7 +273,6 @@ ActiveRecord::Schema.define(version: 2019_05_15_184344) do
   add_foreign_key "depends", "profiles"
   add_foreign_key "descriptions", "controls"
   add_foreign_key "evaluations", "profiles"
-  add_foreign_key "filters", "filter_groups"
   add_foreign_key "groups", "profiles"
   add_foreign_key "results", "controls"
   add_foreign_key "source_locations", "controls"

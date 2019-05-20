@@ -13,8 +13,8 @@ RSpec.describe 'Controls', type: :request do
     end
 
     describe 'GET /controls' do
-      it 'works! (now write some real specs)' do
-        control = create :control, profile_id: @profile.id, created_by: @user
+      it 'gets the show page' do
+        control = create :control, profile_id: @profile.id
         get profile_control_path(control.profile_id, control)
         expect(response).to have_http_status(200)
       end

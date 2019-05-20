@@ -159,19 +159,22 @@ class EvaluationsController < ApplicationController
     file = params[:file]
     sign_in_api_user(params[:email], params[:api_key])
     if current_user
-      authorize! :create, Evaluation
-      if (@eval = Evaluation.parse(JSON.parse(file.read)))
-        @eval.force_created_by(current_user)
-        @evaluation = Evaluation.find(@eval.id)
-        @evaluation.tags.create(name: 'filename', value: params[:file].original_filename)
-        (Constants::TAG_NAMES - ['Filename']).each do |tag|
-          if params[tag.downcase]
-            @evaluation.tags.create(name: tag.downcase, value: params[tag.downcase])
+      if current_user.has_role?(:admin) or current_user.has_role?(:editor)
+        if (@eval = Evaluation.parse(JSON.parse(file.read), current_user))
+          @evaluation = Evaluation.find(@eval.id)
+          @evaluation.findings
+          @evaluation.tags.create(name: 'filename', value: params[:file].original_filename)
+          (Constants::TAG_NAMES - ['Filename']).each do |tag|
+            if params[tag.downcase]
+              @evaluation.tags.create(name: tag.downcase, value: params[tag.downcase])
+            end
           end
+          render body: 'SUCCESS: Evaluation uploaded'
+        else
+          render body: 'ERROR: Could not upload evaluation'
         end
-        render body: 'SUCCESS: Evaluation uploaded'
       else
-        render body: 'ERROR: Could not upload evaluation'
+        render body: 'ERROR: User not authorized to upload'
       end
     else
       render body: 'ERROR: Could not login User'
@@ -234,9 +237,9 @@ class EvaluationsController < ApplicationController
   def sign_in_api_user(email, api_key)
     if (user = User.where(email: email, api_key: api_key).first)
       sign_in user
-      if user._type == 'DbUser'
+      if user.type == 'DbUser'
         session['user_id'] = session['warden.user.db_user.key'].first.try(:first)
-      elsif user._type == 'LdapUser'
+      elsif user.type == 'LdapUser'
         session['user_id'] = session['warden.user.ldap_user.key'].first.try(:first)
       end
     end

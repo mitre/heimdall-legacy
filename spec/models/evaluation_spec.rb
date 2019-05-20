@@ -63,12 +63,13 @@ RSpec.describe Evaluation, type: :model do
     end
 
     it 'get parse with bad data' do
-      nist = Evaluation.parse JSON.parse('{"some": "nonsense", "instead": "of an evaluation"}')
+      nist = Evaluation.parse JSON.parse('{"some": "nonsense", "instead": "of an evaluation"}'), user
       expect(nist).to be_nil
     end
   end
   context 'Evaluation imported' do
-    let(:eval) { Evaluation.parse(JSON.parse(File.open('spec/support/ngadev-test1.json', 'r').read)) }
+    let(:user) { FactoryBot.create(:user) }
+    let(:eval) { Evaluation.parse(JSON.parse(File.open('spec/support/ngadev-test1.json', 'r').read), user) }
 
     it 'get nist_hash' do
       nist = eval.nist_hash nil, nil, []

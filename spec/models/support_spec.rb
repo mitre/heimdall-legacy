@@ -1,8 +1,6 @@
 require 'rails_helper'
 
 RSpec.describe Support, type: :model do
-  it { is_expected.to be_embedded_in(:profile).as_inverse_of(:supports) }
-
   context 'with Support' do
     let(:support) { FactoryBot.build(:support) }
 
