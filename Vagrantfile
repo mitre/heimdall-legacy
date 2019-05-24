@@ -3,10 +3,14 @@ $script = <<~SCRIPT
 
   yum install -y heimdall-activerecord
 
+  postgresql-setup initdb
+  echo "local   all             postgres                                trust" > /var/lib/pgsql/data/pg_hba.conf
   systemctl start postgresql
   systemctl enable postgresql
 
-  heimdall scale web=1
+  heimdall-activerecord run rake db:create db:schema:load || true
+  heimdall-activerecord run rake db:migrate
+  heimdall-activerecord scale web=1
 SCRIPT
 
 Vagrant.configure('2') do |config|
