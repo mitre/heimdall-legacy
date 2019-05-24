@@ -51,6 +51,7 @@ gem 'nokogiri'
 gem 'thor'
 gem 'json'
 gem 'pry'
+gem 'pry-nav'
 
 gem 'inspec_tools', '~>1.3.0'
 gem 'roo'

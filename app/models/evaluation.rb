@@ -185,8 +185,7 @@ class Evaluation < ApplicationRecord
     nist = {}
     profiles.each do |profile|
       next if ex_ids.include?(profile.id)
-
-      p_controls = filters.nil? ? profile.controls : profile.filtered_controls(filters)
+      p_controls = filters.nil? ? profile.controls.includes(:results, :tags) : profile.filtered_controls(filters)
       p_controls.each do |control|
         params[:ct_results] = params[:cts][control.id]
         severity = control.severity
@@ -206,7 +205,7 @@ class Evaluation < ApplicationRecord
 
   def nist_hash(cat, status_symbol, ex_ids, filters = nil)
     cts = {}
-    profiles.each do |profile|
+    profiles.includes(controls: :results).each do |profile|
       profile.controls.each do |control|
         control.results.each do |result|
           unless cts.key?(result.control_id)
