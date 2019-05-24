@@ -14,7 +14,7 @@
 config/ldap.yml
 /public/uploads
 inspec-tools/
-
+/.vagrant/
 rails_best_practices_output.html
 
 # Used by dotenv library to load environment variables.

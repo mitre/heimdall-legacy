@@ -1,4 +1,5 @@
 ---
+name: heimdall
 before:
   - 'export SECRET_KEY_BASE=xxx'
 after_install: 'setup-secrets.sh'
