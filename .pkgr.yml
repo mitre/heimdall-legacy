@@ -8,11 +8,14 @@ build_dependencies:
   - libxml2-devel
   - libxslt-devel
   - openssl-devel
+  - openssl-libs
+  - openssl
   - gcc
   - make
   - automake
 dependencies:
   - openssl-libs
+  - openssl
   - postgresql-server
   - ImageMagick
 targets:
