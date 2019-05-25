@@ -5,8 +5,8 @@ $script = <<~SCRIPT
 
   postgresql-setup initdb
   echo "local   all             postgres                                trust" > /var/lib/pgsql/data/pg_hba.conf
-  systemctl start postgresql
   systemctl enable postgresql
+  systemctl start postgresql
 
   heimdall-activerecord run rake db:create db:schema:load || true
   heimdall-activerecord run rake db:migrate
