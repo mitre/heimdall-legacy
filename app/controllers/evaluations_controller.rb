@@ -18,7 +18,7 @@ class EvaluationsController < ApplicationController
   # GET /evaluations/1.json
   def show
     @profiles = @evaluation.profiles
-    filters, @filter_label = session_filters
+    _, @filter_label = session_filters
     @nist_hash = Constants::NIST_800_53
     respond_to do |format|
       format.html { render :show }
@@ -87,11 +87,9 @@ class EvaluationsController < ApplicationController
     if ex_ids.nil?
       ex_ids = []
     else
-      ex_ids = ex_ids.split(',').map{|ex_id| ex_id.to_i}
+      ex_ids = ex_ids.split(',').map(&:to_i)
     end
     Rails.logger.debug "ex_ids: #{ex_ids}"
-    # key = "#{params[:id]}#{category}|#{status_sym}|#{filters}"
-    # @control_hash = Rails.cache.read(key)
     @control_hash = nil
     @control_hash ||= @evaluation.nist_hash category, status_sym, ex_ids, filters
     @name = Constants::NIST_800_53['name']
@@ -165,9 +163,9 @@ class EvaluationsController < ApplicationController
           @evaluation.findings
           @evaluation.tags.create(name: 'filename', value: params[:file].original_filename)
           (Constants::TAG_NAMES - ['Filename']).each do |tag|
-            if params[tag.downcase]
-              @evaluation.tags.create(name: tag.downcase, value: params[tag.downcase])
-            end
+            next unless params[tag.downcase]
+
+            @evaluation.tags.create(name: tag.downcase, value: params[tag.downcase])
           end
           render body: 'SUCCESS: Evaluation uploaded'
         else

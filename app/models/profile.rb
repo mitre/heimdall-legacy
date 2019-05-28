@@ -12,7 +12,7 @@ class Profile < ApplicationRecord
   accepts_nested_attributes_for :groups
   accepts_nested_attributes_for :aspects
   accepts_nested_attributes_for :depends
-  #validates_presence_of :name, :title, :sha256
+  # validates_presence_of :name, :title, :sha256
   scope :recent, ->(num) { order(created_at: :desc).limit(num) }
 
   def filtered_controls(filters = nil)
@@ -83,6 +83,7 @@ class Profile < ApplicationRecord
     controls.each do |control|
       severity = control.severity
       next unless severity && (cat.nil? || cat == severity)
+
       nist_tags = control.tag('nist', true)
       if nist_tags != ''
         nist_tags.each do |value|

@@ -13,7 +13,7 @@ class CreateProfiles < ActiveRecord::Migration[5.2]
       t.string :status
       t.string :sha256
       t.integer :created_by_id
-      
+
       t.timestamps
     end
   end

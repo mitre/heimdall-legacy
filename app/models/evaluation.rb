@@ -1,10 +1,10 @@
 require 'inspec_tools'
 
 class Evaluation < ApplicationRecord
-  store :platform, accessors: [ :name, :release ], coder: JSON
+  store :platform, accessors: [:name, :release], coder: JSON
   serialize :other_checks
-  store :statistics, accessors: [ :duration ], coder: JSON
-  store :findings, accessors: [ :failed, :passed, :not_reviewed, :not_tested, :not_applicable ], coder: JSON
+  store :statistics, accessors: [:duration], coder: JSON
+  store :findings, accessors: [:failed, :passed, :not_reviewed, :not_tested, :not_applicable], coder: JSON
   has_many :tags, as: :tagger
   has_and_belongs_to_many :profiles, dependent: :destroy
   belongs_to :created_by, class_name: 'User', foreign_key: 'created_by_id'
@@ -13,7 +13,7 @@ class Evaluation < ApplicationRecord
   scope :recent, ->(num) { order(created_at: :desc).limit(num) }
 
   def findings
-    Rails.logger.debug "get findings"
+    Rails.logger.debug 'get findings'
     if read_attribute(:findings).empty?
       counts, _, start_tm = status_counts
       Rails.logger.debug "set start_time #{start_tm}"
@@ -35,7 +35,7 @@ class Evaluation < ApplicationRecord
   end
 
   def filename
-    tag = tags.select{|tag| tag.content[:name] == 'filename'}.first
+    tag = tags.select { |tg| tg.content[:name] == 'filename' }.first
     tag.nil? ? nil : tag.content[:value]
   end
 
@@ -84,7 +84,7 @@ class Evaluation < ApplicationRecord
   end
 
   def status_counts(filters = nil)
-    Rails.logger.debug "Getting status_counts"
+    Rails.logger.debug 'Getting status_counts'
     counts = { failed: 0, passed: 0, not_reviewed: 0, not_tested: 0, not_applicable: 0 }
     controls = {}
     start_times = []
@@ -185,6 +185,7 @@ class Evaluation < ApplicationRecord
     nist = {}
     profiles.each do |profile|
       next if ex_ids.include?(profile.id)
+
       p_controls = filters.nil? ? profile.controls.includes(:results, :tags) : profile.filtered_controls(filters)
       p_controls.each do |control|
         params[:ct_results] = params[:cts][control.id]
@@ -220,27 +221,25 @@ class Evaluation < ApplicationRecord
   end
 
   def self.parse(hash, user)
-    begin
-      hash.deep_transform_keys! { |key| key.to_s.tr('-', '_').gsub(/\battributes\b/, 'aspects').gsub(/\bid\b/, 'control_id') }
-      hash.delete('controls')
+    hash.deep_transform_keys! { |key| key.to_s.tr('-', '_').gsub(/\battributes\b/, 'aspects').gsub(/\bid\b/, 'control_id') }
+    hash.delete('controls')
 
-      profiles = hash.delete('profiles')
-      if profiles.empty?
-        evaluation = nil
-      else
-        hash['created_by_id'] = user.id
-        evaluation = Evaluation.create(hash)
-        evaluation.save
-        all_profiles = Profile.parse(profiles)
-        all_profiles.each do |profile|
-          profile['created_by_id'] = user.id
-          evaluation.profiles.create(profile)
-        end
+    profiles = hash.delete('profiles')
+    if profiles.empty?
+      evaluation = nil
+    else
+      hash['created_by_id'] = user.id
+      evaluation = Evaluation.create(hash)
+      evaluation.save
+      all_profiles = Profile.parse(profiles)
+      all_profiles.each do |profile|
+        profile['created_by_id'] = user.id
+        evaluation.profiles.create(profile)
       end
-      evaluation
-    rescue Exception => e
-      Rails.logger.debug "Import error: #{e.inspect}"
-      nil
     end
+    evaluation
+  rescue Exception => e
+    Rails.logger.debug "Import error: #{e.inspect}"
+    nil
   end
 end

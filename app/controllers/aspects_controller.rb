@@ -12,5 +12,4 @@ class AspectsController < ApplicationController
     @profile = Profile.find(params[:profile_id])
     @aspect = @profile.aspects.find(params[:id])
   end
-
 end

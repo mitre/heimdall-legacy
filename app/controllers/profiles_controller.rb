@@ -18,7 +18,7 @@ class ProfilesController < ApplicationController
   def show
     respond_to do |format|
       format.html { render :show }
-      format.json { render json: @profile.to_json}
+      format.json { render json: @profile.to_json }
     end
   end
 
@@ -66,21 +66,14 @@ class ProfilesController < ApplicationController
     if contents.key? 'name'
       profile_hash = Profile.transform(contents)
       begin
-        #groups = profile_hash.delete(:groups_attributes)
-        #controls = profile_hash.delete(:controls_attributes)
         profile_hash['created_by_id'] = current_user.id
-        Rails.logger.debug "Profile Hash keys: #{profile_hash.keys}"
         @profile = Profile.new(profile_hash)
-        Rails.logger.debug "New Profile: #{@profile.inspect}"
         if @profile.save
-          Rails.logger.debug "Save profile"
           redirect_to @profile, notice: 'Profile uploaded.'
         else
-          logger.debug "ERROR #{@profile.errors.inspect}"
           redirect_to profiles_url, error: 'Profile was not successfully created.'
         end
-      rescue Exception => e
-        logger.debug "Import error: #{e.inspect}"
+      rescue Exception
         redirect_to profiles_url, notice: 'Profile was malformed.'
       end
     else

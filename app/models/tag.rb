@@ -1,5 +1,5 @@
 class Tag < ApplicationRecord
-  store :content, accessors: [ :name, :value ], coder: JSON
+  store :content, accessors: [:name, :value], coder: JSON
   belongs_to :tagger, polymorphic: true
 
   def good_values

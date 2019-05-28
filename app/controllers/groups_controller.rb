@@ -14,5 +14,4 @@ class GroupsController < ApplicationController
     @profile = Profile.find(params[:profile_id])
     @group = @profile.groups.find(params[:id])
   end
-
 end

@@ -5,6 +5,8 @@ AllCops:
   Exclude:
     - Gemfile
     - Rakefile
+    - Vagrantfile
+    - Dockerfile
     - 'test/**/*'
     - 'examples/**/*'
     - 'vendor/**/*'
@@ -12,6 +14,7 @@ AllCops:
     - 'www/demo/**/*'
     - 'bin/*'
     - 'app/models/ability.rb'
+    - 'db/schema.rb'
     - 'config/initializers/rolify.rb'
 AlignParameters:
   Enabled: true

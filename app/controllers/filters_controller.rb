@@ -71,5 +71,4 @@ class FiltersController < ApplicationController
   def filter_params
     params.require(:filter).permit(family: [], number: [], sub_fam: [], sub_num: [], enhancement: [], enh_sub_fam: [], enh_sub_num: [])
   end
-
 end
