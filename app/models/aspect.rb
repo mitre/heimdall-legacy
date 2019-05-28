@@ -1,6 +1,6 @@
 class Aspect < ApplicationRecord
   belongs_to :profile
-  store :options, accessors: [ :default, :description, :value, :type, :required ], coder: JSON
+  store :options, accessors: [:default, :description, :value, :type, :required], coder: JSON
   validates_presence_of :name
 
   def to_jbuilder

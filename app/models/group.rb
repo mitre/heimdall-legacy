@@ -17,5 +17,4 @@ class Group < ApplicationRecord
   def to_json(*_args)
     to_jbuilder.target!
   end
-
 end

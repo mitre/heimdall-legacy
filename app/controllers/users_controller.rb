@@ -58,7 +58,6 @@ class UsersController < ApplicationController
     rotate = params[:user].delete(:rotate)
     logger.debug "rotate = #{rotate}"
     ImageUploader.rotation = rotate.to_f
-    Rails.logger.debug "ROTATION = #{ImageUploader.rotation}"
   end
 
   # PATCH/PUT /users/1
@@ -113,6 +112,6 @@ class UsersController < ApplicationController
 
   # Never trust parameters from the scary internet, only allow the white list through.
   def user_params
-    params.require(:user).permit(:first_name, :last_name, :image, :api_key, :rotate, :role)
+    params.require(:user).permit(:first_name, :last_name, :image, :api_key, :rotate)
   end
 end

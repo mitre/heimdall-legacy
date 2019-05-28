@@ -86,7 +86,7 @@ RSpec.describe CirclesController, type: :controller do
 
         it 'creates a new Circle' do
           expect {
-            post :create, params: { circle: new_attributes}, session: valid_session
+            post :create, params: { circle: new_attributes }, session: valid_session
           }.to change(Circle, :count).by(1)
         end
 

@@ -50,10 +50,10 @@ class Control < ApplicationRecord
     results.map(&:run_time).inject(0, :+).round(6)
   end
 
-  def tag(name, good=false)
-    tag_obj = tags.select{|tag| tag.content[:name] == name}.first
+  def tag(name, good = false)
+    tag_obj = tags.select { |tag| tag.content[:name] == name }.first
     if tag_obj
-      #val.is_a?(Array) ? val.join(', ') : val
+      # val.is_a?(Array) ? val.join(', ') : val
       if good
         tag_obj.good_values
       else
@@ -114,7 +114,7 @@ class Control < ApplicationRecord
       tags = control.delete('tags')
       new_tags = []
       tags.each do |key, value|
-        new_tags << {'content': {"name": key.to_s, "value": value }}
+        new_tags << { 'content': { "name": key.to_s, "value": value } }
       end
       control[:tags_attributes] = new_tags
       control['impact'] = Control.parse_impact(control['impact'])
@@ -145,5 +145,4 @@ class Control < ApplicationRecord
       end
     end
   end
-
 end
