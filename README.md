@@ -1,168 +1,187 @@
 # Heimdall
 
-Heimdall is a centralized aggregation tool for InSpec evaluations
+Heimdall is a centralized visualization server for your InSpec evaluations and profiles.
 
 ## Description
-Heimdall supports viewing of InSpec profiles and evaluations in a convenient
-interface.  Data uploads can be automated through usage of curl, and added as
-a step after an InSpec pipeline stage.
 
-## Versioning and State of Development
-This project uses the [Semantic Versioning Policy](https://semver.org/).
-
-### Branches
-The master branch contains the latest version of the software leading up to a new release.
-
-Other branches contain feature-specific updates.
-
-### Tags
-Tags indicate official releases of the project.
-
-Please note 0.x releases are works in progress (WIP) and may change at any time.
+Heimdall supports viewing of InSpec profiles and evaluations in a convenient interface. Data uploads can be automated through usage of curl and added as a step after an InSpec pipeline stage.
 
 ## Heimdall vs Heimdall-Lite
 
-There two versions of the MITRE Heimdall Viewer - the full [Heimdall](https://github.com/mitre/heimdall_activerecord/) and the [Heimdall-Lite](https://github.com/mitre/heimdall-lite/)  version. We produced each to meet different needs and use-cases.
-
-### Features
-
-|                                                                                | [Heimdall-Lite](https://github.com/mitre/heimdall-lite/) | [Heimdall](https://github.com/mitre/heimdall_activerecord/)                                |
-| :----------------------------------------------------------------------------- | :------------------------------------------------------- | :---------------------------------------------------------------------------- |
-| Installation Requirements                                                      | any web server                                           | rails 5.x Server <br /> postgresql instance                                      |
-| Overview Dashboard & Counts                                                    | x                                                        | x                                                                             |
-| 800-53 Partition and TreeMap View                                              | x                                                        | x                                                                             |
-| Data Table / Control Summary                                                   | x                                                        | x                                                                             |
-| InSpec Code / Control Viewer                                                   | x                                                        | x                                                                             |
-| SSP Content Generator                                                          | x                                                        | x                                                                             |
-| PDF Report and Print View                                                      | x                                                        | x                                                                             |
-|                                                                                |                                                          |                                                                               |
-| Users & Roles & multi-team support                                             |                                                          | x                                                                             |
-| Authentication & Authorization                                                 | Hosting Webserver                                        | Hosting Webserver<br />LDAP<br />GitHub OAUTH & SAML<br />GitLab OAUTH & SAML |
-| Advanced Data / Filters for Reports and Viewing                                |                                                          | x                                                                             |
-| Multiple Report Output<br />(DISA Checklist XML, CAT, XCCDF-Results, and more) |                                                          | x                                                                             |
-| Authenticated REST API                                                         |                                                          | x                                                                             |
-| InSpec Run 'Delta' View                                                        |                                                          | x                                                                             |
-| Multi-Report Tagging, Filtering and Comparison                                |                                                          | x                                                                             |
+There two versions of the MITRE Heimdall - the full [Heimdall](https://github.com/mitre/heimdall_activerecord/) and the [Heimdall-Lite](https://github.com/mitre/heimdall-lite/) version. We produced each to meet different needs and use-cases.
 
 ### Use Cases
 
-| [Heimdall-Lite](https://github.com/mitre/heimdall-lite/) | [Heimdall](https://github.com/mitre/heimdall_activerecord/)           |
-| :------------------------------------------------------- | :------------------------------------------------------- |
-| Ship the App & Data via simple Email                     | Multiple Teams Support                                   |
-| Minimal Footprint & Deployment Time                      | Timeline and Report History                              |
-| Local or disconnected Use                                | Centralized Deployment Model                             |
-| One-Time Quick Reviews                                   | Need to view the delta between one or more runs          |
-| Decentralized Deployment                                 | Need to view subsets of the 800-53 control alignment     |
-| Minimal A&A Time                                         | Need to produce more complex reports in multiple formats |
+| [Heimdall-Lite](https://github.com/mitre/heimdall-lite/) | [Heimdall](https://github.com/mitre/heimdall_activerecord/) |
+| :------------------------------------------------------- | :---------------------------------------------------------- |
+| Ship the App & Data via simple Email                     | Multiple Teams Support                                      |
+| Minimal Footprint & Deployment Time                      | Timeline and Report History                                 |
+| Local or disconnected Use                                | Centralized Deployment Model                                |
+| One-Time Quick Reviews                                   | Need to view the delta between one or more runs             |
+| Decentralized Deployment                                 | Need to view subsets of the 800-53 control alignment        |
+| Minimal A&A Time                                         | Need to produce more complex reports in multiple formats    |
+
+### Features
+
+| Features                                                                       | Heimdall-Lite     | Heimdall                                                                      |
+| :----------------------------------------------------------------------------- | :---------------- | :---------------------------------------------------------------------------- |
+| Installation Requirements                                                      | any web server    | rails 5.x Server <br/> PostgreSQL                                             |
+| Overview Dashboard & Counts                                                    | x                 | x                                                                             |
+| 800-53 Partition and TreeMap View                                              | x                 | x                                                                             |
+| Data Table / Control Summary                                                   | x                 | x                                                                             |
+| InSpec Code / Control Viewer                                                   | x                 | x                                                                             |
+| SSP Content Generator                                                          | x                 | x                                                                             |
+| PDF Report and Print View                                                      | x                 | x                                                                             |
+| Users & Roles & multi-team support                                             |                   | x                                                                             |
+| Authentication & Authorization                                                 | Hosting Webserver | Hosting Webserver<br />LDAP<br />GitHub OAUTH & SAML<br />GitLab OAUTH & SAML |
+| Advanced Data / Filters for Reports and Viewing                                |                   | x                                                                             |
+| Multiple Report Output<br />(DISA Checklist XML, CAT, XCCDF-Results, and more) |                   | x                                                                             |
+| Authenticated REST API                                                         |                   | x                                                                             |
+| InSpec Run 'Delta' View                                                        |                   | x                                                                             |
+| Multi-Report Tagging, Filtering and Comparison                                 |                   | x                                                                             |
 
 ## Installation
 
-  curl -o /etc/yum.repos.d/heimdall_activerecord.repo https://dl.packager.io/srv/mitre/heimdall_activerecord/master/installer/el/7.repo
+Heimdall supports running via RPM packages, Docker and Chef Habitat(coming soon). For production installations we recommend one of these three methods.
 
-  yum install -y heimdall_activerecord
+We publish our latest builds on [packackager.io](https://packager.io/gh/mitre/heimdall_activerecord), [Docker Hub](https://cloud.docker.com/u/mitre/repository/docker/mitre/heimdall_postgres) and Chef Habitat (Coming Soon).
 
-  heimdall_activerecord scale web=1
+### Run with Vagrant and Virtualbox
 
-### Dependencies
-You can setup a deployment/development environment through bundler or docker.
+You can easily run a local instance for demo and testing purposes using our provided `Vagrantfile` in the project which installs a simple `centos7` VM locally and uses the above RPM method to install, configure and start Heimdall.
 
-If you wish to use docker, then the dependencies are:
-  * Docker
-  * docker-compose (installable with pip)
+1. Install Vagrant
+2. Install a Virtualbox or some other Vagrant support VM system
+3. Grab our [Vagrantfile](https://github.com/mitre/heimdall_activerecord/blob/master/Vagrantfile) or just clone the github repository.
+4. run `vagrant up` in the directory where you cloned the `heimdall` repo or downloaded the `Vagrantfile`
+5. Navigate to `localhost:3000` once the process is complete
+6. Create your first account
+7. Enjoy
 
-If you wish to use ruby and are on Ubuntu 16, then the dependencies are:
-  * Ruby 2.4.4
-  * build-essentials (your distribution's gcc package)
-  * Bundler
-  * libpq-dev
-  * nodejs
-  * postgresql
+### Run with RPM
 
-#### Run directly with Ruby (Instead of Docker)
+To run Heimdall you just need to add the Heimdall [Packager.io](https://dl.packager.io/srv/mitre/heimdall_activerecord/master/installer/el/7.repo) repository to your Yum configuration and you can easily deploy and update Heimdall on RHEL7/CentOS7 system.
 
-This mode is primarily for developers, shared heimdall instances should be
-deployed in production mode. Since this is a Ruby application it is suggested to use
-Rbenv or RVM for ruby version management.
-1. Install rbenv or RVM
-1. Install dependencies
-	- `apt-get install build-essential libpq-dev nodejs libxml2-dev libmagick++-dev mongodb-server -y`
-1. Install ruby by running `rbenv install` or `rvm install $(cat .ruby-version)` from the root directory of this project
-1. Run the following in a terminal
-	- `bundle install`
-	- `bundle exec rake db:setup`
-	- `bundle exec rake db:migrate`
-	- `bundle exec rails s` (Start the server on localhost)
+1. `curl -o /etc/yum.repos.d/heimdall.repo https://dl.packager.io/srv/mitre/heimdall_activerecord/master/installer/el/7.repo`
+2. `yum update`
+3. `yum install -y heimdall-activerecord`
+4. `postgresql-setup initdb`
+5. `echo "local all postgres trust" > /var/lib/pgsql/data/pg_hba.conf`
+6. `systemctl enable postgresql`
+7. `systemctl start postgresql`
+8. `heimdall-activerecord run rake db:create db:schema:load || true`
+9. `heimdall-activerecord run rake db:migrate`
+10. `heimdall-activerecord scale web=1`
+11. Navigate to `hostname:6000`
+12. Create your first account
+13. Enjoy
 
-#### Run With Docker
+### Run With Docker
 
-##### Login Configuration
-If you would like to use your organization's internal User authentication
-service, when deploying the dockerized Heimdall instance, you'll need to edit
-config/ldap.yml to point to your organization's LDAP server. **You do not have
-to use your internal LDAP. However, people will have to create an account in
-Heimdall to perform most actions** You may view ldap.example.yml for how
-authentication of people's internal email addresses works with a LDAP server
-which allows anonymous access.
+Given that Heimdall requires at least a database service, we use Docker Compose.
 
-##### Setup Docker Container
-These steps need to be performed once per machine in order to prepare your machine to run heimdall in Docker.
+#### Setup Docker Container
 
 1. Install Docker
 2. Download heimdall by running `git clone https://github.com/mitre/heimdall_activerecord.git`.
 3. Navigate to the base folder where `docker-compose.yml` is located
 4. Run the following commands in a terminal window from the heimdall source directory:
-   * `./setup-docker-secrets.sh`
-   * `docker-compose up -d`
+   - `./setup-docker-secrets.sh`
+   - `docker-compose up -d`
 
+#### Managing Docker Container
 
-##### Managing Docker Container
 The following commands are useful for managing the data in your docker container:
-	* `docker-compose run web rake db:reset` **This destroys and rebuilds the db**
-	* `docker-compose run web rake db:migrate` **This updates the db**
 
+- `docker-compose run web rake db:reset` **This destroys and rebuilds the db**
+- `docker-compose run web rake db:migrate` **This updates the db**
 
-##### Running Docker Container
+#### Running Docker Container
+
 Make sure you have run the setup steps at least once before following these steps!
 
 1. Run the following command in a terminal window:
-   * `docker-compose up -d`
+   - `docker-compose up -d`
 2. Go to `127.0.0.1:3000/heimdall` in a web browser
 
 ##### Updating Docker Container
-A new version of the docker container can be retrieved by running
 
-    docker-compose pull
-    docker-compose up -d
-    docker-compose run web bundle exec rake db:migrate
+A new version of the docker container can be retrieved by running:
+
+```
+docker-compose pull
+docker-compose up -d
+docker-compose run web bundle exec rake db:migrate
+```
 
 This will fetch the latest version of the container, redeploy if a newer version exists, and then apply any database migrations if applicable. No data should be lost by this operation.
 
-###### Stopping the Container
+##### Stopping the Container
+
 `docker-compose down` # From the source directory you started from
 
-## Usage
+### Run with Chef Habitat
 
-You can access a Demo instance if you have access to the company's intranet at
-https://inspec-dev.mitre.org
+(Coming Soon)
 
-You can login via the company LDAP server, or by creating a new account.
+### Run from Github
 
-Once you have an account you can upload jsons for evaluations and profiles
-then view them by clicking on the evaluations and profiles tab at the top of
-the page.
+This mode is primarily for developers, shared heimdall instances should be deployed in production mode. Since this is a Ruby application it is suggested to use `rbenv` or `RVM` for ruby version management.
 
-**When uploading data you may go to the circles tab, and select public. This will
-allow all visitors to view the profile/evaluation you uploaded.**
+1. Install `rbenv` or `RVM`
+2. Install dependencies
+   1. `apt-get install -y build-essential libpq-dev nodejs libxml2-dev libmagick++-dev postgresql-server`
+3. Install ruby by running `rbenv install` or `rvm install $(cat .ruby-version)` from the root directory of this project
+4. Clone the Heimdall Github repository
+5. Run the following in a terminal
+   1. `bundle install`
+   2. `bundle exec rake db:setup`
+   3. `bundle exec rake db:migrate`
+   4. `bundle exec rails s` (Start the server on localhost)
 
-To upload through curl you'll need an API key. This is located on your profile
-page which can be reached by clicking on your user name in the top right
-corner, then on profile.
+## Using Heimdall
+
+### Getting Started
+
+Once you install Heimdall, you will have to create your first account. By default this account will have full `admin` rights and you will then be able to create other users and grant them access to roles, `circles` (groups) and teams as you need. You can add your first user by selecting 'Create Account' and then logging in as that user.
+
+### Using LDAP and OAuth
+
+Heimdall also supports connecting to your corporate LDAP and other OAuth authentication services but the authorization of those users in Heimdall is managed via the application itself (_PRs Welcome_).
+
+### Uploading Results Manually
+
+Once you have an account you can upload InSpec JSONs (see [reporters](https://www.inspec.io/docs/reference/reporters/)) for evaluations and profile then view them by clicking on the evaluations and profiles tab at the top of the page.
+
+### Supporting Groups/Circles and Multiple Teams
+
+Heimdall supports separating users into groups we call 'Circles' which is basically just groups and roles. This will allow you to deploy a command service which many teams can use, allow your AO or Security Teams to review and comment on multiple teams work while still providing separation of roles and responsibilities.
+
+The Heimdall Administrator can define Circles and add users to those circles. At the moment, this is done directly in the Heimdall application (_PRs Welcome_) and teams can `push` their results to a circle via `curl`. This will allow multiple work streams to happen and easy integration into workflow processes while trying to keep the human element from going blind :).
+
+My default everything goes to the public circle, you should define your circles with respect to the R&R of your organization and project and program structure.
+
+Although it's just a suggestion, we have also found that having a few generic results in the `public` circle is useful to help easy demonstrations or conversations to happen. This will allow all visitors to view the profile/evaluation you uploaded.
+
+### Remote Upload and Pipeline Integration via CURL
+
+To upload through curl you'll need an API key. This is located on your profile page which can be reached by clicking on your user name in the top right corner, then on profile.
 
 The upload API takes three parameters: the file, your email address, and your API key.
 
 ```
 curl -F "file=@FILE_PATH" -F email=EMAIL -F api_key=API_KEY http://localhost:3000/evaluation_upload_api
 ```
+
+### Useful Tools
+
+The [inspec_tools](https://github.com/mitre/inspec_tools) and [heimdall_tools](https://github.com/mitre/heimdall_tools) also have useful features that help you manage your results, do integration with your CI/CD and DevOps pipelines and get your teams working.
+
+[inspec_tools](https://github.com/mitre/inspec_tools) has the [`compliance`](https://github.com/mitre/inspec_tools#compliance) and [`summary`](https://github.com/mitre/inspec_tools#summary) functions which will help you define a `go/no-go` for your pipeline results and allow you to define your `thin blue line` of success or failure. Incorporating these tools, you can `scan`, `process`, `evaluate` and `upload` your results to allow your various teams and `stages` to define the granularity they need while still following the `spirit` of the overall `DevSecOps` process as a whole.
+
+For example, the [`compliance`](https://github.com/mitre/inspec_tools#compliance) function will let you easily use Jenkins, GitLab/Hub CICD or Drone to have clean pass/fail with an `exit 0` or `exit 1` and allow you to define exactly the `high`, `medium` and `low` and overall `compliance score` that you and your Security Official agreed to in `production` or in `development`.
+
+_NOTE_ You should always test like you are in _production_, that is where you are going to end up after all!!
 
 ## Configuration
 
@@ -174,41 +193,100 @@ Contact us for advice, we'll be able to send most people our setup.
 
 #### Host container off relative url
 
-Edit RAILS\_RELATIVE\_URL\_ROOT line from docker-compose.yml
+Edit RAILS_RELATIVE_URL_ROOT line from docker-compose.yml
 
 #### Switch container to dev mode
 
-Set RAILS\_ENV = to development in docker-compose.yml
+Set RAILS_ENV = to development in docker-compose.yml
 
 ## Development
 
-Clone, edit, then please submit a PR with an issue number associated.
+### Dependencies
+
+You can setup a deployment/development environment through bundler or docker.
+
+If you wish to use docker, then the dependencies are:
+
+- Docker
+- docker-compose
+
+If you wish to use ruby and are on Ubuntu 16, then the dependencies are:
+
+- Ruby 2.4.4
+- build-essentials (your distribution's gcc package)
+- Bundler
+- libpq-dev
+- nodejs
+- postgresql
+
+## Versioning and State of Development
+
+This project uses the [Semantic Versioning Policy](https://semver.org/).
 
 # Contributing, Issues and Support
 
 ## Contributing
 
-Please feel free to look through our issues, make a fork and submit *PRs* and improvements. We love hearing from our end-users and the community and will be happy to engage with you on suggestions, updates, fixes or new capabilities.
+Please feel free to look through our issues, make a fork and submit _PRs_ and improvements. We love hearing from our end-users and the community and will be happy to engage with you on suggestions, updates, fixes or new capabilities.
 
 ## Issues and Support
 
 Please feel free to contact us by **opening an issue** on the issue board, or, at [inspec@mitre.org](mailto:inspec@mitre.org) should you have any suggestions, questions or issues. If you have more general questions about the use of our software or other concerns, please contact us at [opensource@mitre.org](mailto:opensource@mitre.org).
 
+## A complete PR should include 7 core elements:
+
+- A signed PR ( aka `git commit -a -s` )
+- Code for the new functionality
+- Updates to the CLI
+- New unit tests for the functionality
+- Updates to the docs and examples in `README.md`
+- (if needed) Example / Template files
+  - Scripts / Scaffolding code for the Example / Template files
+- Example Output of the new functionality if it produces an artifact
+
+### Our PR Process
+
+1. open an issue on the main heimdall_activerecord website noting the issues your PR will address
+2. fork the repository
+3. checkout your repository
+4. cd to the repository
+5. git co -b `<your_branch>`
+6. bundle install
+7. `hack as you will`
+8. test via rake
+9. ensure unit tests still function and add unit tests for your new feature
+10. add new docs to the `README.md`
+11. (if needed) create and document any example or templates
+12. (if needed) create any supporting scripts
+13. git commit -a -s `<your_branch>`
+14. Open a PRs on the MITRE heimdall_activerecord repository
+
+# Testing
+
+There are a set of unit tests. Run `rake test` to run the tests.
+
+To release a new version, update the version number in `version.rb` according to the [Semantic Versioning Policy](https://semver.org/).
+
+Then, run `bundle exec rake release` which will create a git tag for the specified version, push git commits and tags, and push to [github.com](https://github.com/mitre/heimdall_activerecord).
+
 ## Licensing and Authors
 
 ### Authors
-* Robert Thew
-* Aaron Lippold
-* Matthew Dromazos
-* Luke Malinowski
+
+- Robert Thew
+- Aaron Lippold
+- Robert Clark
+- Matthew Dromazos
+- Luke Malinowski
 
 ### NOTICE
 
-© 2018 The MITRE Corporation.
+© 2018-2019 The MITRE Corporation.
 
 Approved for Public Release; Distribution Unlimited. Case Number 18-3678.
 
-## NOTICE
+### NOTICE
+
 MITRE hereby grants express written permission to use, reproduce, distribute, modify, and otherwise leverage this software to the extent permitted by the licensed terms provided in the LICENSE.md file included with this project.
 
 ### NOTICE
@@ -217,4 +295,4 @@ This software was produced for the U. S. Government under Contract Number HHSM-5
 
 No other use other than that granted to the U. S. Government, or to those acting on behalf of the U. S. Government under that Clause is authorized without the express written permission of The MITRE Corporation.
 
-For further information, please contact The MITRE Corporation, Contracts Management Office, 7515 Colshire Drive, McLean, VA  22102-7539, (703) 983-6000.
+For further information, please contact The MITRE Corporation, Contracts Management Office, 7515 Colshire Drive, McLean, VA 22102-7539, (703) 983-6000.
