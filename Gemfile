@@ -50,15 +50,13 @@ gem 'nokogiri-happymapper'
 gem 'nokogiri'
 gem 'thor'
 gem 'json'
-gem 'pry'
-gem 'pry-nav'
 
 gem 'inspec_tools', '~>1.3.0'
 gem 'roo'
 
 group :development, :test do
-  # Call 'byebug' anywhere in the code to stop execution and get a debugger console
-  gem 'byebug', platforms: [:mri, :mingw, :x64_mingw]
+  gem 'pry'
+  gem 'pry-nav'
   gem 'rspec-rails', '~> 3.6'
   gem 'rubocop-rspec'
   gem 'factory_bot_rails'

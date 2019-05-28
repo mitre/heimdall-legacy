@@ -2,3 +2,6 @@
 .idea
 .DS_Store
 dockerfiles
+Vagrantfile
+sample_jsons
+log/*
