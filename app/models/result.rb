@@ -1,6 +1,7 @@
 class Result < ApplicationRecord
   serialize :backtrace
   belongs_to :control, inverse_of: :results
+  belongs_to :evaluation
 
   def to_jbuilder
     Jbuilder.new do |json|

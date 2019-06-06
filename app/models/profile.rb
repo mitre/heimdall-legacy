@@ -98,18 +98,35 @@ class Profile < ApplicationRecord
     nist
   end
 
-  def self.parse(profiles)
+  def self.evaluation_counts
+    counts = {}
+    Profile.all.map { |profile| counts[profile.id] = 0 }
+    Evaluation.all.each do |eval|
+      eval.profiles.each do |profile|
+        counts[profile.id] += 1
+      end
+    end
+    counts
+  end
+
+  def self.parse(profiles, evaluation_id=nil)
     all_profiles = []
     profiles.try(:each) do |profile_hash|
-      new_profile_hash = Profile.transform(profile_hash.deep_dup)
-      all_profiles << new_profile_hash
+      sha256 = profile_hash['sha256']
+      profile = Profile.where(sha256: sha256).first
+      if profile.present?
+        all_profiles << profile
+      else
+        new_profile_hash = Profile.transform(profile_hash.deep_dup, evaluation_id)
+        all_profiles << new_profile_hash
+      end
     end
     all_profiles
   end
 
-  def self.transform(hash)
+  def self.transform(hash, evaluation_id=nil)
     hash = hash.deep_transform_keys { |key| key.to_s.tr('-', '_').gsub(/\battributes\b/, 'aspects').gsub(/\bid\b/, 'control_id') }
-    controls = Control.transform(hash.delete('controls'))
+    controls = Control.transform(hash.delete('controls'), evaluation_id)
     hash[:controls_attributes] = controls
     depends = hash.delete('depends') || []
     hash[:depends_attributes] = depends

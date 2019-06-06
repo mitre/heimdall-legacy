@@ -109,7 +109,7 @@ class Control < ApplicationRecord
     end
   end
 
-  def self.transform(controls)
+  def self.transform(controls, evaluation_id)
     controls.try(:each) do |control|
       tags = control.delete('tags')
       new_tags = []
@@ -121,6 +121,11 @@ class Control < ApplicationRecord
       source_location = control.delete('source_location')
       control[:source_location_attributes] = source_location
       results = control.delete('results')
+      if results.present?
+        results.each do |result|
+          result[:evaluation_id] = evaluation_id
+        end
+      end
       control[:results_attributes] = results || []
       descriptions = control.delete('descriptions')
       control[:descriptions_attributes] = descriptions || []

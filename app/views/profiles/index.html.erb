@@ -16,31 +16,32 @@
         </div>
         <!-- /.box-header -->
         <div class="box-body table-responsive no-padding">
-          <table class="table table-hover">
-            <tr>
-              <th>Name</th>
-              <th>Sha256</th>
-              <th>Title</th>
-              <th>Maintainer</th>
-              <th>Copyright</th>
-              <th>License</th>
-              <th>Summary</th>
-              <th>Version</th>
-              <th>Editable</th>
-              <th>Owner</th>
-              <th>Action</th>
-            </tr>
+          <table id="profiles-datatable" class="table table-hover">
+            <thead>
+              <tr>
+                <th>Name</th>
+                <th>Sha256</th>
+                <th>Title</th>
+                <th>Maintainer</th>
+                <th># of Evaluations</th>
+                <th>License</th>
+                <th>Summary</th>
+                <th>Version</th>
+                <th>Owner</th>
+                <th>Action</th>
+              </tr>
+            </thead>
+            <tbody>
             <% @profiles.each do |profile| %>
               <tr>
                 <td><%= link_to profile.name, profile %></td>
                 <td><%= profile.sha256 %></td>
                 <td><%= profile.title %></td>
                 <td><%= profile.maintainer %></td>
-                <td><%= profile.copyright %></td>
+                <td><%= @eval_counts[profile.id] %></td>
                 <td><%= profile.license %></td>
                 <td><%= profile.summary %></td>
                 <td><%= profile.version %></td>
-                <td><%= profile.is_editable? %></td>
                 <td><%= profile.created_by.try(:email) %></td>
                 <td>
                   <% if (can? :delete, profile) && (profile.is_editable?) %>
@@ -49,6 +50,7 @@
                 </td>
               </tr>
             <% end %>
+          </tbody>
           </table>
         </div>
         <!-- /.box-body -->
@@ -78,3 +80,17 @@
   </div>
 </section>
 <!-- /.content -->
+<script>
+  jQuery(document).ready(function() {
+    console.log("Hello");
+    $('#profiles-datatable').dataTable({
+      "iDisplayLength": 25,
+      "processing": true,
+      "serverSide": false,
+      "pagingType": "full_numbers"
+      // pagingType is optional, if you want full pagination controls.
+      // Check dataTables documentation to learn more about
+      // available options.
+    });
+  });
+</script>
