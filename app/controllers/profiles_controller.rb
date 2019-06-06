@@ -11,6 +11,7 @@ class ProfilesController < ApplicationController
       @circle = Circle.where(name: 'Public').try(:first)
       @profiles = @circle.present? ? @circle.readable_profiles : []
     end
+    @eval_counts = Profile.evaluation_counts
   end
 
   # GET /profiles/1
@@ -64,7 +65,7 @@ class ProfilesController < ApplicationController
     file = params[:file]
     contents = JSON.parse(file.read)
     if contents.key? 'name'
-      profile_hash = Profile.transform(contents)
+      profile_hash = Profile.transform(contents, nil)
       begin
         profile_hash['created_by_id'] = current_user.id
         @profile = Profile.new(profile_hash)

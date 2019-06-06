@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2019_05_20_174005) do
+ActiveRecord::Schema.define(version: 2019_06_05_135059) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -171,7 +171,9 @@ ActiveRecord::Schema.define(version: 2019_05_20_174005) do
     t.bigint "control_id"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.bigint "evaluation_id"
     t.index ["control_id"], name: "index_results_on_control_id"
+    t.index ["evaluation_id"], name: "index_results_on_evaluation_id"
   end
 
   create_table "roles", force: :cascade do |t|
@@ -275,6 +277,7 @@ ActiveRecord::Schema.define(version: 2019_05_20_174005) do
   add_foreign_key "evaluations", "profiles"
   add_foreign_key "groups", "profiles"
   add_foreign_key "results", "controls"
+  add_foreign_key "results", "evaluations"
   add_foreign_key "source_locations", "controls"
   add_foreign_key "supports", "profiles"
 end

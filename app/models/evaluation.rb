@@ -8,6 +8,7 @@ class Evaluation < ApplicationRecord
   has_many :tags, as: :tagger
   has_and_belongs_to_many :profiles, dependent: :destroy
   belongs_to :created_by, class_name: 'User', foreign_key: 'created_by_id'
+  has_many :results
   resourcify
 
   scope :recent, ->(num) { order(created_at: :desc).limit(num) }
@@ -92,7 +93,7 @@ class Evaluation < ApplicationRecord
       p_controls = filters.nil? ? profile.controls : profile.filtered_controls(filters)
       p_controls.each do |control|
         controls[control.id] = { control: control, results: [] }
-        control.results.each do |result|
+        control.results.where(evaluation_id: id).each do |result|
           controls[control.id][:results] << result
           start_times << result.start_time
         end
@@ -208,7 +209,7 @@ class Evaluation < ApplicationRecord
     cts = {}
     profiles.includes(controls: :results).each do |profile|
       profile.controls.each do |control|
-        control.results.each do |result|
+        control.results.where(evaluation_id: id).each do |result|
           unless cts.key?(result.control_id)
             cts[result.control_id] = []
           end
@@ -225,16 +226,20 @@ class Evaluation < ApplicationRecord
     hash.delete('controls')
 
     profiles = hash.delete('profiles')
-    if profiles.empty?
+    if profiles.nil? or profiles.empty?
       evaluation = nil
     else
       hash['created_by_id'] = user.id
       evaluation = Evaluation.create(hash)
       evaluation.save
-      all_profiles = Profile.parse(profiles)
+      all_profiles = Profile.parse(profiles, evaluation.id)
       all_profiles.each do |profile|
-        profile['created_by_id'] = user.id
-        evaluation.profiles.create(profile)
+        if profile.is_a?(Profile)
+          evaluation.profiles << profile
+        else
+          profile['created_by_id'] = user.id
+          evaluation.profiles.create(profile)
+        end
       end
     end
     evaluation
