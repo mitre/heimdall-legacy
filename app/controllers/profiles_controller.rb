@@ -1,6 +1,6 @@
 class ProfilesController < ApplicationController
   load_resource
-  authorize_resource only: [:show, :details, :destroy, :upload]
+  authorize_resource only: [:show, :details, :results, :destroy, :upload]
 
   # GET /profiles
   # GET /profiles.json
@@ -24,6 +24,13 @@ class ProfilesController < ApplicationController
   end
 
   def details
+  end
+
+  def results
+    logger.debug "@profile: #{@profile.inspect}"
+    respond_to do |format|
+      format.js { render layout: false }
+    end
   end
 
   # PATCH/PUT /profiles/1

@@ -1,0 +1,51 @@
+<div class="tab-content">
+<%= form_for :evaluation, url: evaluations_compare_path do |form| %>
+  <div id="fdetails-<%= @profile.id %>" class="tab-pane fade in active">
+    <table class="table table-bordered table-striped">
+      <thead>
+        <tr>
+          <th>Filename</th>
+          <th>Start Time</th>
+          <th>Duration</th>
+          <th>InSpec Version</th>
+          <th>Platform</th>
+          <th>Passed</th>
+          <th>Failed</th>
+          <th>Not Tested</th>
+          <th>Not Applicable</th>
+          <th>Not Reviewed</th>
+          <th>Compare</th>
+        </tr>
+      </thead>
+      <tbody>
+        <% @profile.evaluations.each do |evaluation| %>
+          <tr>
+            <td><%= link_to evaluation.filename, evaluation %></td>
+            <td><%= evaluation.start_time %></td>
+            <td><%= evaluation.statistics[:duration] %></td>
+            <td><%= evaluation.version %></td>
+            <td><%= evaluation.platform[:name] %> <%= evaluation.platform[:release] %></td>
+            <td><%= evaluation.findings[:passed] %></td>
+            <td><%= evaluation.findings[:failed] %></td>
+            <td><%= evaluation.findings[:not_tested] %></td>
+            <td><%= evaluation.findings[:not_applicable] %></td>
+            <td><%= evaluation.findings[:not_reviewed] %></td>
+            <td>
+              <div class="checkbox">
+                <label>
+                  <%= form.check_box 'eval_ids', {:checked=>false, :multiple => true}, evaluation.id, nil %>
+                </label>
+              </div>
+            </td>
+          </tr>
+        <% end %>
+      </tbody>
+    </table>
+  </div>
+  <div>
+    <%= button_tag(type: "submit", class: "btn btn-primary pull-right") do %>
+      <i class="fa fa-edit"></i> Compare
+    <% end %>
+  </div>
+  <% end %>
+</div>

@@ -45,6 +45,7 @@ Rails.application.routes.draw do
   match 'circles/:id/profiles' => 'circles#profiles', as: :circle_profiles, :via => :post
   match 'circles/:id/remove_profile/:profile_id' => 'circles#remove_profile', as: :circle_profile_remove, :via => :delete
   match 'profiles/:profile_id/controls/:id/details(/evaluation/:evaluation_id)' => 'controls#details', as: :profile_control_details, :via => :get
+  match 'profiles/:id/results' => 'profiles#results', as: :profile_results, :via => :get
   match 'profiles/:id/nist(/category/:category)' => 'profiles#nist', as: :profile_nist, :via => :get
   match 'evaluation_upload_api' => 'evaluations#upload_api', as: :upload_evaluation_api, :via => :post
   match 'evaluations/:id/nist(/category/:category)(/status/:status_symbol)' => 'evaluations#nist', as: :evaluation_nist, :via => :get

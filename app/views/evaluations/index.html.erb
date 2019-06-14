@@ -9,6 +9,7 @@
   </ol>
 </section>
 
+
 <section class="content container-fluid">
   <div class="row">
     <div class="col-xs-12">
@@ -17,61 +18,140 @@
           <h3 class="box-title">Evaluations</h3>
         </div>
         <!-- /.box-header -->
-        <div class="box-body table-responsive no-padding">
-          <%= form_for :evaluation, url: evaluations_compare_path do |form| %>
-          <table id="evaluations-datatable" class="table table-hover">
-            <thead>
-              <tr>
-                <th>Profiles</th>
-                <th>Filename</th>
-                <th>Start Time</th>
-                <th>Duration</th>
-                <th>InSpec Version</th>
-                <th>Platform Name</th>
-                <th>Platform Release</th>
-                <th>Compliance</th>
-                <th>Compare</th>
-                <th>Owner</th>
-                <th>Action</th>
-              </tr>
-            </thead>
-            <tbody>
-            <% @evaluations.each do |evaluation| %>
-              <tr>
-                <td><%= link_to evaluation.profiles.map(&:name).join(', '), evaluation %></td>
-                <td><%= evaluation.filename %></td>
-                <td><%= evaluation.start_time %></td>
-                <td><%= evaluation.statistics[:duration] %></td>
-                <td><%= evaluation.version %></td>
-                <td><%= evaluation.platform[:name] %></td>
-                <td><%= evaluation.platform[:release] %></td>
-                <td>
-                  <table id="message_counts" class="cn-msg-table">
+
+          <ul class="nav nav-tabs tabs-bordered" id="myTab" role="tablist">
+            <li class="nav-item active" id="home-tab">
+              <a class="nav-link" data-toggle="tab" href="#home" role="tab" aria-controls="home" aria-selected="true">Home</a>
+            </li>
+            <li class="nav-item" id="grouped-tab">
+              <a class="nav-link" data-toggle="tab" href="#grouped" role="tab" aria-controls="grouped" aria-selected="false">Grouped</a>
+            </li>
+          </ul>
+          <div class="tab-content" id="myTabContent">
+            <div class="tab-pane fade active in" id="home" role="tabpanel" aria-labelledby="home-tab">
+              <div class="box-body table-responsive">
+                <%= form_for :evaluation, url: evaluations_compare_path do |form| %>
+                <table id="evaluations-datatable" class="table table-hover">
+                  <thead>
                     <tr>
-                      <td><div class="cn-msg-bar bg-green" data-status="0" style="width: <%= pass_pixels(evaluation.findings) %>px"></div></td>
-                      <td><div class="cn-msg-bar bg-red" data-status="3" style="width: <%= fail_pixels(evaluation.findings) %>px"></div></td>
+                      <th>Profiles</th>
+                      <th>Filename</th>
+                      <th>Start Time</th>
+                      <th>Duration</th>
+                      <th>InSpec Version</th>
+                      <th>Platform Name</th>
+                      <th>Platform Release</th>
+                      <th>Compliance</th>
+                      <th>Compare</th>
+                      <th>Owner</th>
+                      <th>Action</th>
                     </tr>
-                  </table>
-                </td>
-                <td>
-                  <div class="checkbox">
-                    <label>
-                      <%= form.check_box 'eval_ids', {:checked=>false, :multiple => true}, evaluation.id, nil %>
-                    </label>
+                  </thead>
+                  <tbody>
+                  <% @evaluations.each do |evaluation| %>
+                    <tr>
+                      <td><%= link_to evaluation.profiles.map(&:name).join(', '), evaluation %></td>
+                      <td><%= evaluation.filename %></td>
+                      <td><%= evaluation.start_time %></td>
+                      <td><%= evaluation.statistics[:duration] %></td>
+                      <td><%= evaluation.version %></td>
+                      <td><%= evaluation.platform[:name] %></td>
+                      <td><%= evaluation.platform[:release] %></td>
+                      <td>
+                        <table id="message_counts" class="cn-msg-table">
+                          <tr>
+                            <td><div class="cn-msg-bar bg-green" data-status="0" style="width: <%= pass_pixels(evaluation.findings) %>px"></div></td>
+                            <td><div class="cn-msg-bar bg-red" data-status="3" style="width: <%= fail_pixels(evaluation.findings) %>px"></div></td>
+                          </tr>
+                        </table>
+                      </td>
+                      <td>
+                        <div class="checkbox">
+                          <label>
+                            <%= form.check_box 'eval_ids', {:checked=>false, :multiple => true}, evaluation.id, nil %>
+                          </label>
+                        </div>
+                      </td>
+                      <td><%= evaluation.created_by.try(:email) %></td>
+                      <td><% if can? :delete, evaluation %><%= link_to 'Destroy', evaluation, method: :delete, data: { confirm: 'Are you sure?' } %><% end %></td>
+                    </tr>
+                  <% end %>
+                </tbody>
+                </table>
+                <div>
+                  <%= button_tag(type: "submit", class: "btn btn-primary") do %>
+                    <i class="fa fa-edit"></i> Compare
+                  <% end %>
+                </div>
+                <% end %>
+              </div>
+            </div>
+            <div class="tab-pane fade" id="grouped" role="tabpanel" aria-labelledby="grouped-tab">
+              <div class="box-body table-responsive">
+                <%= form_for :evaluation, url: evaluations_compare_path do |form| %>
+                  <% @grouping.sort.each do |key, evals| %>
+                    <% unless evals.empty? %>
+                      <div class="box-header with-border">
+                        <h3 class="box-title"><%= key %></h3>
+                      </div>
+                      <table class="table table-hover">
+                        <thead>
+                          <tr>
+                            <th>Profiles</th>
+                            <th>Filename</th>
+                            <th>Start Time</th>
+                            <th>Duration</th>
+                            <th>InSpec Version</th>
+                            <th>Platform Name</th>
+                            <th>Platform Release</th>
+                            <th>Compliance</th>
+                            <th>Compare</th>
+                            <th>Owner</th>
+                            <th>Action</th>
+                          </tr>
+                        </thead>
+                        <tbody>
+                        <% evals.each do |evaluation| %>
+                          <tr>
+                            <td><%= link_to evaluation.profiles.map(&:name).join(', '), evaluation %></td>
+                            <td><%= evaluation.filename %></td>
+                            <td><%= evaluation.start_time %></td>
+                            <td><%= evaluation.statistics[:duration] %></td>
+                            <td><%= evaluation.version %></td>
+                            <td><%= evaluation.platform[:name] %></td>
+                            <td><%= evaluation.platform[:release] %></td>
+                            <td>
+                              <table id="message_counts" class="cn-msg-table">
+                                <tr>
+                                  <td><div class="cn-msg-bar bg-green" data-status="0" style="width: <%= pass_pixels(evaluation.findings) %>px"></div></td>
+                                  <td><div class="cn-msg-bar bg-red" data-status="3" style="width: <%= fail_pixels(evaluation.findings) %>px"></div></td>
+                                </tr>
+                              </table>
+                            </td>
+                            <td>
+                              <div class="checkbox">
+                                <label>
+                                  <%= form.check_box 'eval_ids', {:checked=>false, :multiple => true}, evaluation.id, nil %>
+                                </label>
+                              </div>
+                            </td>
+                            <td><%= evaluation.created_by.try(:email) %></td>
+                            <td><% if can? :delete, evaluation %><%= link_to 'Destroy', evaluation, method: :delete, data: { confirm: 'Are you sure?' } %><% end %></td>
+                          </tr>
+                        <% end %>
+                        </tbody>
+                      </table>
+                    <% end %>
+                  <% end %>
+                  <div>
+                    <%= button_tag(type: "submit", class: "btn btn-primary") do %>
+                      <i class="fa fa-edit"></i> Compare
+                    <% end %>
                   </div>
-                </td>
-                <td><%= evaluation.created_by.try(:email) %></td>
-                <td><% if can? :delete, evaluation %><%= link_to 'Destroy', evaluation, method: :delete, data: { confirm: 'Are you sure?' } %><% end %></td>
-              </tr>
-            <% end %>
-          </tbody>
-          </table>
-          <div>
-            <%= button_tag(type: "submit", class: "btn btn-primary") do %>
-              <i class="fa fa-edit"></i> Compare
-            <% end %>
+                <% end %>
+              </div>
+            </div>
           </div>
-          <% end %>
         </div>
       </div>
     </div>
@@ -110,7 +190,7 @@
 <!-- /.content -->
 <script>
   jQuery(document).ready(function() {
-    console.log("Hello");
+    //$('#home-tab').addClass('active');
     $('#evaluations-datatable').dataTable({
       "iDisplayLength": 25,
       "processing": true,
