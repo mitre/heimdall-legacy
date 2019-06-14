@@ -12,6 +12,20 @@ class EvaluationsController < ApplicationController
       @circle = Circle.where(name: 'Public').try(:first)
       @evaluations = @circle.present? ? @circle.evaluations : []
     end
+    @eval_counts = Profile.evaluation_counts
+    @grouping = {}
+    @grouping['singles'] = []
+    @evaluations.each do |evaluation|
+      key = evaluation.profiles.collect(&:id)
+      unless @grouping.key?(key.to_s)
+        @grouping[key.to_s] = []
+      end
+      if @eval_counts[key.first] > 1
+        @grouping[key.to_s] << evaluation
+      else
+        @grouping['singles'] << evaluation
+      end
+    end
   end
 
   # GET /evaluations/1

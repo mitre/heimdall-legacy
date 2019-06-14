@@ -19,8 +19,7 @@
           <table id="profiles-datatable" class="table table-hover">
             <thead>
               <tr>
-                <th>Name</th>
-                <th>Sha256</th>
+                <th>Name (Sha256)</th>
                 <th>Title</th>
                 <th>Maintainer</th>
                 <th># of Evaluations</th>
@@ -33,12 +32,11 @@
             </thead>
             <tbody>
             <% @profiles.each do |profile| %>
-              <tr>
-                <td><%= link_to profile.name, profile %></td>
-                <td><%= profile.sha256 %></td>
-                <td><%= profile.title %></td>
+              <tr id="<%= profile.id %>">
+                <td><%= link_to profile.name, '#', :onclick => 'show_results("' + profile.id.to_s + '")' %><br><span class="small-font grey-text">(<%= profile.sha256 %>)</span></td>
+                <td><%= link_to profile.title, profile %></td>
                 <td><%= profile.maintainer %></td>
-                <td><%= @eval_counts[profile.id] %></td>
+                <td><button class="btn btn-info" style="width:120px" onclick="show_results('<%= profile.id %>');"><%= @eval_counts[profile.id] %></button></td>
                 <td><%= profile.license %></td>
                 <td><%= profile.summary %></td>
                 <td><%= profile.version %></td>
@@ -81,6 +79,8 @@
 </section>
 <!-- /.content -->
 <script>
+  var shown_id = null;
+
   jQuery(document).ready(function() {
     console.log("Hello");
     $('#profiles-datatable').dataTable({
@@ -93,4 +93,27 @@
       // available options.
     });
   });
+
+  function show_results(profile_id) {
+    hsh = "#" + profile_id;
+    url = '<%= root_path %>' + 'profiles/' + profile_id + '/results';
+    var tr = $(hsh);
+    if ($('#results_row').length) {
+      $('#results_row').remove();
+    }
+    if (profile_id != shown_id) {
+      shown_id = profile_id;
+      $.ajax(url, {
+          success: function(data) {
+            tr.after('<tr id="results_row" role="row"><td colspan="9" id="profile_results">' + resultsData + '</td></tr>');
+          },
+          error: function() {
+            console.log("Error occured");
+          }
+       });
+     } else {
+       shown_id = null;
+     }
+  }
+
 </script>
