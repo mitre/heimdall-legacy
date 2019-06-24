@@ -88,7 +88,7 @@ var evaluation_id = '<%= @evaluation.id %>';
         <!-- /.box-header -->
         <div class="box-body">
           <p>
-            <strong>Base Profile:</strong>
+            <strong>Parent Profile:</strong>
             <%= link_to @evaluation.base_profile&.name, profile_path(@evaluation.base_profile) %></li>
           </p>
           <% prof_list = @evaluation.included_profiles %>
@@ -826,7 +826,7 @@ function add_control_table(d) {
   console.log("empty table");
   header = '<table id="controls" class="table table-bordered table-striped"><thead>';
   footer = '</tfoot></table>';
-  tr_str = '<tr><th>Status</th><th>Title</th><th>Control ID</th><th>Impact</th><th>Run Time</th><th>NIST Refs</th><th class="hidden">Details</th></tr>';
+  tr_str = '<tr><th>Status</th><th>Profile</th><th>Title</th><th>Control ID</th><th>Impact</th><th>Run Time</th><th>NIST Refs</th><th class="hidden">Details</th></tr>';
   rows = '';
   root_path = '<%= root_path %>';
   if (d.controls) {
@@ -837,6 +837,7 @@ function add_control_table(d) {
       profile_id = ctl.profile_id;
       rows += '<tr class="' + ctl.severity_cap + ' ' + ctl.status_symbol_title + '" id="' + ctl_id + '">';
       rows += '<td><button class="' + status_btn(ctl.status_symbol_title) + '" style="width:120px" onclick="show_details(\'' + profile_id + '\', \'' + ctl_id + '\');">' + ctl.status_symbol_title + '</button></td>';
+      rows += '<td>' + ctl.profile_name + '</td>';
       rows += '<td>' + ctl.title + '</td>';
       rows += '<td><a href="' + root_path + 'profiles/' + profile_id + '/controls/' + ctl_id + '">' + ctl.name + '</a></td>';
       rows += '<td>' + ctl.impact + '</td>';
@@ -860,7 +861,7 @@ function show_details(profile_id, control_id) {
     shown_id = control_id;
     $.ajax(url, {
         success: function(data) {
-          tr.after('<tr id="details_row" role="row"><td colspan="5" id="control_details">' + detailsData + '</td></tr>');
+          tr.after('<tr id="details_row" role="row"><td colspan="7" id="control_details">' + detailsData + '</td></tr>');
           Prism.highlightAll();
         },
         error: function() {

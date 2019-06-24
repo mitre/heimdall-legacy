@@ -6,9 +6,9 @@ class Evaluation < ApplicationRecord
   store :statistics, accessors: [:duration], coder: JSON
   store :findings, accessors: [:failed, :passed, :not_reviewed, :not_tested, :not_applicable], coder: JSON
   has_many :tags, as: :tagger
-  has_and_belongs_to_many :profiles, dependent: :destroy
+  has_and_belongs_to_many :profiles
   belongs_to :created_by, class_name: 'User', foreign_key: 'created_by_id'
-  has_many :results
+  has_many :results, dependent: :destroy
   resourcify
 
   scope :recent, ->(num) { order(created_at: :desc).limit(num) }
@@ -28,11 +28,20 @@ class Evaluation < ApplicationRecord
   end
 
   def base_profile
-    profiles.where(parent_profile: nil).try(:first)
+    base = profiles.first
+    if profiles.size > 1
+      profiles.each do |profile|
+        if profile.dependants.present?
+          base = profile
+          break
+        end
+      end
+    end
+    base
   end
 
   def included_profiles
-    profiles.where(parent_profile: base_profile.name)
+    base_profile.dependants
   end
 
   def filename
@@ -85,16 +94,32 @@ class Evaluation < ApplicationRecord
   end
 
   def status_counts(filters = nil)
-    Rails.logger.debug 'Getting status_counts'
     counts = { failed: 0, passed: 0, not_reviewed: 0, not_tested: 0, not_applicable: 0 }
     controls = {}
     start_times = []
-    profiles.each do |profile|
+    if profiles.size > 1
+      profiles.each do |profile|
+        next unless profile.dependants.empty?
+        p_controls = filters.nil? ? profile.controls : profile.filtered_controls(filters)
+        p_controls.each do |control|
+          unless control.results.empty?
+            unless controls.key?(control.control_id)
+              controls[control.control_id] = { control: control, results: [] }
+            end
+            control.results.where(evaluation_id: id).each do |result|
+              controls[control.control_id][:results] << result
+              start_times << result.start_time
+            end
+          end
+        end
+      end
+    else
+      profile = profiles.first
       p_controls = filters.nil? ? profile.controls : profile.filtered_controls(filters)
       p_controls.each do |control|
-        controls[control.id] = { control: control, results: [] }
+        controls[control.control_id] = { control: control, results: [] }
         control.results.where(evaluation_id: id).each do |result|
-          controls[control.id][:results] << result
+          controls[control.control_id][:results] << result
           start_times << result.start_time
         end
       end
@@ -105,11 +130,11 @@ class Evaluation < ApplicationRecord
       ct[:status_symbol] = sym
       counts[sym] += 1
     end
-    logger.debug "return counts: #{counts}"
     [counts, controls, start_tm]
   end
 
   def status_symbol(control, ct_results)
+    #Rails.logger.debug "control: #{control.inspect}, ct_results: #{ct_results.inspect}"
     if control.impact == 'none'
       :not_applicable
     elsif ct_results.nil?
@@ -166,18 +191,18 @@ class Evaluation < ApplicationRecord
   def tag_values(tag, control, params, nist)
     tag.each do |value|
       nist[value] = [] unless nist[value]
-      ct_results = params[:ct_results]
+      ct_results = params[:results]
       sym = status_symbol(control, ct_results)
       next unless params[:status_symbol].nil? || params[:status_symbol] == sym
 
-      code_descs = ct_results ? ct_results.map { |result| "#{result.status.upcase} -- #{result.code_desc}" }.join("\n") : ''
+      code_descs = ct_results ? ct_results.map{ |result| "#{result.status.upcase} -- #{result.code_desc}" }.join("\n") : ''
       nist[value] << { "name": control.control_id.to_s, "status_value": status_symbol_value(sym), "children":
         [{ "name": control.control_id.to_s, "title": control.title, "nist": control.tag('nist'),
           "family": value, "status_symbol": sym, "status_value": status_symbol_value(sym),
           "severity": params[:severity], "description": control.desc,
           "check": control.tag('check'), "fix": control.tag('fix'), "start_time": control.start_time,
           "code": control.code, "run_time": control.run_time, "profile_id": control.profile_id,
-          "impact": control.impact, "value": 1, "id": control.id,
+          "profile_name": control.profile.name, "impact": control.impact, "value": 1, "id": control.id,
           "result_message": "#{result_message(sym)}\n\n#{code_descs}" }] }
     end
   end
@@ -206,19 +231,26 @@ class Evaluation < ApplicationRecord
   end
 
   def nist_hash(cat, status_symbol, ex_ids, filters = nil)
-    cts = {}
+    nist = {}
+    params = { status_symbol: status_symbol }
     profiles.includes(controls: :results).each do |profile|
-      profile.controls.each do |control|
-        control.results.where(evaluation_id: id).each do |result|
-          unless cts.key?(result.control_id)
-            cts[result.control_id] = []
+      next if ex_ids.include?(profile.id)
+      if profiles.size == 1 or profile.dependants.empty?
+        profile.controls.each do |control|
+          severity = control.severity
+          next unless severity && (cat.nil? || cat == severity)
+          params[:severity] = severity
+          params[:results] = control.results.where(evaluation_id: id)
+          nist_tag = control.tag('nist', true)
+          if nist_tag.empty?
+            tag_values ['UM-1'], control, params, nist
+          else
+            tag_values nist_tag, control, params, nist
           end
-          cts[result.control_id] << result
         end
       end
     end
-    params = { status_symbol: status_symbol, cts: cts }
-    profile_values cat, params, ex_ids, filters
+    nist
   end
 
   def self.parse(hash, user)
@@ -232,13 +264,32 @@ class Evaluation < ApplicationRecord
       hash['created_by_id'] = user.id
       evaluation = Evaluation.create(hash)
       evaluation.save
-      all_profiles = Profile.parse(profiles, evaluation.id)
+      all_profiles, parent = Profile.parse(profiles, evaluation.id)
       all_profiles.each do |profile|
         if profile.is_a?(Profile)
           evaluation.profiles << profile
         else
           profile['created_by_id'] = user.id
           evaluation.profiles.create(profile)
+        end
+      end
+    end
+    if parent.present? and profiles.size > 1
+      dependants = []
+      profiles.each do |profile|
+        unless profile['name'] == parent
+          dependants << profile['name']
+        end
+      end
+      parent_profile = evaluation.profiles.where(name: parent).first
+      if parent_profile.present?
+        evaluation.profiles.where.not(name: parent).each do |dependant|
+          if dependants.include?(dependant.name)
+            existing = DependantsParent.where(parent_id: parent_profile.id, dependant_id: dependant.id).first
+            unless existing.present?
+              DependantsParent.create(parent_id: parent_profile.id, dependant_id: dependant.id)
+            end
+          end
         end
       end
     end

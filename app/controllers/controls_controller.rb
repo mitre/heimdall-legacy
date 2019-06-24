@@ -9,6 +9,12 @@ class ControlsController < ApplicationController
   def details
     logger.debug "DETAILS for #{@control.control_id}"
     @evaluation = Evaluation.find(params[:evaluation_id]) if params.key?(:evaluation_id)
+    if @profile == @evaluation.base_profile
+      @parent = nil
+    else
+      @parent = @evaluation.base_profile
+      @parent_control = @parent.controls.where(control_id: @control.control_id).first
+    end
     respond_to do |format|
       format.js { render layout: false }
     end

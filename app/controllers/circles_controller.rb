@@ -31,6 +31,7 @@ class CirclesController < ApplicationController
   # POST /circles.json
   def create
     @circle = Circle.new(circle_params)
+    @circle.created_by = current_user
     current_user.add_role(:owner, @circle)
     respond_to do |format|
       if @circle.save
