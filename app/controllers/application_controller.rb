@@ -14,8 +14,10 @@ class ApplicationController < ActionController::Base
     if session[:user_id]
       @current_user ||= User.find_by(id: session[:user_id])
       if @current_user
-        unless @current_user.has_role?(:admin) and User.first == User.last
-          @current_user.add_role :admin
+        unless @current_user.has_role?(:admin)
+          if User.first == User.last
+            @current_user.add_role :admin
+          end
         end
         if @current_user.api_key.nil?
           @current_user.api_key = SecureRandom.urlsafe_base64

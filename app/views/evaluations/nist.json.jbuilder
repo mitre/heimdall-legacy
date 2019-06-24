@@ -168,6 +168,7 @@ json.controls all_controls.each do |key, ctl|
   json.id key
   json.family ctl[:family]
   json.profile_id ctl[:profile_id]
+  json.profile_name ctl[:profile_name]
   json.name ctl[:name]
   json.title ctl[:title]
   json.description ctl[:description]

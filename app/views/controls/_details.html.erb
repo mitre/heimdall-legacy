@@ -1,61 +1,10 @@
-<ul class="nav nav-tabs">
-  <% if evaluation %>
-    <li class="active"><a data-toggle="tab" href="#fdetails-<%= control.id %>">Finding Details</a></li>
-    <li><a data-toggle="tab" href="#details-<%= control.id %>">Details</a></li>
-  <% else %>
-    <li class="active"><a data-toggle="tab" href="#details-<%= control.id %>">Details</a></li>
-  <% end %>
-  <li><a data-toggle="tab" href="#inspec_code-<%= control.id %>" >Inspec Code</a></li>
-</ul>
-<div class="tab-content">
-  <% if evaluation %>
-    <div id="fdetails-<%= control.id %>" class="tab-pane fade in active">
-      <table class="table table-bordered table-striped">
-        <tr><td colspan="3"><%= result_message(evaluation.status_symbol(control, control.results)) %>:<br><%= control.desc %></td><tr>
-        <% control.results.each do |result| %>
-          <tr>
-            <td><%= result.status.upcase %></td>
-            <td style="max-width:300px; word-wrap:break-word">Test: <%= result.code_desc %></td>
-            <td style="max-width:300px; word-wrap:break-word"><% if result.message %>Message: <%= result.message %><% end %></td>
-          </tr>
-        <% end %>
-      </table>
-    </div>
-    <div id="details-<%= control.id %>" class="tab-pane fade">
-  <% else %>
-  <div id="details-<%= control.id %>" class="tab-pane fade in active">
-  <% end %>
-    <table class="table table-bordered table-striped">
-      <tr><td>Control:</td><td><%= control.control_id %></td></tr>
-      <tr><td>Title:</td><td><%= control.title %></td></tr>
-      <% if control.descriptions.present? %>
-        <tr><td>Descriptions:</td>
-          <td><ul>
-            <% control.descriptions.each do |desc| %>
-              <li><%= desc.label %>: <%= desc.data %></li>
-            <% end %>
-          </ul></td>
-        </tr>
-      <% else %>
-        <tr><td>Desc:</td><td><%= control.desc %></td></tr>
-      <% end %>
-      <tr><td>Impact:</td><td><%= control.impact %></td></tr>
-      <% if nist = control.tag('nist') %>
-        <tr><td>NIST Ref:</td><td><%= nist %></td></tr>
-      <% end %>
-      <% if check = control.tag('check') %>
-        <tr><td>Check Text:</td><td><%= check %></td></tr>
-      <% end %>
-      <% if fix = control.tag('fix') %>
-        <tr><td>Fix Text:</td><td><%= fix %></td></tr>
-      <% end %>
-    </table>
-  </div>
-  <div id="inspec_code-<%= control.id %>" class="tab-pane fade">
-    <table class="table table-bordered table-striped">
-      <tr>
-        <td><pre><code class="language-ruby"><%= control.code %></code></pre></td>
-      </tr>
-    </table>
-  </div>
+<div class="content">
+  <h4><%= @profile.name %></h4>
+  <%= render partial: 'controls/profile_details', locals: { evaluation: @evaluation, control: @control } %>
 </div>
+<% if @parent.present? %>
+  <div class="content">
+    <h4>Parent profile: <%= @parent.name %></h4>
+    <%= render partial: 'controls/profile_details', locals: { evaluation: @evaluation, control: @parent_control } %>
+  </div>
+<% end %>

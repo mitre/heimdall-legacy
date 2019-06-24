@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2019_06_05_135059) do
+ActiveRecord::Schema.define(version: 2019_06_23_091605) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -63,6 +63,11 @@ ActiveRecord::Schema.define(version: 2019_06_05_135059) do
     t.bigint "control_id", null: false
     t.index ["control_id", "group_id"], name: "index_controls_groups_on_control_id_and_group_id"
     t.index ["group_id", "control_id"], name: "index_controls_groups_on_group_id_and_control_id"
+  end
+
+  create_table "dependants_parents", id: false, force: :cascade do |t|
+    t.bigint "parent_id", null: false
+    t.bigint "dependant_id", null: false
   end
 
   create_table "depends", force: :cascade do |t|
@@ -150,7 +155,6 @@ ActiveRecord::Schema.define(version: 2019_06_05_135059) do
     t.string "license"
     t.string "summary"
     t.string "version"
-    t.string "parent_profile"
     t.string "status"
     t.string "sha256"
     t.integer "created_by_id"

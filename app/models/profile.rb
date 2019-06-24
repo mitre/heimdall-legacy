@@ -7,6 +7,12 @@ class Profile < ApplicationRecord
   has_many :depends
   has_many :aspects
   belongs_to :created_by, class_name: 'User', foreign_key: 'created_by_id'
+  has_many :dependants_list, foreign_key: :parent_id, class_name: 'DependantsParent'
+  has_many :dependants, through: :dependants_list
+
+  has_many :on_dependants_list, foreign_key: :dependant_id, class_name: 'DependantsParent'
+  has_many :parents, through: :on_dependants_list
+
   accepts_nested_attributes_for :controls
   accepts_nested_attributes_for :supports
   accepts_nested_attributes_for :groups
@@ -98,6 +104,21 @@ class Profile < ApplicationRecord
     nist
   end
 
+  def upload_results(hash, evaluation_id)
+    hash = hash.deep_transform_keys { |key| key.to_s.tr('-', '_').gsub(/\battributes\b/, 'aspects').gsub(/\bid\b/, 'control_id') }
+    controls_ary = hash.delete('controls')
+    controls_ary.try(:each) do |control|
+      ctl = controls.where(control_id: control['control_id']).first
+      results = control.delete('results')
+      if ctl.present? and results.present?
+        results.each do |result|
+          result[:evaluation_id] = evaluation_id
+          ctl.results.create(result)
+        end
+      end
+    end
+  end
+
   def self.evaluation_counts
     counts = {}
     Profile.all.map { |profile| counts[profile.id] = 0 }
@@ -111,17 +132,24 @@ class Profile < ApplicationRecord
 
   def self.parse(profiles, evaluation_id=nil)
     all_profiles = []
+    parent = nil
     profiles.try(:each) do |profile_hash|
       sha256 = profile_hash['sha256']
+      Rails.logger.debug "PARSING profile #{profile_hash.inspect}"
+      if profile_hash.key?('parent_profile')
+        parent = profile_hash.delete('parent_profile')
+        Rails.logger.debug "PARENT profile: #{parent}"
+      end
       profile = Profile.where(sha256: sha256).first
       if profile.present?
+        profile.upload_results(profile_hash, evaluation_id)
         all_profiles << profile
       else
         new_profile_hash = Profile.transform(profile_hash.deep_dup, evaluation_id)
         all_profiles << new_profile_hash
       end
     end
-    all_profiles
+    [all_profiles, parent]
   end
 
   def self.transform(hash, evaluation_id=nil)

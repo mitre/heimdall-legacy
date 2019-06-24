@@ -9,7 +9,6 @@ class CreateProfiles < ActiveRecord::Migration[5.2]
       t.string :license
       t.string :summary
       t.string :version
-      t.string :parent_profile
       t.string :status
       t.string :sha256
       t.integer :created_by_id
