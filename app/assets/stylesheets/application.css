@@ -195,6 +195,9 @@
   margin-right: 10px;
   margin-top: -5px !important;;
 }
+.form-group {
+  color: #555;
+}
 #editor {
     top: 0;
     right: 0;

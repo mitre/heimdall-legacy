@@ -150,6 +150,7 @@ class EvaluationsController < ApplicationController
   def upload
     authorize! :create, Evaluation
     file = params[:file]
+    circle_id = params[:circle_id]
     if (@eval = Evaluation.parse(JSON.parse(file.read), current_user))
       @evaluation = Evaluation.find(@eval.id)
       @evaluation.findings
@@ -161,7 +162,14 @@ class EvaluationsController < ApplicationController
           @evaluation.tags.create(name: tag.downcase, value: params[tag.downcase])
         end
       end
-      redirect_to evaluations_url, notice: 'Evaluation uploaded.'
+
+      if circle_id.present?
+        @circle = Circle.find(circle_id)
+        @circle.evaluations << @evaluation
+        redirect_to @circle, notice: 'Evaluation uploaded.'
+      else
+        redirect_to evaluations_url, notice: 'Evaluation uploaded.'
+      end
     else
       redirect_to evaluations_url, notice: 'File does not contain an evaluation.'
     end
@@ -170,6 +178,7 @@ class EvaluationsController < ApplicationController
   def upload_api
     file = params[:file]
     sign_in_api_user(params[:email], params[:api_key])
+    circle = params[:circle]
     if current_user
       if current_user.has_role?(:admin) or current_user.has_role?(:editor)
         if (@eval = Evaluation.parse(JSON.parse(file.read), current_user))
@@ -180,6 +189,12 @@ class EvaluationsController < ApplicationController
             next unless params[tag.downcase]
 
             @evaluation.tags.create(name: tag.downcase, value: params[tag.downcase])
+          end
+          if circle.present?
+            @circle = Circle.where(name: circle).first
+            if @circle and current_user.my_circles.include?(@circle)
+              @circle.evaluations << @evaluation
+            end
           end
           render body: 'SUCCESS: Evaluation uploaded'
         else

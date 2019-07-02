@@ -110,6 +110,13 @@ RSpec.describe EvaluationsController, type: :controller do
         expect(response).to redirect_to(evaluations_path)
       end
 
+      it 'can upload an evaluation to a circle' do
+        circle = create :circle, created_by: user
+        @file = fixture_file_upload('sample_jsons/good_nginxresults.json', 'text/json')
+        post :upload, params: { file: @file, circle: circle.name }, session: valid_session
+        expect(response).to redirect_to(evaluations_path)
+      end
+
       it 'rejects a malformed evaluation' do
         @file = fixture_file_upload('spec/support/bad_profile.json', 'text/json')
         post :upload, params: { file: @file }, session: valid_session
