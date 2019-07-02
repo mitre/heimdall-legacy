@@ -167,10 +167,21 @@ Although it's just a suggestion, we have also found that having a few generic re
 
 To upload through curl you'll need an API key. This is located on your profile page which can be reached by clicking on your user name in the top right corner, then on profile.
 
-The upload API takes three parameters: the file, your email address, and your API key.
+At its most basic, the upload API takes three parameters: the file, your email address, and your API key.
 
 ```
-curl -F "file=@FILE_PATH" -F email=EMAIL -F api_key=API_KEY http://localhost:3000/evaluation_upload_api
+curl -F "file=@FILE_PATH" -F "email=EMAIL" -F "api_key=API_KEY" http://localhost:3000/evaluation_upload_api
+```
+If you are an owner or member of any circles, you can have the uploaded evaluation added to your circle by supplying a circle name parameter:
+
+```
+curl -F "file=@FILE_PATH" -F "email=EMAIL" -F "api_key=API_KEY" -F "circle=CIRCLE NAME" http://localhost:3000/evaluation_upload_api
+```
+
+You can also added parameters for Hostname, UUID, FISMA System, and Environment. The first three can by any string, but the environment needs to be one of ['sandbox, 'dev', 'test', 'impl', 'prod']
+
+```
+curl -F "file=@FILE_PATH" -F "email=EMAIL" -F "api_key=API_KEY" -F "hostname=HOSTNAME" -F "uuid=UUID" -F "fisma system=FISMA" -F "environment=test" http://localhost:3000/evaluation_upload_api
 ```
 
 ### Useful Tools

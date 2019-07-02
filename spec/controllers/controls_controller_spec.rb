@@ -36,12 +36,18 @@ RSpec.describe ControlsController, type: :controller do
 
   context 'Editor is logged in' do
     let(:user) { FactoryBot.create(:editor) }
+    let(:valid_attributes) {
+      FactoryBot.build(:profile).attributes
+    }
+
     before do
       db_sign_in user
     end
 
     before(:each) do
-      @profile = create :profile, created_by: user
+      @evaluation = create :evaluation, created_by: user
+      valid_attributes['created_by'] = user
+      @profile = @evaluation.profiles.create! valid_attributes
     end
 
     describe 'GET #show' do
@@ -55,7 +61,7 @@ RSpec.describe ControlsController, type: :controller do
     describe 'GET #details' do
       it 'returns a success response' do
         control = create :control, profile_id: @profile.id
-        get :details, format: 'js', params: { profile_id: control.profile_id, id: control.to_param }, xhr: true, session: valid_session
+        get :details, format: 'js', params: { profile_id: control.profile_id, id: control.to_param, evaluation_id: @evaluation.id }, xhr: true, session: valid_session
         expect(response.content_type).to eq('text/javascript')
       end
     end

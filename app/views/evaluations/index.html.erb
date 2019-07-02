@@ -1,4 +1,7 @@
-<!-- Content Header (Page header) -->
+<% if can? :create, Evaluation %>
+  <%= render :partial => 'evaluations/upload_modal', :locals => { :circle => nil } %>
+<% end %>
+
 <section class="content-header">
   <h1>
     Evaluations
@@ -8,7 +11,6 @@
     <li class="active">Evaluations</li>
   </ol>
 </section>
-
 
 <section class="content container-fluid">
   <div class="row">
@@ -36,7 +38,7 @@
                     <tr>
                       <th>Profiles</th>
                       <th>Filename</th>
-                      <th>Start Time</th>
+                      <th>Uploaded</th>
                       <th>Duration</th>
                       <th>InSpec Version</th>
                       <th>Platform Name</th>
@@ -52,7 +54,7 @@
                     <tr>
                       <td><%= link_to evaluation.profiles.map(&:name).join(', '), evaluation %></td>
                       <td><%= evaluation.filename %></td>
-                      <td><%= evaluation.start_time %></td>
+                      <td><%= evaluation.created_at %></td>
                       <td><%= evaluation.statistics[:duration] %></td>
                       <td><%= evaluation.version %></td>
                       <td><%= evaluation.platform[:name] %></td>
@@ -99,7 +101,7 @@
                           <tr>
                             <th>Profiles</th>
                             <th>Filename</th>
-                            <th>Start Time</th>
+                            <th>Uploaded At</th>
                             <th>Duration</th>
                             <th>InSpec Version</th>
                             <th>Platform Name</th>
@@ -115,7 +117,7 @@
                           <tr>
                             <td><%= link_to evaluation.profiles.map(&:name).join(', '), evaluation %></td>
                             <td><%= evaluation.filename %></td>
-                            <td><%= evaluation.start_time %></td>
+                            <td><%= evaluation.created_at %></td>
                             <td><%= evaluation.statistics[:duration] %></td>
                             <td><%= evaluation.version %></td>
                             <td><%= evaluation.platform[:name] %></td>
@@ -157,32 +159,9 @@
     </div>
     <% if can? :create, Evaluation %>
       <div class="col-xs-6">
-        <div class="box box-primary">
-          <div class="box-header with-border">
-            <h3 class="box-title">Upload Evaluation</h3>
-          </div>
-          <div class="box-body">
-            <%= form_tag(upload_evaluations_path, multipart: true, :html => {class: 'form-control'}) do %>
-              <div class="input-group">
-                <%= file_field_tag :file, :class => "menu-text" %>
-              </div>
-              <br>
-              <% (Constants::TAG_NAMES - ['Filename', 'Environment']).each do |tag| %>
-                <div class="form-group">
-                  <%= label_tag(tag, "#{tag}:") %>
-                  <%= text_field_tag(tag.downcase) %>
-                </div>
-              <% end %>
-              <div class="form-group">
-                <%= label_tag(:environment, 'Environment:') %>
-                <%= select_tag :environment, options_for_select(Constants::ENV_TAG_NAMES), include_blank: true %>
-              </div>
-              <div class="actions">
-                <%= submit_tag 'Upload', :class => "btn btn-info" %>
-              </div>
-            <% end %>
-          </div>
-        </div>
+        <% if can? :create, Evaluation %>
+          <button type="button" class="btn btn-info btn-lg" data-toggle="modal" data-target="#myModal">Upload Evaluation</button>
+        <% end %>
       </div>
     <% end %>
   </div>
@@ -195,7 +174,8 @@
       "iDisplayLength": 25,
       "processing": true,
       "serverSide": false,
-      "pagingType": "full_numbers"
+      "pagingType": "full_numbers",
+      "order": [[ 2, "desc" ]]
       // pagingType is optional, if you want full pagination controls.
       // Check dataTables documentation to learn more about
       // available options.
