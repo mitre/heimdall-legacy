@@ -275,20 +275,12 @@ class Evaluation < ApplicationRecord
       end
     end
     if parent.present? and profiles.size > 1
-      dependants = []
-      profiles.each do |profile|
-        unless profile['name'] == parent
-          dependants << profile['name']
-        end
-      end
       parent_profile = evaluation.profiles.where(name: parent).first
       if parent_profile.present?
         evaluation.profiles.where.not(name: parent).each do |dependant|
-          if dependants.include?(dependant.name)
-            existing = DependantsParent.where(parent_id: parent_profile.id, dependant_id: dependant.id).first
-            unless existing.present?
-              DependantsParent.create(parent_id: parent_profile.id, dependant_id: dependant.id)
-            end
+          existing = DependantsParent.where(parent_id: parent_profile.id, dependant_id: dependant.id).first
+          unless existing.present?
+            DependantsParent.create(parent_id: parent_profile.id, dependant_id: dependant.id)
           end
         end
       end
