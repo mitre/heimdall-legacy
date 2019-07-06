@@ -44,7 +44,7 @@ There two versions of the MITRE Heimdall - the full [Heimdall](https://github.co
 
 Heimdall supports running via RPM packages, Docker and Chef Habitat(coming soon). For production installations we recommend one of these three methods.
 
-We publish our latest builds on [packackager.io](https://packager.io/gh/mitre/heimdall_activerecord), [Docker Hub](https://cloud.docker.com/u/mitre/repository/docker/mitre/heimdall_postgres) and Chef Habitat (Coming Soon).
+We publish our latest builds on [packackager.io](https://packager.io/gh/mitre/heimdall_activerecord), [Docker Hub](https://hub.docker.com/r/mitre/heimdall_postgres) and Chef Habitat (Coming Soon).
 
 ### Run with Vagrant and Virtualbox
 
