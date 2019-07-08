@@ -1,5 +1,5 @@
 {
-  "name": "heimdall_postgres",
+  "name": "heimdall",
   "private": true,
   "dependencies": {}
 }
