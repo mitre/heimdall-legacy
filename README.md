@@ -64,14 +64,14 @@ To run Heimdall you just need to add the Heimdall [Packager.io](https://dl.packa
 
 1. `curl -o /etc/yum.repos.d/heimdall.repo https://dl.packager.io/srv/mitre/heimdall/master/installer/el/7.repo`
 2. `yum update`
-3. `yum install -y heimdall-activerecord`
+3. `yum install -y heimdall`
 4. `postgresql-setup initdb`
 5. `echo "local all postgres trust" > /var/lib/pgsql/data/pg_hba.conf`
 6. `systemctl enable postgresql`
 7. `systemctl start postgresql`
-8. `heimdall-activerecord run rake db:create db:schema:load || true`
-9. `heimdall-activerecord run rake db:migrate`
-10. `heimdall-activerecord scale web=1`
+8. `heimdall run rake db:create db:schema:load || true`
+9. `heimdall run rake db:migrate`
+10. `heimdall scale web=1`
 11. Navigate to `hostname:6000`
 12. Create your first account
 13. Enjoy
