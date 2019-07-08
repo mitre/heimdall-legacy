@@ -8,11 +8,11 @@ Heimdall supports viewing of InSpec profiles and evaluations in a convenient int
 
 ## Heimdall vs Heimdall-Lite
 
-There two versions of the MITRE Heimdall - the full [Heimdall](https://github.com/mitre/heimdall_activerecord/) and the [Heimdall-Lite](https://github.com/mitre/heimdall-lite/) version. We produced each to meet different needs and use-cases.
+There two versions of the MITRE Heimdall - the full [Heimdall](https://github.com/mitre/heimdall/) and the [Heimdall-Lite](https://github.com/mitre/heimdall-lite/) version. We produced each to meet different needs and use-cases.
 
 ### Use Cases
 
-| [Heimdall-Lite](https://github.com/mitre/heimdall-lite/) | [Heimdall](https://github.com/mitre/heimdall_activerecord/) |
+| [Heimdall-Lite](https://github.com/mitre/heimdall-lite/) | [Heimdall](https://github.com/mitre/heimdall/) |
 | :------------------------------------------------------- | :---------------------------------------------------------- |
 | Ship the App & Data via simple Email                     | Multiple Teams Support                                      |
 | Minimal Footprint & Deployment Time                      | Timeline and Report History                                 |
@@ -44,7 +44,7 @@ There two versions of the MITRE Heimdall - the full [Heimdall](https://github.co
 
 Heimdall supports running via RPM packages, Docker and Chef Habitat(coming soon). For production installations we recommend one of these three methods.
 
-We publish our latest builds on [packackager.io](https://packager.io/gh/mitre/heimdall_activerecord), [Docker Hub](https://hub.docker.com/r/mitre/heimdall_postgres) and Chef Habitat (Coming Soon).
+We publish our latest builds on [packackager.io](https://packager.io/gh/mitre/heimdall), [Docker Hub](https://hub.docker.com/r/mitre/heimdall_postgres) and Chef Habitat (Coming Soon).
 
 ### Run with Vagrant and Virtualbox
 
@@ -52,7 +52,7 @@ You can easily run a local instance for demo and testing purposes using our prov
 
 1. Install Vagrant
 2. Install a Virtualbox or some other Vagrant support VM system
-3. Grab our [Vagrantfile](https://github.com/mitre/heimdall_activerecord/blob/master/Vagrantfile) or just clone the github repository.
+3. Grab our [Vagrantfile](https://github.com/mitre/heimdall/blob/master/Vagrantfile) or just clone the github repository.
 4. run `vagrant up` in the directory where you cloned the `heimdall` repo or downloaded the `Vagrantfile`
 5. Navigate to `localhost:3000` once the process is complete
 6. Create your first account
@@ -60,9 +60,9 @@ You can easily run a local instance for demo and testing purposes using our prov
 
 ### Run with RPM
 
-To run Heimdall you just need to add the Heimdall [Packager.io](https://dl.packager.io/srv/mitre/heimdall_activerecord/master/installer/el/7.repo) repository to your Yum configuration and you can easily deploy and update Heimdall on RHEL7/CentOS7 system.
+To run Heimdall you just need to add the Heimdall [Packager.io](https://dl.packager.io/srv/mitre/heimdall/master/installer/el/7.repo) repository to your Yum configuration and you can easily deploy and update Heimdall on RHEL7/CentOS7 system.
 
-1. `curl -o /etc/yum.repos.d/heimdall.repo https://dl.packager.io/srv/mitre/heimdall_activerecord/master/installer/el/7.repo`
+1. `curl -o /etc/yum.repos.d/heimdall.repo https://dl.packager.io/srv/mitre/heimdall/master/installer/el/7.repo`
 2. `yum update`
 3. `yum install -y heimdall-activerecord`
 4. `postgresql-setup initdb`
@@ -83,7 +83,7 @@ Given that Heimdall requires at least a database service, we use Docker Compose.
 #### Setup Docker Container
 
 1. Install Docker
-2. Download heimdall by running `git clone https://github.com/mitre/heimdall_activerecord.git`.
+2. Download heimdall by running `git clone https://github.com/mitre/heimdall.git`.
 3. Navigate to the base folder where `docker-compose.yml` is located
 4. Run the following commands in a terminal window from the heimdall source directory:
    - `./setup-docker-secrets.sh`
@@ -257,7 +257,7 @@ Please feel free to contact us by **opening an issue** on the issue board, or, a
 
 ### Our PR Process
 
-1. open an issue on the main heimdall_activerecord website noting the issues your PR will address
+1. open an issue on the main heimdall website noting the issues your PR will address
 2. fork the repository
 3. checkout your repository
 4. cd to the repository
@@ -270,7 +270,7 @@ Please feel free to contact us by **opening an issue** on the issue board, or, a
 11. (if needed) create and document any example or templates
 12. (if needed) create any supporting scripts
 13. git commit -a -s `<your_branch>`
-14. Open a PRs on the MITRE heimdall_activerecord repository
+14. Open a PRs on the MITRE heimdall repository
 
 # Testing
 
@@ -278,7 +278,7 @@ There are a set of unit tests. Run `rake test` to run the tests.
 
 To release a new version, update the version number in `version.rb` according to the [Semantic Versioning Policy](https://semver.org/).
 
-Then, run `bundle exec rake release` which will create a git tag for the specified version, push git commits and tags, and push to [github.com](https://github.com/mitre/heimdall_activerecord).
+Then, run `bundle exec rake release` which will create a git tag for the specified version, push git commits and tags, and push to [github.com](https://github.com/mitre/heimdall).
 
 ## Licensing and Authors
 

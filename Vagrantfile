@@ -1,5 +1,5 @@
 $script = <<~SCRIPT
-  curl -o /etc/yum.repos.d/heimdall.repo https://dl.packager.io/srv/mitre/heimdall_activerecord/master/installer/el/7.repo
+  curl -o /etc/yum.repos.d/heimdall.repo https://dl.packager.io/srv/mitre/heimdall/master/installer/el/7.repo
 
   yum install -y heimdall-activerecord
 
