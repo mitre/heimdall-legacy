@@ -3,6 +3,7 @@ module.exports = {
     sidebar: "auto",
     repo: "mitre/heimdall",
     editLinks: true,
+    docsBranch: "landing-page",
     repoLabel: "Edit this project",
     nav: [
       { text: "Home", link: "/" },
