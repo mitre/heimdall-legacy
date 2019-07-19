@@ -49,7 +49,7 @@ module ApplicationHelper
   def pass_pixels(findings)
     Rails.logger.debug "FINDINGS: #{findings}"
     if findings and findings[:passed] != 0
-      (findings[:passed] / (findings[:failed] + findings[:passed] + findings[:not_tested] + findings[:not_reviewed]).to_f * 200.0).round
+      (findings[:passed] / (findings[:failed] + findings[:passed] + findings[:profile_error] + findings[:not_reviewed]).to_f * 200.0).round
     else
       0
     end
@@ -60,7 +60,7 @@ module ApplicationHelper
   end
 
   def compliance(findings)
-    (findings[:passed] / (findings[:failed] + findings[:passed] + findings[:not_tested] + findings[:not_reviewed]).to_f * 100.0).round(2)
+    (findings[:passed] / (findings[:failed] + findings[:passed] + findings[:profile_error] + findings[:not_reviewed]).to_f * 100.0).round(2)
   end
 
   def icon(clss)

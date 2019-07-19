@@ -1,10 +1,11 @@
 require 'inspec_tools'
+require 'fuzzystringmatch'
 
 class Evaluation < ApplicationRecord
   store :platform, accessors: [:name, :release], coder: JSON
   serialize :other_checks
   store :statistics, accessors: [:duration], coder: JSON
-  store :findings, accessors: [:failed, :passed, :not_reviewed, :not_tested, :not_applicable], coder: JSON
+  store :findings, accessors: [:failed, :passed, :not_reviewed, :profile_error, :not_applicable], coder: JSON
   has_many :tags, as: :tagger
   has_and_belongs_to_many :profiles
   belongs_to :created_by, class_name: 'User', foreign_key: 'created_by_id'
@@ -41,7 +42,40 @@ class Evaluation < ApplicationRecord
   end
 
   def included_profiles
-    base_profile.dependants
+    profiles.where.not(id: base_profile.id)
+  end
+
+  def fuzzy_match_profile(fuzzy_name, exclude)
+    best = nil
+    match = 0.4
+    jarow = FuzzyStringMatch::JaroWinkler.create(:pure)
+    profiles.where.not(id: exclude.id).each do |profile|
+      val = jarow.getDistance(fuzzy_name, profile.name)
+      if val > match
+        match = val
+        best = profile
+      end
+    end
+    best
+  end
+
+  def profile_code(profile, control_id)
+    code = "Profile Name: #{profile.name}\n"
+    code += "=============================================================\n"
+    control = profile.controls.where(control_id: control_id).first
+    code += control&.code + "\n"
+    profile.dependants&.each do |dependant|
+      code += profile_code(dependant, control_id) + "\n"
+    end
+    code
+  end
+
+  def control_code(control)
+    if base_profile.dependants.present?
+      profile_code(base_profile, control.control_id)
+    else
+      control.code
+    end
   end
 
   def filename
@@ -94,7 +128,7 @@ class Evaluation < ApplicationRecord
   end
 
   def status_counts(filters = nil)
-    counts = { failed: 0, passed: 0, not_reviewed: 0, not_tested: 0, not_applicable: 0 }
+    counts = { failed: 0, passed: 0, not_reviewed: 0, profile_error: 0, not_applicable: 0 }
     controls = {}
     start_times = []
     if profiles.size > 1
@@ -134,21 +168,22 @@ class Evaluation < ApplicationRecord
   end
 
   def status_symbol(control, ct_results)
-    #Rails.logger.debug "control: #{control.inspect}, ct_results: #{ct_results.inspect}"
     if control.impact == 'none'
       :not_applicable
     elsif ct_results.nil?
-      :not_tested
+      :profile_error
     else
-      status_list = ct_results.map(&:status).uniq
-      if status_list.include?('failed')
+      status_list = ct_results.map(&:status_symbol).uniq
+      if status_list.include?(:profile_error)
+        :profile_error
+      elsif status_list.include?(:failed)
         :failed
-      elsif status_list.include?('passed')
+      elsif status_list.include?(:passed)
         :passed
-      elsif status_list.include?('skipped')
+      elsif status_list.include?(:not_reviewed)
         :not_reviewed
       else
-        :not_tested
+        :profile_error
       end
     end
   end
@@ -230,27 +265,49 @@ class Evaluation < ApplicationRecord
     nist
   end
 
-  def nist_hash(cat, status_symbol, ex_ids, filters = nil)
-    nist = {}
-    params = { status_symbol: status_symbol }
-    profiles.includes(controls: :results).each do |profile|
-      next if ex_ids.include?(profile.id)
-      if profiles.size == 1 or profile.dependants.empty?
+  def filtered_controls(ex_ids, filters = nil)
+    controls = {}
+    p_controls = filters.nil? ? base_profile.controls.includes(:results, :tags) : base_profile.filtered_controls(filters)
+    p_controls.each do |control|
+      controls[control.control_id] = control
+    end
+    included_profiles.each do |profile|
+      if ex_ids.include?(profile.id)
         profile.controls.each do |control|
-          severity = control.severity
-          next unless severity && (cat.nil? || cat == severity)
-          params[:severity] = severity
-          params[:results] = control.results.where(evaluation_id: id)
-          nist_tag = control.tag('nist', true)
-          if nist_tag.empty?
-            tag_values ['UM-1'], control, params, nist
-          else
-            tag_values nist_tag, control, params, nist
+          controls.delete(control.control_id)
+        end
+      else
+        d_controls = filters.nil? ? profile.controls.includes(:results, :tags) : profile.filtered_controls(filters)
+        d_controls.each do |control|
+          unless controls[control.control_id].present?
+            controls[control.control_id] = control
+          end
+          unless controls[control.control_id].results.present?
+            controls[control.control_id] = control
           end
         end
       end
     end
-    nist
+    controls.values
+  end
+
+  def nist_hash(cat, status_symbol_param, ex_ids, filters = nil)
+    nist = {}
+    params = { status_symbol: status_symbol_param }
+    controls = filtered_controls(ex_ids, filters = nil)
+    controls.each do |control|
+      severity = control.severity
+      next unless severity && (cat.nil? || cat == severity)
+      params[:severity] = severity
+      params[:results] = control.results.where(evaluation_id: id)
+      nist_tag = control.tag('nist', true)
+      if nist_tag.empty?
+        tag_values ['UM-1'], control, params, nist
+      else
+        tag_values nist_tag, control, params, nist
+      end
+    end
+    [nist, controls]
   end
 
   def self.parse(hash, user)
@@ -264,7 +321,7 @@ class Evaluation < ApplicationRecord
       hash['created_by_id'] = user.id
       evaluation = Evaluation.create(hash)
       evaluation.save
-      all_profiles, parent = Profile.parse(profiles, evaluation.id)
+      all_profiles = Profile.parse(profiles, evaluation.id)
       all_profiles.each do |profile|
         if profile.is_a?(Profile)
           evaluation.profiles << profile
@@ -274,13 +331,19 @@ class Evaluation < ApplicationRecord
         end
       end
     end
-    if parent.present? and profiles.size > 1
-      parent_profile = evaluation.profiles.where(name: parent).first
-      if parent_profile.present?
-        evaluation.profiles.where.not(name: parent).each do |dependant|
-          existing = DependantsParent.where(parent_id: parent_profile.id, dependant_id: dependant.id).first
-          unless existing.present?
-            DependantsParent.create(parent_id: parent_profile.id, dependant_id: dependant.id)
+
+    if evaluation.profiles.size > 1
+      evaluation.profiles.each do |profile|
+        profile.depends&.each do |depend|
+          child = evaluation.profiles.where(name: depend.name).first
+          unless child.present?
+            child = evaluation.fuzzy_match_profile(depend.name, profile)
+          end
+          if child.present?
+            existing = DependantsParent.where(parent_id: profile.id, dependant_id: child.id).first
+            unless existing.present?
+              DependantsParent.create(parent_id: profile.id, dependant_id: child.id)
+            end
           end
         end
       end

@@ -105,7 +105,7 @@ class EvaluationsController < ApplicationController
     end
     Rails.logger.debug "ex_ids: #{ex_ids}"
     @control_hash = nil
-    @control_hash ||= @evaluation.nist_hash category, status_sym, ex_ids, filters
+    @control_hash, @controls = @evaluation.nist_hash category, status_sym, ex_ids, filters
     @name = Constants::NIST_800_53['name']
     @families = Constants::NIST_800_53['children']
   end

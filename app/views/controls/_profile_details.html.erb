@@ -14,9 +14,13 @@
         <tr><td colspan="3"><%= result_message(evaluation.status_symbol(control, control.results)) %>:<br><%= control.desc %></td><tr>
         <% control.results.where(evaluation_id: evaluation.id).each do |result| %>
           <tr>
-            <td><%= result.status.upcase %></td>
+            <td>
+              <% if result.backtrace.present? %>ERROR<% else %><%= result.status.upcase %><% end %></td>
             <td style="max-width:300px; word-wrap:break-word">Test: <%= result.code_desc %></td>
-            <td style="max-width:300px; word-wrap:break-word"><% if result.message %>Message: <%= result.message %><% end %></td>
+            <td style="max-width:300px; word-wrap:break-word">
+              <% if result.message %>Message: <%= result.message %><% end %>
+              <% if result.exception %><br>Exception: <%= result.exception %><% end %>
+            </td>
           </tr>
         <% end %>
       </table>

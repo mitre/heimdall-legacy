@@ -136,13 +136,6 @@ class Profile < ApplicationRecord
     profiles.try(:each) do |profile_hash|
       sha256 = profile_hash['sha256']
       Rails.logger.debug "PARSING profile #{profile_hash.inspect}"
-      if profile_hash.key?('parent_profile')
-        profile_hash.delete('parent_profile')
-      end
-      if profile_hash.key?('depends')
-        parent = profile_hash['name']
-        Rails.logger.debug "PARENT profile: #{parent}"
-      end
       profile = Profile.where(sha256: sha256).first
       if profile.present?
         profile.upload_results(profile_hash, evaluation_id)
@@ -152,7 +145,7 @@ class Profile < ApplicationRecord
         all_profiles << new_profile_hash
       end
     end
-    [all_profiles, parent]
+    all_profiles
   end
 
   def self.transform(hash, evaluation_id=nil)
