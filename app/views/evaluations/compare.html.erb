@@ -138,13 +138,13 @@ document.addEventListener("turbolinks:load", function() {
     $('#controls_wrapper').children(":first").children(":first").append(divstr);
   }
 
-  var columns = [['x'], ['Passed'], ['Failed'], ['Not Applicable'], ['Not Tested'], ['Not Reviewed']];
+  var columns = [['x'], ['Passed'], ['Failed'], ['Not Applicable'], ['Profile Error'], ['Not Reviewed']];
   <% @evaluations.each_with_index do |eval, index| %>
     columns[0].push(<%= index + 1 %>);
     columns[1].push(<%= eval.findings[:passed] %>);
     columns[2].push(<%= eval.findings[:failed] %>);
     columns[3].push(<%= eval.findings[:not_applicable] %>);
-    columns[4].push(<%= eval.findings[:not_tested] %>);
+    columns[4].push(<%= eval.findings[:profile_error] %>);
     columns[5].push(<%= eval.findings[:not_reviewed] %>);
   <% end %>
 

@@ -22,14 +22,16 @@ class Result < ApplicationRecord
   end
 
   def status_symbol
-    if status.include?('failed')
+    if backtrace.present?
+      :profile_error
+    elsif status.include?('failed')
       :failed
     elsif status.include?('passed')
       :passed
     elsif status.include?('skipped')
       :not_reviewed
     else
-      :not_tested
+      :profile_error
     end
   end
 end

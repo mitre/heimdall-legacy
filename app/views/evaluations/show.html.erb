@@ -253,8 +253,8 @@ var evaluation_id = '<%= @evaluation.id %>';
             <div class="small-box bg-med-grey">
               <div class="inner">
                 <ul class="horizontal-list">
-                  <li><h3 id="not_tested_count"></h3></li>
-                  <li><h4>Not Tested&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</h4></li>
+                  <li><h3 id="profile_error_count"></h3></li>
+                  <li><h4>Profile Error&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</h4></li>
                 </ul>
                 <p class="small-font">(profile error)</p>
               </div>
@@ -619,7 +619,7 @@ var evaluation_id = '<%= @evaluation.id %>';
 <script>
 
 var cats = {"High": true, "Medium": true, "Low": true};
-var stats = {"Passed": true, "Not Applicable": true, "Failed": true, "Not Reviewed": true, "Not Tested": true};
+var stats = {"Passed": true, "Not Applicable": true, "Failed": true, "Not Reviewed": true, "Profile Error": true};
 var shown_id = null;
 var loaded = null;
 var compliance_count = 0.0;
@@ -830,7 +830,6 @@ function add_control_table(d) {
   rows = '';
   root_path = '<%= root_path %>';
   if (d.controls) {
-    console.log("Add " + d.controls.length + " rows to table");
     for(var i=0, len=d.controls.length; i < len; i++) {
       ctl = d.controls[i];
       ctl_id = ctl.id;
@@ -878,7 +877,7 @@ function clear_cat_filter(bool) {
 }
 
 function clear_stat_filter(bool) {
-  stats = {"Passed": bool, "Not Applicable": bool, "Failed": bool, "Not Reviewed": bool, "Not Tested": bool};
+  stats = {"Passed": bool, "Not Applicable": bool, "Failed": bool, "Not Reviewed": bool, "Profile Error": bool};
 }
 
 function exclude_profile(profile_id) {
@@ -902,7 +901,7 @@ function set_counts(d) {
   if (d.controls) {
     for(var i=0, len=d.controls.length; i < len; i++) {
       symbol = d.controls[i].status_symbol;
-      if (symbol == 'not_tested') {
+      if (symbol == 'profile_error') {
         not_test += 1;
       } else if (symbol == 'not_applicable') {
         not_app += 1;
@@ -921,13 +920,13 @@ function set_counts(d) {
   $('#failed_count').html(failed);
   $('#not_reviewed_count').html(not_rev);
   $('#not_applicable_count').html(not_app);
-  $('#not_tested_count').html(not_test);
+  $('#profile_error_count').html(not_test);
   status_data = [
                 ['Passed',  passed],
                 ['Failed',           failed],
                 ['Not Reviewed',   not_rev],
                 ['Not Applicable', not_app],
-                ['Not Tested',     not_test],
+                ['Profile Error',     not_test],
                 ];
 }
 

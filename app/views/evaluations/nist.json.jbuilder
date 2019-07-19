@@ -44,19 +44,17 @@ json.children @families do |family|
   json.name family['name']
   json.desc family['desc']
   fam_status_symbol = :not_reviewed
-  # Rails.logger.debug "#{family['name']}"
+
   json.children family['children'] do |control|
     control_total_impact = 0.0
     control_total_children = 0
     json.name control['name']
     sub_fam_status_symbol = :not_reviewed
-    # Rails.logger.debug "#{control['name']}"
     if @control_hash[control['name']]
       child_hsh = {}
       status_symbol = :not_reviewed
       # json.children @control_hash[control['name']].each do |child|
       @control_hash[control['name']].each do |child|
-        # Rails.logger.debug "child: #{child.inspect}"
         childf = child[:children].first
         # Rails.logger.debug "children: #{child[:children].inspect}"
         # Rails.logger.debug "childf: #{childf.inspect}"
@@ -166,22 +164,22 @@ json.status_symbol nist_status_symbol
 json.status_value convert_status_symbol(nist_status_symbol)
 json.controls all_controls.each do |key, ctl|
   json.id key
-  json.family ctl[:family]
+  json.family h(ctl[:family])
   json.profile_id ctl[:profile_id]
-  json.profile_name ctl[:profile_name]
-  json.name ctl[:name]
-  json.title ctl[:title]
-  json.description ctl[:description]
+  json.profile_name h(ctl[:profile_name])
+  json.name h(ctl[:name])
+  json.title h(ctl[:title])
+  json.description h(ctl[:description])
   json.nist ctl[:nist]
   json.status_symbol ctl[:status_symbol]
   json.status_symbol_title ctl[:status_symbol].to_s.titleize
   json.status_value ctl[:status_value]
   json.severity ctl[:severity]
   json.severity_cap ctl[:severity].capitalize
-  json.check ctl[:check]
-  json.fix ctl[:fix]
-  json.result_message ctl[:result_message]
-  json.code ctl[:code]
+  json.check h(ctl[:check])
+  json.fix h(ctl[:fix])
+  json.result_message h(ctl[:result_message])
+  json.code h(ctl[:code])
   json.start_time ctl[:start_time]
   json.run_time ctl[:run_time]
   json.impact ctl[:impact]

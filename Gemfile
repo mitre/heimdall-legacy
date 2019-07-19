@@ -50,7 +50,7 @@ gem 'nokogiri-happymapper'
 gem 'nokogiri'
 gem 'thor'
 gem 'json'
-
+gem 'fuzzy-string-match'
 gem 'inspec_tools', '~>1.3.0'
 gem 'roo'
 

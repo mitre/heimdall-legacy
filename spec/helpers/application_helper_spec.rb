@@ -59,7 +59,7 @@ RSpec.describe ApplicationHelper, type: :helper do
   end
 
   context 'with findings' do
-    let(:findings) { { passed: 23, failed: 43, not_reviewed: 23, not_tested: 10, not_applicable: 18 } }
+    let(:findings) { { passed: 23, failed: 43, not_reviewed: 23, profile_error: 10, not_applicable: 18 } }
 
     describe 'pass_pixels' do
       it 'converts an array to a string' do

@@ -693,7 +693,7 @@ fieldset[disabled] .btn-link:focus {
           <h2 class="box-title"><%= evaluation.profiles.map(&:name).join(', ') %></h2>
           <div class="box-body">
             <% counts, _ = evaluation.status_counts %>
-            <% total_count = counts[:failed] + counts[:passed] + counts[:not_reviewed] + counts[:not_tested] %>
+            <% total_count = counts[:failed] + counts[:passed] + counts[:not_reviewed] + counts[:profile_error] %>
             <% compliance_level = ((counts[:passed]).to_f / total_count) * 100 %>
             <h3>Compliance Level: <%= compliance_level.round(1) %>%</h3>
             <table width="80%" class="findings">
@@ -703,7 +703,7 @@ fieldset[disabled] .btn-link:focus {
                 <td>Not Reviewed: <%= counts[:not_reviewed] %></td>
               </tr>
               <tr>
-                <td>Not Tested: <%= counts[:not_tested] %></td>
+                <td>Profile Error: <%= counts[:profile_error] %></td>
                 <td>Not Applicable: <%= counts[:not_applicable] %></td>
               </tr>
             </table>
