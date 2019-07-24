@@ -27,7 +27,7 @@
             <td><%= evaluation.platform[:name] %> <%= evaluation.platform[:release] %></td>
             <td><%= evaluation.findings[:passed] %></td>
             <td><%= evaluation.findings[:failed] %></td>
-            <td><%= evaluation.findings[:profile_error] %></td>
+            <td><%= evaluation.findings[:not_tested] || evaluation.findings[:profile_error] %></td>
             <td><%= evaluation.findings[:not_applicable] %></td>
             <td><%= evaluation.findings[:not_reviewed] %></td>
             <td>

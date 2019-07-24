@@ -220,7 +220,7 @@ $(document).ready(function() {
     columns[1].push(<%= eval.findings[:passed] %>);
     columns[2].push(<%= eval.findings[:failed] %>);
     columns[3].push(<%= eval.findings[:not_applicable] %>);
-    columns[4].push(<%= eval.findings[:profile_error] %>);
+    columns[4].push(<%= eval.findings[:not_tested] || eval.findings[:profile_error] %>);
     columns[5].push(<%= eval.findings[:not_reviewed] %>);
   <% end %>
 
