@@ -216,7 +216,7 @@ class EvaluationsController < ApplicationController
       eval_params.each do |eval_id|
         evaluation = Evaluation.find(eval_id)
         @evaluations << evaluation
-        _, controls = evaluation.status_counts
+        _, controls, _ = evaluation.status_counts
         controls.each do |_, hsh|
           control = hsh[:control]
           unless @compare_hsh.key?(control.control_id)
