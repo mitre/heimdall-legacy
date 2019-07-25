@@ -18,7 +18,6 @@ class Evaluation < ApplicationRecord
     Rails.logger.debug 'get findings'
     if read_attribute(:findings).empty?
       counts, _, start_tm = status_counts
-      Rails.logger.debug "set start_time #{start_tm}"
       write_attribute(:findings, counts)
       write_attribute(:start_time, start_tm)
       save
@@ -131,40 +130,20 @@ class Evaluation < ApplicationRecord
     counts = { failed: 0, passed: 0, not_reviewed: 0, profile_error: 0, not_applicable: 0 }
     controls = {}
     start_times = []
-    if profiles.size > 1
-      profiles.each do |profile|
-        next unless profile.dependants.empty?
-        p_controls = filters.nil? ? profile.controls : profile.filtered_controls(filters)
-        p_controls.each do |control|
-          unless control.results.empty?
-            unless controls.key?(control.control_id)
-              controls[control.control_id] = { control: control, results: [] }
-            end
-            control.results.where(evaluation_id: id).each do |result|
-              controls[control.control_id][:results] << result
-              start_times << result.start_time
-            end
-          end
-        end
-      end
-    else
-      profile = profiles.first
-      p_controls = filters.nil? ? profile.controls : profile.filtered_controls(filters)
-      p_controls.each do |control|
-        controls[control.control_id] = { control: control, results: [] }
-        control.results.where(evaluation_id: id).each do |result|
-          controls[control.control_id][:results] << result
-          start_times << result.start_time
-        end
+    filtered = filtered_controls([], filters)
+    filtered.each do |control|
+      controls[control.control_id] = { control: control, results: [] }
+      control.results.where(evaluation_id: id).each do |result|
+        controls[control.control_id][:results] << result
+        start_times << result.start_time
       end
     end
-    start_tm = start_times.compact.sort.try(:first)
     controls.each do |_, ct|
       sym = status_symbol(ct[:control], ct[:results])
       ct[:status_symbol] = sym
       counts[sym] += 1
     end
-    [counts, controls, start_tm]
+    [counts, controls, start_times.compact.sort.try(:first)]
   end
 
   def status_symbol(control, ct_results)
