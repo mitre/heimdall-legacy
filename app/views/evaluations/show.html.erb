@@ -1071,10 +1071,13 @@ $("#export-caat").click(function(event) {
     var impact = control.impact;
     var field = [];
 
-    if (impact != 'none' && !vulnList.includes(control.name)) {
+    if (impact != 'none' && !vulnList.includes('xxxx' + control.name)) {
       vulnList.push(control.name)
-      field.push(control.family);              // Control Number
-      field.push(br2nl(control.title));        // Finding Title
+      if (control.nist)
+        field.push(control.nist[0].replace(/\-(\d)(\s|$)/, "-0$1$2").replace(/\((\d)\)/, "(0$1)"));              // NIST
+      else
+        field.push(control.family);
+      field.push(br2nl('(' + control.name + ') - ' + control.title));        // Finding Title
       field.push(convertDate(new Date(control.start_time),'/')); // Date Identified
       field.push('');                          // Finding ID
       field.push('');                          // Information System or Program Name
@@ -1084,7 +1087,7 @@ $("#export-caat").click(function(event) {
       field.push(br2nl(control.description));  // Weakness Description
       field.push('Security');                  // Control Weakness Type
       field.push('Self-Assessment ');          // Source
-      field.push('InSpec');                    // Assessment/Audit Company
+      field.push('');                          // Assessment/Audit Company
       field.push('Test');                      // Test Method
       field.push(br2nl(control.check)) ;       // Test Objective
       field.push(br2nl(control.result_message)); // Test Result Description
