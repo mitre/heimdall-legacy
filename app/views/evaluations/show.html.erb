@@ -1073,10 +1073,11 @@ $("#export-caat").click(function(event) {
 
     if (impact != 'none' && !vulnList.includes('xxxx' + control.name)) {
       vulnList.push(control.name)
-      if (control.nist)
+      if (control.nist) {
         field.push(control.nist[0].replace(/\-(\d)(\s|$)/, "-0$1$2").replace(/\((\d)\)/, "(0$1)"));              // NIST
-      else
+      } else {
         field.push(control.family);
+      }
       field.push(br2nl('(' + control.name + ') - ' + control.title));        // Finding Title
       field.push(convertDate(new Date(control.start_time),'/')); // Date Identified
       field.push('');                          // Finding ID
