@@ -54,6 +54,7 @@ gem 'fuzzy-string-match'
 gem 'inspec_tools', '>= 1.4.2'
 gem 'roo'
 gem "rake-version", "~> 1.0"
+gem 'versionator'
 
 group :development, :test do
   gem 'pry'

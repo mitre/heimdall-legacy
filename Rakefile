@@ -3,6 +3,7 @@
 
 require_relative 'config/application'
 require 'rake-version'
+require 'versionator'
 
 Rails.application.load_tasks
 RakeVersion::Tasks.new
