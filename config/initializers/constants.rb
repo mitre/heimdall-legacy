@@ -7,4 +7,10 @@ module Constants
   NIST_800_53_COUNTS = hsh
   TAG_NAMES = ['Filename', 'Hostname', 'UUID', 'FISMA System', 'Environment'].freeze
   ENV_TAG_NAMES = %w{sandbox dev test impl prod}.freeze
+  if(File.file?('VERSION'))
+    version = File.read('VERSION')
+    VERSION = version
+  else
+    VERSION = ''
+  end
 end

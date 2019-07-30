@@ -105,7 +105,8 @@ class Evaluation < ApplicationRecord
   end
 
   def to_ckl
-    tool = InspecTools::Inspec.new(to_json)
+    js = to_json
+    tool = InspecTools::Inspec.new(js)
     tool.to_ckl
   end
 
