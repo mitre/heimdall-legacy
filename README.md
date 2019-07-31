@@ -102,7 +102,7 @@ Make sure you have run the setup steps at least once before following these step
 
 1. Run the following command in a terminal window:
    - `docker-compose up -d`
-2. Go to `127.0.0.1:3000/heimdall` in a web browser
+2. Go to `127.0.0.1:3000` in a web browser
 
 ##### Updating Docker Container
 
@@ -111,7 +111,7 @@ A new version of the docker container can be retrieved by running:
 ```
 docker-compose pull
 docker-compose up -d
-docker-compose run web bundle exec rake db:migrate
+docker-compose run web rake db:migrate
 ```
 
 This will fetch the latest version of the container, redeploy if a newer version exists, and then apply any database migrations if applicable. No data should be lost by this operation.
