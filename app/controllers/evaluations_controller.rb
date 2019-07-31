@@ -17,11 +17,15 @@ class EvaluationsController < ApplicationController
     @grouping['singles'] = []
     @evaluations.each do |evaluation|
       key = evaluation.profiles.collect(&:id)
-      unless @grouping.key?(key.to_s)
-        @grouping[key.to_s] = []
-      end
-      if @eval_counts[key.first] > 1
-        @grouping[key.to_s] << evaluation
+      if key.present?
+        unless @grouping.key?(key.to_s)
+          @grouping[key.to_s] = []
+        end
+        if @eval_counts[key.first] > 1
+          @grouping[key.to_s] << evaluation
+        else
+          @grouping['singles'] << evaluation
+        end
       else
         @grouping['singles'] << evaluation
       end
