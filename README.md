@@ -80,14 +80,16 @@ To run Heimdall you just need to add the Heimdall [Packager.io](https://dl.packa
 
 Given that Heimdall requires at least a database service, we use Docker Compose.
 
-#### Setup Docker Container
+#### Setup Docker Container (Clean Install)
 
 1. Install Docker
 2. Download heimdall by running `git clone https://github.com/mitre/heimdall.git`.
 3. Navigate to the base folder where `docker-compose.yml` is located
 4. Run the following commands in a terminal window from the heimdall source directory:
-   - `./setup-docker-secrets.sh`
-   - `docker-compose up -d`
+   a. `./setup-docker-secrets.sh`
+   b. `docker-compose up -d`
+   c. `docker-compose run web rake db:create db:migrate`
+5. Navigate to `http://127.0.0.1:3000`
 
 #### Managing Docker Container
 
