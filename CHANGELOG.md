@@ -1,5 +1,20 @@
 # Change Log
 
+## [2.6.0](https://github.com/mitre/heimdall/tree/2.6.0) (2019-08-02)
+[Full Changelog](https://github.com/mitre/heimdall/compare/v2.5.8...2.6.0)
+
+**Merged pull requests:**
+
+- Added bump task [\#55](https://github.com/mitre/heimdall/pull/55) ([robthew](https://github.com/robthew))
+
+## [v2.5.8](https://github.com/mitre/heimdall/tree/v2.5.8) (2019-07-31)
+[Full Changelog](https://github.com/mitre/heimdall/compare/v2.5.6...v2.5.8)
+
+**Merged pull requests:**
+
+- fix eval page bug [\#47](https://github.com/mitre/heimdall/pull/47) ([robthew](https://github.com/robthew))
+- Fix rails entrypoint to include bundle exec [\#45](https://github.com/mitre/heimdall/pull/45) ([rbclark](https://github.com/rbclark))
+
 ## [v2.5.6](https://github.com/mitre/heimdall/tree/v2.5.6) (2019-07-30)
 [Full Changelog](https://github.com/mitre/heimdall/compare/v2.5.5...v2.5.6)
 
