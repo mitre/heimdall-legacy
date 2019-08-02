@@ -28,9 +28,9 @@ namespace :change do
   task :tag => :environment do |task|
     # tag and push tag
     version = File.read('VERSION')
-    task_str = "git tag \"v#{version}\""
+    task_str = "git tag v#{version}"
     sh task_str
-    task_str = "git push origin \"v#{version}\""
+    task_str = "git push origin v#{version}"
     sh task_str
   end
 end
