@@ -5,7 +5,7 @@
   <meta name="ROBOTS" content="NOODP" />
   <meta name="viewport" content="initial-scale=1" />
   <style>
-    <%= (Rails.application.assets || ::Sprockets::Railtie.build_environment(Rails.application)).find_asset('ssp_pdf') %>
+    <%= Rails.application.assets_manifest.assets['ssp_pdf'] %>
   </style>
 </head>
 <body>
