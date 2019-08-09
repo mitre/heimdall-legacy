@@ -181,6 +181,7 @@ var evaluation_id = '<%= @evaluation.id %>';
       <div class="box box-primary">
         <div class="box-header with-border">
           <h3 class="box-title">Compliance Level</h3>
+		  <%= render :partial => 'assets/images/compliance_formula' %>
         </div>
         <!-- /.box-header -->
         <div class="box-body">
@@ -352,7 +353,7 @@ var evaluation_id = '<%= @evaluation.id %>';
                   <i class="fa fa-edit"></i> Filter by Selected
                 <% end %>
                 <h4>Or</h4>
-                <button type="button" id="build_btn" class="btn btn-block btn-info">Build Filter</button>
+                <button type="button" id="build_btn" class="btn btn-block btn-info">Build Advanced Filter</button>
               </div>
             <% end %>
           </div>
@@ -364,7 +365,7 @@ var evaluation_id = '<%= @evaluation.id %>';
     <div class="col-md-12">
       <div class="box box-primary">
         <div class="box-header with-border">
-          <h3 class="box-title">Tests' Filters</h3>
+          <h3 class="box-title">NIST SP 800-53 Security Control Filters</h3>
         </div>
         <!-- /.box-header -->
         <div class="box-body">
