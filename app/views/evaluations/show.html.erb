@@ -1176,7 +1176,8 @@ document.addEventListener("turbolinks:load", function() {
   if($('[id^=controls_wrapper]').length == 0) {
     $('#controls').DataTable({
       'paging'      : true,
-      'lengthChange': false,
+      'lengthChange': true,
+      'lengthMenu'  : [[10, 25, 50, 75], [10, 25, 50, 75]],
       'searching'   : true,
       'ordering'    : true,
       'info'        : true,
