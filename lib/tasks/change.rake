@@ -9,6 +9,7 @@ namespace :change do
     sh task_str
   end
 
+  desc 'bump minor version and generate changelog'
   task :minor => :environment do |task|
     # bump minor version
     Rake::Task['version:bump:minor'].invoke
@@ -17,6 +18,7 @@ namespace :change do
     sh task_str
   end
 
+  desc 'bump major version and generate changelog'
   task :major => :environment do |task|
     # bump major version
     Rake::Task['version:bump:major'].invoke
@@ -25,6 +27,7 @@ namespace :change do
     sh task_str
   end
 
+  desc 'set and push tag'
   task :tag => :environment do |task|
     # tag and push tag
     version = File.read('VERSION')
