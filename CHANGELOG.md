@@ -1,11 +1,23 @@
 # Change Log
 
-## [2.6.1](https://github.com/mitre/heimdall/tree/2.6.1) (2019-08-12)
-[Full Changelog](https://github.com/mitre/heimdall/compare/v2.6.0...2.6.1)
+## [v2.6.1](https://github.com/mitre/heimdall/tree/v2.6.1) (2019-08-12)
+[Full Changelog](https://github.com/mitre/heimdall/compare/v2.6.0...v2.6.1)
 
 **Fixed bugs:**
 
+- Clear Filter Button is Overlapped by Lower Rows of Evaluation [\#58](https://github.com/mitre/heimdall/issues/58)
 - Change "Control" to "Test" for Status and Impact labels [\#57](https://github.com/mitre/heimdall/issues/57)
+- For count tiles, change "Findings" label to "Test Counts" [\#54](https://github.com/mitre/heimdall/issues/54)
+- List formula for Compliance % [\#53](https://github.com/mitre/heimdall/issues/53)
+- Allow 25, 50, 75, All options for results per screen [\#52](https://github.com/mitre/heimdall/issues/52)
+- Change "Profile Controls" label to "Tests" [\#51](https://github.com/mitre/heimdall/issues/51)
+- Tree/Partition area label should be "NIST SP 800-53 Coverage" [\#50](https://github.com/mitre/heimdall/issues/50)
+- Generate PDF for SSP view error [\#48](https://github.com/mitre/heimdall/issues/48)
+- Lm/auditee cosmetic fixes [\#59](https://github.com/mitre/heimdall/pull/59) ([lukemalinowski](https://github.com/lukemalinowski))
+
+**Closed issues:**
+
+- Fully document the curl API options and examples [\#17](https://github.com/mitre/heimdall/issues/17)
 
 ## [v2.6.0](https://github.com/mitre/heimdall/tree/v2.6.0) (2019-08-02)
 [Full Changelog](https://github.com/mitre/heimdall/compare/v2.5.8...v2.6.0)
@@ -39,13 +51,13 @@
 
 - Overlay counting is incorrect [\#26](https://github.com/mitre/heimdall/issues/26)
 - Update the API to upload to a specific circle and all other tagging [\#19](https://github.com/mitre/heimdall/issues/19)
-- Fully document the curl API options and examples [\#17](https://github.com/mitre/heimdall/issues/17)
 - The Upload component and model needs to be smoother [\#14](https://github.com/mitre/heimdall/issues/14)
 
 **Merged pull requests:**
 
 - patched gems [\#40](https://github.com/mitre/heimdall/pull/40) ([robthew](https://github.com/robthew))
 - Updated inspec and added versioning tools [\#39](https://github.com/mitre/heimdall/pull/39) ([robthew](https://github.com/robthew))
+- Caat fix [\#38](https://github.com/mitre/heimdall/pull/38) ([robthew](https://github.com/robthew))
 - Fixed a comparison bug [\#36](https://github.com/mitre/heimdall/pull/36) ([robthew](https://github.com/robthew))
 - fixed findings issue [\#34](https://github.com/mitre/heimdall/pull/34) ([robthew](https://github.com/robthew))
 - Added fixer migration [\#33](https://github.com/mitre/heimdall/pull/33) ([robthew](https://github.com/robthew))

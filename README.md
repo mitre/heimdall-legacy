@@ -271,16 +271,30 @@ Please feel free to contact us by **opening an issue** on the issue board, or, a
 10. add new docs to the `README.md`
 11. (if needed) create and document any example or templates
 12. (if needed) create any supporting scripts
-13. git commit -a -s `<your_branch>`
+13. update the version and changelog (see below for instructions)
+
 14. Open a PRs on the MITRE heimdall repository
+
+### Versioning and the Changelog
+
+There are rake tasks to help with the [Semantic Versioning Policy](https://semver.org/) and updating the Changelog. The rake tasks use the `rake-version` and `github_changelog_generator` gems.
+
+The `github_changelog_generator` gem requires the use of a access token setup with GitHub. Read the gem's [GitHub page](https://github.com/github-changelog-generator/github-changelog-generator#github-token) for instructions on how to setup this token.
+
+If you have the token setup, you should use this set of steps:
+1. run `bundle exec rake change:patch` for bug fixes, or `bundle exec rake change:minor` if you're adding a new feature. This will update the Version number and generate the Changelog.
+2. `git add VERSION` and `git add CHANGELOG.md` to add the files to your commit.
+3. `git commit -m "commit message"`. If your commit fixes an outstanding issue, put the issue number in the commit message, like "Fixes #34"
+4. `git push origin <your_branch>`
+5. In GitHub, open a Pull Request on the MITRE heimdall repository
+
+If you don't have a token setup for the `github_changelog_generator`, you can run the rake task `bundle exec rake version:bump:patch` to bump the Version number without modifying the Changelog. Then, in your Pull Request, add a comment requesting the Changelog be updated after merging.
+
+After the Pull Request has been merged, switch back to the `master` branch and pull the merged code. You can run the `bundle exec rake change:tag` to create a release tagged with the new Version number. 
 
 # Testing
 
-There are a set of unit tests. Run `rake test` to run the tests.
-
-To release a new version, update the version number in `version.rb` according to the [Semantic Versioning Policy](https://semver.org/).
-
-Then, run `bundle exec rake release` which will create a git tag for the specified version, push git commits and tags, and push to [github.com](https://github.com/mitre/heimdall).
+There are a set of tests developed using `rspec`. Run `rake spec` to run the tests.
 
 ## Licensing and Authors
 

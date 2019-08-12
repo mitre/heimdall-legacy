@@ -247,28 +247,32 @@ class Evaluation < ApplicationRecord
 
   def filtered_controls(ex_ids, filters = nil)
     controls = {}
-    p_controls = filters.nil? ? base_profile.controls.includes(:results, :tags) : base_profile.filtered_controls(filters)
-    p_controls.each do |control|
-      controls[control.control_id] = control
-    end
-    included_profiles.each do |profile|
-      if ex_ids.include?(profile.id)
-        profile.controls.each do |control|
-          controls.delete(control.control_id)
-        end
-      else
-        d_controls = filters.nil? ? profile.controls.includes(:results, :tags) : profile.filtered_controls(filters)
-        d_controls.each do |control|
-          unless controls[control.control_id].present?
-            controls[control.control_id] = control
+    p_controls = filters.nil? ? base_profile&.controls.includes(:results, :tags) : base_profile&.filtered_controls(filters)
+    if p_controls.present?
+      p_controls.each do |control|
+        controls[control.control_id] = control
+      end
+      included_profiles.each do |profile|
+        if ex_ids.include?(profile.id)
+          profile.controls.each do |control|
+            controls.delete(control.control_id)
           end
-          unless controls[control.control_id].results.present?
-            controls[control.control_id] = control
+        else
+          d_controls = filters.nil? ? profile.controls.includes(:results, :tags) : profile.filtered_controls(filters)
+          d_controls.each do |control|
+            unless controls[control.control_id].present?
+              controls[control.control_id] = control
+            end
+            unless controls[control.control_id].results.present?
+              controls[control.control_id] = control
+            end
           end
         end
       end
+      controls.values
+    else
+      []
     end
-    controls.values
   end
 
   def nist_hash(cat, status_symbol_param, ex_ids, filters = nil)
