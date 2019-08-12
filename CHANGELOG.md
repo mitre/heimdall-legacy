@@ -1,10 +1,18 @@
 # Change Log
 
-## [2.6.0](https://github.com/mitre/heimdall/tree/2.6.0) (2019-08-02)
-[Full Changelog](https://github.com/mitre/heimdall/compare/v2.5.8...2.6.0)
+## [2.6.1](https://github.com/mitre/heimdall/tree/2.6.1) (2019-08-12)
+[Full Changelog](https://github.com/mitre/heimdall/compare/v2.6.0...2.6.1)
+
+**Fixed bugs:**
+
+- Change "Control" to "Test" for Status and Impact labels [\#57](https://github.com/mitre/heimdall/issues/57)
+
+## [v2.6.0](https://github.com/mitre/heimdall/tree/v2.6.0) (2019-08-02)
+[Full Changelog](https://github.com/mitre/heimdall/compare/v2.5.8...v2.6.0)
 
 **Merged pull requests:**
 
+- Tagging [\#56](https://github.com/mitre/heimdall/pull/56) ([robthew](https://github.com/robthew))
 - Added bump task [\#55](https://github.com/mitre/heimdall/pull/55) ([robthew](https://github.com/robthew))
 
 ## [v2.5.8](https://github.com/mitre/heimdall/tree/v2.5.8) (2019-07-31)
@@ -38,7 +46,6 @@
 
 - patched gems [\#40](https://github.com/mitre/heimdall/pull/40) ([robthew](https://github.com/robthew))
 - Updated inspec and added versioning tools [\#39](https://github.com/mitre/heimdall/pull/39) ([robthew](https://github.com/robthew))
-- Caat fix [\#38](https://github.com/mitre/heimdall/pull/38) ([robthew](https://github.com/robthew))
 - Fixed a comparison bug [\#36](https://github.com/mitre/heimdall/pull/36) ([robthew](https://github.com/robthew))
 - fixed findings issue [\#34](https://github.com/mitre/heimdall/pull/34) ([robthew](https://github.com/robthew))
 - Added fixer migration [\#33](https://github.com/mitre/heimdall/pull/33) ([robthew](https://github.com/robthew))
