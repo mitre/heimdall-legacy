@@ -1,5 +1,5 @@
 {
-  "name": "NIST SP 800-53",
+  "name": "NIST SP 800-53 Security Control Coverage",
   "children": [
     {
       "name": "UM",

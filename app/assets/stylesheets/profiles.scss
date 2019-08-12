@@ -90,7 +90,8 @@ rect.parent,
 }
 .floating {
     position: fixed;
-    top: 110px;
+    top: 53px;
     right: 20px;
+    z-index: 10;
     visibility: hidden;
 }
