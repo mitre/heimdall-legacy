@@ -1,3 +1,5 @@
+![Docker Pulls](https://img.shields.io/docker/pulls/mitre/heimdall?label=Docker%20Hub%20Pulls)  
+![Docker Cloud Build Status](https://img.shields.io/docker/cloud/build/mitre/heimdall)
 # Heimdall
 
 Heimdall is a centralized visualization server for your InSpec evaluations and profiles.
