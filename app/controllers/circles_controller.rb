@@ -32,7 +32,6 @@ class CirclesController < ApplicationController
   def create
     @circle = Circle.new(circle_params)
     @circle.created_by = current_user
-    current_user.add_role(:owner, @circle)
     respond_to do |format|
       if @circle.save
         format.html { redirect_to @circle, notice: 'Circle was successfully created.' }

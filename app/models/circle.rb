@@ -2,8 +2,9 @@ class Circle < ApplicationRecord
   resourcify
   has_and_belongs_to_many :evaluations
   has_and_belongs_to_many :profiles
-  belongs_to :created_by, class_name: 'User', foreign_key: 'created_by_id'
+  belongs_to :created_by, class_name: 'User'
   validates_presence_of :name
+  after_create :assign_owner
 
   def readable_profiles
     retval = profiles
@@ -23,7 +24,7 @@ class Circle < ApplicationRecord
     recents = Hash[recents.sort_by { |key, _| key }]
     ret_hsh = {}
     recents.each do |tl, ary|
-      ret_hsh[tl] = ary.sort
+      ret_hsh[tl] = ary.sort_by(&:created_at)
     end
     ret_hsh
   end
@@ -37,5 +38,11 @@ class Circle < ApplicationRecord
       recents[key] << obj
     end
     recents
+  end
+
+  private
+
+  def assign_owner
+    self.created_by.add_role(:owner, self)
   end
 end

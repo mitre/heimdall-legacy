@@ -113,8 +113,8 @@ class Profile < ApplicationRecord
       if ctl.present? and results.present?
         results.each do |result|
           result[:evaluation_id] = evaluation_id
-          ctl.results.create(result)
         end
+        ctl.results.create(results)
       end
     end
   end
