@@ -189,16 +189,14 @@ class EvaluationsController < ApplicationController
           @evaluation = Evaluation.find(@eval.id)
           @evaluation.findings
           @evaluation.tags.create(name: 'filename', value: params[:file].original_filename)
-          (Constants::TAG_NAMES - ['Filename']).each do |tag|
-            next unless params[tag.downcase]
-
-            @evaluation.tags.create(name: tag.downcase, value: params[tag.downcase])
-          end
+          tags = (Constants::TAG_NAMES - ['Filename']).map do |tag|
+            {name: tag.downcase, value: params[tag.downcase]} if params.has_key?(tag.downcase)
+          end.compact
+          @evaluation.tags.create(tags)
           if circle.present?
-            @circle = Circle.where(name: circle).first
-            if @circle and current_user.my_circles.include?(@circle)
-              @circle.evaluations << @evaluation
-            end
+            @circle = Circle.with_roles([:owner, :member], current_user).find_by(name: circle)
+            @circle = Circle.create(name: circle, created_by: current_user) unless @circle
+            @circle.evaluations << @evaluation
           end
           render body: 'SUCCESS: Evaluation uploaded'
         else
