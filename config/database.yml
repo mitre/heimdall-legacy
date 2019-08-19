@@ -80,6 +80,4 @@ test:
 #
 production:
   <<: *default
-  database: heimdall_postgres_production
-  host: <%= ENV['POSTGRES_TCP_ADDR'] %>
-  username: postgres
+  url: <%= ENV['DATABASE_URL'] %>
