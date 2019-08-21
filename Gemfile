@@ -3,6 +3,7 @@ git_source(:github) { |repo| "https://github.com/#{repo}.git" }
 
 ruby '2.6.3'
 
+gem 'wdm', '>= 0.1.0' if Gem.win_platform?
 # Bundle edge Rails instead: gem 'rails', github: 'rails/rails'
 gem 'rails', '~> 5.2.2'
 # Use postgresql as the database for Active Record
@@ -47,7 +48,7 @@ gem 'wkhtmltopdf-binary', '0.12.3.1'
 gem 'rmagick'
 gem 'carrierwave'
 gem 'nokogiri-happymapper'
-gem 'nokogiri'
+gem "nokogiri", ">= 1.10.4"
 gem 'thor'
 gem 'json'
 gem 'fuzzy-string-match'
