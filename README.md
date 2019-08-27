@@ -64,19 +64,23 @@ You can easily run a local instance for demo and testing purposes using our prov
 
 To run Heimdall you just need to add the Heimdall [Packager.io](https://dl.packager.io/srv/mitre/heimdall/master/installer/el/7.repo) repository to your Yum configuration and you can easily deploy and update Heimdall on RHEL7/CentOS7 system.
 
-1. `curl -o /etc/yum.repos.d/heimdall.repo https://dl.packager.io/srv/mitre/heimdall/master/installer/el/7.repo`
-2. `yum update`
-3. `yum install -y heimdall`
-4. `postgresql-setup initdb`
-5. `echo "local all postgres trust" > /var/lib/pgsql/data/pg_hba.conf`
-6. `systemctl enable postgresql`
-7. `systemctl start postgresql`
-8. `heimdall run rake db:create db:schema:load || true`
-9. `heimdall run rake db:migrate`
-10. `heimdall scale web=1`
-11. Navigate to `hostname:6000`
-12. Create your first account
-13. Enjoy
+1. ``` bash
+curl -o /etc/yum.repos.d/heimdall.repo https://dl.packager.io/srv/mitre/heimdall/master/installer/el/7.repo
+yum update
+yum install -y heimdall
+postgresql-setup initdb
+echo "host all postgres 127.0.0.1/32 trust" > /var/lib/pgsql/data/pg_hba.conf
+systemctl enable postgresql
+systemctl start postgresql
+heimdall config:set DATABASE_URL=postgres://postgres@127.0.0.1/heimdall_prod
+heimdall config:set PORT=3000
+heimdall run rake db:create db:schema:load || true
+heimdall run rake db:migrate
+heimdall scale web=1
+```
+2. Navigate to `hostname:6000`
+3. Create your first account
+4. Enjoy
 
 ### Run With Docker
 
