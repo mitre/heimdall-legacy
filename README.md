@@ -1,4 +1,4 @@
-![Docker Pulls](https://img.shields.io/docker/pulls/mitre/heimdall?label=Docker%20Hub%20Pulls)  
+![Docker Pulls](https://img.shields.io/docker/pulls/mitre/heimdall?label=Docker%20Hub%20Pulls)
 ![Docker Cloud Build Status](https://img.shields.io/docker/cloud/build/mitre/heimdall)
 # Heimdall
 
@@ -65,18 +65,21 @@ You can easily run a local instance for demo and testing purposes using our prov
 To run Heimdall you just need to add the Heimdall [Packager.io](https://dl.packager.io/srv/mitre/heimdall/master/installer/el/7.repo) repository to your Yum configuration and you can easily deploy and update Heimdall on RHEL7/CentOS7 system.
 
 1. `curl -o /etc/yum.repos.d/heimdall.repo https://dl.packager.io/srv/mitre/heimdall/master/installer/el/7.repo`
-2. `yum update`
-3. `yum install -y heimdall`
-4. `postgresql-setup initdb`
-5. `echo "local all postgres trust" > /var/lib/pgsql/data/pg_hba.conf`
-6. `systemctl enable postgresql`
-7. `systemctl start postgresql`
-8. `heimdall run rake db:create db:schema:load || true`
-9. `heimdall run rake db:migrate`
-10. `heimdall scale web=1`
-11. Navigate to `hostname:6000`
-12. Create your first account
-13. Enjoy
+2. `yum install -y https://download.postgresql.org/pub/repos/yum/reporpms/EL-7-x86_64/pgdg-redhat-repo-latest.noarch.rpm`
+3. `yum update`
+4. `yum install -y heimdall`
+5. `/usr/pgsql-11/bin/postgresql-11-setup initdb`
+6. `echo "local   all             all                                trust" > /var/lib/pgsql/11/data/pg_hba.conf`
+7. `systemctl enable postgresql-11`
+8. `systemctl start postgresql-11`
+9. `sudo -u postgres createuser --superuser heimdall`
+10. `heimdall config:set DATABASE_URL=postgresql:///heimdall_production`
+11. `heimdall run rake db:create db:schema:load || true`
+12. `heimdall run rake db:migrate`
+13. `heimdall scale web=1`
+14. Navigate to `hostname:6000`
+15. Create your first account
+16. Enjoy
 
 ### Run With Docker
 
@@ -84,21 +87,22 @@ Given that Heimdall requires at least a database service, we use Docker Compose.
 
 #### Setup Docker Container (Clean Install)
 
-1. Install Docker  
-2. Download heimdall by running `git clone https://github.com/mitre/heimdall.git`.  
-3. Navigate to the base folder where `docker-compose.yml` is located  
-4. Run the following commands in a terminal window from the heimdall source directory:  
-   a. `./setup-docker-secrets.sh`  
-   b. `docker-compose up -d`  
-   c. `docker-compose run web rake db:create db:migrate`  
-5. Navigate to `http://127.0.0.1:3000`  
+1. Install Docker
+2. Download heimdall by running `git clone https://github.com/mitre/heimdall.git`.
+3. Navigate to the base folder where `docker-compose.yml` is located
+4. Run the following commands in a terminal window from the heimdall source directory:
+   a. `./setup-docker-secrets.sh`
+   b. **Optional:** Set a custom root URL by editing the `docker-compose.yml` and changing `HEIMDALL_RELATIVE_URL_ROOT` to the path of your choosing, for example `/heimdall`.
+   c. `docker-compose up -d`
+   d. `docker-compose run --rm web rake db:create db:migrate`
+6. Navigate to `http://127.0.0.1:3000`
 
 #### Managing Docker Container
 
 The following commands are useful for managing the data in your docker container:
 
-- `docker-compose run web rake db:reset` **This destroys and rebuilds the db**
-- `docker-compose run web rake db:migrate` **This updates the db**
+- `docker-compose run --rm web rake db:reset` **This destroys and rebuilds the db**
+- `docker-compose run --rm web rake db:migrate` **This updates the db**
 
 #### Running Docker Container
 
@@ -292,7 +296,7 @@ If you have the token setup, you should use this set of steps:
 
 If you don't have a token setup for the `github_changelog_generator`, you can run the rake task `bundle exec rake version:bump:patch` to bump the Version number without modifying the Changelog. Then, in your Pull Request, add a comment requesting the Changelog be updated after merging.
 
-After the Pull Request has been merged, switch back to the `master` branch and pull the merged code. You can run the `bundle exec rake change:tag` to create a release tagged with the new Version number. 
+After the Pull Request has been merged, switch back to the `master` branch and pull the merged code. You can run the `bundle exec rake change:tag` to create a release tagged with the new Version number.
 
 # Testing
 
