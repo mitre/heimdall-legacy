@@ -21,9 +21,6 @@ RUN gem install bundler && bundle install --deployment --without development tes
 
 COPY . .
 
-# precompile is only necessary for production builds
-RUN sh -c "RAILS_ENV=$RAILS_ENV SECRET_KEY_BASE=xxx bundle exec rake assets:precompile"
-
 RUN rm -rf tmp/cache spec vendor/bundle/ruby/*/cache && find vendor/bundle/ruby/*/gems/ -name "*.c" -delete && \
     find vendor/bundle/ruby/*/gems/ -name "*.o" -delete
 
