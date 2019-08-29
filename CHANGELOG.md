@@ -1,5 +1,35 @@
 # Change Log
 
+## [2.7.0](https://github.com/mitre/heimdall/tree/2.7.0) (2019-08-29)
+[Full Changelog](https://github.com/mitre/heimdall/compare/v2.6.2...2.7.0)
+
+**Fixed bugs:**
+
+- 500 error when attempting to load evaluations page [\#46](https://github.com/mitre/heimdall/issues/46)
+
+**Closed issues:**
+
+- Circles throwing 500 error after adding evaluations to them [\#64](https://github.com/mitre/heimdall/issues/64)
+- Update Postgresql Confuguration section [\#62](https://github.com/mitre/heimdall/issues/62)
+- Custom context root for heimdall [\#61](https://github.com/mitre/heimdall/issues/61)
+- add version tagging to the docker hub releases using the new VERSION file [\#44](https://github.com/mitre/heimdall/issues/44)
+- Heimdall Fails To Start - Docker [\#41](https://github.com/mitre/heimdall/issues/41)
+- point to the hatchboxapp demo site on the readme [\#21](https://github.com/mitre/heimdall/issues/21)
+
+**Merged pull requests:**
+
+- Add support for serving from subdirectories from Dockerfile [\#70](https://github.com/mitre/heimdall/pull/70) ([rbclark](https://github.com/rbclark))
+- Upgrade Vagrantfile to use postgres-11 [\#69](https://github.com/mitre/heimdall/pull/69) ([rbclark](https://github.com/rbclark))
+- Create circles if they do not already exist and are requested via the API [\#65](https://github.com/mitre/heimdall/pull/65) ([rbclark](https://github.com/rbclark))
+- Move over to using DATABASE\_URL for better support of external databases [\#63](https://github.com/mitre/heimdall/pull/63) ([rbclark](https://github.com/rbclark))
+
+## [v2.6.2](https://github.com/mitre/heimdall/tree/v2.6.2) (2019-08-12)
+[Full Changelog](https://github.com/mitre/heimdall/compare/v2.6.1...v2.6.2)
+
+**Merged pull requests:**
+
+- Fixes \#46 [\#60](https://github.com/mitre/heimdall/pull/60) ([robthew](https://github.com/robthew))
+
 ## [v2.6.1](https://github.com/mitre/heimdall/tree/v2.6.1) (2019-08-12)
 [Full Changelog](https://github.com/mitre/heimdall/compare/v2.6.0...v2.6.1)
 
@@ -14,10 +44,6 @@
 - Tree/Partition area label should be "NIST SP 800-53 Coverage" [\#50](https://github.com/mitre/heimdall/issues/50)
 - Generate PDF for SSP view error [\#48](https://github.com/mitre/heimdall/issues/48)
 - Lm/auditee cosmetic fixes [\#59](https://github.com/mitre/heimdall/pull/59) ([lukemalinowski](https://github.com/lukemalinowski))
-
-**Closed issues:**
-
-- Fully document the curl API options and examples [\#17](https://github.com/mitre/heimdall/issues/17)
 
 ## [v2.6.0](https://github.com/mitre/heimdall/tree/v2.6.0) (2019-08-02)
 [Full Changelog](https://github.com/mitre/heimdall/compare/v2.5.8...v2.6.0)
@@ -51,6 +77,7 @@
 
 - Overlay counting is incorrect [\#26](https://github.com/mitre/heimdall/issues/26)
 - Update the API to upload to a specific circle and all other tagging [\#19](https://github.com/mitre/heimdall/issues/19)
+- Fully document the curl API options and examples [\#17](https://github.com/mitre/heimdall/issues/17)
 - The Upload component and model needs to be smoother [\#14](https://github.com/mitre/heimdall/issues/14)
 
 **Merged pull requests:**
