@@ -91,10 +91,10 @@ Given that Heimdall requires at least a database service, we use Docker Compose.
 2. Download heimdall by running `git clone https://github.com/mitre/heimdall.git`.
 3. Navigate to the base folder where `docker-compose.yml` is located
 4. Run the following commands in a terminal window from the heimdall source directory:
-   a. `./setup-docker-secrets.sh`
-   b. **Optional:** Set a custom root URL by editing the `docker-compose.yml` and changing `HEIMDALL_RELATIVE_URL_ROOT` to the path of your choosing, for example `/heimdall`.
-   c. `docker-compose up -d`
-   d. `docker-compose run --rm web rake db:create db:migrate`
+   1. `./setup-docker-secrets.sh`
+   2. **Optional:** Set a custom root URL by editing the `docker-compose.yml` and changing `HEIMDALL_RELATIVE_URL_ROOT` to the path of your choosing, for example `/heimdall`.
+   3. `docker-compose up -d`
+   4. `docker-compose run --rm web rake db:create db:migrate`
 6. Navigate to `http://127.0.0.1:3000`
 
 #### Managing Docker Container
