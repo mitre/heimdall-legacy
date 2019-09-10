@@ -1,7 +1,20 @@
 # Change Log
 
-## [2.7.2](https://github.com/mitre/heimdall/tree/2.7.2) (2019-09-04)
-[Full Changelog](https://github.com/mitre/heimdall/compare/v2.6.2...2.7.2)
+## [2.7.3](https://github.com/mitre/heimdall/tree/2.7.3) (2019-09-10)
+[Full Changelog](https://github.com/mitre/heimdall/compare/v2.7.2...2.7.3)
+
+**Implemented enhancements:**
+
+- Migrate heimdall\_activerecord to heimdall and deprecate heimdall mongo [\#20](https://github.com/mitre/heimdall/issues/20)
+
+**Closed issues:**
+
+- fix rake versionator:tasks to also run github\_changelog\_... so that the updated changelog is part of the process [\#43](https://github.com/mitre/heimdall/issues/43)
+- update to use versionator gem rather than rake-version [\#42](https://github.com/mitre/heimdall/issues/42)
+- Heimdall active record should accurately report version number [\#28](https://github.com/mitre/heimdall/issues/28)
+
+## [v2.7.2](https://github.com/mitre/heimdall/tree/v2.7.2) (2019-09-04)
+[Full Changelog](https://github.com/mitre/heimdall/compare/v2.6.2...v2.7.2)
 
 **Fixed bugs:**
 
@@ -18,6 +31,7 @@
 
 **Merged pull requests:**
 
+- Relative paths [\#72](https://github.com/mitre/heimdall/pull/72) ([robthew](https://github.com/robthew))
 - Paths [\#71](https://github.com/mitre/heimdall/pull/71) ([robthew](https://github.com/robthew))
 - Add support for serving from subdirectories from Dockerfile [\#70](https://github.com/mitre/heimdall/pull/70) ([rbclark](https://github.com/rbclark))
 - Upgrade Vagrantfile to use postgres-11 [\#69](https://github.com/mitre/heimdall/pull/69) ([rbclark](https://github.com/rbclark))
@@ -26,6 +40,10 @@
 
 ## [v2.6.2](https://github.com/mitre/heimdall/tree/v2.6.2) (2019-08-12)
 [Full Changelog](https://github.com/mitre/heimdall/compare/v2.6.1...v2.6.2)
+
+**Fixed bugs:**
+
+- Change "Profile Controls" label to "Tests" [\#51](https://github.com/mitre/heimdall/issues/51)
 
 **Merged pull requests:**
 
@@ -41,7 +59,6 @@
 - For count tiles, change "Findings" label to "Test Counts" [\#54](https://github.com/mitre/heimdall/issues/54)
 - List formula for Compliance % [\#53](https://github.com/mitre/heimdall/issues/53)
 - Allow 25, 50, 75, All options for results per screen [\#52](https://github.com/mitre/heimdall/issues/52)
-- Change "Profile Controls" label to "Tests" [\#51](https://github.com/mitre/heimdall/issues/51)
 - Tree/Partition area label should be "NIST SP 800-53 Coverage" [\#50](https://github.com/mitre/heimdall/issues/50)
 - Generate PDF for SSP view error [\#48](https://github.com/mitre/heimdall/issues/48)
 - Lm/auditee cosmetic fixes [\#59](https://github.com/mitre/heimdall/pull/59) ([lukemalinowski](https://github.com/lukemalinowski))
