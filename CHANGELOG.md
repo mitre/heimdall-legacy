@@ -1,7 +1,7 @@
 # Change Log
 
-## [2.7.3](https://github.com/mitre/heimdall/tree/2.7.3) (2019-09-10)
-[Full Changelog](https://github.com/mitre/heimdall/compare/v2.7.2...2.7.3)
+## [2.7.4](https://github.com/mitre/heimdall/tree/2.7.4) (2019-09-16)
+[Full Changelog](https://github.com/mitre/heimdall/compare/v2.7.2...2.7.4)
 
 **Implemented enhancements:**
 
@@ -12,6 +12,11 @@
 - fix rake versionator:tasks to also run github\_changelog\_... so that the updated changelog is part of the process [\#43](https://github.com/mitre/heimdall/issues/43)
 - update to use versionator gem rather than rake-version [\#42](https://github.com/mitre/heimdall/issues/42)
 - Heimdall active record should accurately report version number [\#28](https://github.com/mitre/heimdall/issues/28)
+
+**Merged pull requests:**
+
+- updated cookie settings [\#75](https://github.com/mitre/heimdall/pull/75) ([robthew](https://github.com/robthew))
+- Security settings [\#73](https://github.com/mitre/heimdall/pull/73) ([robthew](https://github.com/robthew))
 
 ## [v2.7.2](https://github.com/mitre/heimdall/tree/v2.7.2) (2019-09-04)
 [Full Changelog](https://github.com/mitre/heimdall/compare/v2.6.2...v2.7.2)
@@ -41,10 +46,6 @@
 ## [v2.6.2](https://github.com/mitre/heimdall/tree/v2.6.2) (2019-08-12)
 [Full Changelog](https://github.com/mitre/heimdall/compare/v2.6.1...v2.6.2)
 
-**Fixed bugs:**
-
-- Change "Profile Controls" label to "Tests" [\#51](https://github.com/mitre/heimdall/issues/51)
-
 **Merged pull requests:**
 
 - Fixes \#46 [\#60](https://github.com/mitre/heimdall/pull/60) ([robthew](https://github.com/robthew))
@@ -59,6 +60,7 @@
 - For count tiles, change "Findings" label to "Test Counts" [\#54](https://github.com/mitre/heimdall/issues/54)
 - List formula for Compliance % [\#53](https://github.com/mitre/heimdall/issues/53)
 - Allow 25, 50, 75, All options for results per screen [\#52](https://github.com/mitre/heimdall/issues/52)
+- Change "Profile Controls" label to "Tests" [\#51](https://github.com/mitre/heimdall/issues/51)
 - Tree/Partition area label should be "NIST SP 800-53 Coverage" [\#50](https://github.com/mitre/heimdall/issues/50)
 - Generate PDF for SSP view error [\#48](https://github.com/mitre/heimdall/issues/48)
 - Lm/auditee cosmetic fixes [\#59](https://github.com/mitre/heimdall/pull/59) ([lukemalinowski](https://github.com/lukemalinowski))
