@@ -1,7 +1,7 @@
 # Change Log
 
-## [2.7.4](https://github.com/mitre/heimdall/tree/2.7.4) (2019-09-16)
-[Full Changelog](https://github.com/mitre/heimdall/compare/v2.7.2...2.7.4)
+## [v2.7.4](https://github.com/mitre/heimdall/tree/v2.7.4) (2019-09-16)
+[Full Changelog](https://github.com/mitre/heimdall/compare/v2.7.2...v2.7.4)
 
 **Implemented enhancements:**
 
@@ -40,7 +40,6 @@
 - Paths [\#71](https://github.com/mitre/heimdall/pull/71) ([robthew](https://github.com/robthew))
 - Add support for serving from subdirectories from Dockerfile [\#70](https://github.com/mitre/heimdall/pull/70) ([rbclark](https://github.com/rbclark))
 - Upgrade Vagrantfile to use postgres-11 [\#69](https://github.com/mitre/heimdall/pull/69) ([rbclark](https://github.com/rbclark))
-- Create circles if they do not already exist and are requested via the API [\#65](https://github.com/mitre/heimdall/pull/65) ([rbclark](https://github.com/rbclark))
 - Move over to using DATABASE\_URL for better support of external databases [\#63](https://github.com/mitre/heimdall/pull/63) ([rbclark](https://github.com/rbclark))
 
 ## [v2.6.2](https://github.com/mitre/heimdall/tree/v2.6.2) (2019-08-12)

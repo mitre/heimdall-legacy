@@ -38,7 +38,7 @@ gem 'jbuilder', '~> 2.5'
 gem 'bootsnap', '>= 1.1.0', require: false
 
 gem 'gibberish'
-gem 'devise'
+gem 'devise', '>= 4.7.1'
 gem 'devise_ldap_authenticatable'
 gem "rolify"
 gem 'cancancan', '~> 2.0'
