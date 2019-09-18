@@ -25,5 +25,5 @@ In scanning compressed a Javascript files it came across a bunch of numbers that
 ### Application Error Disclosure
 The scan is flagging the Rails standard production error page, claiming it (may) expose information. It doesn't. The page displays a banner saying an error occurred, but shows no details. The error is logged on the server but no details about the error are shown to the user.
 
-## Information Disclosure - Suspicious Comments
+### Information Disclosure - Suspicious Comments
 The scan is complaining about a what I would consider 'Helpful' comments in the application javascript file, comments that explain what particular lines do.
