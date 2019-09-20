@@ -1,6 +1,6 @@
 # LDAP Integration
 
-### LDAP integration is controlled by a LDAP.yml file which will be located in the /HEIMDALLDIR/config folder. There should be a file called ldap.example.yml, go ahead and copy this and rename it to ldap.yml.
+LDAP integration is controlled by a LDAP.yml file which will be located in the /HEIMDALLDIR/config folder. There should be a file called ldap.example.yml, go ahead and copy this and rename it to ldap.yml.
 
 ## Example of ldap.example.yml
 
@@ -63,17 +63,13 @@ production:
   # <<: *AUTHORIZATIONS
 ```
 
-### These values will need to be changed to reflect the LDAP server you are connecting to. Your LDAP admin or IT specialist should be able to provide you with the necessary information.
+These values will need to be changed to reflect the LDAP server you are connecting to. Your LDAP admin or IT specialist should be able to provide you with the necessary information.
 
 ## Devise.rb Configuration
 
 This file is located at /heimdall/config/initializers/devise.rb
 
-```
-
-
-
-```
+The following values are set in the devise.rb and their options are laid out below. 
 
 * ldap_logger (default: true)
   * If set to true, will log LDAP queries to the Rails logger.
