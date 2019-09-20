@@ -1,6 +1,6 @@
 # LDAP Integration
 
-LDAP integration is controlled by a LDAP.yml file which will be located in the /HEIMDALLDIR/config folder. There should be a file called ldap.example.yml, go ahead and copy this and rename it to ldap.yml.
+### LDAP integration is controlled by a LDAP.yml file which will be located in the /HEIMDALLDIR/config folder. There should be a file called ldap.example.yml, go ahead and copy this and rename it to ldap.yml.
 
 ## Example of ldap.example.yml
 
@@ -63,7 +63,7 @@ production:
   # <<: *AUTHORIZATIONS
 ```
 
-These values will need to be changed to reflect the LDAP server you are connecting to. Your LDAP admin or IT specialist should be able to provide you with the necessary information.
+### These values will need to be changed to reflect the LDAP server you are connecting to. Your LDAP admin or IT specialist should be able to provide you with the necessary information.
 
 ## Devise.rb Configuration
 
@@ -74,3 +74,23 @@ This file is located at /heimdall/config/initializers/devise.rb
 
 
 ```
+
+* ldap_logger (default: true)
+  * If set to true, will log LDAP queries to the Rails logger.
+* ldap_create_user (default: false)
+  * If set to true, all valid LDAP users will be allowed to login and an appropriate user record will be created. If set to false, you will have to create the user record before they will be allowed to login.
+* ldap_config (default: #{Rails.root}/config/ldap.yml)
+  * Where to find the LDAP config file. Commented out to use the default, change if needed.
+* ldap_update_password (default: true)
+  * When doing password resets, if true will update the LDAP server. Requires admin password in the ldap.yml
+* ldap_check_group_membership (default: false)
+  * When set to true, the user trying to login will be checked to make sure they are in all of groups specified in the ldap.yml file.
+* ldap_check_attributes (default: false)
+  * When set to true, the user trying to login will be checked to make sure their attributes match those specified in the ldap.yml file.
+* ldap_check_attributes_presence (default: false)
+  * When set to true, the user trying to login will be checked against all require_attribute_presence attributes in the ldap.yml file, either present (attr: true),or not present (attr: false).
+* ldap_use_admin_to_bind (default: false)
+  * When set to true, the admin user will be used to bind to the LDAP server during authentication.
+* ldap_check_group_membership_without_admin (default: false)
+  * When set to true, the group membership check is done with the user's own credentials rather than with admin credentials. Since these credentials are only available to the Devise user model during the login flow, the group check function will not work if a group check is performed when this option is true outside of the login flow (e.g., before particular actions).
+
