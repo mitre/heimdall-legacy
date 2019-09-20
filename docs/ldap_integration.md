@@ -63,6 +63,8 @@ production:
   # <<: *AUTHORIZATIONS
 ```
 
+Depending what environment you're running, you can configure a different LDAP server for each one, such as testing, production and development. If you're unsure of what to use, you will most likely be using production. 
+
 These values will need to be changed to reflect the LDAP server you are connecting to. Your LDAP admin or IT specialist should be able to provide you with the necessary information.
 
 ## Devise.rb Configuration
