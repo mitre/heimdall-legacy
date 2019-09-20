@@ -8,7 +8,7 @@ end
 json.controls profile.controls do |control|
   json.partial! 'controls/control', control: control
 end
-json.groups profile.groups.where(:title.nin => [nil, '']) do |group|
+json.groups profile.groups.where(:title => [nil, '']) do |group|
   json.partial! 'groups/group', group: group
 end
 json.attributes profile.aspects do |aspect|

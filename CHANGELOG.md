@@ -1,7 +1,11 @@
 # Change Log
 
-## [2.7.6](https://github.com/mitre/heimdall/tree/2.7.6) (2019-09-19)
-[Full Changelog](https://github.com/mitre/heimdall/compare/v2.7.5...2.7.6)
+## [v2.7.6](https://github.com/mitre/heimdall/tree/v2.7.6) (2019-09-19)
+[Full Changelog](https://github.com/mitre/heimdall/compare/v2.7.5...v2.7.6)
+
+**Closed issues:**
+
+- Change to "Welcome to Heimdall, a security results viewer" [\#77](https://github.com/mitre/heimdall/issues/77)
 
 **Merged pull requests:**
 
@@ -60,11 +64,6 @@
 ## [v2.6.2](https://github.com/mitre/heimdall/tree/v2.6.2) (2019-08-12)
 [Full Changelog](https://github.com/mitre/heimdall/compare/v2.6.1...v2.6.2)
 
-**Fixed bugs:**
-
-- Clear Filter Button is Overlapped by Lower Rows of Evaluation [\#58](https://github.com/mitre/heimdall/issues/58)
-- List formula for Compliance % [\#53](https://github.com/mitre/heimdall/issues/53)
-
 **Merged pull requests:**
 
 - Fixes \#46 [\#60](https://github.com/mitre/heimdall/pull/60) ([robthew](https://github.com/robthew))
@@ -74,17 +73,15 @@
 
 **Fixed bugs:**
 
+- Clear Filter Button is Overlapped by Lower Rows of Evaluation [\#58](https://github.com/mitre/heimdall/issues/58)
 - Change "Control" to "Test" for Status and Impact labels [\#57](https://github.com/mitre/heimdall/issues/57)
 - For count tiles, change "Findings" label to "Test Counts" [\#54](https://github.com/mitre/heimdall/issues/54)
+- List formula for Compliance % [\#53](https://github.com/mitre/heimdall/issues/53)
 - Allow 25, 50, 75, All options for results per screen [\#52](https://github.com/mitre/heimdall/issues/52)
 - Change "Profile Controls" label to "Tests" [\#51](https://github.com/mitre/heimdall/issues/51)
 - Tree/Partition area label should be "NIST SP 800-53 Coverage" [\#50](https://github.com/mitre/heimdall/issues/50)
 - Generate PDF for SSP view error [\#48](https://github.com/mitre/heimdall/issues/48)
 - Lm/auditee cosmetic fixes [\#59](https://github.com/mitre/heimdall/pull/59) ([lukemalinowski](https://github.com/lukemalinowski))
-
-**Closed issues:**
-
-- Change to "Welcome to Heimdall, a security results viewer" [\#77](https://github.com/mitre/heimdall/issues/77)
 
 ## [v2.6.0](https://github.com/mitre/heimdall/tree/v2.6.0) (2019-08-02)
 [Full Changelog](https://github.com/mitre/heimdall/compare/v2.5.8...v2.6.0)
