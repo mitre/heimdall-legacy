@@ -1,5 +1,8 @@
 # Change Log
 
+## [v2.7.7](https://github.com/mitre/heimdall/tree/v2.7.7) (2019-09-20)
+[Full Changelog](https://github.com/mitre/heimdall/compare/v2.7.6...v2.7.7)
+
 ## [v2.7.6](https://github.com/mitre/heimdall/tree/v2.7.6) (2019-09-19)
 [Full Changelog](https://github.com/mitre/heimdall/compare/v2.7.5...v2.7.6)
 

@@ -155,6 +155,10 @@ var evaluation_id = '<%= @evaluation.id %>';
             <%= link_to 'SSP', ssp_evaluation_path(@evaluation) %>
           </p>
           <p>
+            <strong>Export JSON:</strong>
+            <%= link_to 'JSON', evaluation_path(@evaluation, format: :json), :target => "_blank" %>
+          </p>
+          <p>
             <strong>Export CKL:</strong>
             <%= link_to 'CKL', evaluation_path(@evaluation, format: :ckl), :target => "_blank" %>
           </p>
