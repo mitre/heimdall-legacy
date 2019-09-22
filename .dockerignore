@@ -5,3 +5,4 @@ dockerfiles
 Vagrantfile
 sample_jsons
 log/*
+.ufo

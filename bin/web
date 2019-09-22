@@ -1,0 +1,19 @@
+#!/bin/sh
+set -e
+
+if [[ $(pwd | awk -F'/' '{ print $NF }') = heimdall ]]; then
+  export APP_ROOT=$(pwd)
+else
+    export APP_ROOT="$(cd ../ && pwd)"
+fi
+
+if [ -f $APP_ROOT/tmp/pids/server.pid ]; then
+    echo "Removing old .pid file"
+    rm -f $APP_ROOT/tmp/pids/server.pid
+else
+    echo "No .pid file, good to go"
+fi
+echo "precompiling assets"
+bundle exec rake assets:precompile
+echo "starting frontent"
+bundle exec rails s -p 3000 -b '0.0.0.0'

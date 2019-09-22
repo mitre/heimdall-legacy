@@ -1,4 +1,4 @@
-version: '3.5'
+version: "3.5"
 
 services:
   # If you wish to use a db other than mongo, this is 100% wrong
@@ -9,9 +9,9 @@ services:
     expose:
       - "5432"
   web:
-    # build: .
+    build: .
     # image: web:1.0
-    image: mitre/heimdall:latest
+    # image: mitre/heimdall:latest
     environment:
       DATABASE_URL: postgres://postgres@db/heimdall_postgres_production
       RAILS_SERVE_STATIC_FILES: "true"
@@ -20,7 +20,7 @@ services:
       DISABLE_SPRING: "true"
     env_file: .env-prod
     restart: unless-stopped
-    command: /bin/sh -c "rm -f tmp/pids/server.pid && bundle exec rake assets:precompile && bundle exec rails s -p 3000 -b '0.0.0.0'"
+    command: /bin/sh -c "./bin/web"
     ports:
       - "80:3000"
     depends_on:
