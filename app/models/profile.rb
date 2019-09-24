@@ -40,12 +40,12 @@ class Profile < ApplicationRecord
     filtered_list
   end
 
-  def to_jbuilder
+  def to_jbuilder(skip_results=false)
     Jbuilder.new do |json|
       json.extract! self, :name, :title, :maintainer, :copyright,
                     :copyright_email, :license, :summary, :version
       json.supports(supports.collect { |support| support.to_jbuilder.attributes! })
-      json.controls(controls.collect { |control| control.to_jbuilder.attributes! })
+      json.controls(controls.collect { |control| control.to_jbuilder(skip_results).attributes! })
       json.groups(groups.collect { |group| group.to_jbuilder.attributes! })
       json.depends(depends.collect { |depend| depend.to_jbuilder.attributes! })
       json.aspects(aspects.collect { |aspect| aspect.to_jbuilder.attributes! })
@@ -59,6 +59,10 @@ class Profile < ApplicationRecord
 
   def to_json(*_args)
     to_jbuilder.target!
+  end
+
+  def profile_json(*_args)
+    to_jbuilder(skip_results=true).target!
   end
 
   def is_editable?
