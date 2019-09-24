@@ -1,5 +1,15 @@
 # Change Log
 
+## [2.8.0](https://github.com/mitre/heimdall/tree/2.8.0) (2019-09-24)
+[Full Changelog](https://github.com/mitre/heimdall/compare/v2.7.9...2.8.0)
+
+**Merged pull requests:**
+
+- Document updates [\#80](https://github.com/mitre/heimdall/pull/80) ([mrtollick](https://github.com/mrtollick))
+
+## [v2.7.9](https://github.com/mitre/heimdall/tree/v2.7.9) (2019-09-20)
+[Full Changelog](https://github.com/mitre/heimdall/compare/v2.7.8...v2.7.9)
+
 ## [v2.7.8](https://github.com/mitre/heimdall/tree/v2.7.8) (2019-09-20)
 [Full Changelog](https://github.com/mitre/heimdall/compare/v2.7.7...v2.7.8)
 
@@ -8,6 +18,10 @@
 
 ## [v2.7.6](https://github.com/mitre/heimdall/tree/v2.7.6) (2019-09-19)
 [Full Changelog](https://github.com/mitre/heimdall/compare/v2.7.5...v2.7.6)
+
+**Closed issues:**
+
+- Change to "Welcome to Heimdall, a security results viewer" [\#77](https://github.com/mitre/heimdall/issues/77)
 
 **Merged pull requests:**
 
@@ -84,10 +98,6 @@
 - Tree/Partition area label should be "NIST SP 800-53 Coverage" [\#50](https://github.com/mitre/heimdall/issues/50)
 - Generate PDF for SSP view error [\#48](https://github.com/mitre/heimdall/issues/48)
 - Lm/auditee cosmetic fixes [\#59](https://github.com/mitre/heimdall/pull/59) ([lukemalinowski](https://github.com/lukemalinowski))
-
-**Closed issues:**
-
-- Change to "Welcome to Heimdall, a security results viewer" [\#77](https://github.com/mitre/heimdall/issues/77)
 
 ## [v2.6.0](https://github.com/mitre/heimdall/tree/v2.6.0) (2019-08-02)
 [Full Changelog](https://github.com/mitre/heimdall/compare/v2.5.8...v2.6.0)

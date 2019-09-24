@@ -222,12 +222,29 @@ class Evaluation < ApplicationRecord
     end
   end
 
+  def profile_controls(profile, filters)
+    if profile.nil?
+      Rails.logger.debug "profile_controls: Profile is nil"
+      []
+    else
+      if filters.nil?
+        if profile.controls.present?
+          profile.controls.includes(:results, :tags)
+        else
+          []
+        end
+      else
+        profile.filtered_controls(filters)
+      end
+    end
+  end
+
   def profile_values(cat, params, ex_ids, filters = nil)
     nist = {}
     profiles.each do |profile|
       next if ex_ids.include?(profile.id)
 
-      p_controls = filters.nil? ? profile.controls.includes(:results, :tags) : profile.filtered_controls(filters)
+      p_controls = profile_controls(profile, filters)
       p_controls.each do |control|
         params[:ct_results] = params[:cts][control.id]
         severity = control.severity
@@ -247,7 +264,7 @@ class Evaluation < ApplicationRecord
 
   def filtered_controls(ex_ids, filters = nil)
     controls = {}
-    p_controls = filters.nil? ? base_profile&.controls.includes(:results, :tags) : base_profile&.filtered_controls(filters)
+    p_controls = profile_controls(base_profile, filters)
     if p_controls.present?
       p_controls.each do |control|
         controls[control.control_id] = control
@@ -258,7 +275,7 @@ class Evaluation < ApplicationRecord
             controls.delete(control.control_id)
           end
         else
-          d_controls = filters.nil? ? profile.controls.includes(:results, :tags) : profile.filtered_controls(filters)
+          d_controls = profile_controls(profile, filters)
           d_controls.each do |control|
             unless controls[control.control_id].present?
               controls[control.control_id] = control

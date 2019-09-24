@@ -12,7 +12,7 @@ class Control < ApplicationRecord
   accepts_nested_attributes_for :source_location
   accepts_nested_attributes_for :results
 
-  def to_jbuilder
+  def to_jbuilder(skip_results=false)
     Jbuilder.new do |json|
       json.extract! self, :title, :desc, :impact, :refs
       json.tags do
@@ -28,8 +28,10 @@ class Control < ApplicationRecord
         end
       end
       json.id control_id
-      if results.present?
-        json.results(results.collect { |result| result.to_jbuilder.attributes! })
+      unless skip_results
+        if results.present?
+          json.results(results.collect { |result| result.to_jbuilder.attributes! })
+        end
       end
     end
   end
@@ -134,19 +136,23 @@ class Control < ApplicationRecord
   end
 
   def self.parse_impact(value)
-    if value.nil?
-      'none'
+    if ['none', 'low', 'medium', 'high', 'critical'].include?(value)
+      impact = value
     else
-      if [Float, Integer].include?(value.class)
-        impact = value
-      elsif value.numeric?
-        impact = value.to_f
-      end
-      if impact < 0.1 then 'none'
-      elsif impact < 0.4 then 'low'
-      elsif impact < 0.7 then 'medium'
-      elsif impact < 0.9 then 'high'
-      elsif impact >= 0.9 then 'critical'
+      if value.nil?
+        'none'
+      else
+        if [Float, Integer].include?(value.class)
+          impact = value
+        elsif value.numeric?
+          impact = value.to_f
+        end
+        if impact < 0.1 then 'none'
+        elsif impact < 0.4 then 'low'
+        elsif impact < 0.7 then 'medium'
+        elsif impact < 0.9 then 'high'
+        elsif impact >= 0.9 then 'critical'
+        end
       end
     end
   end
