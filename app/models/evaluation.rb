@@ -41,7 +41,7 @@ class Evaluation < ApplicationRecord
   end
 
   def included_profiles
-    profiles.where.not(id: base_profile.id)
+    profiles.where.not(id: base_profile&.id)
   end
 
   def fuzzy_match_profile(fuzzy_name, exclude)
@@ -312,6 +312,7 @@ class Evaluation < ApplicationRecord
   end
 
   def self.parse(hash, user)
+    evaluation = nil
     hash.deep_transform_keys! { |key| key.to_s.tr('-', '_').gsub(/\battributes\b/, 'aspects').gsub(/\bid\b/, 'control_id') }
     hash.delete('controls')
 
@@ -321,14 +322,21 @@ class Evaluation < ApplicationRecord
     else
       hash['created_by_id'] = user.id
       evaluation = Evaluation.create(hash)
-      evaluation.save
+      Rails.logger.debug "evaluation errors: #{evaluation.errors.inspect}"
+      #evaluation.save
       all_profiles = Profile.parse(profiles, evaluation.id)
+      Rails.logger.debug "Loop through all_profiles"
       all_profiles.each do |profile|
         if profile.is_a?(Profile)
+          Rails.logger.debug "is a profile"
           evaluation.profiles << profile
         else
           profile['created_by_id'] = user.id
-          evaluation.profiles.create(profile)
+          Rails.logger.debug "new profile"
+          pr = Profile.create(profile)
+          Rails.logger.debug "pr errors: #{pr.errors.inspect}"
+          evaluation.profiles << pr
+          Rails.logger.debug "pr #{pr.inspect}"
         end
       end
     end
@@ -351,6 +359,9 @@ class Evaluation < ApplicationRecord
     end
     evaluation
   rescue Exception => e
+    if evaluation.is_a?(Evaluation)
+      evaluation.destroy
+    end
     Rails.logger.debug "Import error: #{e.inspect}"
     nil
   end

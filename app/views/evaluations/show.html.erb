@@ -89,7 +89,9 @@ var evaluation_id = '<%= @evaluation.id %>';
         <div class="box-body">
           <p>
             <strong>Parent Profile:</strong>
-            <%= link_to @evaluation.base_profile&.name, profile_path(@evaluation.base_profile) %></li>
+            <% if @evaluation.base_profile.present? %>
+              <%= link_to @evaluation.base_profile&.name, profile_path(@evaluation.base_profile) %></li>
+            <% end %>
           </p>
           <% prof_list = @evaluation.included_profiles %>
           <% unless prof_list.empty? %>

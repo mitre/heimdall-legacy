@@ -142,9 +142,11 @@ class Profile < ApplicationRecord
       Rails.logger.debug "PARSING profile #{profile_hash.inspect}"
       profile = Profile.where(sha256: sha256).first
       if profile.present?
+        Rails.logger.debug "profile present"
         profile.upload_results(profile_hash, evaluation_id)
         all_profiles << profile
       else
+        Rails.logger.debug "new_profile_hash = Profile.transform"
         new_profile_hash = Profile.transform(profile_hash.deep_dup, evaluation_id)
         all_profiles << new_profile_hash
       end
@@ -153,8 +155,10 @@ class Profile < ApplicationRecord
   end
 
   def self.transform(hash, evaluation_id=nil)
+    Rails.logger.debug "self.transform"
     hash = hash.deep_transform_keys { |key| key.to_s.tr('-', '_').gsub(/\battributes\b/, 'aspects').gsub(/\bid\b/, 'control_id') }
     controls = Control.transform(hash.delete('controls'), evaluation_id)
+    Rails.logger.debug "transformed controls"
     hash[:controls_attributes] = controls
     depends = hash.delete('depends') || []
     hash[:depends_attributes] = depends
@@ -174,6 +178,7 @@ class Profile < ApplicationRecord
       end
     end
     hash[:groups_attributes] = new_groups if !new_groups.empty?
+    Rails.logger.debug " done Profile.transform"
     hash
   end
 end

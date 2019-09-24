@@ -1,10 +1,11 @@
 # Change Log
 
-## [2.8.0](https://github.com/mitre/heimdall/tree/2.8.0) (2019-09-24)
-[Full Changelog](https://github.com/mitre/heimdall/compare/v2.7.9...2.8.0)
+## [v2.8.0](https://github.com/mitre/heimdall/tree/v2.8.0) (2019-09-24)
+[Full Changelog](https://github.com/mitre/heimdall/compare/v2.7.9...v2.8.0)
 
 **Merged pull requests:**
 
+- Attempt to fix profiles problem [\#82](https://github.com/mitre/heimdall/pull/82) ([robthew](https://github.com/robthew))
 - Document updates [\#80](https://github.com/mitre/heimdall/pull/80) ([mrtollick](https://github.com/mrtollick))
 
 ## [v2.7.9](https://github.com/mitre/heimdall/tree/v2.7.9) (2019-09-20)
@@ -43,7 +44,6 @@
 
 **Closed issues:**
 
-- fix rake versionator:tasks to also run github\_changelog\_... so that the updated changelog is part of the process [\#43](https://github.com/mitre/heimdall/issues/43)
 - update to use versionator gem rather than rake-version [\#42](https://github.com/mitre/heimdall/issues/42)
 - Heimdall active record should accurately report version number [\#28](https://github.com/mitre/heimdall/issues/28)
 
@@ -74,11 +74,14 @@
 - Paths [\#71](https://github.com/mitre/heimdall/pull/71) ([robthew](https://github.com/robthew))
 - Add support for serving from subdirectories from Dockerfile [\#70](https://github.com/mitre/heimdall/pull/70) ([rbclark](https://github.com/rbclark))
 - Upgrade Vagrantfile to use postgres-11 [\#69](https://github.com/mitre/heimdall/pull/69) ([rbclark](https://github.com/rbclark))
-- Create circles if they do not already exist and are requested via the API [\#65](https://github.com/mitre/heimdall/pull/65) ([rbclark](https://github.com/rbclark))
 - Move over to using DATABASE\_URL for better support of external databases [\#63](https://github.com/mitre/heimdall/pull/63) ([rbclark](https://github.com/rbclark))
 
 ## [v2.6.2](https://github.com/mitre/heimdall/tree/v2.6.2) (2019-08-12)
 [Full Changelog](https://github.com/mitre/heimdall/compare/v2.6.1...v2.6.2)
+
+**Fixed bugs:**
+
+- Clear Filter Button is Overlapped by Lower Rows of Evaluation [\#58](https://github.com/mitre/heimdall/issues/58)
 
 **Merged pull requests:**
 
@@ -89,7 +92,6 @@
 
 **Fixed bugs:**
 
-- Clear Filter Button is Overlapped by Lower Rows of Evaluation [\#58](https://github.com/mitre/heimdall/issues/58)
 - Change "Control" to "Test" for Status and Impact labels [\#57](https://github.com/mitre/heimdall/issues/57)
 - For count tiles, change "Findings" label to "Test Counts" [\#54](https://github.com/mitre/heimdall/issues/54)
 - List formula for Compliance % [\#53](https://github.com/mitre/heimdall/issues/53)
@@ -98,6 +100,14 @@
 - Tree/Partition area label should be "NIST SP 800-53 Coverage" [\#50](https://github.com/mitre/heimdall/issues/50)
 - Generate PDF for SSP view error [\#48](https://github.com/mitre/heimdall/issues/48)
 - Lm/auditee cosmetic fixes [\#59](https://github.com/mitre/heimdall/pull/59) ([lukemalinowski](https://github.com/lukemalinowski))
+
+**Closed issues:**
+
+- fix rake versionator:tasks to also run github\_changelog\_... so that the updated changelog is part of the process [\#43](https://github.com/mitre/heimdall/issues/43)
+
+**Merged pull requests:**
+
+- Create circles if they do not already exist and are requested via the API [\#65](https://github.com/mitre/heimdall/pull/65) ([rbclark](https://github.com/rbclark))
 
 ## [v2.6.0](https://github.com/mitre/heimdall/tree/v2.6.0) (2019-08-02)
 [Full Changelog](https://github.com/mitre/heimdall/compare/v2.5.8...v2.6.0)

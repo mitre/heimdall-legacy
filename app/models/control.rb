@@ -3,10 +3,10 @@ require 'ripper'
 class Control < ApplicationRecord
   serialize :refs
   belongs_to :profile, inverse_of: :controls
-  has_many :tags, as: :tagger
-  has_many :descriptions
-  has_many :results
-  has_one :source_location
+  has_many :tags, as: :tagger, dependent: :destroy
+  has_many :descriptions, dependent: :destroy
+  has_many :results, dependent: :destroy
+  has_one :source_location, dependent: :destroy
   accepts_nested_attributes_for :tags
   accepts_nested_attributes_for :descriptions
   accepts_nested_attributes_for :source_location
@@ -121,7 +121,9 @@ class Control < ApplicationRecord
       control[:tags_attributes] = new_tags
       control['impact'] = Control.parse_impact(control['impact'])
       source_location = control.delete('source_location')
-      control[:source_location_attributes] = source_location
+      if source_location.present?
+        control[:source_location_attributes] = source_location
+      end
       results = control.delete('results')
       if results.present?
         results.each do |result|
