@@ -5,7 +5,7 @@
 # Ensure that the cpu and memory values are a supported combination by Fargate.
 # More info: https://docs.aws.amazon.com/AmazonECS/latest/developerguide/task-cpu-memory-error.html"
 @cpu = 256
-@memory = 512
-@memory_reservation = 512
+@memory = 2048
+@memory_reservation = 2048
 
-@execution_role_arn = "arn:aws:iam::916481805664ole/ecsTaskExecutionRole"
+@execution_role_arn = "arn:aws:iam::4848859:role/ecsTaskExecutionRole"

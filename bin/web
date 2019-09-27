@@ -7,6 +7,8 @@ else
     export APP_ROOT="$(cd ../ && pwd)"
 fi
 
+echo "The APP_ROOT is at $APP_ROOT"
+
 if [ -f $APP_ROOT/tmp/pids/server.pid ]; then
     echo "Removing old .pid file"
     rm -f $APP_ROOT/tmp/pids/server.pid
@@ -15,5 +17,5 @@ else
 fi
 echo "precompiling assets"
 bundle exec rake assets:precompile
-echo "starting frontent"
+echo "starting frontend"
 bundle exec rails s -p 3000 -b '0.0.0.0'

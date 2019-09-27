@@ -4,4 +4,4 @@
 # Meant to be overridden.
 
 # Only build one docker image and deploys it to multiple ECS services
-ufo ships heimdall-{web,db_setup,db_reset,db_migrate}
+ufo ships heimdall-web

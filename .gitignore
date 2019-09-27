@@ -61,6 +61,7 @@ build-iPhoneSimulator/
 
 # Hide docker secrets file from repository
 .env-prod
+.env
 .ufo/current
 .ufo/data
 .ufo/log
