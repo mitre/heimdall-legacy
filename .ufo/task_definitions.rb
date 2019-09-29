@@ -12,7 +12,7 @@
 # More info: http://ufoships.com/docs/helpers/
 #
 task_definition "heimdall-web" do
-  source "fargate" # will use ufo/templates/fargate.json.erb
+  source "main" # will use ufo/templates/main.json.erb
   variables(
     family: task_definition_name,
     name: "web",
@@ -29,71 +29,6 @@ task_definition "heimdall-web" do
     awslogs_group: ["ecs/heimdall-web", Ufo.env_extra].compact.join('-'),
     awslogs_stream_prefix: "heimdall",
     awslogs_region: helper.current_region,
-    command: ["/bin/sh","-c","./bin/web"] # IMPORTANT: change or create a bin/web file
+    command: ["sh","-c","bin/web"] # IMPORTANT: change or create a bin/web file
   )
 end
-
-# task_definition "heimdall-db-migrate" do
-#   source "fargate" # will use ufo/templates/fargate.json.erb
-#   variables(
-#     family: task_definition_name,
-#     name: "db-migrate",
-#     # Comment out awslogs_* if you do not want logs to be sent to CloudWatch.
-#     awslogs_group: ["ecs/heimdall-db-migrate", Ufo.env_extra].compact.join('-'),
-#     awslogs_stream_prefix: "heimdall",
-#     awslogs_region: helper.current_region,
-#     command: ["/bin/sh","-c","./bin/db_migrate"]
-#   )
-# end
-
-# task_definition "heimdall-db-setup" do
-#   source "fargate" # will use ufo/templates/fargate.json.erb
-#   variables(
-#     family: task_definition_name,
-#     name: "db-setup",
-#     # Comment out awslogs_* if you do not want logs to be sent to CloudWatch.
-#     awslogs_group: ["ecs/heimdall-db-setup", Ufo.env_extra].compact.join('-'),
-#     awslogs_stream_prefix: "heimdall",
-#     awslogs_region: helper.current_region,
-#     command: ["/bin/sh","-c","./bin/db_setup"]
-#   )
-# end
-
-# task_definition "heimdall-db-reset" do
-#   source "fargate" # will use ufo/templates/fargate.json.erb
-#   variables(
-#     family: task_definition_name,
-#     name: "db-reset",
-#     # Comment out awslogs_* if you do not want logs to be sent to CloudWatch.
-#     awslogs_group: ["ecs/heimdall-db-reset", Ufo.env_extra].compact.join('-'),
-#     awslogs_stream_prefix: "heimdall",
-#     awslogs_region: helper.current_region,
-#     command: ["/bin/sh","-c","./bin/db_reset"]
-#   )
-# end
-
-# task_definition "heimdall-worker" do
-#   source "fargate" # will use ufo/templates/fargate.json.erb
-#   variables(
-#     family: task_definition_name,
-#     name: "worker",
-#     # Comment out awslogs_* if you do not want logs to be sent to CloudWatch.
-#     awslogs_group: ["ecs/heimdall-worker", Ufo.env_extra].compact.join('-'),
-#     awslogs_stream_prefix: "heimdall",
-#     awslogs_region: helper.current_region,
-#     # command: ["bin/worker"] # IMPORTANT: change or create a bin/worker file
-#   )
-# end
-
-# task_definition "heimdall-clock" do
-#   source "fargate" # will use ufo/templates/fargate.json.erb
-#   variables(
-#     family: task_definition_name,
-#     name: "clock",
-#     # Comment out awslogs_* if you do not want logs to be sent to CloudWatch.
-#     awslogs_group: ["ecs/heimdall-clock", Ufo.env_extra].compact.join('-'),
-#     awslogs_stream_prefix: "heimdall",
-#     awslogs_region: helper.current_region,
-#     # command: ["bin/clock"] # IMPORTANT: change or create a bin/clock file
-#   )
-# end

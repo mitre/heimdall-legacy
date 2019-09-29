@@ -1,6 +1,7 @@
 {
   "family": "<%= @family %>",
   "networkMode": "awsvpc",
+  "executionRoleArn": "<%= @execution_role_arn || raise("@execution_role_arn needs to be set") %>",
   "containerDefinitions": [
     {
       "name": "<%= @name %>",
