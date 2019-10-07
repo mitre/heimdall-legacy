@@ -12,7 +12,8 @@
     <% if @evaluation %>
       <div id="fdetails-<%= @evaluation.id %>-<%= control.id %>" class="tab-pane fade in active">
         <table class="table table-bordered table-striped">
-          <tr><td colspan="3"><%= result_message(@evaluation.status_symbol(control, control.results)) %>:<br><%= control.desc %></td><tr>
+          <% status_symbol = @evaluation.status_symbol(control, control.results) %>
+          <tr><td colspan="3"><%= result_message(status_symbol) %>:<br><%= control.desc %></td><tr>
           <% control.results.where(evaluation_id: @evaluation.id).each do |result| %>
             <tr>
               <td>
@@ -22,6 +23,11 @@
                 <% if result.message %>Message: <%= result.message %><% end %>
                 <% if result.exception %><br>Exception: <%= result.exception %><% end %>
               </td>
+            </tr>
+          <% end %>
+          <% if status_symbol == :profile_error && control.results.empty? %>
+            <tr>
+              <td>This test produced no results. Check the code for missing conditions</td>
             </tr>
           <% end %>
         </table>
