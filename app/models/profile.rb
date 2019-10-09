@@ -108,9 +108,7 @@ class Profile < ApplicationRecord
     nist
   end
 
-  def upload_results(hash, evaluation_id)
-    hash = hash.deep_transform_keys { |key| key.to_s.tr('-', '_').gsub(/\battributes\b/, 'aspects').gsub(/\bid\b/, 'control_id') }
-    controls_ary = hash.delete('controls')
+  def upload_results(controls_ary, evaluation_id)
     controls_ary.try(:each) do |control|
       ctl = controls.where(control_id: control['control_id']).first
       results = control.delete('results')
@@ -120,6 +118,21 @@ class Profile < ApplicationRecord
         end
         ctl.results.create(results)
       end
+    end
+  end
+
+  def top_control(control_id)
+    control = base_profile.controls.where(control_id: control_id).first
+    if control.present?
+      control
+    else
+      dependants.each do |dep_profile|
+        ctl = dep_profile.top_control
+        if ctl.present?
+          control = ctl
+        end
+      end
+      control
     end
   end
 
@@ -136,14 +149,26 @@ class Profile < ApplicationRecord
 
   def self.parse(profiles, evaluation_id=nil)
     all_profiles = []
+    results_hash = {}
     parent = nil
     profiles.try(:each) do |profile_hash|
+      profile_hash = profile_hash.deep_transform_keys { |key| key.to_s.tr('-', '_').gsub(/\battributes\b/, 'aspects').gsub(/\bid\b/, 'control_id') }
       sha256 = profile_hash['sha256']
       Rails.logger.debug "PARSING profile #{profile_hash.inspect}"
+      if profiles.size > 1
+        profile_hash['controls'].each do |control|
+          results = control.delete['results']
+          if results.present?
+            results_hash[control['control_id']] = results
+          end
+        end
+      end
       profile = Profile.where(sha256: sha256).first
       if profile.present?
         Rails.logger.debug "profile present"
-        profile.upload_results(profile_hash, evaluation_id)
+        if profiles.size == 1
+          profile.upload_results(profile_hash.delete('controls'), evaluation_id)
+        end
         all_profiles << profile
       else
         Rails.logger.debug "new_profile_hash = Profile.transform"
@@ -151,7 +176,7 @@ class Profile < ApplicationRecord
         all_profiles << new_profile_hash
       end
     end
-    all_profiles
+    [all_profiles, results_hash]
   end
 
   def self.transform(hash, evaluation_id=nil)
