@@ -40,6 +40,21 @@ class Evaluation < ApplicationRecord
     base
   end
 
+  def top_control(control_id)
+    control = base_profile.controls.where(control_id: control_id).first
+    if control.present?
+      control
+    else
+      included_profiles.each do |profile|
+        ctl = profile.top_control(control_id)
+        if ctl.present?
+          control = ctl
+        end
+      end
+      control
+    end
+  end
+
   def included_profiles
     profiles.where.not(id: base_profile&.id)
   end
@@ -64,7 +79,15 @@ class Evaluation < ApplicationRecord
     control = profile.controls.where(control_id: control_id).first
     code += control&.code + "\n"
     profile.dependants&.each do |dependant|
-      code += profile_code(dependant, control_id) + "\n"
+      ctl = dependant.controls.where(control_id: control_id).first
+      if ctl.present?
+        code_str = profile_code(dependant, control_id) + "\n"
+        if ctl.code == control&.code
+          code = code_str
+        else
+          code += code_str
+        end
+      end
     end
     code
   end
@@ -127,17 +150,16 @@ class Evaluation < ApplicationRecord
     save
   end
 
-  def status_counts(filters = nil)
+  def status_counts
     counts = { failed: 0, passed: 0, not_reviewed: 0, profile_error: 0, not_applicable: 0 }
     controls = {}
     start_times = []
-    filtered = filtered_controls([], filters)
-    filtered.each do |control|
-      controls[control.control_id] = { control: control, results: [] }
-      control.results.where(evaluation_id: id).each do |result|
-        controls[control.control_id][:results] << result
-        start_times << result.start_time
+    results.each do |result|
+      start_times << result.start_time
+      unless controls.key?(result.control.control_id)
+        controls[result.control.control_id] = { control: result.control, results: [] }
       end
+      controls[result.control.control_id][:results] << result
     end
     controls.each do |_, ct|
       sym = status_symbol(ct[:control], ct[:results])
@@ -324,7 +346,7 @@ class Evaluation < ApplicationRecord
       evaluation = Evaluation.create(hash)
       Rails.logger.debug "evaluation errors: #{evaluation.errors.inspect}"
       #evaluation.save
-      all_profiles = Profile.parse(profiles, evaluation.id)
+      all_profiles, results_hash = Profile.parse(profiles, evaluation.id)
       Rails.logger.debug "Loop through all_profiles"
       all_profiles.each do |profile|
         if profile.is_a?(Profile)
@@ -354,6 +376,15 @@ class Evaluation < ApplicationRecord
               DependantsParent.create(parent_id: profile.id, dependant_id: child.id)
             end
           end
+        end
+      end
+      results_hash.each do |control_id, results|
+        control = evaluation.top_control(control_id)
+        if control.present?
+          results.each do |result|
+            result[:evaluation_id] = evaluation.id
+          end
+          control.results.create(results)
         end
       end
     end
