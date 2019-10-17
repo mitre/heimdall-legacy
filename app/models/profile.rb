@@ -154,21 +154,24 @@ class Profile < ApplicationRecord
     profiles.try(:each) do |profile_hash|
       profile_hash = profile_hash.deep_transform_keys { |key| key.to_s.tr('-', '_').gsub(/\battributes\b/, 'aspects').gsub(/\bid\b/, 'control_id') }
       sha256 = profile_hash['sha256']
-      Rails.logger.debug "PARSING profile #{profile_hash.inspect}"
+      Rails.logger.debug "PARSING profiles #{profiles.size}"
       if profiles.size > 1
         profile_hash['controls'].each do |control|
-          results = control.delete['results']
+          results = control.delete('results')
           if results.present?
             results_hash[control['control_id']] = results
           end
         end
       end
+      Rails.logger.debug "lookup profile #{sha256}"
       profile = Profile.where(sha256: sha256).first
       if profile.present?
         Rails.logger.debug "profile present"
         if profiles.size == 1
+          Rails.logger.debug "existings profile upload_results"
           profile.upload_results(profile_hash.delete('controls'), evaluation_id)
         end
+        Rails.logger.debug "add profile to all_profiles"
         all_profiles << profile
       else
         Rails.logger.debug "new_profile_hash = Profile.transform"
@@ -176,6 +179,7 @@ class Profile < ApplicationRecord
         all_profiles << new_profile_hash
       end
     end
+    Rails.logger.debug "return all_profiles(#{all_profiles.size}), results"
     [all_profiles, results_hash]
   end
 

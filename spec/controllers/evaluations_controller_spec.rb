@@ -163,7 +163,7 @@ RSpec.describe EvaluationsController, type: :controller do
 
     context 'with imported evaluation' do
       let(:eval1) { Evaluation.parse(JSON.parse(File.open('spec/support/ngadev-test1.json', 'r').read), user) }
-      let(:eval2) { Evaluation.parse(JSON.parse(File.open('spec/support/ngadev-test2.json', 'r').read), user) }
+      let(:eval2) { Evaluation.parse(JSON.parse(File.open('spec/support/good_nginxresults.json', 'r').read), user) }
       describe 'POST #compare' do
         it 'returns a success response' do
           post :compare, params: { evaluation: { eval_ids: [eval1.to_param, eval2.to_param] } }, session: valid_session
