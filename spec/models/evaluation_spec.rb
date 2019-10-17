@@ -12,7 +12,7 @@ RSpec.describe Evaluation, type: :model do
         failed:           3,
         passed:  33,
         not_reviewed:   3,
-        profile_error:     1,
+        profile_error:     0,
         not_applicable: 1,
       )
     end
@@ -24,10 +24,10 @@ RSpec.describe Evaluation, type: :model do
         failed:           3,
         passed:  33,
         not_reviewed:   3,
-        profile_error:     1,
+        profile_error:     0,
         not_applicable: 1,
       )
-      expect(controls.size).to eq 41
+      expect(controls.size).to eq 40
     end
 
     it 'get status_symbol_value' do
