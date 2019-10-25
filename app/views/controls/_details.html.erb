@@ -60,6 +60,9 @@
         <% if fix = control.tag('fix') %>
           <tr><td>Fix Text:</td><td><%= fix %></td></tr>
         <% end %>
+        <% if control.waiver_data.present? %>
+          <tr><td>Waiver Data:</td><td><%= control.waiver_data %></td></tr>
+        <% end %>
       </table>
     </div>
     <div id="inspec_code-<%= @evaluation.id %>-<%= control.id %>" class="tab-pane fade">
