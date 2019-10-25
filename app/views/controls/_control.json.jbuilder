@@ -1,4 +1,4 @@
-json.extract! control, :title, :desc, :impact, :refs
+json.extract! control, :title, :desc, :impact, :refs, :waiver_data
 json.tags do
   control.tags.each do |tag|
     json.set!(tag.name, tag.value)

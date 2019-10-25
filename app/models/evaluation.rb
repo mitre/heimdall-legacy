@@ -178,6 +178,8 @@ class Evaluation < ApplicationRecord
         :profile_error
       elsif control.impact == 'none'
         :not_applicable
+      elsif control.waiver_data.present?
+        :not_applicable
       elsif status_list.include?(:failed)
         :failed
       elsif status_list.include?(:passed)

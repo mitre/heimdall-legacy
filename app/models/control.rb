@@ -2,6 +2,7 @@ require 'ripper'
 
 class Control < ApplicationRecord
   serialize :refs
+  store :waiver_data, accessors: [:justification, :run, :skipped_due_to_waiver, :message], coder: JSON
   belongs_to :profile, inverse_of: :controls
   has_many :tags, as: :tagger, dependent: :destroy
   has_many :descriptions, dependent: :destroy
