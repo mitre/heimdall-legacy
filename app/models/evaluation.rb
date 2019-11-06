@@ -171,7 +171,11 @@ class Evaluation < ApplicationRecord
 
   def status_symbol(control, ct_results)
     if ct_results.nil?
-      :profile_error
+      if control.impact == 'none'
+        :not_applicable
+      else
+        :profile_error
+      end
     else
       status_list = ct_results.map(&:status_symbol).uniq
       if status_list.include?(:profile_error)
