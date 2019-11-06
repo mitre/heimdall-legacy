@@ -1,10 +1,15 @@
 # Change Log
 
-## [2.9.0](https://github.com/mitre/heimdall/tree/2.9.0) (2019-10-25)
-[Full Changelog](https://github.com/mitre/heimdall/compare/v2.8.4...2.9.0)
+## [v2.9.0](https://github.com/mitre/heimdall/tree/v2.9.0) (2019-10-25)
+[Full Changelog](https://github.com/mitre/heimdall/compare/v2.8.4...v2.9.0)
+
+**Closed issues:**
+
+- New Field 'waiver\_data' need to be added to controls [\#94](https://github.com/mitre/heimdall/issues/94)
 
 **Merged pull requests:**
 
+- update that fixes \#94 [\#95](https://github.com/mitre/heimdall/pull/95) ([robthew](https://github.com/robthew))
 - Linux script [\#93](https://github.com/mitre/heimdall/pull/93) ([mrtollick](https://github.com/mrtollick))
 
 ## [v2.8.4](https://github.com/mitre/heimdall/tree/v2.8.4) (2019-10-17)
@@ -83,7 +88,6 @@
 
 - updated cookie settings [\#75](https://github.com/mitre/heimdall/pull/75) ([robthew](https://github.com/robthew))
 - Security settings [\#73](https://github.com/mitre/heimdall/pull/73) ([robthew](https://github.com/robthew))
-- Upgrade Vagrantfile to use postgres-11 [\#69](https://github.com/mitre/heimdall/pull/69) ([rbclark](https://github.com/rbclark))
 
 ## [v2.7.2](https://github.com/mitre/heimdall/tree/v2.7.2) (2019-09-04)
 [Full Changelog](https://github.com/mitre/heimdall/compare/v2.6.2...v2.7.2)
@@ -106,6 +110,7 @@
 - Relative paths [\#72](https://github.com/mitre/heimdall/pull/72) ([robthew](https://github.com/robthew))
 - Paths [\#71](https://github.com/mitre/heimdall/pull/71) ([robthew](https://github.com/robthew))
 - Add support for serving from subdirectories from Dockerfile [\#70](https://github.com/mitre/heimdall/pull/70) ([rbclark](https://github.com/rbclark))
+- Upgrade Vagrantfile to use postgres-11 [\#69](https://github.com/mitre/heimdall/pull/69) ([rbclark](https://github.com/rbclark))
 - Create circles if they do not already exist and are requested via the API [\#65](https://github.com/mitre/heimdall/pull/65) ([rbclark](https://github.com/rbclark))
 - Move over to using DATABASE\_URL for better support of external databases [\#63](https://github.com/mitre/heimdall/pull/63) ([rbclark](https://github.com/rbclark))
 
