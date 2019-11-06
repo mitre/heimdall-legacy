@@ -24,3 +24,22 @@ point to the profile and where the scan will be saved.
 **EXAMPLE** ```0 2 * * 5 /path/to/automatedScan.sh``` 
 
 The above example will run the scan every Friday at 2 AM as root. **This will not work if you do not run this script as Root, since config.sh requires root to read**
+
+# Automated Powershell script
+
+* First and foremost create a folder where you will you storing all of your scans and where the stig-microsoft-windows-server-2016-v1r4-baseline folder is located. 
+
+* Once inside of that folder, go ahead in a powershell window and run the command 
+```read-host -assecurestring | convertfrom-securestring | out-file C:\PATH_TO_YOUR_SCANS_DIRECTORY\username.txt```
+
+AND
+
+```read-host -assecurestring | convertfrom-securestring | out-file C:\PATH_TO_YOUR_SCANS_DIRECTORY\password.txt```
+
+MAKE SURE THAT THESE FILES ARE IN THE SAME FOLDER AS THE PROFILE YOU WILL BE RUNNING, THIS WILL BE YOUR STARTING POINT. 
+
+* Once those folders exist, you should be able to run the inspec scan, or automatedScan.ps1. This will locate these files you created and pull them into the script. 
+
+* You just need to schedule the script to run on Windows task scheduler, which will run the scans at the proper times and output it into it's own folders for date and time the scan was run.
+
+

@@ -11,17 +11,13 @@ $password=Get-Content "$basePath\password.txt" | ConvertTo-SecureString
 
 New-Item -Path "$basePath\$folderName" -ItemType "directory"
 
-function inspecScan([String]$hostName, [String]$ipAddress,[String]$username,[String]$password){
-    Start-Process "cmd.exe" "/c inspec exec stig-microsoft-windows-server-2016-v1r14-baseline -t winrm://$usersname@$hostName --password=$password --reporter cli json:$hostname.json"
+function inspecScan(){
+    Start-Process "cmd.exe" "/c inspec exec stig-microsoft-windows-server-2016-v1r14-baseline -t winrm://$username@$ipAddress --password=$password --reporter cli json:$basePath\$folderName\$hostname.json"
 }
 
 foreach ($item in $hostCSV) {
     $hostName=$($item.hostname)
     $ipAddress=$($item.IPAddress)
+    inspecScan($hostName, $ipAddress, $username, $password)
 }
-
-
-
-
-
 
