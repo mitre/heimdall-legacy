@@ -63,7 +63,12 @@ class Control < ApplicationRecord
         tag_obj.content[:value]
       end
     else
-      ''
+      desc_obj = descriptions.select { |desc| desc.label == name }.first
+      if desc_obj
+        desc_obj.data
+      else
+        ''
+      end
     end
   end
 

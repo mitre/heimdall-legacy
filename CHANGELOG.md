@@ -1,5 +1,19 @@
 # Change Log
 
+## [2.9.2](https://github.com/mitre/heimdall/tree/2.9.2) (2019-11-15)
+[Full Changelog](https://github.com/mitre/heimdall/compare/v2.9.1...2.9.2)
+
+**Merged pull requests:**
+
+- Powershell script [\#97](https://github.com/mitre/heimdall/pull/97) ([mrtollick](https://github.com/mrtollick))
+
+## [v2.9.1](https://github.com/mitre/heimdall/tree/v2.9.1) (2019-11-06)
+[Full Changelog](https://github.com/mitre/heimdall/compare/v2.9.0...v2.9.1)
+
+**Merged pull requests:**
+
+- Updated status counts again [\#96](https://github.com/mitre/heimdall/pull/96) ([robthew](https://github.com/robthew))
+
 ## [v2.9.0](https://github.com/mitre/heimdall/tree/v2.9.0) (2019-10-25)
 [Full Changelog](https://github.com/mitre/heimdall/compare/v2.8.4...v2.9.0)
 
@@ -67,10 +81,6 @@
 ## [v2.7.5](https://github.com/mitre/heimdall/tree/v2.7.5) (2019-09-17)
 [Full Changelog](https://github.com/mitre/heimdall/compare/v2.7.4...v2.7.5)
 
-**Merged pull requests:**
-
-- updated devise gem [\#76](https://github.com/mitre/heimdall/pull/76) ([robthew](https://github.com/robthew))
-
 ## [v2.7.4](https://github.com/mitre/heimdall/tree/v2.7.4) (2019-09-16)
 [Full Changelog](https://github.com/mitre/heimdall/compare/v2.7.2...v2.7.4)
 
@@ -107,11 +117,11 @@
 
 **Merged pull requests:**
 
+- updated devise gem [\#76](https://github.com/mitre/heimdall/pull/76) ([robthew](https://github.com/robthew))
 - Relative paths [\#72](https://github.com/mitre/heimdall/pull/72) ([robthew](https://github.com/robthew))
 - Paths [\#71](https://github.com/mitre/heimdall/pull/71) ([robthew](https://github.com/robthew))
 - Add support for serving from subdirectories from Dockerfile [\#70](https://github.com/mitre/heimdall/pull/70) ([rbclark](https://github.com/rbclark))
 - Upgrade Vagrantfile to use postgres-11 [\#69](https://github.com/mitre/heimdall/pull/69) ([rbclark](https://github.com/rbclark))
-- Create circles if they do not already exist and are requested via the API [\#65](https://github.com/mitre/heimdall/pull/65) ([rbclark](https://github.com/rbclark))
 - Move over to using DATABASE\_URL for better support of external databases [\#63](https://github.com/mitre/heimdall/pull/63) ([rbclark](https://github.com/rbclark))
 
 ## [v2.6.2](https://github.com/mitre/heimdall/tree/v2.6.2) (2019-08-12)
