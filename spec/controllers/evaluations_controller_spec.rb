@@ -40,7 +40,7 @@ RSpec.describe EvaluationsController, type: :controller do
     end
 
     context 'with imported evaluation' do
-      let(:eval) { Evaluation.parse(JSON.parse(File.open('spec/support/bad_nginx.json', 'r').read), user) }
+      let(:eval) { Evaluation.parse(JSON.parse(File.open('spec/support/good_nginxresults.json', 'r').read), user) }
 
       describe 'GET #index' do
         it 'returns a success response' do

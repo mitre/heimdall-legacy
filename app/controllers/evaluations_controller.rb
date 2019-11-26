@@ -97,7 +97,7 @@ class EvaluationsController < ApplicationController
     authorize! :read, Evaluation
     filters, = session_filters
     category = nil
-    category = params[:category].downcase if params.key?(:category)
+    category = convert_impact(params[:category]) if params.key?(:category)
     status_sym = nil
     status_sym = params[:status_symbol].downcase.tr(' ', '_').to_sym if params.key?(:status_symbol)
     ex_ids = params[:ex_ids]
@@ -146,8 +146,14 @@ class EvaluationsController < ApplicationController
   end
 
   def tag
-    @evaluation.tags.where(name: tag_params['name'])&.destroy
-    @evaluation.tags.create(name: tag_params['name'], value: tag_params['value'])
+    name = tag_params['name']
+    value = tag_params['value']
+    @evaluation.tags.each do |tag|
+      if tag.content['name'] == name
+        tag.destroy
+      end
+    end
+    @evaluation.tags.create(content: {'name': "#{name}", 'value': "#{value}"})
     redirect_to @evaluation
   end
 
@@ -157,13 +163,12 @@ class EvaluationsController < ApplicationController
     circle_id = params[:circle_id]
     if (@eval = Evaluation.parse(JSON.parse(file.read), current_user))
       @evaluation = Evaluation.find(@eval.id)
-      @evaluation.findings
       Rails.logger.debug "Now start_time is #{@evaluation.start_time}"
 
-      @evaluation.tags.create(name: 'filename', value: params[:file].original_filename)
+      @evaluation.tags.create(content: {'name': 'filename', 'value': "#{params[:file].original_filename}"})
       (Constants::TAG_NAMES - ['Filename']).each do |tag|
         if params[tag.downcase]
-          @evaluation.tags.create(name: tag.downcase, value: params[tag.downcase])
+          @evaluation.tags.create(content: {'name': "#{tag.downcase}", 'value': "#{params[tag.downcase]}"})
         end
       end
 
@@ -187,12 +192,14 @@ class EvaluationsController < ApplicationController
       if current_user.has_role?(:admin) or current_user.has_role?(:editor)
         if (@eval = Evaluation.parse(JSON.parse(file.read), current_user))
           @evaluation = Evaluation.find(@eval.id)
-          @evaluation.findings
-          @evaluation.tags.create(name: 'filename', value: params[:file].original_filename)
+          @evaluation.tags.create(content: {'name': 'filename', 'value': "#{params[:file].original_filename}"})
           tags = (Constants::TAG_NAMES - ['Filename']).map do |tag|
-            {name: tag.downcase, value: params[tag.downcase]} if params.has_key?(tag.downcase)
+            {'name': "#{tag.downcase}", 'value': "#{params[tag.downcase]}"} if params.has_key?(tag.downcase)
           end.compact
-          @evaluation.tags.create(tags)
+          tags.each do |tag|
+            @evaluation.tags.create(content: tag)
+          end
+
           if circle.present?
             @circle = Circle.with_roles([:owner, :member], current_user).find_by(name: circle)
             @circle = Circle.create(name: circle, created_by: current_user) unless @circle
@@ -262,6 +269,20 @@ class EvaluationsController < ApplicationController
   end
 
   private
+
+  def convert_impact(impact)
+    if impact == 'None'
+      0.0
+    elsif impact == 'Low'
+      0.3
+    elsif impact == 'Medium'
+      0.5
+    elsif impact == 'High'
+      0.7
+    elsif impact == 'Critical'
+      1.0
+    end
+  end
 
   def sign_in_api_user(email, api_key)
     if (user = User.where(email: email, api_key: api_key).first)

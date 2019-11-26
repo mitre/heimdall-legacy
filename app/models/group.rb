@@ -1,5 +1,5 @@
 class Group < ApplicationRecord
-  serialize :controls
+  serialize :controls_array
   belongs_to :profile, inverse_of: :groups
   validates_presence_of :title
 

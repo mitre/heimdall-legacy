@@ -141,11 +141,11 @@ document.addEventListener("turbolinks:load", function() {
   var columns = [['x'], ['Passed'], ['Failed'], ['Not Applicable'], ['Profile Error'], ['Not Reviewed']];
   <% @evaluations.each_with_index do |eval, index| %>
     columns[0].push(<%= index + 1 %>);
-    columns[1].push(<%= eval.findings[:passed] %>);
-    columns[2].push(<%= eval.findings[:failed] %>);
-    columns[3].push(<%= eval.findings[:not_applicable] %>);
-    columns[4].push(<%= eval.findings[:not_tested] || eval.findings[:profile_error] %>);
-    columns[5].push(<%= eval.findings[:not_reviewed] %>);
+    columns[1].push(<%= eval.finding&.passed %>);
+    columns[2].push(<%= eval.finding&.failed %>);
+    columns[3].push(<%= eval.finding&.not_applicable %>);
+    columns[4].push(<%= eval.finding&.profile_error %>);
+    columns[5].push(<%= eval.finding&.not_reviewed %>);
   <% end %>
 
   var chart = c3.generate({

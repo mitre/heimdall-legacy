@@ -1,13 +1,25 @@
 module ApplicationHelper
   def category_button(impact)
-    if impact == 'low'
+    if impact == 0.3
       'btn btn-category-iii'
-    elsif impact == 'medium'
+    elsif impact == 0.5
       'btn btn-category-ii'
-    elsif impact == 'high'
+    elsif impact == 0.7
       'btn btn-category-i'
-    elsif impact == 'critical'
+    elsif impact == 1.0
       'btn btn-category-i'
+    end
+  end
+
+  def severity_class(impact)
+    if impact == 0.3
+      'Low'
+    elsif impact == 0.5
+      'Medium'
+    elsif impact == 0.7
+      'High'
+    elsif impact == 1.0
+      'Critical'
     end
   end
 
@@ -46,21 +58,21 @@ module ApplicationHelper
     val.size == 1 ? val.first.to_s.delete('"') : val.to_s.delete('"')
   end
 
-  def pass_pixels(findings)
-    Rails.logger.debug "FINDINGS: #{findings}"
-    if findings and findings[:passed] != 0
-      (findings[:passed] / (findings[:failed] + findings[:passed] + (findings[:not_tested] || findings[:profile_error]) + findings[:not_reviewed]).to_f * 200.0).round
+  def pass_pixels(finding)
+    Rails.logger.debug "FINDINGS: #{finding}"
+    if finding and finding.passed != 0
+      (finding.passed / (finding.failed + finding.passed + finding.not_reviewed + finding.profile_error).to_f * 200.0).round
     else
       0
     end
   end
 
-  def fail_pixels(findings)
-    200 - pass_pixels(findings)
+  def fail_pixels(finding)
+    200 - pass_pixels(finding)
   end
 
-  def compliance(findings)
-    (findings[:passed] / (findings[:failed] + findings[:passed] + (findings[:not_tested] || findings[:profile_error]) + findings[:not_reviewed]).to_f * 100.0).round(2)
+  def compliance(finding)
+    (finding.passed / (finding.failed + finding.passed + finding.not_reviewed + finding.profile_error).to_f * 100.0).round(2)
   end
 
   def icon(clss)

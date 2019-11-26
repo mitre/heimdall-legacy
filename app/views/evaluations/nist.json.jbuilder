@@ -20,6 +20,20 @@ def calc_status_value(status_value, curr_value, curr_total)
   [curr_value, curr_total]
 end
 
+def convert_severity(impact)
+  if impact == 0.0
+    'None'
+  elsif impact == 0.3
+    'Low'
+  elsif impact == 0.5
+    'Medium'
+  elsif impact == 0.7
+    'High'
+  elsif impact == 1.0
+    'Critical'
+  end
+end
+
 def convert_status_symbol(symbol)
   case symbol
   when :not_applicable then 0.2
@@ -175,7 +189,7 @@ json.controls all_controls.each do |key, ctl|
   json.status_symbol_title ctl[:status_symbol].to_s.titleize
   json.status_value ctl[:status_value]
   json.severity ctl[:severity]
-  json.severity_cap ctl[:severity].capitalize
+  json.severity_cap convert_severity(ctl[:severity])
   json.check h(ctl[:check])
   json.fix h(ctl[:fix])
   json.result_message h(ctl[:result_message])
