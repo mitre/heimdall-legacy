@@ -111,15 +111,15 @@
               <tr>
                 <td><%= index + 1 %>: <%= link_to evaluation.profiles.map(&:name).join(', '), evaluation %></td>
                 <td><%= evaluation.start_time %></td>
-                <td><%= evaluation.statistics[:duration] %></td>
+                <td><%= evaluation.statistic&.duration %></td>
                 <td><%= evaluation.version %></td>
-                <td><%= evaluation.platform[:name] %></td>
-                <td><%= evaluation.platform[:release] %></td>
+                <td><%= evaluation.platform&.name %></td>
+                <td><%= evaluation.platform&.release %></td>
                 <td>
                   <table id="message_counts" class="cn-msg-table">
                     <tr>
-                      <td><div class="cn-msg-bar bg-green" data-status="0" style="width: <%= pass_pixels(evaluation.findings) %>px"></div></td>
-                      <td><div class="cn-msg-bar bg-red" data-status="3" style="width: <%= fail_pixels(evaluation.findings) %>px"></div></td>
+                      <td><div class="cn-msg-bar bg-green" data-status="0" style="width: <%= pass_pixels(evaluation.finding) %>px"></div></td>
+                      <td><div class="cn-msg-bar bg-red" data-status="3" style="width: <%= fail_pixels(evaluation.finding) %>px"></div></td>
                     </tr>
                   </table>
                 </td>
@@ -217,11 +217,11 @@ $(document).ready(function() {
   var columns = [['x'], ['Passed'], ['Failed'], ['Not Applicable'], ['Profile Error'], ['Not Reviewed']];
   <% @circle.evaluations.each_with_index do |eval, index| %>
     columns[0].push(<%= index + 1 %>);
-    columns[1].push(<%= eval.findings[:passed] %>);
-    columns[2].push(<%= eval.findings[:failed] %>);
-    columns[3].push(<%= eval.findings[:not_applicable] %>);
-    columns[4].push(<%= eval.findings[:not_tested] || eval.findings[:profile_error] %>);
-    columns[5].push(<%= eval.findings[:not_reviewed] %>);
+    columns[1].push(<%= eval.finding&.passed %>);
+    columns[2].push(<%= eval.finding&.failed %>);
+    columns[3].push(<%= eval.finding&.not_applicable %>);
+    columns[4].push(<%= eval.finding&.profile_error %>);
+    columns[5].push(<%= eval.finding&.not_reviewed %>);
   <% end %>
 
   var chart = c3.generate({

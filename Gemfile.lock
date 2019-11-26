@@ -244,6 +244,8 @@ GEM
     crack (0.4.3)
       safe_yaml (~> 1.0.0)
     crass (1.0.4)
+    data_migrate (6.0.5)
+      rails (>= 5.0)
     database_cleaner (1.7.0)
     declarative (0.0.10)
     declarative-option (0.1.0)
@@ -768,6 +770,7 @@ DEPENDENCIES
   carrierwave
   chromedriver-helper
   coffee-rails (~> 4.2)
+  data_migrate
   database_cleaner (~> 1.6, >= 1.6.1)
   devise (>= 4.7.1)
   devise_ldap_authenticatable

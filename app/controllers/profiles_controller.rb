@@ -60,7 +60,7 @@ class ProfilesController < ApplicationController
   def nist
     authorize! :read, Profile
     category = nil
-    category = params[:category].downcase if params.key?(:category)
+    category = convert_impact(params[:category]) if params.key?(:category)
     @control_hash = @profile.nist_hash category
     nist_hash = Constants::NIST_800_53
     @name = nist_hash['name']
@@ -100,6 +100,20 @@ class ProfilesController < ApplicationController
   end
 
   private
+
+  def convert_impact(impact)
+    if impact == 'None'
+      0.0
+    elsif impact == 'Low'
+      0.3
+    elsif impact == 'Medium'
+      0.5
+    elsif impact == 'High'
+      0.7
+    elsif impact == 'Critical'
+      1.0
+    end
+  end
 
   # Never trust parameters from the scary internet, only allow the white list through.
   def profile_params

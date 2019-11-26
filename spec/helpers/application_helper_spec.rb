@@ -3,9 +3,9 @@ require 'rails_helper'
 RSpec.describe ApplicationHelper, type: :helper do
   describe 'category_button' do
     it 'gets a button from an impact' do
-      expect(helper.category_button('low')).to eq('btn btn-category-iii')
-      expect(helper.category_button('medium')).to eq('btn btn-category-ii')
-      expect(helper.category_button('high')).to eq('btn btn-category-i')
+      expect(helper.category_button(0.3)).to eq('btn btn-category-iii')
+      expect(helper.category_button(0.5)).to eq('btn btn-category-ii')
+      expect(helper.category_button(0.7)).to eq('btn btn-category-i')
     end
   end
 
@@ -59,7 +59,7 @@ RSpec.describe ApplicationHelper, type: :helper do
   end
 
   context 'with findings' do
-    let(:findings) { { passed: 23, failed: 43, not_reviewed: 23, profile_error: 10, not_applicable: 18 } }
+    let(:findings) { FactoryBot.build(:finding) }
 
     describe 'pass_pixels' do
       it 'converts an array to a string' do

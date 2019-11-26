@@ -692,7 +692,7 @@ fieldset[disabled] .btn-link:focus {
           <h2 class="box-title">SSP Ready Control Implementation Details and Status</h2>
           <h2 class="box-title"><%= evaluation.profiles.map(&:name).join(', ') %></h2>
           <div class="box-body">
-            <% counts, _ = evaluation.status_counts %>
+            <% counts, _, _ = evaluation.status_counts %>
             <% total_count = counts[:failed] + counts[:passed] + counts[:not_reviewed] + counts[:profile_error] %>
             <% compliance_level = ((counts[:passed]).to_f / total_count) * 100 %>
             <h3>Compliance Level: <%= compliance_level.round(1) %>%</h3>

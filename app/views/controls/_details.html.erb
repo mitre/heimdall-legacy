@@ -4,9 +4,9 @@
       <li class="active"><a data-toggle="tab" href="#fdetails-<%= @evaluation.id %>-<%= control.id %>">Test Details</a></li>
       <li><a data-toggle="tab" href="#details-<%= @evaluation.id %>-<%= control.id %>">Details</a></li>
     <% else %>
-      <li class="active"><a data-toggle="tab" href="#details-<%= @evaluation.id %>-<%= control.id %>">Details</a></li>
+      <li class="active"><a data-toggle="tab" href="#details-<%= control.id %>">Details</a></li>
     <% end %>
-    <li><a data-toggle="tab" href="#inspec_code-<%= @evaluation.id %>-<%= control.id %>" >Inspec Code</a></li>
+    <li><a data-toggle="tab" href="#inspec_code-<%= control.id %>" >Inspec Code</a></li>
   </ul>
   <div class="tab-content">
     <% if @evaluation %>
@@ -34,7 +34,7 @@
       </div>
       <div id="details-<%= @evaluation.id %>-<%= control.id %>" class="tab-pane fade">
     <% else %>
-      <div id="details-<%= @evaluation.id %>-<%= control.id %>" class="tab-pane fade in active">
+      <div id="details-<%= control.id %>" class="tab-pane fade in active">
     <% end %>
       <table class="table table-bordered table-striped">
         <tr><td>Control:</td><td><%= control.control_id %></td></tr>
@@ -65,10 +65,14 @@
         <% end %>
       </table>
     </div>
-    <div id="inspec_code-<%= @evaluation.id %>-<%= control.id %>" class="tab-pane fade">
+    <div id="inspec_code-<%= control.id %>" class="tab-pane fade">
       <table class="table table-bordered table-striped">
         <tr>
-          <td><pre><code class="language-ruby"><%= @evaluation.control_code(control) %></code></pre></td>
+          <% if @evaluation %>
+            <td><pre><code class="language-ruby"><%= @evaluation.control_code(control) %></code></pre></td>
+          <% else %>
+            <td><pre><code class="language-ruby"><%= control.code %></code></pre></td>
+          <% end %>
         </tr>
       </table>
     </div>

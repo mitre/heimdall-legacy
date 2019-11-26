@@ -2,29 +2,29 @@ require 'inspec_tools'
 require 'fuzzystringmatch'
 
 class Evaluation < ApplicationRecord
-  store :platform, accessors: [:name, :release], coder: JSON
-  serialize :other_checks
-  store :statistics, accessors: [:duration], coder: JSON
-  store :findings, accessors: [:failed, :passed, :not_reviewed, :profile_error, :not_applicable], coder: JSON
-  has_many :tags, as: :tagger
+  store :platform_hash, accessors: [:name, :release], coder: JSON
+  #serialize :other_checks
+  store :statistics_hash, accessors: [:duration], coder: JSON
+  store :findings_hash, accessors: [:failed, :passed, :not_reviewed, :profile_error, :not_applicable], coder: JSON
+  has_one :platform, dependent: :destroy
+  has_one :statistic, dependent: :destroy
+  has_one :finding, dependent: :destroy
+  has_many :tags, as: :tagger, dependent: :destroy
   has_and_belongs_to_many :profiles
   belongs_to :created_by, class_name: 'User', foreign_key: 'created_by_id'
   has_many :results, dependent: :destroy
+  accepts_nested_attributes_for :platform, :statistic
   resourcify
 
   scope :recent, ->(num) { order(created_at: :desc).limit(num) }
 
-  def findings
-    Rails.logger.debug 'get findings'
-    if read_attribute(:findings).empty?
-      counts, _, start_tm = status_counts
-      write_attribute(:findings, counts)
-      write_attribute(:start_time, start_tm)
-      save
-    else
-      Rails.logger.debug "read findings: #{read_attribute(:findings)}"
-    end
-    read_attribute(:findings)
+  def store_findings
+    Rails.logger.debug 'store findings'
+    counts, _, _ = status_counts
+    finds = Finding.create(passed: counts[:passed], failed: counts[:failed],
+                             not_reviewed: counts[:not_reviewed], not_applicable: counts[:not_applicable],
+                             profile_error: counts[:profile_error])
+    self.finding = finds
   end
 
   def base_profile
@@ -101,8 +101,8 @@ class Evaluation < ApplicationRecord
   end
 
   def filename
-    tag = tags.select { |tg| tg.content[:name] == 'filename' }.first
-    tag.nil? ? nil : tag.content[:value]
+    tag = tags.select { |tg| tg.content['name'] == 'filename' }.first
+    tag.nil? ? nil : tag.content['value']
   end
 
   def to_jbuilder
@@ -110,11 +110,11 @@ class Evaluation < ApplicationRecord
       json.extract! self, :version, :other_checks
       json.profiles(profiles.collect { |profile| profile.to_jbuilder.attributes! })
       json.platform do
-        json.name platform[:name]
-        json.release platform[:release]
+        json.name platform&.name
+        json.release platform&.release
       end
       json.statistics do
-        json.duration statistics[:duration]
+        json.duration statistic&.duration
       end
     end
   end
@@ -208,7 +208,7 @@ class Evaluation < ApplicationRecord
   end
 
   def symbols
-    _, controls = status_counts
+    _, controls, _ = status_counts
     symbols = {}
     controls.each do |_, hsh|
       control = hsh[:control]
@@ -341,10 +341,16 @@ class Evaluation < ApplicationRecord
 
   def self.parse(hash, user)
     evaluation = nil
-    hash.deep_transform_keys! { |key| key.to_s.tr('-', '_').gsub(/\battributes\b/, 'aspects').gsub(/\bid\b/, 'control_id') }
+    hash.deep_transform_keys! { |key| key.to_s.tr('-', '_').gsub(/\battributes\b/, 'inputs').gsub(/\bid\b/, 'control_id') }
     hash.delete('controls')
+    hash.delete('other_checks')
+    platform = hash.delete('platform') || {}
+    hash[:platform_attributes] = platform
+    statistic = hash.delete('statistics') || {}
+    hash[:statistic_attributes] = statistic
 
     profiles = hash.delete('profiles')
+    Rails.logger.debug "evaluation hash: #{hash.inspect}"
     if profiles.nil? or profiles.empty?
       evaluation = nil
     else
@@ -394,6 +400,7 @@ class Evaluation < ApplicationRecord
         end
       end
     end
+    evaluation.store_findings
     evaluation
   rescue Exception => e
     if evaluation.is_a?(Evaluation)

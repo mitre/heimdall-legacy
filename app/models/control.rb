@@ -1,24 +1,28 @@
 require 'ripper'
 
 class Control < ApplicationRecord
-  serialize :refs
-  store :waiver_data, accessors: [:justification, :run, :skipped_due_to_waiver, :message], coder: JSON
+  serialize :refs_array
+  store :waiver_data_hash, accessors: [:justification, :run, :skipped_due_to_waiver, :message], coder: JSON
   belongs_to :profile, inverse_of: :controls
   has_many :tags, as: :tagger, dependent: :destroy
   has_many :descriptions, dependent: :destroy
   has_many :results, dependent: :destroy
+  has_many :refs, dependent: :destroy
   has_one :source_location, dependent: :destroy
+  has_one :waiver_data, dependent: :destroy
   accepts_nested_attributes_for :tags
   accepts_nested_attributes_for :descriptions
   accepts_nested_attributes_for :source_location
   accepts_nested_attributes_for :results
+  accepts_nested_attributes_for :refs
+  accepts_nested_attributes_for :waiver_data
 
   def to_jbuilder(skip_results=false)
     Jbuilder.new do |json|
-      json.extract! self, :title, :desc, :impact, :refs
+      json.extract! self, :title, :desc, :impact, :refs, :waiver_data
       json.tags do
         tags.each do |tag|
-          json.set!(tag.name, tag.value)
+          json.set!(tag.content['name'], tag.content['value'])
         end
       end
       json.extract! self, :code
@@ -54,14 +58,9 @@ class Control < ApplicationRecord
   end
 
   def tag(name, good = false)
-    tag_obj = tags.select { |tag| tag.content[:name] == name }.first
+    tag_obj = tags.select { |tag| tag.content['name'] == name }.first
     if tag_obj
-      # val.is_a?(Array) ? val.join(', ') : val
-      if good
-        tag_obj.good_values
-      else
-        tag_obj.content[:value]
-      end
+      tag_obj.content['value']
     else
       desc_obj = descriptions.select { |desc| desc.label == name }.first
       if desc_obj
@@ -125,7 +124,7 @@ class Control < ApplicationRecord
         new_tags << { 'content': { "name": key.to_s, "value": value } }
       end
       control[:tags_attributes] = new_tags
-      control['impact'] = Control.parse_impact(control['impact'])
+      control['impact'] = control['impact']
       source_location = control.delete('source_location')
       if source_location.present?
         control[:source_location_attributes] = source_location

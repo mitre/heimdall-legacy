@@ -1,11 +1,12 @@
 class Profile < ApplicationRecord
   resourcify
-  has_many :supports
+  has_many :supports, dependent: :destroy
   has_many :controls, dependent: :destroy
   has_and_belongs_to_many :evaluations
-  has_many :groups
-  has_many :depends
-  has_many :aspects
+  has_many :groups, dependent: :destroy
+  has_many :depends, dependent: :destroy
+  has_many :inputs, dependent: :destroy
+  has_many :aspects, dependent: :destroy
   belongs_to :created_by, class_name: 'User', foreign_key: 'created_by_id'
   has_many :dependants_list, foreign_key: :parent_id, class_name: 'DependantsParent'
   has_many :dependants, through: :dependants_list
@@ -16,7 +17,7 @@ class Profile < ApplicationRecord
   accepts_nested_attributes_for :controls
   accepts_nested_attributes_for :supports
   accepts_nested_attributes_for :groups
-  accepts_nested_attributes_for :aspects
+  accepts_nested_attributes_for :inputs
   accepts_nested_attributes_for :depends
   # validates_presence_of :name, :title, :sha256
   scope :recent, ->(num) { order(created_at: :desc).limit(num) }
@@ -48,7 +49,7 @@ class Profile < ApplicationRecord
       json.controls(controls.collect { |control| control.to_jbuilder(skip_results).attributes! })
       json.groups(groups.collect { |group| group.to_jbuilder.attributes! })
       json.depends(depends.collect { |depend| depend.to_jbuilder.attributes! })
-      json.aspects(aspects.collect { |aspect| aspect.to_jbuilder.attributes! })
+      json.inputs(inputs.collect { |input| input.to_jbuilder.attributes! })
       json.extract! self, :sha256
     end
   end
@@ -152,7 +153,7 @@ class Profile < ApplicationRecord
     results_hash = {}
     parent = nil
     profiles.try(:each) do |profile_hash|
-      profile_hash = profile_hash.deep_transform_keys { |key| key.to_s.tr('-', '_').gsub(/\battributes\b/, 'aspects').gsub(/\bid\b/, 'control_id') }
+      profile_hash = profile_hash.deep_transform_keys { |key| key.to_s.tr('-', '_').gsub(/\battributes\b/, 'inputs').gsub(/\bid\b/, 'control_id') }
       sha256 = profile_hash['sha256']
       Rails.logger.debug "PARSING profiles #{profiles.size}"
       if profiles.size > 1
@@ -185,14 +186,14 @@ class Profile < ApplicationRecord
 
   def self.transform(hash, evaluation_id=nil)
     Rails.logger.debug "self.transform"
-    hash = hash.deep_transform_keys { |key| key.to_s.tr('-', '_').gsub(/\battributes\b/, 'aspects').gsub(/\bid\b/, 'control_id') }
+    hash = hash.deep_transform_keys { |key| key.to_s.tr('-', '_').gsub(/\battributes\b/, 'inputs').gsub(/\bid\b/, 'control_id') }
     controls = Control.transform(hash.delete('controls'), evaluation_id)
     Rails.logger.debug "transformed controls"
     hash[:controls_attributes] = controls
     depends = hash.delete('depends') || []
     hash[:depends_attributes] = depends
-    aspects = hash.delete('aspects') || []
-    hash[:aspects_attributes] = aspects
+    inputs = hash.delete('inputs') || []
+    hash[:inputs_attributes] = inputs
     supports = hash.delete('supports') || []
     new_supports = []
     supports.each do |key, value|
