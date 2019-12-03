@@ -1,10 +1,15 @@
 # Change Log
 
-## [2.10.0](https://github.com/mitre/heimdall/tree/2.10.0) (2019-11-26)
-[Full Changelog](https://github.com/mitre/heimdall/compare/v2.9.2...2.10.0)
+## [v2.10.0](https://github.com/mitre/heimdall/tree/v2.10.0) (2019-11-26)
+[Full Changelog](https://github.com/mitre/heimdall/compare/v2.9.2...v2.10.0)
+
+**Closed issues:**
+
+- Database updates needed for compatibility with Sequelize JS ORM [\#102](https://github.com/mitre/heimdall/issues/102)
 
 **Merged pull requests:**
 
+- Data migrations [\#103](https://github.com/mitre/heimdall/pull/103) ([robthew](https://github.com/robthew))
 - Updated documentation to include pushing to the heimdall server in th… [\#101](https://github.com/mitre/heimdall/pull/101) ([mrtollick](https://github.com/mrtollick))
 
 ## [v2.9.2](https://github.com/mitre/heimdall/tree/v2.9.2) (2019-11-15)
@@ -131,9 +136,9 @@
 
 - Relative paths [\#72](https://github.com/mitre/heimdall/pull/72) ([robthew](https://github.com/robthew))
 - Paths [\#71](https://github.com/mitre/heimdall/pull/71) ([robthew](https://github.com/robthew))
+- Add support for serving from subdirectories from Dockerfile [\#70](https://github.com/mitre/heimdall/pull/70) ([rbclark](https://github.com/rbclark))
 - Upgrade Vagrantfile to use postgres-11 [\#69](https://github.com/mitre/heimdall/pull/69) ([rbclark](https://github.com/rbclark))
 - Create circles if they do not already exist and are requested via the API [\#65](https://github.com/mitre/heimdall/pull/65) ([rbclark](https://github.com/rbclark))
-- Move over to using DATABASE\_URL for better support of external databases [\#63](https://github.com/mitre/heimdall/pull/63) ([rbclark](https://github.com/rbclark))
 
 ## [v2.6.2](https://github.com/mitre/heimdall/tree/v2.6.2) (2019-08-12)
 [Full Changelog](https://github.com/mitre/heimdall/compare/v2.6.1...v2.6.2)
@@ -155,7 +160,6 @@
 - Change "Profile Controls" label to "Tests" [\#51](https://github.com/mitre/heimdall/issues/51)
 - Tree/Partition area label should be "NIST SP 800-53 Coverage" [\#50](https://github.com/mitre/heimdall/issues/50)
 - Generate PDF for SSP view error [\#48](https://github.com/mitre/heimdall/issues/48)
-- comparing evaluations doesn't show correctly [\#35](https://github.com/mitre/heimdall/issues/35)
 - Lm/auditee cosmetic fixes [\#59](https://github.com/mitre/heimdall/pull/59) ([lukemalinowski](https://github.com/lukemalinowski))
 
 ## [v2.6.0](https://github.com/mitre/heimdall/tree/v2.6.0) (2019-08-02)
@@ -163,6 +167,7 @@
 
 **Merged pull requests:**
 
+- Move over to using DATABASE\_URL for better support of external databases [\#63](https://github.com/mitre/heimdall/pull/63) ([rbclark](https://github.com/rbclark))
 - Tagging [\#56](https://github.com/mitre/heimdall/pull/56) ([robthew](https://github.com/robthew))
 - Added bump task [\#55](https://github.com/mitre/heimdall/pull/55) ([robthew](https://github.com/robthew))
 
@@ -181,6 +186,7 @@
 **Fixed bugs:**
 
 - CAAT file generation alignment to heimdall-lite [\#37](https://github.com/mitre/heimdall/issues/37)
+- comparing evaluations doesn't show correctly [\#35](https://github.com/mitre/heimdall/issues/35)
 - Creating a circle doesn't seem to work [\#18](https://github.com/mitre/heimdall/issues/18)
 - users seem to be given too many rights on signup [\#9](https://github.com/mitre/heimdall/issues/9)
 - Sign out seems to be broken [\#4](https://github.com/mitre/heimdall/issues/4)
