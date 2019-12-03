@@ -60,7 +60,11 @@ class Control < ApplicationRecord
   def tag(name, good = false)
     tag_obj = tags.select { |tag| tag.content['name'] == name }.first
     if tag_obj
-      tag_obj.content['value']
+      if good
+        tag_obj.good_values
+      else
+        tag_obj.content['value']
+      end
     else
       desc_obj = descriptions.select { |desc| desc.label == name }.first
       if desc_obj
@@ -128,6 +132,10 @@ class Control < ApplicationRecord
       source_location = control.delete('source_location')
       if source_location.present?
         control[:source_location_attributes] = source_location
+      end
+      waiver_data = control.delete('waiver_data')
+      if waiver_data.present?
+        control[:waiver_data_attributes] = waiver_data
       end
       results = control.delete('results')
       if results.present?
