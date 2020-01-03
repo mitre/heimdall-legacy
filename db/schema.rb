@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2019_11_22_183549) do
+ActiveRecord::Schema.define(version: 2019_12_31_172315) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -167,6 +167,8 @@ ActiveRecord::Schema.define(version: 2019_11_22_183549) do
     t.bigint "profile_id"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.bigint "evaluation_id"
+    t.index ["evaluation_id"], name: "index_inputs_on_evaluation_id"
     t.index ["profile_id"], name: "index_inputs_on_profile_id"
   end
 
@@ -312,7 +314,9 @@ ActiveRecord::Schema.define(version: 2019_11_22_183549) do
     t.bigint "control_id"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.bigint "evaluation_id"
     t.index ["control_id"], name: "index_waiver_data_on_control_id"
+    t.index ["evaluation_id"], name: "index_waiver_data_on_evaluation_id"
   end
 
   create_table "xccdfs", force: :cascade do |t|
@@ -346,6 +350,7 @@ ActiveRecord::Schema.define(version: 2019_11_22_183549) do
   add_foreign_key "evaluations", "profiles"
   add_foreign_key "findings", "evaluations"
   add_foreign_key "groups", "profiles"
+  add_foreign_key "inputs", "evaluations"
   add_foreign_key "inputs", "profiles"
   add_foreign_key "platforms", "evaluations"
   add_foreign_key "refs", "controls"
@@ -355,4 +360,5 @@ ActiveRecord::Schema.define(version: 2019_11_22_183549) do
   add_foreign_key "statistics", "evaluations"
   add_foreign_key "supports", "profiles"
   add_foreign_key "waiver_data", "controls"
+  add_foreign_key "waiver_data", "evaluations"
 end

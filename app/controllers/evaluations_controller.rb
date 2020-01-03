@@ -167,7 +167,7 @@ class EvaluationsController < ApplicationController
 
       @evaluation.tags.create(content: {'name': 'filename', 'value': "#{params[:file].original_filename}"})
       (Constants::TAG_NAMES - ['Filename']).each do |tag|
-        if params[tag.downcase]
+        if params[tag.downcase].present?
           @evaluation.tags.create(content: {'name': "#{tag.downcase}", 'value': "#{params[tag.downcase]}"})
         end
       end
@@ -192,13 +192,19 @@ class EvaluationsController < ApplicationController
       if current_user.has_role?(:admin) or current_user.has_role?(:editor)
         if (@eval = Evaluation.parse(JSON.parse(file.read), current_user))
           @evaluation = Evaluation.find(@eval.id)
+          Rails.logger.debug "EVALUATION created: #{@evaluation.id}"
+          Rails.logger.debug "Create filename tag for : #{params[:file].original_filename}"
           @evaluation.tags.create(content: {'name': 'filename', 'value': "#{params[:file].original_filename}"})
-          tags = (Constants::TAG_NAMES - ['Filename']).map do |tag|
-            {'name': "#{tag.downcase}", 'value': "#{params[tag.downcase]}"} if params.has_key?(tag.downcase)
-          end.compact
+          tags = []
+          (Constants::TAG_NAMES - ['Filename']).map do |tag|
+            if params.has_key?(tag.downcase) and params[tag.downcase].present?
+              tags << {'name': "#{tag.downcase}", 'value': "#{params[tag.downcase]}"}
+            end
+          end
           tags.each do |tag|
             @evaluation.tags.create(content: tag)
           end
+          Rails.logger.debug "EVALUATION TAGS: #{@evaluation.tags.inspect}"
 
           if circle.present?
             @circle = Circle.with_roles([:owner, :member], current_user).find_by(name: circle)

@@ -1,5 +1,7 @@
-class WaiverData < ApplicationRecord
+class WaiverDatum < ApplicationRecord
+  #self.table_name = 'waiver_data'
   belongs_to :control
+  belongs_to :evaluation
 
   def to_jbuilder
     Jbuilder.new do |json|

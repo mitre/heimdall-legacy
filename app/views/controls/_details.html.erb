@@ -60,8 +60,11 @@
         <% if fix = control.tag('fix') %>
           <tr><td>Fix Text:</td><td><%= fix %></td></tr>
         <% end %>
-        <% if control.waiver_data.present? %>
-          <tr><td>Waiver Data:</td><td><%= control.waiver_data %></td></tr>
+        <% if @evaluation %>
+          <% wd = control.eval_waiver_data(@evaluation.id) %>
+          <% if wd.present? %>
+            <tr><td>Waiver Data:</td><td><%= wd.as_json %></td></tr>
+          <% end %>
         <% end %>
       </table>
     </div>

@@ -149,6 +149,7 @@ class Profile < ApplicationRecord
   end
 
   def self.parse(profiles, evaluation_id=nil)
+    Rails.logger.debug "self.parse, evaluation_id=#{evaluation_id}"
     all_profiles = []
     results_hash = {}
     parent = nil
@@ -185,7 +186,7 @@ class Profile < ApplicationRecord
   end
 
   def self.transform(hash, evaluation_id=nil)
-    Rails.logger.debug "self.transform"
+    Rails.logger.debug "self.transform, evaluation_id=#{evaluation_id}"
     hash = hash.deep_transform_keys { |key| key.to_s.tr('-', '_').gsub(/\battributes\b/, 'inputs').gsub(/\bid\b/, 'control_id') }
     controls = Control.transform(hash.delete('controls'), evaluation_id)
     Rails.logger.debug "transformed controls"
@@ -193,7 +194,13 @@ class Profile < ApplicationRecord
     depends = hash.delete('depends') || []
     hash[:depends_attributes] = depends
     inputs = hash.delete('inputs') || []
-    hash[:inputs_attributes] = inputs
+    if evaluation_id.present?
+      inputs.each do |input|
+        input[:evaluation_id] = evaluation_id
+      end
+      Rails.logger.debug "INPUTS #{inputs.inspect}"
+      hash[:inputs_attributes] = inputs
+    end
     supports = hash.delete('supports') || []
     new_supports = []
     supports.each do |key, value|
@@ -208,7 +215,7 @@ class Profile < ApplicationRecord
       end
     end
     hash[:groups_attributes] = new_groups if !new_groups.empty?
-    Rails.logger.debug " done Profile.transform"
+    Rails.logger.debug "done Profile.transform"
     hash
   end
 end
