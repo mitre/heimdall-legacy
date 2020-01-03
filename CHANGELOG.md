@@ -1,5 +1,12 @@
 # Change Log
 
+## [v2.10.2](https://github.com/mitre/heimdall/tree/v2.10.2) (2020-01-03)
+[Full Changelog](https://github.com/mitre/heimdall/compare/v2.10.1...v2.10.2)
+
+**Merged pull requests:**
+
+- Refactored waiver\_data and inputs to link to evaluations [\#110](https://github.com/mitre/heimdall/pull/110) ([robthew](https://github.com/robthew))
+
 ## [v2.10.1](https://github.com/mitre/heimdall/tree/v2.10.1) (2019-12-03)
 [Full Changelog](https://github.com/mitre/heimdall/compare/v2.10.0...v2.10.1)
 
@@ -36,10 +43,6 @@
 
 ## [v2.9.0](https://github.com/mitre/heimdall/tree/v2.9.0) (2019-10-25)
 [Full Changelog](https://github.com/mitre/heimdall/compare/v2.8.4...v2.9.0)
-
-**Fixed bugs:**
-
-- List formula for Compliance % [\#53](https://github.com/mitre/heimdall/issues/53)
 
 **Closed issues:**
 
@@ -150,6 +153,7 @@
 - Add support for serving from subdirectories from Dockerfile [\#70](https://github.com/mitre/heimdall/pull/70) ([rbclark](https://github.com/rbclark))
 - Upgrade Vagrantfile to use postgres-11 [\#69](https://github.com/mitre/heimdall/pull/69) ([rbclark](https://github.com/rbclark))
 - Create circles if they do not already exist and are requested via the API [\#65](https://github.com/mitre/heimdall/pull/65) ([rbclark](https://github.com/rbclark))
+- Move over to using DATABASE\_URL for better support of external databases [\#63](https://github.com/mitre/heimdall/pull/63) ([rbclark](https://github.com/rbclark))
 
 ## [v2.6.2](https://github.com/mitre/heimdall/tree/v2.6.2) (2019-08-12)
 [Full Changelog](https://github.com/mitre/heimdall/compare/v2.6.1...v2.6.2)
@@ -166,6 +170,7 @@
 - Clear Filter Button is Overlapped by Lower Rows of Evaluation [\#58](https://github.com/mitre/heimdall/issues/58)
 - Change "Control" to "Test" for Status and Impact labels [\#57](https://github.com/mitre/heimdall/issues/57)
 - For count tiles, change "Findings" label to "Test Counts" [\#54](https://github.com/mitre/heimdall/issues/54)
+- List formula for Compliance % [\#53](https://github.com/mitre/heimdall/issues/53)
 - Allow 25, 50, 75, All options for results per screen [\#52](https://github.com/mitre/heimdall/issues/52)
 - Change "Profile Controls" label to "Tests" [\#51](https://github.com/mitre/heimdall/issues/51)
 - Tree/Partition area label should be "NIST SP 800-53 Coverage" [\#50](https://github.com/mitre/heimdall/issues/50)
@@ -209,7 +214,6 @@
 
 **Merged pull requests:**
 
-- Move over to using DATABASE\_URL for better support of external databases [\#63](https://github.com/mitre/heimdall/pull/63) ([rbclark](https://github.com/rbclark))
 - patched gems [\#40](https://github.com/mitre/heimdall/pull/40) ([robthew](https://github.com/robthew))
 - Updated inspec and added versioning tools [\#39](https://github.com/mitre/heimdall/pull/39) ([robthew](https://github.com/robthew))
 - Caat fix [\#38](https://github.com/mitre/heimdall/pull/38) ([robthew](https://github.com/robthew))
