@@ -103,6 +103,7 @@ The following commands are useful for managing the data in your docker container
 
 - `docker-compose run --rm web rake db:reset` **This destroys and rebuilds the db**
 - `docker-compose run --rm web rake db:migrate` **This updates the db**
+- `docker-compose run --rm web rake data:migrate` **This updates the db**
 
 #### Running Docker Container
 
@@ -120,6 +121,7 @@ A new version of the docker container can be retrieved by running:
 docker-compose pull
 docker-compose up -d
 docker-compose run web rake db:migrate
+docker-compose run web rake data:migrate
 ```
 
 This will fetch the latest version of the container, redeploy if a newer version exists, and then apply any database migrations if applicable. No data should be lost by this operation.
@@ -146,6 +148,13 @@ This mode is primarily for developers, shared heimdall instances should be deplo
    2. `bundle exec rake db:setup`
    3. `bundle exec rake db:migrate`
    4. `bundle exec rails s` (Start the server on localhost)
+
+### Updating from GitHub
+1. Pull the latest master from the Heimdall Github repository
+2. Run the following in a terminal
+  1. `bundle exec rake db:migrate`
+  2. `bundle exec rake data:migrate`
+  4. `bundle exec rails s` (Start the server on localhost)
 
 ## Using Heimdall
 

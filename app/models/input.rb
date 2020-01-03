@@ -1,5 +1,6 @@
 class Input < ApplicationRecord
   belongs_to :profile
+  belongs_to :evaluation
   validates_presence_of :name
 
   def to_jbuilder

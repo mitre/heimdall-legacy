@@ -1,15 +1,15 @@
 require 'ripper'
 
 class Control < ApplicationRecord
-  serialize :refs_array
-  store :waiver_data_hash, accessors: [:justification, :run, :skipped_due_to_waiver, :message], coder: JSON
+  #serialize :refs_array
+  #store :waiver_data_hash, accessors: [:justification, :run, :skipped_due_to_waiver, :message], coder: JSON
   belongs_to :profile, inverse_of: :controls
   has_many :tags, as: :tagger, dependent: :destroy
   has_many :descriptions, dependent: :destroy
   has_many :results, dependent: :destroy
   has_many :refs, dependent: :destroy
   has_one :source_location, dependent: :destroy
-  has_one :waiver_data, dependent: :destroy
+  has_many :waiver_data, dependent: :destroy
   accepts_nested_attributes_for :tags
   accepts_nested_attributes_for :descriptions
   accepts_nested_attributes_for :source_location
@@ -55,6 +55,10 @@ class Control < ApplicationRecord
 
   def run_time
     results.map(&:run_time).inject(0, :+).round(6)
+  end
+
+  def eval_waiver_data(eval_id)
+    waiver_data.where(evaluation_id: eval_id).first
   end
 
   def tag(name, good = false)
@@ -120,13 +124,14 @@ class Control < ApplicationRecord
     end
   end
 
-  def self.transform(controls, evaluation_id)
+  def self.transform(controls, evaluation_id=nil)
     controls.try(:each) do |control|
       tags = control.delete('tags')
       new_tags = []
       tags.each do |key, value|
         new_tags << { 'content': { "name": key.to_s, "value": value } }
       end
+      Rails.logger.debug "NEW TAGS: #{new_tags.inspect}"
       control[:tags_attributes] = new_tags
       control['impact'] = control['impact']
       source_location = control.delete('source_location')
@@ -134,18 +139,24 @@ class Control < ApplicationRecord
         control[:source_location_attributes] = source_location
       end
       waiver_data = control.delete('waiver_data')
-      if waiver_data.present?
-        control[:waiver_data_attributes] = waiver_data
-      end
       results = control.delete('results')
-      if results.present?
-        results.each do |result|
-          result[:evaluation_id] = evaluation_id
+      if evaluation_id.present?
+        if waiver_data.present?
+          waiver_data[:evaluation_id] = evaluation_id
+          control[:waiver_data_attributes] = []
+          control[:waiver_data_attributes] << waiver_data
         end
+        if results.present?
+          results.each do |result|
+            result[:evaluation_id] = evaluation_id
+          end
+        end
+        control[:results_attributes] = results || []
       end
-      control[:results_attributes] = results || []
       descriptions = control.delete('descriptions')
       control[:descriptions_attributes] = descriptions || []
+      refs = control.delete('refs')
+      control[:refs_attributes] = refs || []
     end
     controls
   end

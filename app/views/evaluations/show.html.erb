@@ -42,7 +42,7 @@ var evaluation_id = '<%= @evaluation.id %>';
 
             <% @evaluation.tags.each do |tag| %>
               <p>
-                <strong><%= tag.content['name'].capitalize %>:</strong>
+                <strong><%= tag.content['name']&.capitalize %>:</strong>
                 <%= tag.content['value'] %>
               </p>
             <% end %>
