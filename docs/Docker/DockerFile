@@ -1,0 +1,92 @@
+FROM bitnami/jenkins as base-stage
+# we should build the container in stages
+#- https://docs.docker.com/develop/develop-images/multistage-build/
+#- https://blog.bitsrc.io/a-guide-to-docker-multi-stage-builds-206e8f31aeb8
+# inspec, inspec_tools, inspec-bin
+
+COPY base_ami.json /base_ami.json
+COPY base_script.sh /base_script.sh
+
+RUN apt-get update \
+  && apt-get install -y wget \
+  && apt-get install -y git \
+  && apt-get upgrade -y
+RUN wget https://packages.chef.io/files/stable/inspec/4.18.39/ubuntu/16.04/inspec_4.18.39-1_amd64.deb
+RUN dpkg -i inspec_4.18.39-1_amd64.deb
+
+# Install ubuntu profile
+RUN mkdir profile && cd profile
+RUN git clone https://github.com/mitre/canonical-ubuntu-16.04-lts-stig-baseline.git 
+RUN cd ..
+
+
+# Install inspec_tools
+
+
+
+
+#Install heimdall-lite SPA build
+
+RUN git clone https://github.com/mitre/heimdall-lite.git
+
+
+# python ( for linux-patches)
+
+RUN apt-get install -y python3-pip
+RUN pip3 install --upgrade pip
+RUN python3 -V
+RUN pip --version
+
+# ansible, puppet
+# For a working shell based Jenkins, TF inspec example see:
+# https://github.com/jenkins201/packer-terraform-cicd-aws
+# install packer
+ENV PACKER_BIN_DIR /usr/local/packer/bin
+RUN mkdir --parents $PACKER_BIN_DIR
+
+ENV PACKER_ZIP=https://releases.hashicorp.com/packer/0.9.0/packer_0.9.0_linux_amd64.zip
+RUN curl -sSLo /tmp/packer.zip $PACKER_ZIP && \
+  unzip /tmp/packer.zip -d $PACKER_BIN_DIR && \
+  rm /tmp/packer.zip
+
+ENV PATH $PATH:$PACKER_BIN_DIR
+
+RUN type packer
+
+RUN packer validate base_ami.json
+
+RUN packer build base_ami.json
+
+# install terraform
+
+RUN wget --quiet https://releases.hashicorp.com/terraform/0.11.3/terraform_0.11.3_linux_amd64.zip \
+  && unzip terraform_0.11.3_linux_amd64.zip \
+  && mv terraform /usr/bin \
+  && rm terraform_0.11.3_linux_amd64.zip
+
+
+COPY terraform.tf /terraform.tf
+
+RUN terraform init
+RUN terraform apply -y
+
+
+
+# test-kitchen
+# kitchen-ec2
+# kitchen-ansible
+# kitchen-puppet
+# kitchen-dokken
+# kitchen-vmware
+# kitchen-vshpere
+# current WEB SRG
+#https://public.cyber.mil/stigs/downloads/?_dl_facet_stigs=app-security%2Cweb-servers
+#FOr the below see:
+#https://github.com/mitre/canonical-ubuntu-16.04-lts-stig-baseline/blob/master/.travis.yml
+# chef-workstation or chefdk ( bings bundler, puts ruby in /opt/chef*...)
+# the above means you have to `chef init` to set the system to use the opt installed embeedded bins and update the path as well
+# the system needs to have a `chef --accpet-license always` >> double check this command to accept all chef licenes in the env
+# OR add a .chef/licenese-accept << please see docs for details either way works
+# also, this means that you have to `chef gem install <gem>
+# need to ensure that the `jenkins user env` has access to all these install things on its path
+# all gems should be installed --no-document --no-rmi???
