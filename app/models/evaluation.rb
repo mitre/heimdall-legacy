@@ -116,7 +116,7 @@ class Evaluation < ApplicationRecord
         json.release platform&.release
       end
       json.statistics do
-        json.duration statistic&.duration
+        json.duration statistic&.duration.to_f
       end
     end
   end
@@ -325,7 +325,7 @@ class Evaluation < ApplicationRecord
   def nist_hash(cat, status_symbol_param, ex_ids, filters = nil)
     nist = {}
     params = { status_symbol: status_symbol_param }
-    controls = filtered_controls(ex_ids, filters = nil)
+    controls = filtered_controls(ex_ids, filters)
     controls.each do |control|
       severity = control.severity
       next unless severity && (cat.nil? || cat == severity)
