@@ -1,5 +1,19 @@
 # Change Log
 
+## [2.10.4](https://github.com/mitre/heimdall/tree/2.10.4) (2020-01-23)
+[Full Changelog](https://github.com/mitre/heimdall/compare/v2.10.3...2.10.4)
+
+**Merged pull requests:**
+
+- Jenkins ami [\#112](https://github.com/mitre/heimdall/pull/112) ([mrtollick](https://github.com/mrtollick))
+
+## [v2.10.3](https://github.com/mitre/heimdall/tree/v2.10.3) (2020-01-03)
+[Full Changelog](https://github.com/mitre/heimdall/compare/v2.10.2...v2.10.3)
+
+**Merged pull requests:**
+
+- Migrations fix [\#111](https://github.com/mitre/heimdall/pull/111) ([robthew](https://github.com/robthew))
+
 ## [v2.10.2](https://github.com/mitre/heimdall/tree/v2.10.2) (2020-01-03)
 [Full Changelog](https://github.com/mitre/heimdall/compare/v2.10.1...v2.10.2)
 
@@ -154,6 +168,7 @@
 - Upgrade Vagrantfile to use postgres-11 [\#69](https://github.com/mitre/heimdall/pull/69) ([rbclark](https://github.com/rbclark))
 - Create circles if they do not already exist and are requested via the API [\#65](https://github.com/mitre/heimdall/pull/65) ([rbclark](https://github.com/rbclark))
 - Move over to using DATABASE\_URL for better support of external databases [\#63](https://github.com/mitre/heimdall/pull/63) ([rbclark](https://github.com/rbclark))
+- Updated inspec and added versioning tools [\#39](https://github.com/mitre/heimdall/pull/39) ([robthew](https://github.com/robthew))
 
 ## [v2.6.2](https://github.com/mitre/heimdall/tree/v2.6.2) (2019-08-12)
 [Full Changelog](https://github.com/mitre/heimdall/compare/v2.6.1...v2.6.2)
@@ -190,7 +205,6 @@
 
 **Merged pull requests:**
 
-- fix eval page bug [\#47](https://github.com/mitre/heimdall/pull/47) ([robthew](https://github.com/robthew))
 - Fix rails entrypoint to include bundle exec [\#45](https://github.com/mitre/heimdall/pull/45) ([rbclark](https://github.com/rbclark))
 
 ## [v2.5.6](https://github.com/mitre/heimdall/tree/v2.5.6) (2019-07-30)
@@ -214,8 +228,8 @@
 
 **Merged pull requests:**
 
+- fix eval page bug [\#47](https://github.com/mitre/heimdall/pull/47) ([robthew](https://github.com/robthew))
 - patched gems [\#40](https://github.com/mitre/heimdall/pull/40) ([robthew](https://github.com/robthew))
-- Updated inspec and added versioning tools [\#39](https://github.com/mitre/heimdall/pull/39) ([robthew](https://github.com/robthew))
 - Caat fix [\#38](https://github.com/mitre/heimdall/pull/38) ([robthew](https://github.com/robthew))
 - Fixed a comparison bug [\#36](https://github.com/mitre/heimdall/pull/36) ([robthew](https://github.com/robthew))
 - fixed findings issue [\#34](https://github.com/mitre/heimdall/pull/34) ([robthew](https://github.com/robthew))
