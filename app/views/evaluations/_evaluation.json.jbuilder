@@ -7,5 +7,5 @@ json.platform do
   json.release evaluation.platform&.release
 end
 json.statistics do
-  json.duration evaluation.statistic&.duration
+  json.duration evaluation.statistic&.duration.to_f
 end

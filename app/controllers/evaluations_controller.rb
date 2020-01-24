@@ -96,6 +96,7 @@ class EvaluationsController < ApplicationController
   def nist
     authorize! :read, Evaluation
     filters, = session_filters
+    Rails.logger.debug "filters: #{filters}"
     category = nil
     category = convert_impact(params[:category]) if params.key?(:category)
     status_sym = nil

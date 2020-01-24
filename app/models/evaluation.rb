@@ -116,7 +116,7 @@ class Evaluation < ApplicationRecord
         json.release platform&.release
       end
       json.statistics do
-        json.duration statistic&.duration
+        json.duration statistic&.duration.to_f
       end
     end
   end
@@ -173,7 +173,7 @@ class Evaluation < ApplicationRecord
 
   def status_symbol(control, ct_results)
     if ct_results.nil?
-      if control.impact == 'none'
+      if control.impact == 0.0
         :not_applicable
       else
         :profile_error
@@ -182,7 +182,7 @@ class Evaluation < ApplicationRecord
       status_list = ct_results.map(&:status_symbol).uniq
       if status_list.include?(:profile_error)
         :profile_error
-      elsif control.impact == 'none'
+      elsif control.impact == 0.0
         :not_applicable
       elsif control.waiver_data.present?
         :not_applicable
@@ -325,7 +325,7 @@ class Evaluation < ApplicationRecord
   def nist_hash(cat, status_symbol_param, ex_ids, filters = nil)
     nist = {}
     params = { status_symbol: status_symbol_param }
-    controls = filtered_controls(ex_ids, filters = nil)
+    controls = filtered_controls(ex_ids, filters)
     controls.each do |control|
       severity = control.severity
       next unless severity && (cat.nil? || cat == severity)

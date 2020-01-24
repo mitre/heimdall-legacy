@@ -23,6 +23,7 @@ class Profile < ApplicationRecord
   scope :recent, ->(num) { order(created_at: :desc).limit(num) }
 
   def filtered_controls(filters = nil)
+    Rails.logger.debug "filtered_controls: #{filters.inspect}"
     return controls if filters.nil?
 
     filtered_list = controls.select do |control|

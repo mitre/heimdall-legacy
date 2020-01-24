@@ -8,9 +8,9 @@ RSpec.describe Evaluation, type: :model do
     it 'get findings' do
       expect(eval.finding.failed).to eq 3
       expect(eval.finding.passed).to eq 33
-      expect(eval.finding.not_reviewed).to eq 4
+      expect(eval.finding.not_reviewed).to eq 3
       expect(eval.finding.profile_error).to eq 0
-      expect(eval.finding.not_applicable).to eq 0
+      expect(eval.finding.not_applicable).to eq 1
     end
 
     it 'get status_counts' do
@@ -19,9 +19,9 @@ RSpec.describe Evaluation, type: :model do
       expect(counts).to include(
         failed:           3,
         passed:  33,
-        not_reviewed:   4,
+        not_reviewed:   3,
         profile_error:     0,
-        not_applicable: 0,
+        not_applicable: 1,
       )
       expect(controls.size).to eq 40
     end
