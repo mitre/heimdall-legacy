@@ -105,7 +105,11 @@
         <div class="icon">
           <i class="ion ion-person-add"></i>
         </div>
-        <%= link_to ('More info <i class="fa fa-arrow-circle-right"></i>').html_safe, new_user_session_path, class: "small-box-footer" %>
+        <% if current_user %>
+          <div class="small-box-footer">&nbsp;</div>
+        <% else %>
+          <%= link_to ('More info <i class="fa fa-arrow-circle-right"></i>').html_safe, new_user_session_path, class: "small-box-footer" %>
+        <% end %>
       </div>
     </div>
     <!-- ./col -->
