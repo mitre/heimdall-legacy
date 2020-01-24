@@ -1091,7 +1091,7 @@ $("#export-caat").click(function(event) {
     var impact = control.impact;
     var field = [];
 
-    if (impact != 'none' && !vulnList.includes('xxxx' + control.name)) {
+    if (impact != 0.0 && !vulnList.includes('xxxx' + control.name)) {
       vulnList.push(control.name)
       if (control.nist) {
         field.push(control.nist[0].replace(/\-(\d)(\s|$)/, "-0$1$2").replace(/\((\d)\)/, "(0$1)"));              // NIST
