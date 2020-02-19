@@ -1,5 +1,6 @@
 class Depend < ApplicationRecord
   belongs_to :profile
+  belongs_to :evaluation
 
   def to_jbuilder
     Jbuilder.new do |json|
