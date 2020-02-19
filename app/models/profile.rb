@@ -193,21 +193,26 @@ class Profile < ApplicationRecord
     Rails.logger.debug "transformed controls"
     hash[:controls_attributes] = controls
     depends = hash.delete('depends') || []
-    hash[:depends_attributes] = depends
+    Rails.logger.debug "Depends: #{depends}"
     inputs = hash.delete('inputs') || []
     if evaluation_id.present?
+      depends.each do |depend|
+        depend[:evaluation_id] = evaluation_id
+      end
       inputs.each do |input|
         input[:evaluation_id] = evaluation_id
       end
       Rails.logger.debug "INPUTS #{inputs.inspect}"
       hash[:inputs_attributes] = inputs
+      hash[:depends_attributes] = depends
     end
     supports = hash.delete('supports') || []
-    new_supports = []
-    supports.each do |key, value|
-      new_supports << { 'name': key, 'value': value }
-    end
-    hash[:supports_attributes] = new_supports
+    #new_supports = []
+    #supports.each do |key, value|
+    #  new_supports << { 'name': key, 'value': value }
+    #end
+    Rails.logger.debug "Supports: #{supports}"
+    hash[:supports_attributes] = supports
     groups = hash.delete('groups') || []
     new_groups = []
     groups.each do |group|

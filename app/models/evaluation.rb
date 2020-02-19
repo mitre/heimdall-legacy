@@ -12,6 +12,7 @@ class Evaluation < ApplicationRecord
   has_many :tags, as: :tagger, dependent: :destroy
   has_many :waiver_data, dependent: :destroy
   has_many :inputs, dependent: :destroy
+  has_many :depends, dependent: :destroy
   has_and_belongs_to_many :profiles
   belongs_to :created_by, class_name: 'User', foreign_key: 'created_by_id'
   has_many :results, dependent: :destroy
