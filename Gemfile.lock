@@ -463,7 +463,7 @@ GEM
     pry-nav (0.3.0)
       pry (>= 0.9.10, < 0.13.0)
     public_suffix (3.1.1)
-    puma (3.12.3)
+    puma (3.12.4)
     rack (2.0.8)
     rack-test (1.1.0)
       rack (>= 1.0, < 3)
