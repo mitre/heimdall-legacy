@@ -4,6 +4,7 @@ services:
   # If you wish to use a db other than mongo, this is 100% wrong
   db:
     image: postgres:latest
+    restart: unless-stopped
     volumes:
       - heimdall_dbdata:/var/lib/postgresql/data
     expose:
