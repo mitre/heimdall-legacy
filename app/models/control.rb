@@ -1,23 +1,28 @@
 require 'ripper'
 
 class Control < ApplicationRecord
-  serialize :refs
+  #serialize :refs_array
+  #store :waiver_data_hash, accessors: [:justification, :run, :skipped_due_to_waiver, :message], coder: JSON
   belongs_to :profile, inverse_of: :controls
-  has_many :tags, as: :tagger
-  has_many :descriptions
-  has_many :results
-  has_one :source_location
+  has_many :tags, as: :tagger, dependent: :destroy
+  has_many :descriptions, dependent: :destroy
+  has_many :results, dependent: :destroy
+  has_many :refs, dependent: :destroy
+  has_one :source_location, dependent: :destroy
+  has_many :waiver_data, dependent: :destroy
   accepts_nested_attributes_for :tags
   accepts_nested_attributes_for :descriptions
   accepts_nested_attributes_for :source_location
   accepts_nested_attributes_for :results
+  accepts_nested_attributes_for :refs
+  accepts_nested_attributes_for :waiver_data
 
-  def to_jbuilder
+  def to_jbuilder(skip_results=false)
     Jbuilder.new do |json|
-      json.extract! self, :title, :desc, :impact, :refs
+      json.extract! self, :title, :desc, :impact, :refs, :waiver_data
       json.tags do
         tags.each do |tag|
-          json.set!(tag.name, tag.value)
+          json.set!(tag.content['name'], tag.content['value'])
         end
       end
       json.extract! self, :code
@@ -28,8 +33,10 @@ class Control < ApplicationRecord
         end
       end
       json.id control_id
-      if results.present?
-        json.results(results.collect { |result| result.to_jbuilder.attributes! })
+      unless skip_results
+        if results.present?
+          json.results(results.collect { |result| result.to_jbuilder.attributes! })
+        end
       end
     end
   end
@@ -50,17 +57,25 @@ class Control < ApplicationRecord
     results.map(&:run_time).inject(0, :+).round(6)
   end
 
+  def eval_waiver_data(eval_id)
+    waiver_data.where(evaluation_id: eval_id).first
+  end
+
   def tag(name, good = false)
-    tag_obj = tags.select { |tag| tag.content[:name] == name }.first
+    tag_obj = tags.select { |tag| tag.content['name'] == name }.first
     if tag_obj
-      # val.is_a?(Array) ? val.join(', ') : val
       if good
         tag_obj.good_values
       else
-        tag_obj.content[:value]
+        tag_obj.content['value']
       end
     else
-      ''
+      desc_obj = descriptions.select { |desc| desc.label == name }.first
+      if desc_obj
+        desc_obj.data
+      else
+        ''
+      end
     end
   end
 
@@ -109,44 +124,61 @@ class Control < ApplicationRecord
     end
   end
 
-  def self.transform(controls, evaluation_id)
+  def self.transform(controls, evaluation_id=nil)
     controls.try(:each) do |control|
       tags = control.delete('tags')
       new_tags = []
       tags.each do |key, value|
         new_tags << { 'content': { "name": key.to_s, "value": value } }
       end
+      Rails.logger.debug "NEW TAGS: #{new_tags.inspect}"
       control[:tags_attributes] = new_tags
-      control['impact'] = Control.parse_impact(control['impact'])
+      control['impact'] = control['impact']
       source_location = control.delete('source_location')
-      control[:source_location_attributes] = source_location
-      results = control.delete('results')
-      if results.present?
-        results.each do |result|
-          result[:evaluation_id] = evaluation_id
-        end
+      if source_location.present?
+        control[:source_location_attributes] = source_location
       end
-      control[:results_attributes] = results || []
+      waiver_data = control.delete('waiver_data')
+      results = control.delete('results')
+      if evaluation_id.present?
+        if waiver_data.present?
+          waiver_data[:evaluation_id] = evaluation_id
+          control[:waiver_data_attributes] = []
+          control[:waiver_data_attributes] << waiver_data
+        end
+        if results.present?
+          results.each do |result|
+            result[:evaluation_id] = evaluation_id
+          end
+        end
+        control[:results_attributes] = results || []
+      end
       descriptions = control.delete('descriptions')
       control[:descriptions_attributes] = descriptions || []
+      refs = control.delete('refs')
+      control[:refs_attributes] = refs || []
     end
     controls
   end
 
   def self.parse_impact(value)
-    if value.nil?
-      'none'
+    if ['none', 'low', 'medium', 'high', 'critical'].include?(value)
+      impact = value
     else
-      if [Float, Integer].include?(value.class)
-        impact = value
-      elsif value.numeric?
-        impact = value.to_f
-      end
-      if impact < 0.1 then 'none'
-      elsif impact < 0.4 then 'low'
-      elsif impact < 0.7 then 'medium'
-      elsif impact < 0.9 then 'high'
-      elsif impact >= 0.9 then 'critical'
+      if value.nil?
+        'none'
+      else
+        if [Float, Integer].include?(value.class)
+          impact = value
+        elsif value.numeric?
+          impact = value.to_f
+        end
+        if impact < 0.1 then 'none'
+        elsif impact < 0.4 then 'low'
+        elsif impact < 0.7 then 'medium'
+        elsif impact < 0.9 then 'high'
+        elsif impact >= 0.9 then 'critical'
+        end
       end
     end
   end

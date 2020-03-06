@@ -2,29 +2,32 @@ require 'inspec_tools'
 require 'fuzzystringmatch'
 
 class Evaluation < ApplicationRecord
-  store :platform, accessors: [:name, :release], coder: JSON
-  serialize :other_checks
-  store :statistics, accessors: [:duration], coder: JSON
-  store :findings, accessors: [:failed, :passed, :not_reviewed, :profile_error, :not_applicable], coder: JSON
-  has_many :tags, as: :tagger
+  store :platform_hash, accessors: [:name, :release], coder: JSON
+  #serialize :other_checks
+  store :statistics_hash, accessors: [:duration], coder: JSON
+  store :findings_hash, accessors: [:failed, :passed, :not_reviewed, :profile_error, :not_applicable], coder: JSON
+  has_one :platform, dependent: :destroy
+  has_one :statistic, dependent: :destroy
+  has_one :finding, dependent: :destroy
+  has_many :tags, as: :tagger, dependent: :destroy
+  has_many :waiver_data, dependent: :destroy
+  has_many :inputs, dependent: :destroy
+  has_many :depends, dependent: :destroy
   has_and_belongs_to_many :profiles
   belongs_to :created_by, class_name: 'User', foreign_key: 'created_by_id'
   has_many :results, dependent: :destroy
+  accepts_nested_attributes_for :platform, :statistic
   resourcify
 
   scope :recent, ->(num) { order(created_at: :desc).limit(num) }
 
-  def findings
-    Rails.logger.debug 'get findings'
-    if read_attribute(:findings).empty?
-      counts, _, start_tm = status_counts
-      write_attribute(:findings, counts)
-      write_attribute(:start_time, start_tm)
-      save
-    else
-      Rails.logger.debug "read findings: #{read_attribute(:findings)}"
-    end
-    read_attribute(:findings)
+  def store_findings
+    Rails.logger.debug 'store findings'
+    counts, _, _ = status_counts
+    finds = Finding.create(passed: counts[:passed], failed: counts[:failed],
+                             not_reviewed: counts[:not_reviewed], not_applicable: counts[:not_applicable],
+                             profile_error: counts[:profile_error])
+    self.finding = finds
   end
 
   def base_profile
@@ -40,8 +43,23 @@ class Evaluation < ApplicationRecord
     base
   end
 
+  def top_control(control_id)
+    control = base_profile.controls.where(control_id: control_id).first
+    if control.present?
+      control
+    else
+      included_profiles.each do |profile|
+        ctl = profile.top_control(control_id)
+        if ctl.present?
+          control = ctl
+        end
+      end
+      control
+    end
+  end
+
   def included_profiles
-    profiles.where.not(id: base_profile.id)
+    profiles.where.not(id: base_profile&.id)
   end
 
   def fuzzy_match_profile(fuzzy_name, exclude)
@@ -64,7 +82,15 @@ class Evaluation < ApplicationRecord
     control = profile.controls.where(control_id: control_id).first
     code += control&.code + "\n"
     profile.dependants&.each do |dependant|
-      code += profile_code(dependant, control_id) + "\n"
+      ctl = dependant.controls.where(control_id: control_id).first
+      if ctl.present?
+        code_str = profile_code(dependant, control_id) + "\n"
+        if ctl.code == control&.code
+          code = code_str
+        else
+          code += code_str
+        end
+      end
     end
     code
   end
@@ -78,8 +104,8 @@ class Evaluation < ApplicationRecord
   end
 
   def filename
-    tag = tags.select { |tg| tg.content[:name] == 'filename' }.first
-    tag.nil? ? nil : tag.content[:value]
+    tag = tags.select { |tg| tg.content['name'] == 'filename' }.first
+    tag.nil? ? nil : tag.content['value']
   end
 
   def to_jbuilder
@@ -87,11 +113,11 @@ class Evaluation < ApplicationRecord
       json.extract! self, :version, :other_checks
       json.profiles(profiles.collect { |profile| profile.to_jbuilder.attributes! })
       json.platform do
-        json.name platform[:name]
-        json.release platform[:release]
+        json.name platform&.name
+        json.release platform&.release
       end
       json.statistics do
-        json.duration statistics[:duration]
+        json.duration statistic&.duration.to_f
       end
     end
   end
@@ -127,17 +153,16 @@ class Evaluation < ApplicationRecord
     save
   end
 
-  def status_counts(filters = nil)
+  def status_counts
     counts = { failed: 0, passed: 0, not_reviewed: 0, profile_error: 0, not_applicable: 0 }
     controls = {}
     start_times = []
-    filtered = filtered_controls([], filters)
-    filtered.each do |control|
-      controls[control.control_id] = { control: control, results: [] }
-      control.results.where(evaluation_id: id).each do |result|
-        controls[control.control_id][:results] << result
-        start_times << result.start_time
+    results.each do |result|
+      start_times << result.start_time
+      unless controls.key?(result.control.control_id)
+        controls[result.control.control_id] = { control: result.control, results: [] }
       end
+      controls[result.control.control_id][:results] << result
     end
     controls.each do |_, ct|
       sym = status_symbol(ct[:control], ct[:results])
@@ -148,14 +173,20 @@ class Evaluation < ApplicationRecord
   end
 
   def status_symbol(control, ct_results)
-    if control.impact == 'none'
-      :not_applicable
-    elsif ct_results.nil?
-      :profile_error
+    if ct_results.nil?
+      if control.impact == 0.0
+        :not_applicable
+      else
+        :profile_error
+      end
     else
       status_list = ct_results.map(&:status_symbol).uniq
       if status_list.include?(:profile_error)
         :profile_error
+      elsif control.impact == 0.0
+        :not_applicable
+      elsif control.waiver_data.present?
+        :not_applicable
       elsif status_list.include?(:failed)
         :failed
       elsif status_list.include?(:passed)
@@ -180,7 +211,7 @@ class Evaluation < ApplicationRecord
   end
 
   def symbols
-    _, controls = status_counts
+    _, controls, _ = status_counts
     symbols = {}
     controls.each do |_, hsh|
       control = hsh[:control]
@@ -222,12 +253,29 @@ class Evaluation < ApplicationRecord
     end
   end
 
+  def profile_controls(profile, filters)
+    if profile.nil?
+      Rails.logger.debug "profile_controls: Profile is nil"
+      []
+    else
+      if filters.nil?
+        if profile.controls.present?
+          profile.controls.includes(:results, :tags)
+        else
+          []
+        end
+      else
+        profile.filtered_controls(filters)
+      end
+    end
+  end
+
   def profile_values(cat, params, ex_ids, filters = nil)
     nist = {}
     profiles.each do |profile|
       next if ex_ids.include?(profile.id)
 
-      p_controls = filters.nil? ? profile.controls.includes(:results, :tags) : profile.filtered_controls(filters)
+      p_controls = profile_controls(profile, filters)
       p_controls.each do |control|
         params[:ct_results] = params[:cts][control.id]
         severity = control.severity
@@ -247,7 +295,7 @@ class Evaluation < ApplicationRecord
 
   def filtered_controls(ex_ids, filters = nil)
     controls = {}
-    p_controls = filters.nil? ? base_profile&.controls.includes(:results, :tags) : base_profile&.filtered_controls(filters)
+    p_controls = profile_controls(base_profile, filters)
     if p_controls.present?
       p_controls.each do |control|
         controls[control.control_id] = control
@@ -258,7 +306,7 @@ class Evaluation < ApplicationRecord
             controls.delete(control.control_id)
           end
         else
-          d_controls = filters.nil? ? profile.controls.includes(:results, :tags) : profile.filtered_controls(filters)
+          d_controls = profile_controls(profile, filters)
           d_controls.each do |control|
             unless controls[control.control_id].present?
               controls[control.control_id] = control
@@ -278,7 +326,7 @@ class Evaluation < ApplicationRecord
   def nist_hash(cat, status_symbol_param, ex_ids, filters = nil)
     nist = {}
     params = { status_symbol: status_symbol_param }
-    controls = filtered_controls(ex_ids, filters = nil)
+    controls = filtered_controls(ex_ids, filters)
     controls.each do |control|
       severity = control.severity
       next unless severity && (cat.nil? || cat == severity)
@@ -295,23 +343,37 @@ class Evaluation < ApplicationRecord
   end
 
   def self.parse(hash, user)
-    hash.deep_transform_keys! { |key| key.to_s.tr('-', '_').gsub(/\battributes\b/, 'aspects').gsub(/\bid\b/, 'control_id') }
+    evaluation = nil
+    hash.deep_transform_keys! { |key| key.to_s.tr('-', '_').gsub(/\battributes\b/, 'inputs').gsub(/\bid\b/, 'control_id') }
     hash.delete('controls')
+    hash.delete('other_checks')
+    platform = hash.delete('platform') || {}
+    hash[:platform_attributes] = platform
+    statistic = hash.delete('statistics') || {}
+    hash[:statistic_attributes] = statistic
 
     profiles = hash.delete('profiles')
+    Rails.logger.debug "evaluation hash: #{hash.inspect}"
     if profiles.nil? or profiles.empty?
       evaluation = nil
     else
       hash['created_by_id'] = user.id
       evaluation = Evaluation.create(hash)
-      evaluation.save
-      all_profiles = Profile.parse(profiles, evaluation.id)
+      Rails.logger.debug "evaluation errors: #{evaluation.errors.inspect}"
+      #evaluation.save
+      all_profiles, results_hash = Profile.parse(profiles, evaluation.id)
+      Rails.logger.debug "Loop through all_profiles"
       all_profiles.each do |profile|
         if profile.is_a?(Profile)
+          Rails.logger.debug "is a profile"
           evaluation.profiles << profile
         else
           profile['created_by_id'] = user.id
-          evaluation.profiles.create(profile)
+          Rails.logger.debug "new profile"
+          pr = Profile.create(profile)
+          Rails.logger.debug "pr errors: #{pr.errors.inspect}"
+          evaluation.profiles << pr
+          Rails.logger.debug "pr #{pr.inspect}"
         end
       end
     end
@@ -331,9 +393,22 @@ class Evaluation < ApplicationRecord
           end
         end
       end
+      results_hash.each do |control_id, results|
+        control = evaluation.top_control(control_id)
+        if control.present?
+          results.each do |result|
+            result[:evaluation_id] = evaluation.id
+          end
+          control.results.create(results)
+        end
+      end
     end
+    evaluation.store_findings
     evaluation
   rescue Exception => e
+    if evaluation.is_a?(Evaluation)
+      evaluation.destroy
+    end
     Rails.logger.debug "Import error: #{e.inspect}"
     nil
   end

@@ -11,7 +11,7 @@ end
 json.groups profile.groups.where(:title => [nil, '']) do |group|
   json.partial! 'groups/group', group: group
 end
-json.attributes profile.aspects do |aspect|
-  json.partial! 'aspects/aspect', aspect: aspect
+json.attributes profile.inputs do |input|
+  json.partial! 'inputs/input', input: input
 end
 json.extract! profile, :sha256

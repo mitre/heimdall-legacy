@@ -10,10 +10,20 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2019_07_12_132157) do
+ActiveRecord::Schema.define(version: 2020_02_20_183613) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
+
+  create_table "api_keys", id: :serial, force: :cascade do |t|
+    t.datetime "expiration"
+    t.string "key", limit: 255
+    t.string "name", limit: 255
+    t.datetime "created_at"
+    t.datetime "updated_at"
+    t.integer "role_id"
+    t.integer "user_id"
+  end
 
   create_table "aspects", force: :cascade do |t|
     t.string "name"
@@ -22,6 +32,16 @@ ActiveRecord::Schema.define(version: 2019_07_12_132157) do
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.index ["profile_id"], name: "index_aspects_on_profile_id"
+  end
+
+  create_table "auths_user_pass", id: :serial, force: :cascade do |t|
+    t.string "username", limit: 255
+    t.string "encrypted_password", limit: 255
+    t.boolean "disabled"
+    t.datetime "expiration"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+    t.integer "user_id"
   end
 
   create_table "circles", force: :cascade do |t|
@@ -46,15 +66,17 @@ ActiveRecord::Schema.define(version: 2019_07_12_132157) do
   end
 
   create_table "controls", force: :cascade do |t|
-    t.string "title"
-    t.string "desc"
-    t.string "impact"
-    t.text "refs"
+    t.text "title"
+    t.text "desc"
+    t.string "impact_string"
+    t.text "refs_array"
     t.text "code"
     t.string "control_id"
     t.bigint "profile_id"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.text "waiver_data_hash"
+    t.float "impact"
     t.index ["profile_id"], name: "index_controls_on_profile_id"
   end
 
@@ -63,6 +85,9 @@ ActiveRecord::Schema.define(version: 2019_07_12_132157) do
     t.bigint "control_id", null: false
     t.index ["control_id", "group_id"], name: "index_controls_groups_on_control_id_and_group_id"
     t.index ["group_id", "control_id"], name: "index_controls_groups_on_group_id_and_control_id"
+  end
+
+  create_table "data_migrations", primary_key: "version", id: :string, force: :cascade do |t|
   end
 
   create_table "dependants_parents", id: false, force: :cascade do |t|
@@ -80,6 +105,8 @@ ActiveRecord::Schema.define(version: 2019_07_12_132157) do
     t.bigint "profile_id"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.bigint "evaluation_id"
+    t.index ["evaluation_id"], name: "index_depends_on_evaluation_id"
     t.index ["profile_id"], name: "index_depends_on_profile_id"
   end
 
@@ -95,10 +122,10 @@ ActiveRecord::Schema.define(version: 2019_07_12_132157) do
   create_table "evaluations", force: :cascade do |t|
     t.string "version"
     t.string "other_checks"
-    t.text "platform"
-    t.text "statistics"
+    t.text "platform_hash"
+    t.text "statistics_hash"
     t.datetime "start_time"
-    t.text "findings"
+    t.text "findings_hash"
     t.bigint "profile_id"
     t.integer "created_by_id"
     t.datetime "created_at", null: false
@@ -136,14 +163,47 @@ ActiveRecord::Schema.define(version: 2019_07_12_132157) do
     t.datetime "updated_at", null: false
   end
 
+  create_table "findings", force: :cascade do |t|
+    t.integer "failed"
+    t.integer "passed"
+    t.integer "not_reviewed"
+    t.integer "profile_error"
+    t.integer "not_applicable"
+    t.bigint "evaluation_id"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["evaluation_id"], name: "index_findings_on_evaluation_id"
+  end
+
   create_table "groups", force: :cascade do |t|
     t.string "title"
     t.string "control_id"
-    t.text "controls"
+    t.text "controls_array"
     t.bigint "profile_id"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.string "controls", default: [], array: true
     t.index ["profile_id"], name: "index_groups_on_profile_id"
+  end
+
+  create_table "inputs", force: :cascade do |t|
+    t.string "name"
+    t.jsonb "options"
+    t.bigint "profile_id"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.bigint "evaluation_id"
+    t.index ["evaluation_id"], name: "index_inputs_on_evaluation_id"
+    t.index ["profile_id"], name: "index_inputs_on_profile_id"
+  end
+
+  create_table "platforms", force: :cascade do |t|
+    t.string "name"
+    t.string "release"
+    t.bigint "evaluation_id"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["evaluation_id"], name: "index_platforms_on_evaluation_id"
   end
 
   create_table "profiles", force: :cascade do |t|
@@ -163,20 +223,39 @@ ActiveRecord::Schema.define(version: 2019_07_12_132157) do
     t.string "parent_profile"
   end
 
+  create_table "refs", force: :cascade do |t|
+    t.string "ref"
+    t.string "url"
+    t.string "uri"
+    t.bigint "control_id"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["control_id"], name: "index_refs_on_control_id"
+  end
+
+  create_table "reset_tokens", id: :serial, force: :cascade do |t|
+    t.datetime "expiration"
+    t.string "token", limit: 255
+    t.datetime "created_at"
+    t.datetime "updated_at"
+    t.integer "auth_user_pass_id"
+  end
+
   create_table "results", force: :cascade do |t|
     t.string "status"
-    t.string "code_desc"
+    t.text "code_desc"
     t.string "skip_message"
     t.string "resource"
     t.float "run_time"
     t.date "start_time"
-    t.string "message"
+    t.text "message"
     t.string "exception"
-    t.text "backtrace"
+    t.text "backtrace_array"
     t.bigint "control_id"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.bigint "evaluation_id"
+    t.string "backtrace", default: [], array: true
     t.index ["control_id"], name: "index_results_on_control_id"
     t.index ["evaluation_id"], name: "index_results_on_evaluation_id"
   end
@@ -191,6 +270,14 @@ ActiveRecord::Schema.define(version: 2019_07_12_132157) do
     t.index ["resource_type", "resource_id"], name: "index_roles_on_resource_type_and_resource_id"
   end
 
+  create_table "sessions", id: :serial, force: :cascade do |t|
+    t.datetime "expiration"
+    t.string "key", limit: 255
+    t.datetime "created_at"
+    t.datetime "updated_at"
+    t.integer "user_id"
+  end
+
   create_table "source_locations", force: :cascade do |t|
     t.string "ref"
     t.integer "line"
@@ -200,6 +287,14 @@ ActiveRecord::Schema.define(version: 2019_07_12_132157) do
     t.index ["control_id"], name: "index_source_locations_on_control_id"
   end
 
+  create_table "statistics", force: :cascade do |t|
+    t.string "duration"
+    t.bigint "evaluation_id"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["evaluation_id"], name: "index_statistics_on_evaluation_id"
+  end
+
   create_table "supports", force: :cascade do |t|
     t.string "os_family"
     t.string "name"
@@ -207,16 +302,35 @@ ActiveRecord::Schema.define(version: 2019_07_12_132157) do
     t.bigint "profile_id"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.string "os_name"
+    t.string "platform"
+    t.string "platform_family"
+    t.string "platform_name"
+    t.string "release"
+    t.string "inspec_version"
     t.index ["profile_id"], name: "index_supports_on_profile_id"
   end
 
   create_table "tags", force: :cascade do |t|
-    t.text "content"
+    t.text "content_hash"
     t.string "tagger_type"
     t.bigint "tagger_id"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.jsonb "content"
     t.index ["tagger_type", "tagger_id"], name: "index_tags_on_tagger_type_and_tagger_id"
+  end
+
+  create_table "usergroups", id: :serial, force: :cascade do |t|
+    t.string "name", limit: 255
+    t.boolean "personal"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
+  create_table "usergroups_roles", primary_key: ["usergroup_id", "role_id"], force: :cascade do |t|
+    t.integer "usergroup_id", null: false
+    t.integer "role_id", null: false
   end
 
   create_table "users", force: :cascade do |t|
@@ -251,6 +365,24 @@ ActiveRecord::Schema.define(version: 2019_07_12_132157) do
     t.index ["user_id"], name: "index_users_roles_on_user_id"
   end
 
+  create_table "users_usergroups", primary_key: ["user_id", "usergroup_id"], force: :cascade do |t|
+    t.integer "user_id", null: false
+    t.integer "usergroup_id", null: false
+  end
+
+  create_table "waiver_data", force: :cascade do |t|
+    t.string "justification"
+    t.boolean "run"
+    t.boolean "skipped_due_to_waiver"
+    t.string "message"
+    t.bigint "control_id"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.bigint "evaluation_id"
+    t.index ["control_id"], name: "index_waiver_data_on_control_id"
+    t.index ["evaluation_id"], name: "index_waiver_data_on_evaluation_id"
+  end
+
   create_table "xccdfs", force: :cascade do |t|
     t.string "benchmark_title"
     t.string "benchmark_id"
@@ -275,14 +407,32 @@ ActiveRecord::Schema.define(version: 2019_07_12_132157) do
     t.datetime "updated_at", null: false
   end
 
+  add_foreign_key "api_keys", "roles", name: "api_keys_role_id_fkey", on_update: :cascade, on_delete: :nullify
+  add_foreign_key "api_keys", "users", name: "api_keys_user_id_fkey", on_update: :cascade, on_delete: :nullify
   add_foreign_key "aspects", "profiles"
+  add_foreign_key "auths_user_pass", "users", name: "auths_user_pass_user_id_fkey", on_update: :cascade, on_delete: :nullify
   add_foreign_key "controls", "profiles"
+  add_foreign_key "depends", "evaluations"
   add_foreign_key "depends", "profiles"
   add_foreign_key "descriptions", "controls"
   add_foreign_key "evaluations", "profiles"
+  add_foreign_key "findings", "evaluations"
   add_foreign_key "groups", "profiles"
+  add_foreign_key "inputs", "evaluations"
+  add_foreign_key "inputs", "profiles"
+  add_foreign_key "platforms", "evaluations"
+  add_foreign_key "refs", "controls"
+  add_foreign_key "reset_tokens", "auths_user_pass", column: "auth_user_pass_id", name: "reset_tokens_auth_user_pass_id_fkey", on_update: :cascade, on_delete: :nullify
   add_foreign_key "results", "controls"
   add_foreign_key "results", "evaluations"
+  add_foreign_key "sessions", "users", name: "sessions_user_id_fkey", on_update: :cascade, on_delete: :nullify
   add_foreign_key "source_locations", "controls"
+  add_foreign_key "statistics", "evaluations"
   add_foreign_key "supports", "profiles"
+  add_foreign_key "usergroups_roles", "roles", name: "usergroups_roles_role_id_fkey", on_update: :cascade, on_delete: :cascade
+  add_foreign_key "usergroups_roles", "usergroups", name: "usergroups_roles_usergroup_id_fkey", on_update: :cascade, on_delete: :cascade
+  add_foreign_key "users_usergroups", "usergroups", name: "users_usergroups_usergroup_id_fkey", on_update: :cascade, on_delete: :cascade
+  add_foreign_key "users_usergroups", "users", name: "users_usergroups_user_id_fkey", on_update: :cascade, on_delete: :cascade
+  add_foreign_key "waiver_data", "controls"
+  add_foreign_key "waiver_data", "evaluations"
 end

@@ -1,5 +1,107 @@
 # Change Log
 
+## [2.10.4](https://github.com/mitre/heimdall/tree/2.10.4) (2020-01-23)
+[Full Changelog](https://github.com/mitre/heimdall/compare/v2.10.3...2.10.4)
+
+**Merged pull requests:**
+
+- Jenkins ami [\#112](https://github.com/mitre/heimdall/pull/112) ([mrtollick](https://github.com/mrtollick))
+
+## [v2.10.3](https://github.com/mitre/heimdall/tree/v2.10.3) (2020-01-03)
+[Full Changelog](https://github.com/mitre/heimdall/compare/v2.10.2...v2.10.3)
+
+**Merged pull requests:**
+
+- Migrations fix [\#111](https://github.com/mitre/heimdall/pull/111) ([robthew](https://github.com/robthew))
+
+## [v2.10.2](https://github.com/mitre/heimdall/tree/v2.10.2) (2020-01-03)
+[Full Changelog](https://github.com/mitre/heimdall/compare/v2.10.1...v2.10.2)
+
+**Merged pull requests:**
+
+- Refactored waiver\_data and inputs to link to evaluations [\#110](https://github.com/mitre/heimdall/pull/110) ([robthew](https://github.com/robthew))
+
+## [v2.10.1](https://github.com/mitre/heimdall/tree/v2.10.1) (2019-12-03)
+[Full Changelog](https://github.com/mitre/heimdall/compare/v2.10.0...v2.10.1)
+
+**Merged pull requests:**
+
+- Fixed tag content problem [\#106](https://github.com/mitre/heimdall/pull/106) ([robthew](https://github.com/robthew))
+
+## [v2.10.0](https://github.com/mitre/heimdall/tree/v2.10.0) (2019-11-26)
+[Full Changelog](https://github.com/mitre/heimdall/compare/v2.9.2...v2.10.0)
+
+**Closed issues:**
+
+- Database updates needed for compatibility with Sequelize JS ORM [\#102](https://github.com/mitre/heimdall/issues/102)
+
+**Merged pull requests:**
+
+- Data migrations [\#103](https://github.com/mitre/heimdall/pull/103) ([robthew](https://github.com/robthew))
+- Updated documentation to include pushing to the heimdall server in th… [\#101](https://github.com/mitre/heimdall/pull/101) ([mrtollick](https://github.com/mrtollick))
+
+## [v2.9.2](https://github.com/mitre/heimdall/tree/v2.9.2) (2019-11-15)
+[Full Changelog](https://github.com/mitre/heimdall/compare/v2.9.1...v2.9.2)
+
+**Merged pull requests:**
+
+- fixed missing fix text field in caat [\#100](https://github.com/mitre/heimdall/pull/100) ([robthew](https://github.com/robthew))
+- Powershell script [\#97](https://github.com/mitre/heimdall/pull/97) ([mrtollick](https://github.com/mrtollick))
+
+## [v2.9.1](https://github.com/mitre/heimdall/tree/v2.9.1) (2019-11-06)
+[Full Changelog](https://github.com/mitre/heimdall/compare/v2.9.0...v2.9.1)
+
+**Merged pull requests:**
+
+- Updated status counts again [\#96](https://github.com/mitre/heimdall/pull/96) ([robthew](https://github.com/robthew))
+
+## [v2.9.0](https://github.com/mitre/heimdall/tree/v2.9.0) (2019-10-25)
+[Full Changelog](https://github.com/mitre/heimdall/compare/v2.8.4...v2.9.0)
+
+**Closed issues:**
+
+- New Field 'waiver\_data' need to be added to controls [\#94](https://github.com/mitre/heimdall/issues/94)
+
+**Merged pull requests:**
+
+- update that fixes \#94 [\#95](https://github.com/mitre/heimdall/pull/95) ([robthew](https://github.com/robthew))
+- Linux script [\#93](https://github.com/mitre/heimdall/pull/93) ([mrtollick](https://github.com/mrtollick))
+
+## [v2.8.4](https://github.com/mitre/heimdall/tree/v2.8.4) (2019-10-17)
+[Full Changelog](https://github.com/mitre/heimdall/compare/v2.8.3...v2.8.4)
+
+**Merged pull requests:**
+
+- fixed upload error [\#92](https://github.com/mitre/heimdall/pull/92) ([robthew](https://github.com/robthew))
+
+## [v2.8.3](https://github.com/mitre/heimdall/tree/v2.8.3) (2019-10-09)
+[Full Changelog](https://github.com/mitre/heimdall/compare/v2.8.2...v2.8.3)
+
+**Merged pull requests:**
+
+- updated counts [\#91](https://github.com/mitre/heimdall/pull/91) ([robthew](https://github.com/robthew))
+
+## [v2.8.2](https://github.com/mitre/heimdall/tree/v2.8.2) (2019-10-07)
+[Full Changelog](https://github.com/mitre/heimdall/compare/v2.8.1...v2.8.2)
+
+**Merged pull requests:**
+
+- Updated status counts [\#90](https://github.com/mitre/heimdall/pull/90) ([robthew](https://github.com/robthew))
+
+## [v2.8.1](https://github.com/mitre/heimdall/tree/v2.8.1) (2019-09-24)
+[Full Changelog](https://github.com/mitre/heimdall/compare/v2.8.0...v2.8.1)
+
+## [v2.8.0](https://github.com/mitre/heimdall/tree/v2.8.0) (2019-09-24)
+[Full Changelog](https://github.com/mitre/heimdall/compare/v2.7.9...v2.8.0)
+
+**Merged pull requests:**
+
+- Attempt to fix profiles problem [\#82](https://github.com/mitre/heimdall/pull/82) ([robthew](https://github.com/robthew))
+- Document updates [\#80](https://github.com/mitre/heimdall/pull/80) ([mrtollick](https://github.com/mrtollick))
+
+## [v2.7.9](https://github.com/mitre/heimdall/tree/v2.7.9) (2019-09-20)
+[Full Changelog](https://github.com/mitre/heimdall/compare/v2.7.8...v2.7.9)
+
 ## [v2.7.8](https://github.com/mitre/heimdall/tree/v2.7.8) (2019-09-20)
 [Full Changelog](https://github.com/mitre/heimdall/compare/v2.7.7...v2.7.8)
 
@@ -8,6 +110,10 @@
 
 ## [v2.7.6](https://github.com/mitre/heimdall/tree/v2.7.6) (2019-09-19)
 [Full Changelog](https://github.com/mitre/heimdall/compare/v2.7.5...v2.7.6)
+
+**Closed issues:**
+
+- Change to "Welcome to Heimdall, a security results viewer" [\#77](https://github.com/mitre/heimdall/issues/77)
 
 **Merged pull requests:**
 
@@ -62,6 +168,7 @@
 - Upgrade Vagrantfile to use postgres-11 [\#69](https://github.com/mitre/heimdall/pull/69) ([rbclark](https://github.com/rbclark))
 - Create circles if they do not already exist and are requested via the API [\#65](https://github.com/mitre/heimdall/pull/65) ([rbclark](https://github.com/rbclark))
 - Move over to using DATABASE\_URL for better support of external databases [\#63](https://github.com/mitre/heimdall/pull/63) ([rbclark](https://github.com/rbclark))
+- Updated inspec and added versioning tools [\#39](https://github.com/mitre/heimdall/pull/39) ([robthew](https://github.com/robthew))
 
 ## [v2.6.2](https://github.com/mitre/heimdall/tree/v2.6.2) (2019-08-12)
 [Full Changelog](https://github.com/mitre/heimdall/compare/v2.6.1...v2.6.2)
@@ -85,10 +192,6 @@
 - Generate PDF for SSP view error [\#48](https://github.com/mitre/heimdall/issues/48)
 - Lm/auditee cosmetic fixes [\#59](https://github.com/mitre/heimdall/pull/59) ([lukemalinowski](https://github.com/lukemalinowski))
 
-**Closed issues:**
-
-- Change to "Welcome to Heimdall, a security results viewer" [\#77](https://github.com/mitre/heimdall/issues/77)
-
 ## [v2.6.0](https://github.com/mitre/heimdall/tree/v2.6.0) (2019-08-02)
 [Full Changelog](https://github.com/mitre/heimdall/compare/v2.5.8...v2.6.0)
 
@@ -102,7 +205,6 @@
 
 **Merged pull requests:**
 
-- fix eval page bug [\#47](https://github.com/mitre/heimdall/pull/47) ([robthew](https://github.com/robthew))
 - Fix rails entrypoint to include bundle exec [\#45](https://github.com/mitre/heimdall/pull/45) ([rbclark](https://github.com/rbclark))
 
 ## [v2.5.6](https://github.com/mitre/heimdall/tree/v2.5.6) (2019-07-30)
@@ -126,8 +228,8 @@
 
 **Merged pull requests:**
 
+- fix eval page bug [\#47](https://github.com/mitre/heimdall/pull/47) ([robthew](https://github.com/robthew))
 - patched gems [\#40](https://github.com/mitre/heimdall/pull/40) ([robthew](https://github.com/robthew))
-- Updated inspec and added versioning tools [\#39](https://github.com/mitre/heimdall/pull/39) ([robthew](https://github.com/robthew))
 - Caat fix [\#38](https://github.com/mitre/heimdall/pull/38) ([robthew](https://github.com/robthew))
 - Fixed a comparison bug [\#36](https://github.com/mitre/heimdall/pull/36) ([robthew](https://github.com/robthew))
 - fixed findings issue [\#34](https://github.com/mitre/heimdall/pull/34) ([robthew](https://github.com/robthew))

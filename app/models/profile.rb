@@ -1,11 +1,12 @@
 class Profile < ApplicationRecord
   resourcify
-  has_many :supports
+  has_many :supports, dependent: :destroy
   has_many :controls, dependent: :destroy
   has_and_belongs_to_many :evaluations
-  has_many :groups
-  has_many :depends
-  has_many :aspects
+  has_many :groups, dependent: :destroy
+  has_many :depends, dependent: :destroy
+  has_many :inputs, dependent: :destroy
+  has_many :aspects, dependent: :destroy
   belongs_to :created_by, class_name: 'User', foreign_key: 'created_by_id'
   has_many :dependants_list, foreign_key: :parent_id, class_name: 'DependantsParent'
   has_many :dependants, through: :dependants_list
@@ -16,12 +17,13 @@ class Profile < ApplicationRecord
   accepts_nested_attributes_for :controls
   accepts_nested_attributes_for :supports
   accepts_nested_attributes_for :groups
-  accepts_nested_attributes_for :aspects
+  accepts_nested_attributes_for :inputs
   accepts_nested_attributes_for :depends
   # validates_presence_of :name, :title, :sha256
   scope :recent, ->(num) { order(created_at: :desc).limit(num) }
 
   def filtered_controls(filters = nil)
+    Rails.logger.debug "filtered_controls: #{filters.inspect}"
     return controls if filters.nil?
 
     filtered_list = controls.select do |control|
@@ -40,15 +42,15 @@ class Profile < ApplicationRecord
     filtered_list
   end
 
-  def to_jbuilder
+  def to_jbuilder(skip_results=false)
     Jbuilder.new do |json|
       json.extract! self, :name, :title, :maintainer, :copyright,
                     :copyright_email, :license, :summary, :version
       json.supports(supports.collect { |support| support.to_jbuilder.attributes! })
-      json.controls(controls.collect { |control| control.to_jbuilder.attributes! })
+      json.controls(controls.collect { |control| control.to_jbuilder(skip_results).attributes! })
       json.groups(groups.collect { |group| group.to_jbuilder.attributes! })
       json.depends(depends.collect { |depend| depend.to_jbuilder.attributes! })
-      json.aspects(aspects.collect { |aspect| aspect.to_jbuilder.attributes! })
+      json.inputs(inputs.collect { |input| input.to_jbuilder.attributes! })
       json.extract! self, :sha256
     end
   end
@@ -59,6 +61,10 @@ class Profile < ApplicationRecord
 
   def to_json(*_args)
     to_jbuilder.target!
+  end
+
+  def profile_json(*_args)
+    to_jbuilder(skip_results=true).target!
   end
 
   def is_editable?
@@ -104,9 +110,7 @@ class Profile < ApplicationRecord
     nist
   end
 
-  def upload_results(hash, evaluation_id)
-    hash = hash.deep_transform_keys { |key| key.to_s.tr('-', '_').gsub(/\battributes\b/, 'aspects').gsub(/\bid\b/, 'control_id') }
-    controls_ary = hash.delete('controls')
+  def upload_results(controls_ary, evaluation_id)
     controls_ary.try(:each) do |control|
       ctl = controls.where(control_id: control['control_id']).first
       results = control.delete('results')
@@ -116,6 +120,21 @@ class Profile < ApplicationRecord
         end
         ctl.results.create(results)
       end
+    end
+  end
+
+  def top_control(control_id)
+    control = base_profile.controls.where(control_id: control_id).first
+    if control.present?
+      control
+    else
+      dependants.each do |dep_profile|
+        ctl = dep_profile.top_control
+        if ctl.present?
+          control = ctl
+        end
+      end
+      control
     end
   end
 
@@ -131,37 +150,69 @@ class Profile < ApplicationRecord
   end
 
   def self.parse(profiles, evaluation_id=nil)
+    Rails.logger.debug "self.parse, evaluation_id=#{evaluation_id}"
     all_profiles = []
+    results_hash = {}
     parent = nil
     profiles.try(:each) do |profile_hash|
+      profile_hash = profile_hash.deep_transform_keys { |key| key.to_s.tr('-', '_').gsub(/\battributes\b/, 'inputs').gsub(/\bid\b/, 'control_id') }
       sha256 = profile_hash['sha256']
-      Rails.logger.debug "PARSING profile #{profile_hash.inspect}"
+      Rails.logger.debug "PARSING profiles #{profiles.size}"
+      if profiles.size > 1
+        profile_hash['controls'].each do |control|
+          results = control.delete('results')
+          if results.present?
+            results_hash[control['control_id']] = results
+          end
+        end
+      end
+      Rails.logger.debug "lookup profile #{sha256}"
       profile = Profile.where(sha256: sha256).first
       if profile.present?
-        profile.upload_results(profile_hash, evaluation_id)
+        Rails.logger.debug "profile present"
+        if profiles.size == 1
+          Rails.logger.debug "existings profile upload_results"
+          profile.upload_results(profile_hash.delete('controls'), evaluation_id)
+        end
+        Rails.logger.debug "add profile to all_profiles"
         all_profiles << profile
       else
+        Rails.logger.debug "new_profile_hash = Profile.transform"
         new_profile_hash = Profile.transform(profile_hash.deep_dup, evaluation_id)
         all_profiles << new_profile_hash
       end
     end
-    all_profiles
+    Rails.logger.debug "return all_profiles(#{all_profiles.size}), results"
+    [all_profiles, results_hash]
   end
 
   def self.transform(hash, evaluation_id=nil)
-    hash = hash.deep_transform_keys { |key| key.to_s.tr('-', '_').gsub(/\battributes\b/, 'aspects').gsub(/\bid\b/, 'control_id') }
+    Rails.logger.debug "self.transform, evaluation_id=#{evaluation_id}"
+    hash = hash.deep_transform_keys { |key| key.to_s.tr('-', '_').gsub(/\battributes\b/, 'inputs').gsub(/\bid\b/, 'control_id') }
     controls = Control.transform(hash.delete('controls'), evaluation_id)
+    Rails.logger.debug "transformed controls"
     hash[:controls_attributes] = controls
     depends = hash.delete('depends') || []
-    hash[:depends_attributes] = depends
-    aspects = hash.delete('aspects') || []
-    hash[:aspects_attributes] = aspects
-    supports = hash.delete('supports') || []
-    new_supports = []
-    supports.each do |key, value|
-      new_supports << { 'name': key, 'value': value }
+    Rails.logger.debug "Depends: #{depends}"
+    inputs = hash.delete('inputs') || []
+    if evaluation_id.present?
+      depends.each do |depend|
+        depend[:evaluation_id] = evaluation_id
+      end
+      inputs.each do |input|
+        input[:evaluation_id] = evaluation_id
+      end
+      Rails.logger.debug "INPUTS #{inputs.inspect}"
+      hash[:inputs_attributes] = inputs
+      hash[:depends_attributes] = depends
     end
-    hash[:supports_attributes] = new_supports
+    supports = hash.delete('supports') || []
+    #new_supports = []
+    #supports.each do |key, value|
+    #  new_supports << { 'name': key, 'value': value }
+    #end
+    Rails.logger.debug "Supports: #{supports}"
+    hash[:supports_attributes] = supports
     groups = hash.delete('groups') || []
     new_groups = []
     groups.each do |group|
@@ -170,6 +221,7 @@ class Profile < ApplicationRecord
       end
     end
     hash[:groups_attributes] = new_groups if !new_groups.empty?
+    Rails.logger.debug "done Profile.transform"
     hash
   end
 end

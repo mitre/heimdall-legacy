@@ -1,7 +1,12 @@
 json.extract! control, :title, :desc, :impact, :refs
+if control.waiver_data.present?
+  json.partial! 'waiver_datas/waiver_data', waiver_data: control.waiver_data
+else
+  json.waiver_data []
+end
 json.tags do
   control.tags.each do |tag|
-    json.set!(tag.name, tag.value)
+    json.set!(tag.content['name'], tag.content['value'])
   end
 end
 json.extract! control, :code

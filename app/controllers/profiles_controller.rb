@@ -19,7 +19,7 @@ class ProfilesController < ApplicationController
   def show
     respond_to do |format|
       format.html { render :show }
-      format.json { render json: @profile.to_json }
+      format.json { render json: @profile.profile_json }
     end
   end
 
@@ -60,7 +60,7 @@ class ProfilesController < ApplicationController
   def nist
     authorize! :read, Profile
     category = nil
-    category = params[:category].downcase if params.key?(:category)
+    category = convert_impact(params[:category]) if params.key?(:category)
     @control_hash = @profile.nist_hash category
     nist_hash = Constants::NIST_800_53
     @name = nist_hash['name']
@@ -71,25 +71,49 @@ class ProfilesController < ApplicationController
     authorize! :create, Profile
     file = params[:file]
     contents = JSON.parse(file.read)
-    if contents.key? 'name'
-      profile_hash = Profile.transform(contents, nil)
-      begin
-        profile_hash['created_by_id'] = current_user.id
-        @profile = Profile.new(profile_hash)
-        if @profile.save
-          redirect_to @profile, notice: 'Profile uploaded.'
-        else
-          redirect_to profiles_url, error: 'Profile was not successfully created.'
+    if contents.key? 'sha256'
+      profile = Profile.where(sha256: contents['sha256']).first
+      if profile.present?
+        Rails.logger.debug "Profile already exists"
+        redirect_to profiles_url, error: 'Profile already exists.'
+      else
+        profile_hash = Profile.transform(contents, nil)
+        begin
+          profile_hash['created_by_id'] = current_user.id
+          @profile = Profile.new(profile_hash)
+          if @profile.save
+            Rails.logger.debug "Profile saved"
+            redirect_to @profile, notice: 'Profile uploaded.'
+          else
+            Rails.logger.debug "Saving error: #{@profile.errors.inspect}"
+            redirect_to profiles_url, error: 'Profile was not successfully created.'
+          end
+        rescue Exception
+          Rails.logger.debug "Profile was malformed"
+          redirect_to profiles_url, notice: 'Profile was malformed.'
         end
-      rescue Exception
-        redirect_to profiles_url, notice: 'Profile was malformed.'
       end
     else
+      Rails.logger.debug "File does not contain a profile"
       redirect_to profiles_url, notice: 'File does not contain a profile.'
     end
   end
 
   private
+
+  def convert_impact(impact)
+    if impact == 'None'
+      0.0
+    elsif impact == 'Low'
+      0.3
+    elsif impact == 'Medium'
+      0.5
+    elsif impact == 'High'
+      0.7
+    elsif impact == 'Critical'
+      1.0
+    end
+  end
 
   # Never trust parameters from the scary internet, only allow the white list through.
   def profile_params

@@ -18,7 +18,9 @@
       <div class="box box-primary shown" id="profile_info">
         <div class="box-header with-border">
           <h3 class="box-title">Profile Information</h3>
-          <%= link_to 'Destroy', @profile, method: :delete, class: "btn btn-danger pull-right", data: { confirm: 'Are you sure?' } %>
+          <% if (can? :delete, @profile) && (@profile.is_editable?) %>
+            <%= link_to 'Destroy', @profile, method: :delete, class: "btn btn-danger pull-right", data: { confirm: 'Are you sure?' } %>
+          <% end %>
         </div>
         <!-- /.box-header -->
         <div class="box-body">

@@ -55,15 +55,15 @@
                       <td><%= link_to evaluation.profiles.map(&:name).join(', '), evaluation %></td>
                       <td><%= evaluation.filename %></td>
                       <td><%= evaluation.created_at %></td>
-                      <td><%= evaluation.statistics[:duration] %></td>
+                      <td><%= evaluation.statistic&.duration %></td>
                       <td><%= evaluation.version %></td>
-                      <td><%= evaluation.platform[:name] %></td>
-                      <td><%= evaluation.platform[:release] %></td>
+                      <td><%= evaluation.platform&.name %></td>
+                      <td><%= evaluation.platform&.release %></td>
                       <td>
                         <table id="message_counts" class="cn-msg-table">
                           <tr>
-                            <td><div class="cn-msg-bar bg-green" data-status="0" style="width: <%= pass_pixels(evaluation.findings) %>px"></div></td>
-                            <td><div class="cn-msg-bar bg-red" data-status="3" style="width: <%= fail_pixels(evaluation.findings) %>px"></div></td>
+                            <td><div class="cn-msg-bar bg-green" data-status="0" style="width: <%= pass_pixels(evaluation.finding) %>px"></div></td>
+                            <td><div class="cn-msg-bar bg-red" data-status="3" style="width: <%= fail_pixels(evaluation.finding) %>px"></div></td>
                           </tr>
                         </table>
                       </td>
@@ -118,15 +118,15 @@
                             <td><%= link_to evaluation.profiles.map(&:name).join(', '), evaluation %></td>
                             <td><%= evaluation.filename %></td>
                             <td><%= evaluation.created_at %></td>
-                            <td><%= evaluation.statistics[:duration] %></td>
+                            <td><%= evaluation.statistic&.duration %></td>
                             <td><%= evaluation.version %></td>
-                            <td><%= evaluation.platform[:name] %></td>
-                            <td><%= evaluation.platform[:release] %></td>
+                            <td><%= evaluation.platform&.name %></td>
+                            <td><%= evaluation.platform&.release %></td>
                             <td>
                               <table id="message_counts" class="cn-msg-table">
                                 <tr>
-                                  <td><div class="cn-msg-bar bg-green" data-status="0" style="width: <%= pass_pixels(evaluation.findings) %>px"></div></td>
-                                  <td><div class="cn-msg-bar bg-red" data-status="3" style="width: <%= fail_pixels(evaluation.findings) %>px"></div></td>
+                                  <td><div class="cn-msg-bar bg-green" data-status="0" style="width: <%= pass_pixels(evaluation.finding) %>px"></div></td>
+                                  <td><div class="cn-msg-bar bg-red" data-status="3" style="width: <%= fail_pixels(evaluation.finding) %>px"></div></td>
                                 </tr>
                               </table>
                             </td>

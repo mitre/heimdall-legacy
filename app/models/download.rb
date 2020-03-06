@@ -9,7 +9,7 @@ class Download
     @nist_800_53_json = JSON.parse(file)
     @nist_hash = @nist_800_53_json.deep_dup
     @profiles = @evaluation.profiles
-    @counts, @controls = @evaluation.status_counts
+    @counts, @controls, _ = @evaluation.status_counts
     @symbols = {}
     @controls.each do |_, hsh|
       control = hsh[:control]

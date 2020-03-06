@@ -28,7 +28,7 @@ class Ability
         can [:read], Evaluation do |evaluation|
           user.readable_evaluation?(evaluation.id)
         end
-        can [:read], Profile do |profile|
+        can [:read, :details], Profile do |profile|
           user.readable_profile?(profile.id)
         end
       end

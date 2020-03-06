@@ -140,7 +140,7 @@ ul li:hover>ul {
         </div>
         <!-- /.box-header -->
         <div class="box-body">
-          <% counts, _ = @evaluation.status_counts %>
+          <% counts, _, _ = @evaluation.status_counts %>
           <% total_count = counts[:failed] + counts[:passed] + counts[:not_reviewed] + counts[:profile_error] %>
           <% compliance_level = ((counts[:passed]).to_f / total_count) * 100 %>
           <h2>Compliance Level: <%= compliance_level.round(1) %>%</h2>

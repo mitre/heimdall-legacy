@@ -4,15 +4,16 @@
       <li class="active"><a data-toggle="tab" href="#fdetails-<%= @evaluation.id %>-<%= control.id %>">Test Details</a></li>
       <li><a data-toggle="tab" href="#details-<%= @evaluation.id %>-<%= control.id %>">Details</a></li>
     <% else %>
-      <li class="active"><a data-toggle="tab" href="#details-<%= @evaluation.id %>-<%= control.id %>">Details</a></li>
+      <li class="active"><a data-toggle="tab" href="#details-<%= control.id %>">Details</a></li>
     <% end %>
-    <li><a data-toggle="tab" href="#inspec_code-<%= @evaluation.id %>-<%= control.id %>" >Inspec Code</a></li>
+    <li><a data-toggle="tab" href="#inspec_code-<%= control.id %>" >Inspec Code</a></li>
   </ul>
   <div class="tab-content">
     <% if @evaluation %>
       <div id="fdetails-<%= @evaluation.id %>-<%= control.id %>" class="tab-pane fade in active">
         <table class="table table-bordered table-striped">
-          <tr><td colspan="3"><%= result_message(@evaluation.status_symbol(control, control.results)) %>:<br><%= control.desc %></td><tr>
+          <% status_symbol = @evaluation.status_symbol(control, control.results) %>
+          <tr><td colspan="3"><%= result_message(status_symbol) %>:<br><%= control.desc %></td><tr>
           <% control.results.where(evaluation_id: @evaluation.id).each do |result| %>
             <tr>
               <td>
@@ -24,11 +25,16 @@
               </td>
             </tr>
           <% end %>
+          <% if status_symbol == :profile_error && control.results.empty? %>
+            <tr>
+              <td>This test produced no results. Check the code for missing conditions</td>
+            </tr>
+          <% end %>
         </table>
       </div>
       <div id="details-<%= @evaluation.id %>-<%= control.id %>" class="tab-pane fade">
     <% else %>
-      <div id="details-<%= @evaluation.id %>-<%= control.id %>" class="tab-pane fade in active">
+      <div id="details-<%= control.id %>" class="tab-pane fade in active">
     <% end %>
       <table class="table table-bordered table-striped">
         <tr><td>Control:</td><td><%= control.control_id %></td></tr>
@@ -54,12 +60,22 @@
         <% if fix = control.tag('fix') %>
           <tr><td>Fix Text:</td><td><%= fix %></td></tr>
         <% end %>
+        <% if @evaluation %>
+          <% wd = control.eval_waiver_data(@evaluation.id) %>
+          <% if wd.present? %>
+            <tr><td>Waiver Data:</td><td><%= wd.as_json %></td></tr>
+          <% end %>
+        <% end %>
       </table>
     </div>
-    <div id="inspec_code-<%= @evaluation.id %>-<%= control.id %>" class="tab-pane fade">
+    <div id="inspec_code-<%= control.id %>" class="tab-pane fade">
       <table class="table table-bordered table-striped">
         <tr>
-          <td><pre><code class="language-ruby"><%= @evaluation.control_code(control) %></code></pre></td>
+          <% if @evaluation %>
+            <td><pre><code class="language-ruby"><%= @evaluation.control_code(control) %></code></pre></td>
+          <% else %>
+            <td><pre><code class="language-ruby"><%= control.code %></code></pre></td>
+          <% end %>
         </tr>
       </table>
     </div>

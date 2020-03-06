@@ -1,8 +1,9 @@
 class Tag < ApplicationRecord
-  store :content, accessors: [:name, :value], coder: JSON
+  store :content_hash, accessors: [:name, :value], coder: JSON
   belongs_to :tagger, polymorphic: true
 
   def good_values
+    value = content['value']
     if value.is_a? Array
       good_values = []
       value.each do |value|

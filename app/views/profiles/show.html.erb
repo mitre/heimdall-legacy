@@ -1,7 +1,12 @@
 <!-- Content Header (Page header) -->
 <section class="content-header">
   <h1>
-    Profile <%= link_to @profile.title, details_profile_path(@profile) %>
+    Profile
+    <% if can? :details, @profile %>
+      <%= link_to @profile.title, details_profile_path(@profile) %>
+    <% else %>
+      <%= @profile.title %>
+    <% end %>
   </h1>
   <ol class="breadcrumb" data-turbolinks="false">
     <li><%= link_to ('<i class="fa fa-dashboard"> </i>Dashboard').html_safe, root_path %></li>
@@ -58,11 +63,11 @@
             </thead>
             <tbody>
               <% @profile.controls.each do |control| %>
-              <tr class="<%= control.severity.try(:capitalize) %>" id="<%= control.id %>">
+              <tr class="<%= severity_class(control.severity) %>" id="<%= control.id %>">
                 <td><button class="<%= category_button(control.impact) %>" style="width:120px" onclick="show_details('<%= @profile.id %>', '<%= control.id %>');">View Details</button></td>
                 <td><%= control.title %></td>
                 <td><%= link_to control.control_id, profile_control_path(@profile.id, control.id) %></td>
-                <td><%= control.impact %></td>
+                <td><%= severity_class(control.impact) %></td>
                 <td><%= control.nist_tags.join(', ') %></td>
                 <td class="hidden"><%= control.code %></td>
               </tr>

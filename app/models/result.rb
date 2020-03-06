@@ -1,5 +1,5 @@
 class Result < ApplicationRecord
-  serialize :backtrace
+  serialize :backtrace_array
   belongs_to :control, inverse_of: :results
   belongs_to :evaluation
 

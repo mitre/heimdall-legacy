@@ -12,6 +12,20 @@ def convert_impact(impact)
   end
 end
 
+def convert_severity(impact)
+  if impact == 0.0
+    'none'
+  elsif impact == 0.3
+    'low'
+  elsif impact == 0.5
+    'medium'
+  elsif impact == 0.7
+    'high'
+  elsif impact == 1.0
+    'critical'
+  end
+end
+
 total_impact = 0
 total_children = 0
 json.name @name
@@ -30,14 +44,14 @@ json.children @families do |family|
     if @control_hash[control['name']]
       json.children @control_hash[control['name']].each do |child|
         json.name child[:name]
-        json.severity child[:severity]
-        json.impact convert_impact(child[:impact])
+        json.severity convert_severity(child[:severity])
+        json.impact child[:impact]
         json.value 1
         Rails.logger.debug "child[:impact]: #{child[:impact]}"
         if child[:impact]
           control_total_children += 1
-          control_total_impact += convert_impact(child[:impact])
-          Rails.logger.debug "control_total_impact += #{convert_impact(child[:impact])}: #{control_total_impact}"
+          control_total_impact += child[:impact]
+          Rails.logger.debug "control_total_impact += #{child[:impact]}: #{control_total_impact}"
         end
       end
     end

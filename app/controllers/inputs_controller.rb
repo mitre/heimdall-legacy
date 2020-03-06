@@ -1,5 +1,5 @@
-class AspectsController < ApplicationController
-  before_action :set_aspect, only: [:show]
+class InputsController < ApplicationController
+  before_action :set_input, only: [:show]
 
   def show
     authorize! :read, @profile
@@ -8,8 +8,8 @@ class AspectsController < ApplicationController
   private
 
   # Use callbacks to share common setup or constraints between actions.
-  def set_aspect
+  def set_input
     @profile = Profile.find(params[:profile_id])
-    @aspect = @profile.aspects.find(params[:id])
+    @input = @profile.inputs.find(params[:id])
   end
 end

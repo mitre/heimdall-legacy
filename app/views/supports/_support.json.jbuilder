@@ -1,1 +1,1 @@
-json.set!(support.name, support.value)
+json.extract! support, :os_family, :name, :value

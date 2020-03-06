@@ -40,15 +40,10 @@ var evaluation_id = '<%= @evaluation.id %>';
               <%= @evaluation.version %>
             </p>
 
-            <p>
-              <strong>Other Checks:</strong>
-              <%= @evaluation.other_checks %>
-            </p>
-
             <% @evaluation.tags.each do |tag| %>
               <p>
-                <strong><%= tag.name.capitalize %>:</strong>
-                <%= tag.value %>
+                <strong><%= tag.content['name']&.capitalize %>:</strong>
+                <%= tag.content['value'] %>
               </p>
             <% end %>
             <% if can? :edit, @evaluation %>
@@ -89,7 +84,9 @@ var evaluation_id = '<%= @evaluation.id %>';
         <div class="box-body">
           <p>
             <strong>Parent Profile:</strong>
-            <%= link_to @evaluation.base_profile&.name, profile_path(@evaluation.base_profile) %></li>
+            <% if @evaluation.base_profile.present? %>
+              <%= link_to @evaluation.base_profile&.name, profile_path(@evaluation.base_profile) %></li>
+            <% end %>
           </p>
           <% prof_list = @evaluation.included_profiles %>
           <% unless prof_list.empty? %>
@@ -117,12 +114,12 @@ var evaluation_id = '<%= @evaluation.id %>';
         <div class="box-body">
           <p>
             <strong>Name:</strong>
-            <%= @evaluation.platform[:name] %>
+            <%= @evaluation.platform&.name %>
           </p>
 
           <p>
             <strong>Release:</strong>
-            <%= @evaluation.platform[:release] %>
+            <%= @evaluation.platform&.release %>
           </p>
         </div>
       </div>
@@ -138,7 +135,7 @@ var evaluation_id = '<%= @evaluation.id %>';
           </p>
           <p>
             <strong>Duration:</strong>
-            <%= @evaluation.statistics[:duration] %>
+            <%= @evaluation.statistic&.duration %>
           </p>
         </div>
       </div>
@@ -828,6 +825,22 @@ function status_btn(symbol) {
     return 'btn btn-neutral'
 }
 
+function impact_str(impact) {
+  if (impact == 0.0)
+    return 'None'
+  else if (impact == 0.3)
+    return 'Low'
+  else if (impact == 0.5)
+    return 'Medium'
+  else if (impact == 0.7)
+    return 'High'
+  else if (impact == 1.0)
+    return 'Critical'
+  else
+    return ''
+}
+
+
 function add_control_table(d) {
   $('#controls_table').empty();
   console.log("empty table");
@@ -846,7 +859,7 @@ function add_control_table(d) {
       rows += '<td>' + ctl.profile_name + '</td>';
       rows += '<td>' + ctl.title + '</td>';
       rows += '<td><a href="' + root_path + 'profiles/' + profile_id + '/controls/' + ctl_id + '">' + ctl.name + '</a></td>';
-      rows += '<td>' + ctl.impact + '</td>';
+      rows += '<td>' + impact_str(ctl.impact) + '</td>';
       rows += '<td>' + ctl.run_time + '</td>';
       rows += '<td>' + ctl.nist + '</td>';
       rows += '<td class="hidden">' + ctl.code + '</td></tr>';
@@ -980,13 +993,13 @@ function draw_severity_pie_chart(d) {
   if (d.controls) {
     for(var i=0, len=d.controls.length; i < len; i++) {
       var impact = d.controls[i].impact;
-      if (impact == 'low') {
+      if (impact == 0.3) {
         low += 1;
-      } else if (impact == 'medium') {
+      } else if (impact == 0.5) {
         medium += 1;
-      } else if (impact == 'high') {
+      } else if (impact == 0.7) {
         high += 1;
-      } else if (impact == 'critical') {
+      } else if (impact == 1.0) {
         critical += 1;
       }
     }
@@ -1078,7 +1091,7 @@ $("#export-caat").click(function(event) {
     var impact = control.impact;
     var field = [];
 
-    if (impact != 'none' && !vulnList.includes('xxxx' + control.name)) {
+    if (impact != 0.0 && !vulnList.includes('xxxx' + control.name)) {
       vulnList.push(control.name)
       if (control.nist) {
         field.push(control.nist[0].replace(/\-(\d)(\s|$)/, "-0$1$2").replace(/\((\d)\)/, "(0$1)"));              // NIST
