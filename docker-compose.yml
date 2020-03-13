@@ -7,6 +7,9 @@ services:
     restart: unless-stopped
     volumes:
       - heimdall_dbdata:/var/lib/postgresql/data
+    environment:
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+    env_file: .env-prod
     expose:
       - "5432"
   web:
@@ -14,7 +17,8 @@ services:
     # image: web:1.0
     image: mitre/heimdall:latest
     environment:
-      DATABASE_URL: postgres://postgres@db/heimdall_postgres_production
+      DATABASE_URL: "postgres://postgres@db/heimdall_postgres_production"
+      PGPASSWORD: ${POSTGRES_PASSWORD}
       RAILS_SERVE_STATIC_FILES: "true"
       RAILS_ENV: production
       HEIMDALL_RELATIVE_URL_ROOT: ""
