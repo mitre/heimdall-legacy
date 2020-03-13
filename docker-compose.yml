@@ -17,7 +17,7 @@ services:
     # image: web:1.0
     image: mitre/heimdall:latest
     environment:
-      DATABASE_URL: "postgres://postgres@db/heimdall_postgres_production"
+      DATABASE_URL: postgres://postgres@db/heimdall_postgres_production
       PGPASSWORD: ${POSTGRES_PASSWORD}
       RAILS_SERVE_STATIC_FILES: "true"
       RAILS_ENV: production
