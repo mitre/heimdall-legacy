@@ -17,8 +17,8 @@ inspec-tools/
 /.vagrant/
 rails_best_practices_output.html
 
-# Used by dotenv library to load environment variables.
-# .env
+# Used by dotenv library and docker-compose to load environment variables.
+.env
 
 ## Specific to RubyMotion:
 .dat*
