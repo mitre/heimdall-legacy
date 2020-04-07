@@ -38,16 +38,18 @@
                   <td>
                     <ul>
                       <% user.roles.each do |role| %>
-                        <li>
-                          <%= role.name %>
-                          <%= link_to ('<span class="glyphicon glyphicon-remove red"></span>').html_safe, user_remove_role_path(current_user, user, role.name), :method => :delete, data: { confirm: 'Are you sure?' } %>
-                        </li>
+                        <% if role.name.present? %>
+                          <li>
+                            <%= role.name %>
+                            <%= link_to ('<span class="glyphicon glyphicon-remove red"></span>').html_safe, user_remove_role_path(current_user, user, role.name), :method => :delete, data: { confirm: 'Are you sure?' } %>
+                          </li>
+                        <% end %>
                       <% end %>
                     </ul>
                   </td>
                   <td>
                     <%= form_for :user, url: user_add_role_path(current_user, user), remote: true do |form| %>
-                      <%= form.select :role, ['admin', 'editor'], { :prompt => 'Select' } %>
+                      <%= form.select :role, ['admin', 'editor'] %>
                       <%= button_tag(type: "submit") do %>
                           Add Role
                       <% end %>
