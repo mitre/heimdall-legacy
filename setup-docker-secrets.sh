@@ -9,7 +9,7 @@ fi
 
 if ! grep -qF "POSTGRES_PASSWORD" .env; then
 	echo ".env does not contain POSTGRES_PASSWORD, generating secret..."
-	echo -e "\nPOSTGRES_PASSWORD=$(openssl rand -base64 33)" >> .env
+	echo -e "\nPOSTGRES_PASSWORD=$(openssl rand -hex 33)" >> .env
 fi
 
 
