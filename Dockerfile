@@ -1,4 +1,4 @@
-FROM ruby:2.6.5-alpine as Builder
+FROM ruby:2.6.6-alpine as Builder
 
 ENV RAILS_ROOT /var/www/heimdall
 
