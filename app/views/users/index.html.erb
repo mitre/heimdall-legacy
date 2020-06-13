@@ -31,7 +31,7 @@
               <% single_admin = @users.map{|user| user.roles.map(&:name)}.flatten.count('admin') == 1 %>
               <% @users.each do |user| %>
                 <tr>
-                  <td><%= link_to user.email, user_path(user) %></td>
+                  <td><%= link_to user.email, @user %></td>
                   <td><%= user.type %></td>
                   <td><%= user.first_name %></td>
                   <td><%= user.last_name %></td>

@@ -23,20 +23,21 @@ class DashboardController < ApplicationController
     end
   end
 
+#fix this!!!
   def get_recents(classes)
     recents = {}
-    classes.each do |clss|
-      recent_objs = clss.recent(10)
-      recent_objs.each do |obj|
-        next if obj.created_at.nil?
-        next unless clss == User || can?(:read, obj)
+    #classes.each do |clss|
+    #  recent_objs = clss.recent(10)
+    #  recent_objs.each do |obj|
+    #    next if obj.created_at.nil?
+    #    next unless clss == User || can?(:read, obj)
 
         # key = obj.created_at.strftime('%d %b.%Y')
-        key = obj.created_at.beginning_of_day
-        recents[key] = [] unless recents.key?(key)
-        recents[key] << obj
-      end
-    end
+    #    key = obj.created_at.beginning_of_day
+    #    recents[key] = [] unless recents.key?(key)
+    #    recents[key] << obj
+    #  end
+    #end
     recents
   end
 end

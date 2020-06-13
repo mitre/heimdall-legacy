@@ -1,23 +1,30 @@
 Rails.application.routes.draw do
   scope ENV['HEIMDALL_RELATIVE_URL_ROOT'] || '/' do
-    resources :users do
-      get :image, on: :member
-    end
+    #resources :users do
+    #  get :image, on: :member
+    #end
     resources :circles
     resources :filter_groups do
       resources :filters, only: [:update, :destroy]
     end
     resources :filters
-    devise_for :db_users, controllers: {
-      sessions: 'db_users/sessions',
-      registrations: 'db_users/registrations',
-      passwords: 'db_users/passwords'
+    #devise_for :db_users, controllers: {
+    #  sessions: 'db_users/sessions',
+    #  registrations: 'db_users/registrations',
+    #  passwords: 'db_users/passwords'
+    #}
+    #devise_for :ldap_users, controllers: {
+    #  sessions: 'ldap_users/sessions',
+    #  registrations: 'ldap_users/registrations',
+    #  passwords: 'ldap_users/passwords'
+    #}
+
+    devise_for :users, controllers: {
+      omniauth_callbacks: 'users/omniauth_callbacks',
+      registrations: 'users/registrations'
     }
-    devise_for :ldap_users, controllers: {
-      sessions: 'ldap_users/sessions',
-      registrations: 'ldap_users/registrations',
-      passwords: 'ldap_users/passwords'
-    }
+
+
     resources :profiles, except: [:new] do
       resources :controls, except: [:index]
       resources :aspects, except: [:index]
@@ -36,7 +43,7 @@ Rails.application.routes.draw do
       post 'upload_api', on: :collection
     end
 
-    match 'session/new_session' => 'users#new_session', as: :new_user_session, :via => :get
+    #match 'session/new_session' => 'users#new_session', as: :new_user_session, :via => :get
     match 'circles/:id/members' => 'circles#members', as: :circle_members, :via => :post
     match 'circles/:id/remove_member/:user_id' => 'circles#remove_member', as: :circle_member_remove, :via => :delete
     match 'circles/:id/owners' => 'circles#owners', as: :circle_owners, :via => :post
