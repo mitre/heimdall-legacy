@@ -65,6 +65,10 @@ Rails.application.routes.draw do
     match 'evaluations/:id/chart' => 'evaluations#chart', as: :evaluation_chart, :via => :get
     match 'users/:id/add_role/:user_id/' => 'users#add_role', as: :user_add_role, :via => :post
     match 'users/:id/remove_role/:user_id/:role' => 'users#remove_role', as: :user_remove_role, :via => :delete
+    match 'users' => 'users#index', as: :all_users, :via => :get
+    #match 'users/:id' => 'users#show', as: :single_users, :via => :get
+    #match 'users/:id/edit' => 'users#edit', as: :edit_users, :via => :get
+    match 'users/:id' => 'users#destroy', as: :admin_destroy_user, :via => :delete
 
     root to: 'dashboard#index'
   end

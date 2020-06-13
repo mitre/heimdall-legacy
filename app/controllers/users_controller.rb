@@ -44,14 +44,14 @@ class UsersController < ApplicationController
     role = params[:user][:role].to_sym
     role_user = User.find(params[:user_id])
     role_user.add_role(role)
-    redirect_to users_url, notice: 'Role was added.'
+    redirect_to all_users_path, notice: 'Role was added.'
   end
 
   def remove_role
     role_user = User.find(params[:user_id])
     role = params[:role].to_sym
     role_user.remove_role(role)
-    redirect_to users_url, notice: 'Role was deleted.'
+    redirect_to all_users_path, notice: 'Role was deleted.'
   end
 
   def rotate
@@ -79,7 +79,7 @@ class UsersController < ApplicationController
   def destroy
     @user.destroy
     respond_to do |format|
-      format.html { redirect_to users_url, notice: 'User was successfully destroyed.' }
+      format.html { redirect_to all_users_path, notice: 'User was successfully destroyed.' }
       format.json { head :no_content }
     end
   end

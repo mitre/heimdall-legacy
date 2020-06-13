@@ -61,9 +61,10 @@
           </div>
           <!--GitHub for now-->
           <b> Testing </b><br />
-          <%= link_to "Sign in with GitHub Path", user_github_omniauth_authorize_path %><br />
-          <%= link_to "Sign in with GitHub Path-old", omniauth_authorize_path(resource_name, :github) %><br />
-          <%= link_to "Sign fup with GitHub", "/users/auth/github" %><br />
+          <a href="/users/auth/github">Testing A ref</a>
+          <%= link_to "Sign in with GitHub Path", user_github_omniauth_authorize_path, method: :post %><br />
+          <%= link_to "Sign in with GitHub Path-old", omniauth_authorize_path(resource_name, :github), method: :post %><br />
+          <%= link_to "Sign fup with GitHub", "/users/auth/github", method: :post %><br />
 
           <!-- /.box-footer -->
         <% end %>

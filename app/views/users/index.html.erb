@@ -58,7 +58,7 @@
                   </td>
                   <td>
                     <% unless user.has_role?(:admin) && single_admin %>
-                      <%= link_to 'Destroy', user_path(user), method: :delete, data: { confirm: 'Are you sure?' } %>
+                      <%= link_to 'Destroy', admin_destroy_user_path(user), method: :delete, data: { confirm: 'Are you sure?' } %>
                     <% end %>
                   </td>
                 </tr>

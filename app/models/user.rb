@@ -3,9 +3,9 @@ require 'securerandom'
 class User < ApplicationRecord
   rolify
   after_create :assign_default_role, :add_to_public_circle
-  #mount_uploader :image, ImageUploader
+  mount_uploader :image, ImageUploader
 
-  #scope :recent, ->(num) { order(created_at: :desc).limit(num) }
+  scope :recent, ->(num) { order(created_at: :desc).limit(num) }
 
   devise :database_authenticatable, :registerable, :rememberable, :recoverable, :trackable, :validatable#, :confirmable
 
@@ -19,7 +19,7 @@ class User < ApplicationRecord
     find_or_create_by(email: auth.info.email) do |user|
       user.email = auth.info.email
       user.password = Devise.friendly_token[0, 50]
-      user.name = auth.info.name || "#{auth.provider} user"
+      #user.name = auth.info.name || "#{auth.provider} user"
       user.provider = auth.provider
       user.uid = auth.uid
 
@@ -29,8 +29,17 @@ class User < ApplicationRecord
 
   #These look like user spcific functions
   # new users get assigned the :editor role by default
+  # first user gets assigned the :admin role by default
   def assign_default_role
-    add_role(:editor) if roles.blank?
+      puts("User Count: ")
+      puts(User.count)
+    if User.count != 1
+      puts("Editor Assigned")
+      add_role(:editor) if roles.blank?
+    else
+      puts("Admin Assigned")
+      add_role(:admin) if roles.blank?
+    end
   end
 
   # all users get added to the public circle
