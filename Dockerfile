@@ -27,7 +27,7 @@ RUN rm -rf tmp/cache spec vendor/bundle/ruby/*/cache && find vendor/bundle/ruby/
 # The container above is only used for building. Once the source code is built we copy
 # the required artifacts out of the build above and put them in a clean container.
 # This allows our image size to be much smaller.
-FROM ruby:2.6.5-alpine
+FROM ruby:2.6.6-alpine
 
 ENV RAILS_ROOT /var/www/heimdall
 
