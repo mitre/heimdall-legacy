@@ -16,7 +16,7 @@ build_dependencies:
 dependencies:
   - openssl-libs
   - openssl
-  - postgresql-server
+  - postgresql11-server
   - ImageMagick
 targets:
   centos-7:
