@@ -1,9 +1,9 @@
 <!-- Content Header (Page header) -->
-<section class="content-header">
+<!--<section class="content-header">
   <h1>
     Sign Up
   </h1>
-</section>
+</section>-->
 
 <!-- Main content -->
 <section class="content container-fluid">
@@ -59,24 +59,36 @@
           <div class="box-footer">
             <%= f.submit "Sign Up", :class => "btn btn-primary btn-block btn-flat" %>
           </div>
-          <!--GitHub for now-->
-          <b> Testing </b><br />
-          <a href="/users/auth/github">Testing A ref</a>
-          <%= link_to "Sign in with GitHub Path", user_github_omniauth_authorize_path, method: :post %><br />
-          <%= link_to "Sign in with GitHub Path-old", omniauth_authorize_path(resource_name, :github), method: :post %><br />
-          <%= link_to "Sign fup with GitHub", "/users/auth/github", method: :post %><br />
-
           <!-- /.box-footer -->
         <% end %>
-        <div class="box-body">
-          <div class="form-group">
-            <%= render "devise/shared/links" %>
-          </div>
-        </div>
+
       </div>
     </div>
   </div>
   <!-- /.login-box-body -->
+
+  <!-- GitHub -->
+    <div class="row">
+      <div class="col-md-6">
+        <!-- Horizontal Form -->
+        <div class="box box-info">
+          <div class="box-header with-border">
+            <%= image_tag("GitHub-Mark-32px.png", :width => "24px", :height => "24px", :alt => "GitHub logo") %>
+            <h3 class="box-title">GitHub Login</h3>
+          </div>
+
+          <div class="box-body">
+          <%= button_to "Sign in with GitHub", omniauth_authorize_path(resource_name, :github), method: :post,
+          class: "btn btn-primary btn-block btn-flat" %>
+
+          <br />
+          </div>
+
+        </div>
+      </div>
+    </div>
+
+
 
 </section>
 <!-- /.content -->

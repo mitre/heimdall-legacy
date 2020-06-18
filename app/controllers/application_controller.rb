@@ -30,7 +30,7 @@ class ApplicationController < ActionController::Base
 
   helper_method :current_user
 
-  #protect_from_forgery with: :exception
+  protect_from_forgery with: :exception
   #puts(@current_user)
 
   #def current_user

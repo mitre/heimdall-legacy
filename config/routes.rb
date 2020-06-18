@@ -24,6 +24,20 @@ Rails.application.routes.draw do
       registrations: 'users/registrations'
     }
 
+    resources :users do
+      get :image, on: :member
+    end
+
+    devise_scope :user do
+      authenticated :user do
+        root to: 'dashboard#index'
+      end
+
+      unauthenticated do
+        root to: 'users/registrations#new'
+      end
+
+    end
 
     resources :profiles, except: [:new] do
       resources :controls, except: [:index]
@@ -32,6 +46,7 @@ Rails.application.routes.draw do
       get 'details', on: :member
       post 'upload', on: :collection
     end
+
     resources :evaluations, only: [:index, :show, :destroy] do
       resources :downloads, only: [:show]
       get 'ssp', on: :member
@@ -66,10 +81,10 @@ Rails.application.routes.draw do
     match 'users/:id/add_role/:user_id/' => 'users#add_role', as: :user_add_role, :via => :post
     match 'users/:id/remove_role/:user_id/:role' => 'users#remove_role', as: :user_remove_role, :via => :delete
     match 'users' => 'users#index', as: :all_users, :via => :get
-    #match 'users/:id' => 'users#show', as: :single_users, :via => :get
-    #match 'users/:id/edit' => 'users#edit', as: :edit_users, :via => :get
+    #match 'users/:id' => 'users#show', as: :user, :via => :get
+    match 'users/:id/edit' => 'users#edit', as: :edit_users, :via => :get
     match 'users/:id' => 'users#destroy', as: :admin_destroy_user, :via => :delete
 
-    root to: 'dashboard#index'
+    #root to: 'dashboard#index'
   end
 end
