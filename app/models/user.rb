@@ -22,7 +22,7 @@ class User < ApplicationRecord
       #user.name = auth.info.name || "#{auth.provider} user"
       user.provider = auth.provider
       user.uid = auth.uid
-
+      user.api_key = SecureRandom.urlsafe_base64
       #user.skip_confirmation!
     end
   end
@@ -31,13 +31,9 @@ class User < ApplicationRecord
   # new users get assigned the :editor role by default
   # first user gets assigned the :admin role by default
   def assign_default_role
-      puts("User Count: ")
-      puts(User.count)
     if User.count != 1
-      puts("Editor Assigned")
       add_role(:editor) if roles.blank?
     else
-      puts("Admin Assigned")
       add_role(:admin) if roles.blank?
     end
   end
