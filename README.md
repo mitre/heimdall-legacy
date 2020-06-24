@@ -323,7 +323,7 @@ There are a set of tests developed using `rspec`. Run `rake spec` to run the tes
 
 ### NOTICE
 
-© 2018-2019 The MITRE Corporation.
+© 2019 The MITRE Corporation.
 
 Approved for Public Release; Distribution Unlimited. Case Number 18-3678.
 
@@ -338,13 +338,3 @@ This software was produced for the U. S. Government under Contract Number HHSM-5
 No other use other than that granted to the U. S. Government, or to those acting on behalf of the U. S. Government under that Clause is authorized without the express written permission of The MITRE Corporation.
 
 For further information, please contact The MITRE Corporation, Contracts Management Office, 7515 Colshire Drive, McLean, VA 22102-7539, (703) 983-6000.
-
-### NOTICE
-
-This technical data deliverable was developed using contract funds under Basic Contract No. W56KGU-18-D-0004.
-
-### NOTICE
-
-This software was produced for the U. S. Government under Basic Contract No. W56KGU-18-D-0004, and is subject to the Rights in Noncommercial Computer Software and Noncommercial Computer Software Documentation Clause 252.227-7014 (FEB 2012)
-
-© 2020 The MITRE Corporation.
