@@ -603,6 +603,7 @@ GEM
       childprocess (>= 0.5, < 2.0)
       rubyzip (~> 1.2, >= 1.2.2)
     semverse (3.0.0)
+    settingslogic (2.0.9)
     sexp_processor (4.12.1)
     signet (0.11.0)
       addressable (~> 2.3)
@@ -827,6 +828,7 @@ DEPENDENCIES
   rubocop-rspec
   sassc-rails
   selenium-webdriver
+  settingslogic (~> 2.0.9)
   simplecov
   spring
   spring-watcher-listen (~> 2.0.0)

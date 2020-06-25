@@ -286,9 +286,18 @@ Devise.setup do |config|
   # ==> OmniAuth
   # Add a new OmniAuth provider. Check the wiki for more information on setting
   # up on your models and hooks.
-  config.omniauth :github, 'N/A', 'N/A', scope: 'user:email',
-    client_options: { ssl: { verify: !Rails.env.development? }}
+  # config.omniauth :github, ENV['GITHUB_APP_ID'], ENV['GITHUB_APP_SECRET'],
+  #                 scope: 'user,public_repo'
+  if Settings.ldap.enabled
+    # We currently only support one ldap server however we allow them to be
+    # passed in as an array so that we have the ability to support multiple
+    # servers later without any changes to the YAML syntax.
+    config.omniauth(:ldap, Settings.ldap.servers.values.first)
+  end
 
+  Settings.providers.each do |provider|
+    config.omniauth(provider.name.to_sym, provider.app_id, provider.app_secret, provider.args)
+  end
   # ==> Warden configuration
   # If you want to use other strategies, that are not supported by Devise, or
   # change the failure app, you can configure them inside the config.warden block.
