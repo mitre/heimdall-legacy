@@ -1,0 +1,200 @@
+:javascript
+  var controls = [];
+  var changes = [];
+  <haml_silent> nist_tags = {} 
+  </haml_silent><haml_silent> @compare_hsh.each do |control_id, ct_hsh| 
+  </haml_silent><haml_block>  controls['#{control_id}'] = [];
+  <haml_silent>   symbols = [] 
+  </haml_silent><haml_silent>   @evaluations.each_with_index do |eval, index| 
+  </haml_silent><haml_block>    controls['#{control_id}'][#{index}] = []
+  <haml_silent>     if ct_hsh.key?(eval.id) 
+  </haml_silent><haml_block><haml_silent>       hsh = ct_hsh[eval.id] 
+  </haml_silent><haml_silent>       control = hsh[:control] 
+  </haml_silent><haml_silent>       symbols &lt;&lt; hsh[:status_symbol] 
+  </haml_silent><haml_silent>       nist_tags[control_id] = [] unless nist_tags.key?(control_id) 
+  </haml_silent><haml_silent>       nist_tags[control_id] += control.nist_tags 
+  </haml_silent>      controls['#{control_id}'][#{index}][0] = '#{control.id}';
+        controls['#{control_id}'][#{index}][1] = '#{control.profile_id}';
+        controls['#{control_id}'][#{index}][2] = '#{eval.id}';
+  </haml_block><haml_silent>     else 
+  </haml_silent><haml_block>      controls['#{control_id}'][#{index}][0] = '-1';
+  </haml_block></haml_block>  changes['#{control_id}'] = '#{symbols.uniq.size > 1}';
+  </haml_block>
+/ Content Header (Page header)
+%section.content-header
+  %h1
+    Evaluation Comparisons
+  %ol.breadcrumb
+    %li= link_to ('<i class="fa fa-dashboard"> </i>Dashboard').html_safe, root_path
+    %li= link_to "Back", :back
+    %li.active Evaluation Comparisons
+%section.content.container-fluid
+  .row
+    .col-xs-12
+      .box.box-primary
+        .box-header.with-border
+          %h3.box-title Profile Results
+        / /.box-header
+        .box-body
+          #chart
+  .row
+    .col-xs-12
+      .box.box-primary
+        .box-header.with-border
+          %h3.box-title Controls
+        / /.box-header
+        .box-body
+          %div{:class => "col-xs-#{@evaluations.size + 3}"}
+            %table#controls.table.table-hover
+              %thead
+                %tr
+                  %th Control ID
+                  %th NIST Refs
+                  - @evaluations.each do |eval|
+                    %th= "#{eval.profiles.map(&:name).join(', ')} - #{eval.start_time}"
+                    %th.hidden Details
+              %tbody
+                - @compare_hsh.each do |control_id, ct_hsh|
+                  %tr{:id => control_id, :onclick => "show_details('#{control_id}');"}
+                    %td{:width => "100"}= control_id
+                    %td= nist_tags[control_id].uniq.join(', ')
+                    - Rails.logger.debug "#{control_id}: #{ct_hsh.keys}"
+                    - @evaluations.each do |eval|
+                      - Rails.logger.debug "Has ID #{eval.id}: #{ct_hsh.key?(eval.id)}"
+                      - if ct_hsh.key?(eval.id)
+                        - hsh = ct_hsh[eval.id]
+                        - control = hsh[:control]
+                        - sym = hsh[:status_symbol]
+                        %td{:width => "110"}
+                          %button{:class => "#{status_btn(sym)}", :style => "width:120px", :title => control_id}= status_label(sym)
+                        %td.hidden= control.code
+                      - else
+                        %td{:width => "110"}  
+                        %td.hidden
+/ /.content
+:javascript
+  var loaded = null;
+  var shown_id = null;
+  var filter_off = true;
+  var control_table;
+  
+  $.fn.dataTableExt.afnFiltering.push(
+    function( oSettings, aData, iDataIndex ) {
+      if (filter_off) {
+        return true;
+      } else {
+        if (changes[aData[0]] == 'false') {
+          return false;
+        } else {
+          return true;
+        }
+      }
+    }
+  );
+  
+  document.addEventListener("turbolinks:load", function() {
+    if (loaded) {
+      return;
+    } else {
+      loaded = true;
+    }
+  
+    if($( "[id^='controls_wrapper']" ).length == 0) {
+      control_table = $('#controls').DataTable({
+        'paging'      : false,
+        'lengthChange': false,
+        'searching'   : true,
+        'ordering'    : true,
+        'info'        : true,
+        'autoWidth'   : false
+      });
+      divstr = 'Filter out Unchanged <input type="checkbox" name="filter" id="filter" onclick="filter_table()">';
+      $('#controls_wrapper').children(":first").children(":first").append(divstr);
+    }
+  
+    var columns = [['x'], ['Passed'], ['Failed'], ['Not Applicable'], ['Profile Error'], ['Not Reviewed']];
+  <haml_silent>   @evaluations.each_with_index do |eval, index| 
+  </haml_silent><haml_block>    columns[0].push(#{index + 1});
+      columns[1].push(#{eval.finding&.passed});
+      columns[2].push(#{eval.finding&.failed});
+      columns[3].push(#{eval.finding&.not_applicable});
+      columns[4].push(#{eval.finding&.profile_error});
+      columns[5].push(#{eval.finding&.not_reviewed});
+  </haml_block>
+    var chart = c3.generate({
+      data: {
+          x : 'x',
+          columns: columns,
+          type: 'bar',
+      },
+      color: {
+        pattern: ['#00a65a', '#dd4b39', '#00c0ef', '#8C8C8C', '#8C8C8C']
+      },
+      bar: {
+          width: {
+              ratio: 0.8 // this makes bar width 50% of length between ticks
+          }
+      },
+      axis: {
+          x: {
+              type: 'category' // this is needed to load string x value
+          }
+      },
+      bindto: '#chart'
+    });
+  
+  });
+  
+  function filter_table() {
+    if (filter_off == true)
+      filter_off = false;
+    else {
+      filter_off = true;
+    }
+    control_table.draw();
+  }
+  
+  
+  function show_details(control_id) {
+    if ($('#details_row').length) {
+      $('#details_row').remove();
+    }
+    ct = controls[control_id];
+    if (control_id != shown_id) {
+      shown_id = control_id;
+      if (ct) {
+        details = [];
+        for(var i=0, len=ct.length; i < len; i++) {
+          ct_id = ct[i][0];
+          if (ct_id == '-1') {
+            details[i] = '';
+          } else {
+            profile_id = ct[i][1];
+            evaluation_id = ct[i][2];
+            url = "#{root_path}" + 'profiles/' + profile_id + '/controls/' + ct_id + '/details/evaluation/' + evaluation_id;
+            $.ajax(url, {
+                async: false,
+                success: function(data) {
+                  details[i] = detailsData;
+                },
+                error: function() {
+                  console.log("Error occured");
+                }
+             });
+          }
+        }
+      } else {
+        shown_id = null;
+      }
+  
+      tr_str = '<tr id="details_row" role="row"><td colspan=2> </td>';
+      for(var i=0, len=details.length; i < len; i++) {
+        tr_str += '<td style="min-width: 400px">' + details[i] + '</td>';
+      }
+      tr_str += '</tr>';
+      hsh = "#" + control_id;
+      var tr = $(hsh);
+      tr.after(tr_str);
+      Prism.highlightAll();
+    }
+  }

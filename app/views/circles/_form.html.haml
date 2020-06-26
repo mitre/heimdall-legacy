@@ -1,0 +1,21 @@
+= form_with(model: circle, local: true, :role => "form") do |form|
+  .box-header.with-border
+    %h3.box-title Circle Information
+    - unless circle.created_at.nil?
+      %button#cancel_btn.btn.btn-info.pull-right{:type => "button"} Cancel
+    = button_tag(type: "submit", class: "btn btn-primary pull-right margin-right", id: 'edit_btn') do
+      %i.fa.fa-edit
+      Save
+  .box-body
+    - if circle.errors.any?
+      #error_explanation
+        %h2
+          = pluralize(circle.errors.count, "error")
+          prohibited this circle from being saved:
+        %ul
+          - circle.errors.full_messages.each do |message|
+            %li= message
+    - form.hidden_field :created_by_id, value: current_user.id
+    .form-group
+      = form.label :name
+      = form.text_field :name, id: :circle_name, class: "form-control"

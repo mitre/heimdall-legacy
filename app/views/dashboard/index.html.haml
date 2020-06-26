@@ -1,0 +1,129 @@
+/ Content Header (Page header)
+%section.content-header
+  %h1
+    Welcome to Heimdall, a security results viewer
+  %ol.breadcrumb
+    %li.active= link_to ('<i class="fa fa-dashboard"> </i>Dashboard').html_safe, root_path
+/ Main content
+%section.content
+  / Small boxes (Stat box)
+  .row
+    .col-lg-4.col-xs-6
+      / small box
+      #eval_info.small-box.bg-aqua
+        .inner
+          %h3= @eval_count
+          %p Evaluations
+        .icon
+          %i.ion.ion-pie-graph
+        .small-box-footer
+          - if can? :create, Evaluation
+            = link_to ('Upload <i class="fa fa-upload"></i>').html_safe, "#",id: "upload_eval_btn", class: "white-text"
+                
+          = link_to ('More info <i class="fa fa-arrow-circle-right"></i>').html_safe, evaluations_path, class: "white-text"
+      - if can? :create, Evaluation
+        #upload_eval_form.small-box.bg-aqua{:style => "display:none;"}
+          .inner
+            %h4 Upload Evaluation
+            = form_tag(upload_evaluations_path, multipart: true, :html => {class: 'form-control'}) do
+              .input-group
+                = file_field_tag :file, :class => "menu-text"
+              %br/
+              .actions
+                = submit_tag 'Upload', :class => "btn btn-primary"
+                %button#cancel_eval_btn.btn.btn-info.pull-right{:type => "reset"}
+                  %i.fa.fa-cancel
+                  Cancel
+    / ./col
+    .col-lg-4.col-xs-6
+      / small box
+      #profile_info.small-box.bg-green
+        .inner
+          %h3= @profile_count
+          %p Profiles
+        .icon
+          %i.ion.ion-ios-folder
+        .small-box-footer
+          - if can? :create, Profile
+            = link_to ('Upload <i class="fa fa-upload"></i>').html_safe, "#", id: "upload_profile_btn", class: "white-text"
+                
+          = link_to ('More info <i class="fa fa-arrow-circle-right"></i>').html_safe, profiles_path, class: "white-text"
+      - if can? :create, Profile
+        #upload_profile_form.small-box.bg-green{:style => "display:none;"}
+          .inner
+            %h4 Upload Profile
+            = form_tag(upload_profiles_path, multipart: true, :html => {class: 'form-control'}) do
+              .input-group
+                = file_field_tag :file, :class => "menu-text"
+              %br/
+              .actions
+                = submit_tag 'Upload', :class => "btn btn-primary"
+                %button#cancel_profile_btn.btn.btn-info.pull-right{:type => "reset"}
+                  %i.fa.fa-cancel
+                  Cancel
+    / ./col
+    .col-lg-4.col-xs-6
+      / small box
+      .small-box.bg-yellow
+        .inner
+          %h3= User.all.count
+          %p User Registrations
+        .icon
+          %i.ion.ion-person-add
+        - if current_user
+          .small-box-footer  
+        - else
+          = link_to ('More info <i class="fa fa-arrow-circle-right"></i>').html_safe, new_user_session_path, class: "small-box-footer"
+    / ./col
+  %h2
+    Timeline
+  .row
+    %ul.timeline
+      - @recents.each do |tm, items|
+        / timeline time label
+        %li.time-label
+          %span.bg-red
+            = tm.strftime('%d %b.%Y')
+        / /.timeline-label
+        - items.each do |item|
+          - item_class = item.class
+          - item_class = User if [DbUser, LdapUser].include?(item.class)
+          / timeline item
+          %li
+            / timeline icon
+            %i{:class => "fa #{icon(item_class)} bg-blue"}
+            .timeline-item
+              %span.time
+                %i.fa.fa-clock-o
+                = item.created_at.strftime('%H:%M:%S')
+              %h3.timeline-header
+                = item.class
+                Added
+                - unless item_class == User
+                  by #{item.created_by.try(:email)}
+              .timeline-body
+                - if item_class == Evaluation
+                  Profiles: #{item.profiles.map(&:name).join(', ')}, Platform: #{item.platform[:name]}
+                - elsif item_class == Profile
+                  Name: #{item.name}, Title: #{item.title}, Version: #{item.version}
+                - elsif item_class == User
+                  Email: #{item.email}, Roles: #{item.role_names.uniq.join(", ")}
+          / END timeline item
+/ /.content
+:javascript
+  $(document).ready(function(){
+    $("#upload_eval_btn").click(function(event) {
+      event.preventDefault(); // Prevent link from following its href
+      toggleSections("upload_eval_form", "eval_info");
+    });
+    $("#cancel_eval_btn").click(function() {
+      toggleSections("eval_info", "upload_eval_form");
+    });
+    $("#upload_profile_btn").click(function(event) {
+      event.preventDefault(); // Prevent link from following its href
+      toggleSections("upload_profile_form", "profile_info");
+    });
+    $("#cancel_profile_btn").click(function() {
+      toggleSections("profile_info", "upload_profile_form");
+    });
+  });

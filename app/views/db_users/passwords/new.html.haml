@@ -1,0 +1,30 @@
+/ Content Header (Page header)
+%section.content-header
+  %h1
+    Login
+/ Main content
+%section.content.container-fluid
+  .row
+    .col-md-6
+      / Horizontal Form
+      .box.box-info
+        .box-header.with-border
+          %h3.box-title Forgot your password?
+        / /.box-header
+        / form start
+        = form_for(resource, as: resource_name, url: password_path(resource_name), :html => { method: :post, class: 'form-horizontal'}) do |f|
+          .box-body
+            .form-group.has-feedback
+              %label.col-sm-2.control-label{:for => "inputEmail3"} Email
+              .col-sm-10
+                = f.email_field :email, autofocus: true, :id =>"inputEmail3", :class => "form-control", :placeholder => "Email"
+                %span.glyphicon.glyphicon-envelope.form-control-feedback
+            / /.box-body
+            .box-footer
+              = f.submit "Send me reset password instructions", :class => "btn btn-primary btn-block btn-flat"
+            / /.box-footer
+            .box-body
+              .form-group
+                = render "db_users/shared/links"
+    / /.login-box-body
+    / /.content

@@ -1,0 +1,12 @@
+%p
+  %strong Profiles:
+%table.table.table-hover
+  %tr
+    %th Name
+    %th Title
+    %th
+  - circle.profiles.each do |profile|
+    %tr
+      %td= link_to profile.name, profile
+      %td= profile.title
+      %td= link_to ('<span class="glyphicon glyphicon-remove red"></span>').html_safe, circle_profile_remove_path(circle, profile), :method => :delete, remote: true

@@ -1,0 +1,36 @@
+/ Content Header (Page header)
+%section.content-header
+  %h1
+    Group
+  %ol.breadcrumb
+    %li= link_to ('<i class="fa fa-dashboard"> </i>Dashboard').html_safe, root_path
+    %li= link_to 'Profiles', profiles_path
+    %li= link_to 'Profile', details_profile_path(@profile.id)
+    %li.active Group
+/ Main content
+%section.content.container-fluid
+  .row
+    .col-md-6
+      #show_form.box.box-primary.shown
+        .box-header
+          %h3.box-title Group Information
+        / /.box-header
+        .box-body
+          %p
+            %strong Title:
+            = @group.title
+          %p
+            %strong Control ID:
+            = @group.control_id
+    .col-md-6
+      .box.box-primary
+        .box-header.with-border
+          %h3.box-title Controls
+        / /.box-header
+        .box-body
+          %p
+          %ul
+            - @group.controls.each do |control_id|
+              %li
+                = control_id
+        / /.box-body

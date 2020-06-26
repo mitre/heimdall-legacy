@@ -1,0 +1,97 @@
+.content
+  %ul.nav.nav-tabs
+    - if @evaluation
+      %li.active
+        %a{"data-toggle" => "tab", :href => "#fdetails-#{@evaluation.id}-#{control.id}"} Test Details
+      %li
+        %a{"data-toggle" => "tab", :href => "#details-#{@evaluation.id}-#{control.id}"} Details
+    - else
+      %li.active
+        %a{"data-toggle" => "tab", :href => "#details-#{control.id}"} Details
+    %li
+      %a{"data-toggle" => "tab", :href => "#inspec_code-#{control.id}"} Inspec Code
+  .tab-content
+    - if @evaluation
+      .tab-pane.fade.in.active{:id => "fdetails-#{@evaluation.id}-#{control.id}"}
+        %table.table.table-bordered.table-striped
+          - status_symbol = @evaluation.status_symbol(control, control.results)
+          %tr
+            %td{:colspan => "3"}
+              = result_message(status_symbol)
+              \:
+              %br/
+              = control.desc
+          %tr
+            - control.results.where(evaluation_id: @evaluation.id).each do |result|
+              %tr
+                %td
+                  - if result.backtrace.present?
+                    ERROR
+                  - else
+                    = result.status.upcase
+                %td{:style => "max-width:300px; word-wrap:break-word"}
+                  Test: #{result.code_desc}
+                %td{:style => "max-width:300px; word-wrap:break-word"}
+                  - if result.message
+                    Message: #{result.message}
+                  - if result.exception
+                    %br>/
+                    Exception: #{result.exception}
+            - if status_symbol == :profile_error && control.results.empty?
+              %tr
+                %td This test produced no results. Check the code for missing conditions
+      .tab-pane.fade{:id => "details-#{@evaluation.id}-#{control.id}"}
+        - else
+          .tab-pane.fade.in.active{:id => "details-#{control.id}"}
+            %table.table.table-bordered.table-striped
+              %tr
+                %td Control:
+                %td= control.control_id
+              %tr
+                %td Title:
+                %td= control.title
+              - if control.descriptions.present?
+                %tr
+                  %td Descriptions:
+                  %td
+                    %ul
+                      - control.descriptions.each do |desc|
+                        %li
+                          = desc.label
+                          \: #{desc.data}
+              - else
+                %tr
+                  %td Desc:
+                  %td= control.desc
+              %tr
+                %td Impact:
+                %td= control.impact
+              - if nist = control.tag('nist')
+                %tr
+                  %td NIST Ref:
+                  %td= nist
+              - if check = control.tag('check')
+                %tr
+                  %td Check Text:
+                  %td= check
+              - if fix = control.tag('fix')
+                %tr
+                  %td Fix Text:
+                  %td= fix
+              - if @evaluation
+                - wd = control.eval_waiver_data(@evaluation.id)
+                - if wd.present?
+                  %tr
+                    %td Waiver Data:
+                    %td= wd.as_json
+          .tab-pane.fade{:id => "inspec_code-#{control.id}"}
+            %table.table.table-bordered.table-striped
+              %tr
+                - if @evaluation
+                  %td
+                    %pre
+                      %code.language-ruby= @evaluation.control_code(control)
+                - else
+                  %td
+                    %pre
+                      %code.language-ruby= control.code

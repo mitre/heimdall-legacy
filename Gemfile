@@ -43,6 +43,10 @@ gem 'omniauth-rails_csrf_protection', '~> 0.1'
 
 gem 'settingslogic', '~> 2.0.9'
 
+gem 'haml-rails', '~> 2.0'
+
+gem 'webpacker', '~> 5.0'
+
 gem 'gibberish'
 gem 'devise', '>= 4.7.1'
 gem 'devise_ldap_authenticatable'
@@ -63,6 +67,8 @@ gem 'roo'
 gem "rake-version", "~> 1.0"
 gem 'versionator'
 gem 'data_migrate'
+
+gem "erb2haml", :group => :development
 
 group :development, :test do
   gem 'pry'

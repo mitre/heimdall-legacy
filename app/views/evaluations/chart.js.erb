@@ -1,7 +1,0 @@
-<% if @chart_type == "treemap" %>
-  $( "#chart_js" ).html( "<%= escape_javascript(render( :partial => 'treemap' )) %>");
-  chart_name = "treemap";
-<% else %>
-  $( "#chart_js" ).html( "<%= escape_javascript(render( :partial => 'partition' )) %>");
-  chart_name = "partition";
-<% end %>

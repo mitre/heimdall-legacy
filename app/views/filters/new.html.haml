@@ -1,0 +1,17 @@
+%section.content-header
+  %h1
+    New Filter
+  %ol.breadcrumb
+    %li= link_to ('<i class="fa fa-dashboard"> </i>Dashboard').html_safe, root_path
+    %li= link_to 'Filters', filters_path
+    %li.active New Filter
+/ Main content
+%section.content.container-fluid
+  .row
+    .col-md-12
+      .box.box-primary
+        .box-header
+          %h3.box-title New Filter
+        / /.box-header
+        .box-body
+          = render 'form', filter: @filter, nist_hash: @nist_hash

@@ -1,0 +1,29 @@
+%section.content-header
+  %h1
+    Filter Groups
+  %ol.breadcrumb
+    %li= link_to ('<i class="fa fa-dashboard"> </i>Dashboard').html_safe, root_path
+    %li.active Filter Groups
+%section.content.container-fluid
+  .row
+    .col-xs-12
+      .box.box-primary
+        .box-header.with-border
+          %h3.box-title Filter Groups
+        / /.box-header
+        - if can? :read, FilterGroup
+          .box-body.table-responsive.no-padding
+            %table.table.table-hover
+              %tr
+                %th Name
+                %th Filters
+                %th
+              - @filter_groups.each do |filter_group|
+                %tr
+                  %td= link_to filter_group.name, filter_group
+                  %td
+                    = filter_group.filters.map{|filter| filter.to_s}.join(', ')
+                  %td= link_to 'Destroy', filter_group, method: :delete, data: { confirm: 'Are you sure?' }
+  - if can? :create, FilterGroup
+    .box-body
+      = link_to 'New Filter Group', new_filter_group_path, class: "btn btn-info"

@@ -1,0 +1,39 @@
+%section.content-header
+  %h1
+    Filter
+  %ol.breadcrumb
+    %li= link_to ('<i class="fa fa-dashboard"> </i>Dashboard').html_safe, root_path
+    %li= link_to 'Filters', filters_path
+    %li.active Filter
+%section.content.container-fluid
+  .row
+    .col-xs-12
+      .box.box-primary
+        .box-header.with-border
+          %h3.box-title Filter
+        / /.box-header
+        - if can? :read, Filter
+          .box-body
+            %p
+              %strong Family:
+              = @filter.family
+            %p
+              %strong Number:
+              = @filter.number
+            %p
+              %strong Part:
+              = @filter.sub_fam
+            %p
+              %strong Sub-Part:
+              = @filter.sub_num
+            %p
+              %strong Enhancement:
+              = @filter.enhancement
+            %p
+              %strong Part:
+              = @filter.enh_sub_fam
+            %p
+              %strong Sub-Part:
+              = @filter.enh_sub_num
+    .box-body
+      = link_to 'Edit', edit_filter_path(@filter), class: "btn btn-info"

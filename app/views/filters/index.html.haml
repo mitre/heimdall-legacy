@@ -1,0 +1,39 @@
+%section.content-header
+  %h1
+    Filters
+  %ol.breadcrumb
+    %li= link_to ('<i class="fa fa-dashboard"> </i>Dashboard').html_safe, root_path
+    %li.active Filters
+%section.content.container-fluid
+  .row
+    .col-xs-12
+      .box.box-primary
+        .box-header.with-border
+          %h3.box-title Filters
+        / /.box-header
+        - if can? :read, FilterGroup
+          .box-body.table-responsive.no-padding
+            %table.table.table-hover
+              %tr
+                %th Filter
+                %th Family
+                %th Number
+                %th Part
+                %th Sub-Part
+                %th Enhancement
+                %th Part
+                %th Sub-Part
+                %th{:colspan => "3"}
+              - @filters.each do |filter|
+                %tr
+                  %td= link_to filter.to_s, filter
+                  %td= ary_to_s(filter.family)
+                  %td= ary_to_s(filter.number)
+                  %td= ary_to_s(filter.sub_fam)
+                  %td= ary_to_s(filter.sub_num)
+                  %td= ary_to_s(filter.enhancement)
+                  %td= ary_to_s(filter.enh_sub_fam)
+                  %td= ary_to_s(filter.enh_sub_num)
+                  %td= link_to 'Destroy', filter, method: :delete, data: { confirm: 'Are you sure?' }
+  .box-body
+    = link_to 'New Filter', new_filter_path, class: "btn btn-info"

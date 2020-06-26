@@ -1,0 +1,136 @@
+- if can? :create, Evaluation
+  = render :partial => 'evaluations/upload_modal', :locals => { :circle => nil }
+%section.content-header
+  %h1
+    Evaluations
+  %ol.breadcrumb
+    %li= link_to ('<i class="fa fa-dashboard"> </i>Dashboard').html_safe, root_path
+    %li.active Evaluations
+%section.content.container-fluid
+  .row
+    .col-xs-12
+      .box.box-primary
+        .box-header.with-border
+          %h3.box-title Evaluations
+        / /.box-header
+        %ul#myTab.nav.nav-tabs.tabs-bordered{:role => "tablist"}
+          %li#home-tab.nav-item.active
+            %a.nav-link{"aria-controls" => "home", "aria-selected" => "true", "data-toggle" => "tab", :href => "#home", :role => "tab"} Home
+          %li#grouped-tab.nav-item
+            %a.nav-link{"aria-controls" => "grouped", "aria-selected" => "false", "data-toggle" => "tab", :href => "#grouped", :role => "tab"} Grouped
+        #myTabContent.tab-content
+          #home.tab-pane.fade.active.in{"aria-labelledby" => "home-tab", :role => "tabpanel"}
+            .box-body.table-responsive
+              = form_for :evaluation, url: evaluations_compare_path do |form|
+                %table#evaluations-datatable.table.table-hover
+                  %thead
+                    %tr
+                      %th Profiles
+                      %th Filename
+                      %th Uploaded
+                      %th Duration
+                      %th InSpec Version
+                      %th Platform Name
+                      %th Platform Release
+                      %th Compliance
+                      %th Compare
+                      %th Owner
+                      %th Action
+                  %tbody
+                    - @evaluations.each do |evaluation|
+                      %tr
+                        %td= link_to evaluation.profiles.map(&:name).join(', '), evaluation
+                        %td= evaluation.filename
+                        %td= evaluation.created_at
+                        %td= evaluation.statistic&.duration
+                        %td= evaluation.version
+                        %td= evaluation.platform&.name
+                        %td= evaluation.platform&.release
+                        %td
+                          %table#message_counts.cn-msg-table
+                            %tr
+                              %td
+                                .cn-msg-bar.bg-green{"data-status" => "0", :style => "width: #{pass_pixels(evaluation.finding)}px"}
+                              %td
+                                .cn-msg-bar.bg-red{"data-status" => "3", :style => "width: #{fail_pixels(evaluation.finding)}px"}
+                        %td
+                          .checkbox
+                            %label
+                              = form.check_box 'eval_ids', {:checked=>false, :multiple => true}, evaluation.id, nil
+                        %td= evaluation.created_by.try(:email)
+                        %td
+                          - if can? :delete, evaluation
+                            = link_to 'Destroy', evaluation, method: :delete, data: { confirm: 'Are you sure?' }
+                %div
+                  = button_tag(type: "submit", class: "btn btn-primary") do
+                    %i.fa.fa-edit
+                    Compare
+          #grouped.tab-pane.fade{"aria-labelledby" => "grouped-tab", :role => "tabpanel"}
+            .box-body.table-responsive
+              = form_for :evaluation, url: evaluations_compare_path do |form|
+                - @grouping.sort.each do |key, evals|
+                  - unless evals.empty?
+                    .box-header.with-border
+                      %h3.box-title= key
+                    %table.table.table-hover
+                      %thead
+                        %tr
+                          %th Profiles
+                          %th Filename
+                          %th Uploaded At
+                          %th Duration
+                          %th InSpec Version
+                          %th Platform Name
+                          %th Platform Release
+                          %th Compliance
+                          %th Compare
+                          %th Owner
+                          %th Action
+                      %tbody
+                        - evals.each do |evaluation|
+                          %tr
+                            %td= link_to evaluation.profiles.map(&:name).join(', '), evaluation
+                            %td= evaluation.filename
+                            %td= evaluation.created_at
+                            %td= evaluation.statistic&.duration
+                            %td= evaluation.version
+                            %td= evaluation.platform&.name
+                            %td= evaluation.platform&.release
+                            %td
+                              %table#message_counts.cn-msg-table
+                                %tr
+                                  %td
+                                    .cn-msg-bar.bg-green{"data-status" => "0", :style => "width: #{pass_pixels(evaluation.finding)}px"}
+                                  %td
+                                    .cn-msg-bar.bg-red{"data-status" => "3", :style => "width: #{fail_pixels(evaluation.finding)}px"}
+                            %td
+                              .checkbox
+                                %label
+                                  = form.check_box 'eval_ids', {:checked=>false, :multiple => true}, evaluation.id, nil
+                            %td= evaluation.created_by.try(:email)
+                            %td
+                              - if can? :delete, evaluation
+                                = link_to 'Destroy', evaluation, method: :delete, data: { confirm: 'Are you sure?' }
+                %div
+                  = button_tag(type: "submit", class: "btn btn-primary") do
+                    %i.fa.fa-edit
+                    Compare
+  - if can? :create, Evaluation
+    .col-xs-6
+      - if can? :create, Evaluation
+        %button.btn.btn-info.btn-lg{"data-target" => "#myModal", "data-toggle" => "modal", :type => "button"} Upload Evaluation
+/ /.content
+:javascript
+  jQuery(document).ready(function() {
+    //$('#home-tab').addClass('active');
+    $('#evaluations-datatable').dataTable({
+      "iDisplayLength": 25,
+      "processing": true,
+      "serverSide": false,
+      "pagingType": "full_numbers",
+      "order": [[ 2, "desc" ]]
+      // pagingType is optional, if you want full pagination controls.
+      // Check dataTables documentation to learn more about
+      // available options.
+    });
+  });

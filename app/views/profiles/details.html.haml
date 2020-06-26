@@ -1,0 +1,123 @@
+/ Content Header (Page header)
+%section.content-header
+  %h1
+    Profile #{link_to @profile.title, profile_path(@profile)}
+  %ol.breadcrumb
+    %li= link_to ('<i class="fa fa-dashboard"> </i>Dashboard').html_safe, root_path
+    %li= link_to 'Profiles', profiles_path
+    %li= link_to 'Profile', profile_path(@profile)
+    %li.active Details
+/ Main content
+%section.content.container-fluid
+  .row
+    .col-md-6
+      #profile_info.box.box-primary.shown
+        .box-header.with-border
+          %h3.box-title Profile Information
+          - if (can? :delete, @profile) && (@profile.is_editable?)
+            = link_to 'Destroy', @profile, method: :delete, class: "btn btn-danger pull-right", data: { confirm: 'Are you sure?' }
+        / /.box-header
+        .box-body
+          %p
+            %strong Name:
+            = @profile.name
+          %p
+            %strong Title:
+            = @profile.title
+          %p
+            %strong Maintainer:
+            = @profile.maintainer
+          %p
+            %strong Copyright:
+            = @profile.copyright
+          %p
+            %strong Copyright email:
+            = @profile.copyright_email
+          %p
+            %strong License:
+            = @profile.license
+          %p
+            %strong Summary:
+            = @profile.summary
+          %p
+            %strong Version:
+            = @profile.version
+          %p
+            %strong Sha256:
+            %span.text-muted= @profile.sha256
+        / /.box-body
+      / /.box
+    / /.col 6
+    .col-md-6
+      .box.box-primary
+        .box-header.with-border
+          %h3.box-title Dependencies
+        / /.box-header
+        .box-body
+          %p
+          %ul
+            - @profile.depends.each do |depend|
+              %li
+                %strong Name:
+                = depend.name
+                ,
+                - if depend.path.nil?
+                  %strong URL:
+                  = depend.url
+                - else
+                  %strong Path:
+                  = depend.path
+        / /.box-body
+      .col-md-6
+        / /.box
+        .box.box-primary
+          .box-header.with-border
+            %h3.box-title Supports
+          / /.box-header
+          .box-body
+            %p
+            %ul
+              - @profile.supports.each do |support|
+                %li
+                  = support.name
+                  \: #{support.value}
+          / /.box-body
+      / /.col 6
+    / /.row
+    .row
+      .col-md-12
+        .box.box-primary
+          .box-header.with-border
+            %h3.box-title Groups
+          / /.box-header
+          .box-body
+            %p
+            %ul.list-unstyled.column-4
+              - @profile.groups.each do |gr|
+                %li
+                  = link_to gr.title, profile_group_path(@profile.id, gr.id)
+    .row
+      .col-md-12
+        .box.box-primary
+          .box-header.with-border
+            %h3.box-title Aspects
+          / /.box-header
+          .box-body
+            %p
+            %ul.list-unstyled.column-2
+              - @profile.aspects.each do |pa|
+                %li
+                  = link_to "#{pa.name}: #{pa.options[:description]}", profile_aspect_path(@profile.id, pa.id)
+    .row
+      .col-md-12
+        .box.box-primary
+          .box-header.with-border
+            %h3.box-title Controls
+          / /.box-header
+          .box-body
+            %p
+            %ul.list-unstyled.column-6
+              - @profile.controls.each do |control|
+                %li
+                  = link_to control.control_id, profile_control_path(@profile.id, control.id)
+    / /.content

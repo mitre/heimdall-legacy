@@ -1,0 +1,104 @@
+%section.content-header
+  %h1
+    Profile
+  %ol.breadcrumb
+    %li= link_to ('<i class="fa fa-dashboard"> </i>Dashboard').html_safe, root_path
+    %li.active Profile
+/ Main content
+%section.content.container-fluid
+  .row
+    .box.box-primary
+      / /.box-header
+      .col-xl-3.col-lg-4
+        .text-center.card-box
+          .member-card
+            .thumb-xl.member-thumb.m-b-10.center-block
+              - if @user.image_url.present?
+                = image_tag @user.image_url.to_s, class: "rounded-circle img-thumbnail"
+              - else
+                = image_tag "default_profile_pic.jpg", class: "rounded-circle img-thumbnail"
+              / <img src="" class="rounded-circle img-thumbnail" alt="profile-image">
+        / end card-box
+      / end col
+      .col-lg-8.col-xl-9
+        %div
+          .card-box
+            %ul.nav.nav-tabs.tabs-bordered
+              %li.nav-item
+                %a.nav-link{"aria-expanded" => "false", "data-toggle" => "tab", :href => "#home"}
+                  ABOUT ME
+              - if @user == current_user
+                %li.nav-item
+                  %a.nav-link{"aria-expanded" => "false", "data-toggle" => "tab", :href => "#settings"}
+                    SETTINGS
+            .tab-content
+              #home.tab-pane
+                #show_user{:style => "display:block;"}
+                  %p.m-b-5
+                  .m-t-30
+                    %p.text-muted.font-13
+                      %strong Email:
+                      %span.m-l-15= @user.email
+                    %p.text-muted.font-13
+                      %strong First Name:
+                      %span.m-l-15= @user.first_name
+                    %p.text-muted.font-13
+                      %strong Last Name:
+                      %span.m-l-15= @user.last_name
+                    %p.text-muted.font-13
+                      %strong Roles:
+                      %span.m-l-15= @user.role_names.uniq.join(", ")
+                    %p.text-muted.font-13
+                      %strong Circles:
+                      %span.m-l-15= @user.my_circles.map(&:name).join(", ")
+                    %p.text-muted.font-13
+                      %strong Account Type:
+                      %span.m-l-15= @user.type
+                    %p.text-muted.font-13
+                      %strong API Key:
+                      %span.m-l-15= @user.api_key
+                    - if @user.type == 'DbUser' && @user == current_user
+                      %p
+                        %button#edit_btn.btn.btn-primary.margin-right{:type => "button"}
+                          %i.fa.fa-edit
+                          Edit Profile
+                      %p.text-muted.font-13= link_to "Change Password", edit_db_user_registration_path(@user), :class => "btn btn-primary margin-right"
+                #edit_form{:style => "display:none;"}
+                  = form_for @user, as: :user, url: user_path(@user) do |f|
+                    .form-group
+                      = f.label :first_name
+                      = f.text_field :first_name, id: :user_first_name, class: "form-control"
+                    .form-group
+                      = f.label :last_name
+                      = f.text_field :last_name, id: :user_last_name, class: "form-control"
+                    .form-group
+                      %button#cancel_btn.btn.btn-primary.pull-right{:type => "button"} Cancel
+                      = button_tag(type: "submit", class: "btn btn-primary margin-right") do
+                        %i.fa.fa-edit
+                        Submit
+              #settings.tab-pane
+                %p.m-b-5
+                %h4 Upload Profile Image
+                %div
+                  = form_for @user, as: :user, url: user_path(@user), :html => {:multipart => true} do |f|
+                    .form-group
+                      = f.file_field :image, class: "form-control"
+                    .form-group
+                      %label
+                        = f.check_box("rotate", {:id=> "rotate", :checked=>false}, 90.0, nil)
+                        Rotate Image 90 degrees on upload
+                    .form-group
+                      = button_tag(type: "submit", class: "btn btn-primary margin-right") do
+                        %i.fa.fa-edit
+                        Upload Image
+    / end col
+:javascript
+  $(document).ready(function(){
+    $('.nav-tabs a[href="#home"]').tab('show');
+    $("#edit_btn").click(function(){
+      toggleSections("edit_form", "show_user");
+    });
+    $("#cancel_btn").click(function(){
+      toggleSections("show_user", "edit_form");
+    });
+  });

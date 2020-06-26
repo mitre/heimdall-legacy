@@ -1,0 +1,12 @@
+!!!
+%html
+  %head
+    %meta{:content => "text/html; charset=UTF-8", "http-equiv" => "Content-Type"}/
+    %meta{:charset => "utf-8"}/
+    %meta{:content => "NOODP", :name => "ROBOTS"}/
+    %meta{:content => "initial-scale=1", :name => "viewport"}/
+    :css
+      #{Rails.application.assets_manifest.assets['ssp_pdf']}
+  %body
+    .container
+      = yield

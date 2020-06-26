@@ -1,0 +1,14 @@
+%p
+  %strong Evaluations:
+%table.table.table-hover
+  %tr
+    %th Profiles
+    %th Start Time
+    %th Platform Name
+    %th
+  - circle.evaluations.each do |evaluation|
+    %tr
+      %td= link_to evaluation.profiles.map(&:name).join(', '), evaluation
+      %td= evaluation.start_time
+      %td= evaluation.version
+      %td= link_to ('<span class="glyphicon glyphicon-remove red"></span>').html_safe, circle_eval_remove_path(circle, evaluation), :method => :delete, remote: true

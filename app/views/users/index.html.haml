@@ -1,0 +1,47 @@
+/ Content Header (Page header)
+%section.content-header
+  %h1
+    Users
+  %ol.breadcrumb
+    %li= link_to ('<i class="fa fa-dashboard"> </i>Dashboard').html_safe, root_path
+    %li.active Users
+%section.content.container-fluid
+  .row
+    .col-xs-12
+      .box.box-primary
+        .box-header.with-border
+          %h3.box-title Users
+        / /.box-header
+        - if can? :read, User
+          .box-body.table-responsive.no-padding
+            %table.table.table-hover
+              %tr
+                %th Email
+                %th Type
+                %th First Name
+                %th Last Name
+                %th{:colspan => "2"} Roles
+                %th
+              - single_admin = @users.map{|user| user.roles.map(&:name)}.flatten.count('admin') == 1
+              - @users.each do |user|
+                %tr
+                  %td= link_to user.email, @user
+                  %td= user.type
+                  %td= user.first_name
+                  %td= user.last_name
+                  %td
+                    %ul
+                      - user.roles.each do |role|
+                        - if role.name.present?
+                          %li
+                            = role.name
+                            = link_to ('<span class="glyphicon glyphicon-remove red"></span>').html_safe, user_remove_role_path(current_user, user, role.name), :method => :delete, data: { confirm: 'Are you sure?' }
+                  %td
+                    = form_for :user, url: user_add_role_path(current_user, user), remote: true do |form|
+                      = form.select :role, ['admin', 'editor']
+                      = button_tag(type: "submit") do
+                        Add Role
+                  %td
+                    - unless user.has_role?(:admin) && single_admin
+                      = link_to 'Destroy', admin_destroy_user_path(user), method: :delete, data: { confirm: 'Are you sure?' }
+/ /.content

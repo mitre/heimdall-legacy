@@ -1,0 +1,528 @@
+/ Content Header (Page header)
+%section.content-header
+  %h1
+    Profile
+    - if can? :details, @profile
+      = link_to @profile.title, details_profile_path(@profile)
+    - else
+      = @profile.title
+  %ol.breadcrumb{"data-turbolinks" => "false"}
+    %li= link_to ('<i class="fa fa-dashboard"> </i>Dashboard').html_safe, root_path
+    %li= link_to 'Profiles', profiles_path
+    %li.active Profile
+/ Main content
+%section.content.container-fluid
+  .row
+    .col-md-9
+      .box.box-primary
+        .box-header.with-border
+          %h3.box-title NIST SP 800-53 Security Control Coverage
+        / /.box-header
+        .box-body
+          #chart
+    .col-md-3
+      .box.box-primary
+        .box-header.with-border
+          %h3.box-title Testing Impact
+          %button#clear_filters_button.btn.btn-primary.floating{:type => "button"} Clear Filters
+        / /.box-header
+        .box-body
+          #severity_pie
+  .row
+    .col-xs-12
+      .box.box-primary
+        .box-header
+          %h3.box-title Tests
+        / /.box-header
+        .box-body{"data-turbolinks" => "false"}
+          %table#controls.table.table-bordered.table-striped
+            %thead
+              %tr
+                %th Details
+                %th Title
+                %th Control ID
+                %th Impact
+                %th NIST
+                %th.hidden Details
+            %tbody
+              - @profile.controls.each do |control|
+                %tr{:class => "#{severity_class(control.severity)}", :id => "#{control.id}"}
+                  %td
+                    %button{:class => "#{category_button(control.impact)}", :onclick => "show_details('#{@profile.id}', '#{control.id}');", :style => "width:120px"} View Details
+                  %td= control.title
+                  %td= link_to control.control_id, profile_control_path(@profile.id, control.id)
+                  %td= severity_class(control.impact)
+                  %td= control.nist_tags.join(', ')
+                  %td.hidden= control.code
+            %tfoot
+              %tr
+                %th Details
+                %th Title
+                %th Control ID
+                %th Impact
+                %th NIST
+                %th.hidden Details
+/ /.content
+:javascript
+  //var oTable = $('#controls').DataTable();
+  var cats = {"Critical": true, "High": true, "Medium": true, "Low" : true};
+  var shown_id = null;
+  var loaded = null;
+  
+  function show_details(profile_id, control_id) {
+    hsh = "#" + control_id;
+    url = '#{root_path}' + 'profiles/' + profile_id + '/controls/' + control_id + '/details';
+    var tr = $(hsh);
+    if ($('#details_row').length) {
+      $('#details_row').remove();
+    }
+    if (control_id != shown_id) {
+      shown_id = control_id;
+      $.ajax(url, {
+          success: function(data) {
+            tr.after('<tr id="details_row" role="row"><td colspan="5" id="control_details">' + detailsData + '</td></tr>');
+            Prism.highlightAll();
+          },
+          error: function() {
+            console.log("Error occured");
+          }
+       });
+     } else {
+       shown_id = null;
+     }
+  }
+  
+  function clear_filter(bool) {
+    cats = {"Critical": bool, "High": bool, "Medium": bool, "Low" : bool};
+  }
+  
+  function filter_table(category) {
+    if (category) {
+      clear_filter(false);
+      cats[category] = true;
+    }
+  }
+  
+  $.fn.dataTableExt.afnFiltering.push(
+      function( oSettings, aData, iDataIndex ) {
+        var nTr = oSettings.aoData[ iDataIndex ].nTr;
+        if ($(nTr).hasClass('Critical')) {
+          return cats['Critical'];
+        } else if ($(nTr).hasClass('High')) {
+          return cats['High'];
+        } else if ($(nTr).hasClass('Medium')) {
+          return cats['Medium'];
+        } else if ($(nTr).hasClass('Low')) {
+          return cats['Low'];
+        }
+      }
+  );
+  
+  
+  document.addEventListener("turbolinks:load", function() {
+    if (loaded) {
+      return;
+    } else {
+      loaded = true;
+    }
+    if($('[id^=controls_wrapper]').length == 0) {
+      $('#controls').DataTable({
+        'paging'      : true,
+        'lengthChange': false,
+        'searching'   : true,
+        'ordering'    : true,
+        'info'        : true,
+        'autoWidth'   : false
+      });
+    }
+  
+    $("#clear_filters_button").click(function() {
+      if (currentDepth == 0) {
+        document.getElementById("clear_filters_button").style.visibility = "hidden";
+        clear_filter(true);
+        reload_views(null);
+      } else {
+        alert("You must be at the top level of the chart to clear the filters");
+      }
+    });
+  
+    function draw_severity_pie_chart(d)
+    {
+      critical = 0;
+      high = 0;
+      medium = 0;
+      low = 0;
+      ary = [];
+      if (d.children) {
+        for(var i=0, len=d.children.length; i < len; i++) {
+          child1 = d.children[i];
+          if (child1.children) {
+            for(var j=0, len2=child1.children.length; j < len2; j++) {
+              child2 = child1.children[j];
+              if (child2.children) {
+                for(var k=0, len3=child2.children.length; k < len3; k++) {
+                  child3 = child2.children[k];
+                  if (!(ary.indexOf(child3.name) >= 0)) {
+                    ary.push(child3.name);
+                    if (child3.impact > 0.01) {
+                      if (child3.impact < 0.4) {
+                        low += 1;
+                      } else if (child3.impact < 0.7) {
+                        medium += 1;
+                      } else if (child3.impact < 0.9) {
+                        high += 1;
+                      } else if (child3.impact >= 0.9) {
+                        critical += 1;
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+      severity_data = [
+                      ['Critical',   critical],
+                      ['High',   high],
+                      ['Medium',  medium],
+                      ['Low', low],
+                  ];
+  
+      c3.generate(
+      {
+        bindto: '#severity_pie',
+  
+        data:
+        {
+          columns: severity_data,
+          type : 'donut',
+          onclick: function (d)
+          {
+            if (currentDepth == 0) {
+              document.getElementById("clear_filters_button").style.visibility = "visible";
+              reload_views(d.id);
+            }
+          },
+        },
+        color:
+        {
+            pattern: ['#FF0029', '#003366', '#0080FF', '#99CCFF']
+        },
+        size:
+        {
+          height: 320
+        },
+        donut:
+        {
+          title: "Impact",
+          label:
+          {
+            format: function (value, ratio, id)
+            {
+              return d3.format()(value);
+            }
+          }
+        }
+      });
+    }
+  
+    // functions
+  	function initialize(root) {
+  		root.x = root.y = 0;
+  		root.dx = width;
+  		root.dy = height;
+  		root.depth = 0;
+  	}
+  
+    // Aggregate the values for internal nodes. This is normally done by the
+    // treemap layout, but not here because of our custom implementation.
+    // We also take a snapshot of the original children (_children) to avoid
+    // the children being overwritten when when layout is computed.
+    function accumulate(d) {
+  		return (d._children = d.children)
+  		  // recursion step, note that p and v are defined by reduce
+  			? d.value = d.children.reduce(function(p, v) {return p + accumulate(v); }, 0)
+  			: d.value
+  	}
+  
+    // Compute the treemap layout recursively such that each group of siblings
+    // uses the same size (1×1) rather than the dimensions of the parent cell.
+    // This optimizes the layout for the current zoom state. Note that a wrapper
+    // object is created for the parent node for each group of siblings so that
+    // the parent’s dimensions are not discarded as we recurse. Since each group
+    // of sibling was laid out in 1×1, we must rescale to fit using absolute
+    // coordinates. This lets us use a viewport to zoom.
+    function layout(d) {
+  		if (d._children) {
+  		  // treemap nodes comes from the treemap set of functions as part of d3
+  		  treemap.nodes({_children: d._children});
+  		  d._children.forEach(function(c) {
+  			c.x = d.x + c.x * d.dx;
+  			c.y = d.y + c.y * d.dy;
+  			c.dx *= d.dx;
+  			c.dy *= d.dy;
+  			c.parent = d;
+  			// recursion
+  			layout(c);
+  		  });
+  		}
+  	}
+  
+    // Colors are based on the 'impact' at the leaf level. At higher levels, the
+    // average impact of the children is calculated and used in the color range.
+    // If there is no impact, the default color is grey
+    function get_color(obj) {
+      if ("impact" in obj) {
+        if (obj['impact'] > 0)
+          return color(obj['impact']);
+      }
+      return "#bbbbbb";
+    }
+  
+  	function colorIncrements(d){
+  		return (colorDomain[colorDomain.length - 1] - colorDomain[0])/18*d + colorDomain[0];
+  	}
+  
+    // determines if white or black will be better contrasting color
+  	function getContrast50(hexcolor){
+  		return (parseInt(hexcolor.replace('#', ''), 16) > 0xffffff/3) ? 'black':'white';
+  	}
+  
+    function showCon(d) {
+      console.log(d.name + ": impact: " + d.impact + ", value:"  + d.value);
+      if (d._children) {
+        d._children.forEach(function(c) {
+          console.log(c.name + ": impact: " + c.impact + ", value:"  + c.value);
+          // recursion
+          showCon(c);
+        });
+      }
+    }
+  
+    var obj = document.getElementById('chart');
+  	var divWidth = obj.offsetWidth;
+  
+  	var margin = {top: 30, right: 0, bottom: 20, left: 0},
+  		width = divWidth -25,
+  		height = 540 - margin.top - margin.bottom,
+      currentDepth = 0,
+  		formatNumber = d3.format(",%"),
+  		colorDomain = [0.1, 0.5, 0.9],
+      //colorRange = ['#dda8db', '#ebf2f7', '#9cbdd9'],
+      colorRange = ['#99CCFF', '#0080FF', '#003366'],
+  		//colorRange = ['green', 'orange', 'red'],
+      severity = {'low': 1, 'medium': 2, 'high': 3},
+  		transitioning,
+      root, dataset;
+  
+  	// sets x and y scale to determine size of visible boxes
+  	var x = d3.scale.linear()
+  		.domain([0, width])
+  		.range([0, width]);
+  
+  	var y = d3.scale.linear()
+  		.domain([0, height])
+  		.range([0, height]);
+  
+  	// adding a color scale
+  	var color = d3.scale.linear()
+  		.domain(colorDomain)
+  		.range(colorRange);
+  
+    var treemap, svg, grandparent, legend;
+  
+    drawTreemap(null);
+    //drawLegend();
+  
+    function reload_views(category) {
+      drawTreemap(category);
+      filter_table(category);
+      $('#controls').DataTable().draw();
+    }
+  
+    function drawTreemap(category) {
+      d3.selectAll("svg").remove();
+    	// introduce color scale here
+    	treemap = d3.layout.treemap()
+    		.children(function(d, depth) { return depth ? null : d._children; })
+    		.sort(function(a, b) { return b.name.localeCompare(a.name); })
+    		.ratio(height / width * 0.5 * (1 + Math.sqrt(5)))
+    		.round(false);
+  
+    	svg = d3.select("#chart").append("svg")
+    		.attr("width", width + margin.left + margin.right)
+    		.attr("height", height + margin.bottom + margin.top)
+    		.style("margin-left", -margin.left + "px")
+    		.style("margin.right", -margin.right + "px")
+    	  .append("g")
+    		.attr("transform", "translate(" + margin.left + "," + margin.top + ")")
+    		.style("shape-rendering", "crispEdges");
+  
+    	grandparent = svg.append("g")
+    		.attr("class", "grandparent");
+  
+    	grandparent.append("rect")
+    		.attr("y", -margin.top)
+    		.attr("width", width)
+    		.attr("height", margin.top);
+  
+    	grandparent.append("text")
+    		.attr("x", 6)
+    		.attr("y", 6 - margin.top)
+    		.attr("dy", ".75em");
+  
+      loadTreemapData(category);
+    }
+  
+    function loadTreemapData(category) {
+      api_path = "#{profile_nist_path(@profile)}";
+      if (category) {
+        api_path += "/category/" + encodeURIComponent(category);
+      }
+      api_path += ".json";
+    	d3.json(api_path, function(data) {
+        root = data
+        initialize(root);
+    	  accumulate(root);
+        draw_severity_pie_chart(root);
+    	  layout(root);
+    	  display(root);
+  
+    	  function display(d) {
+      		grandparent
+      			.datum(d.parent)
+      			.on("click", transition)
+      		    .select("text")
+      			.text(name(d))
+  
+      		// color header based on grandparent's impact
+      		grandparent
+      		  .datum(d.parent)
+      		  .select("rect")
+      		  .attr("fill", function(){ return get_color(d) })
+  
+      		var g1 = svg.insert("g", ".grandparent")
+      			.datum(d)
+      			.attr("class", "depth");
+  
+      		var g = g1.selectAll("g")
+      			.data(d._children)
+      		    .enter().append("g");
+  
+      		g.filter(function(d) { return d._children; })
+      			.classed("children", true)
+      			.on("click", transition);
+  
+      		g.selectAll(".child")
+      			.data(function(d) { return d._children || [d]; })
+      		  .enter().append("rect")
+      			.attr("class", "child")
+      			.call(rect);
+  
+  
+      		g.append("rect")
+      			.attr("class", "parent")
+      			.call(rect)
+      		  .append("title");
+  
+      		/* Adding a foreign object instead of a text object, allows for text wrapping */
+      		g.append("foreignObject")
+      				.call(rect)
+      				/* open new window based on the json's URL value for leaf nodes */
+      				/* Firefox displays this on top
+      				.on("click", function(d) {
+      					if(!d.children){
+      						window.open(d.url);
+      				}
+      			})*/
+      			.attr("class","foreignobj")
+      			.append("xhtml:div")
+      			.attr("dy", ".75em")
+      			.html(function(d) { return (d.desc && width > 750) ? '' +
+      				' <p class="title" style="color:' + getContrast50(get_color(d)) + '"> ' + d.name + '</p>' +
+              ' <p style="color:' + getContrast50(get_color(d)) + '"> ' + d.desc + '</p>' :
+              ' <p class="title" style="color:' + getContrast50(get_color(d)) + '"> ' + d.name + '</p>'
+      				;})
+      			.attr("class","textdiv"); //textdiv class allows us to style the text easily with CSS
+  
+      		function transition(d) {
+            currentDepth = d.depth;
+      		  if (transitioning || !d) return;
+      		  transitioning = true;
+  
+      		  var g2 = display(d),
+      			  t1 = g1.transition().duration(650),
+      			  t2 = g2.transition().duration(650);
+  
+      		  // Update the domain only after entering new elements.
+      		  x.domain([d.x, d.x + d.dx]);
+      		  y.domain([d.y, d.y + d.dy]);
+  
+      		  // Enable anti-aliasing during the transition.
+      		  svg.style("shape-rendering", null);
+  
+      		  // Draw child nodes on top of parent nodes.
+      		  svg.selectAll(".depth").sort(function(a, b) { return a.depth - b.depth; });
+  
+      		  // Fade-in entering text.
+      		  g2.selectAll("text").style("fill-opacity", 0);
+      		  g2.selectAll("foreignObject div").style("display", "none"); /*added*/
+  
+      		  // Transition to the new view.
+      		  t1.selectAll("text").call(text).style("fill-opacity", 0);
+      		  t2.selectAll("text").call(text).style("fill-opacity", 1);
+      		  t1.selectAll("rect").call(rect);
+      		  t2.selectAll("rect").call(rect);
+  
+      		  /* Foreign object */
+      		  t1.selectAll(".textdiv").style("display", "none"); /* added */
+      		  t1.selectAll(".foreignobj").call(foreign); /* added */
+      		  t2.selectAll(".textdiv").style("display", "block"); /* added */
+      		  t2.selectAll(".foreignobj").call(foreign); /* added */
+  
+      		  // Remove the old node when the transition is finished.
+      		  t1.remove().each("end", function() {
+      			  svg.style("shape-rendering", "crispEdges");
+      			  transitioning = false;
+      		  });
+      		}
+  
+      		return g;
+    	  }
+  
+      	function text(text) {
+      		text.attr("x", function(d) { return x(d.x) + 6; })
+      		.attr("y", function(d) { return y(d.y) + 6; });
+      	}
+  
+    	  function rect(rect) {
+      		rect.attr("x", function(d) { return x(d.x); })
+      			.attr("y", function(d) { return y(d.y); })
+      			.attr("width", function(d) { return x(d.x + d.dx) - x(d.x); })
+      			.attr("height", function(d) { return y(d.y + d.dy) - y(d.y); })
+      			.attr("fill", function(d){return get_color(d);});
+    	  }
+  
+    	  function foreign(foreign){ /* added */
+    			foreign.attr("x", function(d) { return x(d.x); })
+    			.attr("y", function(d) { return y(d.y); })
+    			.attr("width", function(d) { return x(d.x + d.dx) - x(d.x); })
+    			.attr("height", function(d) { return y(d.y + d.dy) - y(d.y); });
+    		}
+  
+    	  function name(d) {
+      		return d.parent
+      			? d.name + (d.desc ? ": " + d.desc : "") + " -  Click header to zoom out"
+      			: d.name + (d.desc ? ": " + d.desc : "")  + " -  Click in boxes zoom";
+    	  }
+  
+    	  function nameSave(d) {
+      		return d.parent
+      			? name(d.parent) + " - " + d.name + (d.desc ? ": " + d.desc : "") + " -  Click header to zoom out"
+      			: d.name + (d.desc ? ": " + d.desc : "");
+    	  }
+  
+    	});
+    }
+  });

@@ -1,0 +1,20 @@
+%p
+  %strong Name:
+  = circle.name
+%p
+  %strong Owners:
+  - owners = User.with_role(:owner, circle)
+  - owners.each do |user|
+    %li
+      = user.email
+      - if owners.size > 1
+        %span.pull-right
+          = link_to ('<span class="glyphicon glyphicon-remove red"></span>').html_safe, circle_owner_remove_path(circle, user), :method => :delete, remote: true
+%p
+  %strong Members:
+  - User.with_role(:member, circle).each do |user|
+    %li
+      = user.email
+      - if can?(:delete, circle) && circle.name != 'Public'
+        %span.pull-right
+          = link_to ('<span class="glyphicon glyphicon-remove red"></span>').html_safe, circle_member_remove_path(circle, user), :method => :delete, remote: true

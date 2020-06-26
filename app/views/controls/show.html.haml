@@ -1,0 +1,59 @@
+/ Content Header (Page header)
+%section.content-header
+  %h1
+    Control
+  %ol.breadcrumb
+    %li= link_to ('<i class="fa fa-dashboard"> </i>Dashboard').html_safe, root_path
+    %li= link_to 'Profiles', profiles_path
+    %li= link_to 'Profile', details_profile_path(@control.profile.id)
+    %li.active Control
+/ Main content
+%section.content.container-fluid
+  .row
+    .col-xs-12
+      .box.box-primary
+        .box-header
+          %h3.box-title Control Information
+        / /.box-header
+        .box-body
+          %p
+            %strong Title:
+            = @control.title
+          %p
+            %strong Desc:
+            = @control.desc
+          %p
+            %strong Impact:
+            = @control.impact
+          %p
+            %strong Refs:
+            = @control.refs
+          %p
+            %strong Tags:
+          %ul
+            - @control.tags.each do |tag|
+              %li
+                %strong
+                  = tag.name
+                  \:
+                = tag.value
+          %p
+            %strong Source Location:
+          %ul
+            %li
+              %strong Ref:
+              = @control.source_location&.ref
+            %li
+              %strong Line:
+              = @control.source_location&.line
+          %p
+            %strong ID:
+            = @control.control_id;
+          %p
+            %strong Code:
+          %pre
+            %code{:class => "”language-ruby”"}= @control.code
+:javascript
+  document.addEventListener("turbolinks:load", function() {
+      Prism.highlightAll();
+  });

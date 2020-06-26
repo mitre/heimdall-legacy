@@ -61,3 +61,11 @@ build-iPhoneSimulator/
 
 # Hide docker secrets file from repository
 .env-prod
+
+/public/packs
+/public/packs-test
+public/assets/*
+/node_modules
+/yarn-error.log
+yarn-debug.log*
+.yarn-integrity

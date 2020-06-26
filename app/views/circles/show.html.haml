@@ -1,0 +1,14 @@
+:css
+  .c3-line {
+      stroke-width: 5px;
+  }
+- if can? :create, Evaluation
+  = render :partial => 'evaluations/upload_modal', :locals => { :circle => @circle }
+/ Content Header (Page header)
+%section.content-header
+  %h1
+    = link_to @circle.name, edit_circle_path(@circle)
+  %ol.breadcrumb
+    %li= link_to ('<i class="fa fa-dashboard"> </i>Dashboard').html_safe, root_path
+    %li= link_to 'Circles', circles_path
+    %li.active Circle

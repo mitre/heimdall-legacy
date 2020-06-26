@@ -1,0 +1,56 @@
+%body
+  %header.main-header
+    %nav.navbar.navbar-static-top
+      .container.header-container
+        .navbar-header
+          %a.logo{:href => root_path}
+            / mini logo for sidebar mini 50x50 pixels
+            %span.logo-mini= image_tag("logo.png", :width => "40px", :height => "40px", :alt => "logo")
+            / logo for regular state and mobile devices
+            %span.logo-lg
+              %b Heimdall
+              = image_tag("logo.png", :width => "40px", :height => "40px", :alt => "logo")
+        / Collect the nav links, forms, and other content for toggling
+        #navbar-collapse.collapse.navbar-collapse.pull-left{"data-turbolinks" => "false"}
+          %ul.nav.navbar-nav
+            %li= link_to "Evaluations", evaluations_path
+            %li= link_to "Profiles", profiles_path
+            - if current_user
+              %li= link_to "Circles", circles_path
+              - if can? :read, FilterGroup
+                %li= link_to "Filters", filter_groups_path
+              - if current_user.has_role?(:admin)
+                %li= link_to "Users", all_users_path
+        .navbar-custom-menu
+          %ul.nav.navbar-nav
+            - if current_user
+              / User Account Menu
+              %li.dropdown.user.user-menu
+                / Menu Toggle Button
+                %a.dropdown-toggle{"data-toggle" => "dropdown", :href => "#"}
+                  / The user image in the navbar
+                  / hidden-xs hides the username on small devices so only the image appears.
+                  - if current_user.image.present?
+                    = image_tag current_user.image_url(:thumb).to_s, class: "user-image header-image"
+                  %span.hidden-xs= current_user.email
+                %ul.dropdown-menu
+                  / The user image in the menu
+                  %li.user-header
+                    %p
+                      = current_user.email
+                    %p
+                      - if current_user.image
+                        = image_tag current_user.image_url.to_s, class: "image-size"
+                  / Menu Body
+                  %li.user-body
+                    %p= current_user.role_names.uniq.join(", ")
+                  / Menu Footer
+                  %li.user-footer
+                    .pull-left
+                      / user_path(current_user)
+                      = link_to "Profile", user_path(current_user), :class => "btn btn-default btn-flat"
+                    .pull-right
+                      / destroy_db_user_session_path
+                      = link_to "Logout", destroy_user_session_path, :method => :delete, :class => "btn btn-default btn-flat"
+            - else
+              %li.dropdown.user.user-menu= link_to "Login", new_user_session_path, :class => "dropdown-toggle"

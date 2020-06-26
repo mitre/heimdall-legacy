@@ -28,16 +28,15 @@ Rails.application.routes.draw do
       get :image, on: :member
     end
 
-    devise_scope :user do
-      authenticated :user do
-        root to: 'dashboard#index'
-      end
-
-      unauthenticated do
-        root to: 'users/registrations#new'
-      end
-
-    end
+#    devise_scope :user do
+#      authenticated :user do
+#        root to: 'dashboard#index'
+#      end
+#      unauthenticated do
+#        root to: 'users/registrations#new'
+#      end
+#
+#    end
 
     resources :profiles, except: [:new] do
       resources :controls, except: [:index]
@@ -85,6 +84,6 @@ Rails.application.routes.draw do
     match 'users/:id/edit' => 'users#edit', as: :edit_users, :via => :get
     match 'users/:id' => 'users#destroy', as: :admin_destroy_user, :via => :delete
 
-    #root to: 'dashboard#index'
+    root to: 'dashboard#index'
   end
 end

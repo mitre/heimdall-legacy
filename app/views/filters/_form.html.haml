@@ -1,0 +1,205 @@
+= form_with(model: filter, local: true) do |form|
+  - if filter.errors.any?
+    #error_explanation
+      %h2
+        = pluralize(filter.errors.count, "error")
+        prohibited this filter from being saved:
+      %ul
+        - filter.errors.full_messages.each do |message|
+          %li= message
+  .row
+    .col-sm-1
+      .box-header
+        %h3.box-title Families
+      .form-group
+        .col-md-2.padded-right
+          - nist_hash["children"].first((nist_hash["children"].size/2).to_i).each do |family|
+            .checkbox
+              %label
+                = form.check_box 'family', {:id=> "fam_cb_#{family['name']}", :checked=>false, :multiple => true, :onclick=>'filterNumbers()'}, family['name'], nil
+                = family['name']
+        .col-md-2.padded-right
+          - nist_hash["children"].last((nist_hash["children"].size/2).to_i).each do |family|
+            .checkbox
+              %label
+                = form.check_box 'family', {:id=> "fam_cb_#{family['name']}", :checked=>false, :multiple => true, :onclick=>'filterNumbers()'}, family['name'], nil
+                = family['name']
+    .col-sm-2
+      .box-header
+        %h3.box-title Numbers
+      .form-group
+        .col-md-2.padded-right
+          - (1..11).each do |num|
+            .checkbox
+              %label
+                = form.check_box("number", {:id=> "num_cb_#{num}", :checked=>false, :multiple => true}, num, nil)
+                = num
+        .col-md-2.padded-right
+          - (12..22).each do |num|
+            .checkbox
+              %label
+                = form.check_box("number", {:id=> "num_cb_#{num}", :checked=>false, :multiple => true}, num, nil)
+                = num
+        .col-md-2.padded-right
+          - (23..33).each do |num|
+            .checkbox
+              %label
+                = form.check_box("number", {:id=> "num_cb_#{num}", :checked=>false, :multiple => true}, num, nil)
+                = num
+        .col-md-2.padded-right
+          - (34..44).each do |num|
+            .checkbox
+              %label
+                = form.check_box("number", {:id=> "num_cb_#{num}", :checked=>false, :multiple => true}, num, nil)
+                = num
+    .col-sm-1
+      .box-header
+        %h3.box-title Part
+      .form-group
+        .col-md-2
+          - ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k'].each do |fam|
+            .checkbox
+              %label
+                = form.check_box("sub_fam", {:id=> "sub_fam_cb_#{fam}", :checked=>false, :multiple => true}, fam, nil)
+                = fam
+    .col-sm-1
+      .box-header
+        %h3.box-title Sub-Part
+      .form-group
+        .col-md-2
+          - (1..10).each do |num|
+            .checkbox
+              %label
+                = form.check_box("sub_num", {:id=> "sub_num_cb_#{num}", :checked=>false, :multiple => true}, num, nil)
+                = num
+    .col-sm-1
+      .box-header
+        %h3.box-title Enhancement
+      .form-group
+        .col-md-2.padded-right
+          - (1..12).each do |enhancement|
+            .checkbox
+              %label
+                = form.check_box("enhancement", {:id=> "enhancement_cb_#{enhancement}", :checked=>false, :multiple => true, :onclick=>'yesEnhancements()'}, enhancement, nil)
+                = "(#{enhancement})"
+        .col-md-2.padded-right
+          - (13..24).each do |enhancement|
+            .checkbox
+              %label
+                = form.check_box("enhancement", {:id=> "enhancement_cb_#{enhancement}", :checked=>false, :multiple => true, :onclick=>'yesEnhancements()'}, enhancement, nil)
+                = "(#{enhancement})"
+          .checkbox
+            %label
+              = form.check_box("enhancement", {:id=> "none_enhance_cb", :checked=>false, :multiple => true, :onclick=>'noEnhancements()'}, "none", nil)
+              None
+    .col-sm-1
+      .box-header
+        %h3.box-title Part
+      .form-group
+        .col-md-2
+          - ['a', 'b', 'c', 'd', 'e', 'f'].each do |fam|
+            .checkbox
+              %label
+                = form.check_box("enh_sub_fam", {:id=> "enh_sub_fam_cb_#{fam}", :checked=>false, :multiple => true, :disabled=>true}, fam, nil)
+                = fam
+    .col-sm-1
+      .box-header
+        %h3.box-title Sub-Part
+      .form-group
+        .col-md-2
+          - (1..5).each do |num|
+            .checkbox
+              %label
+                = form.check_box("enh_sub_num", {:id=> "enh_sub_num_cb_#{num}", :checked=>false, :multiple => true, :disabled=>true}, num, nil)
+                = num
+  %br/
+  .actions
+    = button_tag(type: "submit", class: "btn btn-primary") do
+      %i.fa.fa-edit
+      Save
+:javascript
+  var nist_counts = {"AC": 25, "AU": 16, "AT": 5, "CM": 11, "CP": 13, "IA": 11, "IR": 10, "MA": 6, "MP": 8,
+    "PS": 8, "PE": 20, "PL": 9, "PM": 16, "RA": 6, "CA": 9, "SC": 44, "SI": 17, "SA": 22};
+  
+  function filterNumbers() {
+    count = 0;
+    checked = null;
+    $('input:checkbox[id^="fam_cb_"]:checked').each(function(){
+      count += 1;
+      checked = $(this).val();
+    });
+    if(count == 1) {
+      $('input:checkbox[id^="num_cb_"]').each(function(){
+        if($(this).val() <= nist_counts[checked]) {
+          $(this).prop("disabled", false);
+        } else {
+          $(this).prop('checked', false);
+          $(this).prop("disabled", true);
+        }
+        $('input:checkbox[id^="sub_fam_cb_"]').each(function(){
+          $(this).prop("disabled", false);
+        });
+        $('input:checkbox[id^="sub_num_cb_"]').each(function(){
+          $(this).prop("disabled", false);
+        });
+      });
+    } else if (count > 1) {
+      $('input:checkbox[id^="num_cb_"]').each(function(){
+        $(this).prop('checked', false);
+        $(this).prop("disabled", true);
+      });
+      $('input:checkbox[id^="sub_fam_cb_"]').each(function(){
+        $(this).prop('checked', false);
+        $(this).prop("disabled", true);
+      });
+      $('input:checkbox[id^="sub_num_cb_"]').each(function(){
+        $(this).prop('checked', false);
+        $(this).prop("disabled", true);
+      });
+    } else {
+      $('input:checkbox[id^="num_cb_"]').each(function(){
+        $(this).prop("disabled", false);
+      });
+    }
+  }
+  
+  function noEnhancements() {
+    $('input:checkbox[id^="enhancement_cb_"]').each(function(){
+      $(this).prop('checked', false);
+    });
+    $('input:checkbox[id^="enh_sub_fam_cb_"]').each(function(){
+      $(this).prop('checked', false);
+      $(this).prop("disabled", true);
+    });
+    $('input:checkbox[id^="enh_sub_num_cb_"]').each(function(){
+      $(this).prop('checked', false);
+      $(this).prop("disabled", true);
+    });
+  }
+  
+  function yesEnhancements() {
+    count = 0;
+    $('input:checkbox[id^="enhancement_cb_"]:checked').each(function(){
+      count += 1;
+    });
+    $('input:checkbox[id^="none_enhance_cb"]').each(function(){
+      $(this).prop('checked', false);
+    });
+    if(count > 1){
+      $('input:checkbox[id^="enh_sub_fam_cb_"]').each(function(){
+        $(this).prop('checked', false);
+        $(this).prop("disabled", true);
+      });
+      $('input:checkbox[id^="enh_sub_num_cb_"]').each(function(){
+        $(this).prop('checked', false);
+        $(this).prop("disabled", true);
+      });
+    } else {
+      $('input:checkbox[id^="enh_sub_fam_cb_"]').each(function(){
+        $(this).prop("disabled", false);
+      });
+      $('input:checkbox[id^="enh_sub_num_cb_"]').each(function(){
+        $(this).prop("disabled", false);
+      });
+    }
+  }

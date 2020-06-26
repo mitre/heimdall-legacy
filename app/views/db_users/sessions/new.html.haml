@@ -1,0 +1,42 @@
+/ Content Header (Page header)
+%section.content-header
+  %h1
+    Login
+/ Main content
+%section.content.container-fluid
+  .row
+    .col-md-6
+      / Horizontal Form
+      .box.box-info
+        .box-header.with-border
+          %h3.box-title Email/Password Login
+        / /.box-header
+        / form start
+        = form_for(resource, as: resource_name, url: session_path(resource_name), :html => {class: 'form-horizontal'} ) do |f|
+          .box-body
+            .form-group.has-feedback
+              %label.col-sm-2.control-label{:for => "inputEmail3"} Email
+              .col-sm-10
+                = f.email_field :email, autofocus: true, :id =>"inputEmail3", :class => "form-control", :placeholder => "Email"
+                %span.glyphicon.glyphicon-envelope.form-control-feedback
+            .form-group.has-feedback
+              %label.col-sm-2.control-label{:for => "inputPassword3"} Password
+              .col-sm-10
+                = f.password_field :password, autocomplete: "off", :id =>"inputPassword3", :class => "form-control"
+                %span.glyphicon.glyphicon-lock.form-control-feedback
+            .form-group
+              .col-sm-offset-2.col-sm-10
+                - if devise_mapping.rememberable?
+                  .checkbox
+                    %label
+                      = f.check_box :remember_me
+                      Remember Me
+          / /.box-body
+          .box-footer
+            = f.submit "Log in", :class => "btn btn-primary btn-block btn-flat"
+          / /.box-footer
+        .box-body
+          .form-group
+            = render "db_users/shared/links"
+  / /.login-box-body
+/ /.content

@@ -1,0 +1,63 @@
+%section.content-header
+  %h1
+    Filter Group
+  %ol.breadcrumb
+    %li= link_to ('<i class="fa fa-dashboard"> </i>Dashboard').html_safe, root_path
+    %li= link_to 'Filter Groups', filter_groups_path
+    %li.active Filter Group
+/ Main content
+%section.content.container-fluid
+  .row
+    .col-md-12
+      .box.box-primary
+        .box-header
+          %h3.box-title Filter Group
+          - if can? :read, FilterGroup
+            = link_to 'Destroy', @filter_group, :method => :delete, class: "btn btn-danger pull-right", data: { confirm: 'Are you sure?' }
+            = link_to ('<i class="fa fa-edit"></i> Edit').html_safe, edit_filter_group_path(@filter_group), class: "btn btn-primary pull-right margin-right"
+        / /.box-header
+        .box-body
+          %p
+            %strong Name:
+            = @filter_group.name
+  .row
+    .col-md-12
+      .box.box-primary
+        .box-header.with-border
+          %h3.box-title Filters
+        .box-body
+          %strong Add Filter:
+          - #form_with(model: @filter_group, url: filter_group_add_filter_path(@filter_group), local: true) do |form|
+          = form_with(model: @filter_group, local: true) do |form|
+            %p
+              = form.fields_for :filter_ids do |ff|
+                = ff.select :id, Filter.all.collect {|u| [u.to_s, u.id]}, { :prompt => 'Select Filter' }
+              = button_tag(type: "submit", class: "btn btn-primary margin-right") do
+                %i.fa.fa-edit
+                Add
+        .box-body.table-responsive.no-padding
+          %table.table.table-hover
+            %tr
+              %th Filter
+              %th Family
+              %th Number
+              %th Part
+              %th Sub-Part
+              %th Enhancement
+              %th Part
+              %th Sub-Part
+              %th{:colspan => "2"}
+            - @filter_group.filters.each do |filter|
+              %tr
+                %td= link_to filter.to_s, filter
+                %td= ary_to_s(filter.family)
+                %td= ary_to_s(filter.number)
+                %td= ary_to_s(filter.sub_fam)
+                %td= ary_to_s(filter.sub_num)
+                %td= ary_to_s(filter.enhancement)
+                %td= ary_to_s(filter.enh_sub_fam)
+                %td= ary_to_s(filter.enh_sub_num)
+                %td
+                  = link_to 'Remove', filter_group_filter_path(@filter_group, filter), :method => :delete, data: { confirm: 'Are you sure?' }
+        .box-body
+          = link_to 'Create New Filter', new_filter_path, class: "btn btn-info"

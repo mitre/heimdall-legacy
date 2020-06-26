@@ -1,0 +1,52 @@
+/ Content Header (Page header)
+%section.content-header
+  %h1
+    Edit
+/ Main content
+%section.content.container-fluid
+  .row
+    .col-md-6
+      / Horizontal Form
+      .box.box-info
+        .box-header.with-border
+          %h3.box-title Edit
+        / /.box-header
+        / form start
+        = form_for(resource, as: resource_name, url: registration_path(resource_name), html: { method: :put, class: 'form-horizontal' }) do |f|
+          = devise_error_messages!
+          .box-body
+            .form-group.has-feedback
+              %label.col-sm-2.control-label{:for => "inputEmail3"} Email
+              .col-sm-10
+                = f.email_field :email, autofocus: true, :id =>"inputEmail3", :class => "form-control", :placeholder => "Email"
+                %span.glyphicon.glyphicon-envelope.form-control-feedback
+            .form-group.has-feedback
+              %label.col-sm-2.control-label{:for => "inputPassword3"} Password
+              .col-sm-10
+                = f.password_field :password, autocomplete: "off", :id =>"inputPassword3", :class => "form-control"
+                %span.glyphicon.glyphicon-lock.form-control-feedback
+            .form-group.has-feedback
+              %label.col-sm-2.control-label{:for => "inputPassword4"} Password Confirmation
+              .col-sm-10
+                = f.password_field :password_confirmation, autocomplete: "off", :id =>"inputPassword4", :class => "form-control"
+                %span.glyphicon.glyphicon-lock.form-control-feedback
+            .form-group.has-feedback
+              %label.col-sm-2.control-label{:for => "inputPassword3"}
+                Current Password
+                %i (we need your current password to confirm your changes)
+              .col-sm-10
+                = f.password_field :current_password, autocomplete: "off", :id =>"inputPassword5", :class => "form-control"
+                %span.glyphicon.glyphicon-lock.form-control-feedback
+          / /.box-body
+          .box-footer
+            = f.submit "Update", :class => "btn btn-primary btn-block btn-flat"
+          / /.box-footer
+        .box-body
+          .form-group
+            %h3 Cancel my account
+            %p
+              Unhappy? #{button_to "Cancel my account", registration_path(resource_name), data: { confirm: "Are you sure?" }, method: :delete}
+          .form-group
+            = link_to "Back", :back
+  / /.login-box-body
+/ /.content

@@ -1,0 +1,39 @@
+/ Content Header (Page header)
+%section.content-header
+  %h1
+    Circles
+  %ol.breadcrumb
+    %li= link_to ('<i class="fa fa-dashboard"> </i>Dashboard').html_safe, root_path
+    %li.active Circles
+%section.content.container-fluid
+  .row
+    .col-xs-12
+      .box.box-primary
+        .box-header.with-border
+          %h3.box-title Circles
+        / /.box-header
+        - if can? :read, Circle
+          .box-body.table-responsive.no-padding
+            %table.table.table-hover
+              %tr
+                %th Name
+                %th Owner
+                %th Edit
+                %th
+              - @circles.sort_by{ |t| [t.name] }.each do |circle|
+                %tr
+                  %td
+                    - if can? :read, circle
+                      = link_to circle.name, circle_path(circle)
+                    - else
+                      = circle.name
+                  %td
+                    - if can? :read, circle
+                      = link_to 'Edit', edit_circle_path(circle)
+                  %td= circle.created_by.try(:email)
+                  %td
+                    - if can?(:delete, circle) && circle.name != 'Public'
+                      = link_to 'Destroy', circle, method: :delete, data: { confirm: 'Are you sure?' }
+      - if can? :create, Circle
+        .box-body
+          = link_to 'New Circle', new_circle_path, class: "btn btn-info"

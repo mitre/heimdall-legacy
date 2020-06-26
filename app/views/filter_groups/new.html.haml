@@ -1,0 +1,17 @@
+%section.content-header
+  %h1
+    New Filter Group
+  %ol.breadcrumb
+    %li= link_to ('<i class="fa fa-dashboard"> </i>Dashboard').html_safe, root_path
+    %li= link_to 'Filter Groups', filter_groups_path
+    %li.active New Filter Group
+/ Main content
+%section.content.container-fluid
+  .row
+    .col-md-12
+      .box.box-primary
+        .box-header
+          %h3.box-title New Filter Group
+        / /.box-header
+        .box-body
+          = render 'form', filter_group: @filter_group

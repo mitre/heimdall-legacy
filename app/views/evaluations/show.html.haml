@@ -1,0 +1,417 @@
+:css
+  .chart {
+    display: block;
+    margin: auto;
+    margin-top: 60px;
+    font-size: 11px;
+  }
+  
+  text {
+    pointer-events: none;
+  }
+/ Content Header (Page header)
+%section.content-header
+  %h1
+    Evaluation #{@evaluation.profiles.map(&:name).join(', ')}
+  %ol.breadcrumb{"data-turbolinks" => "false"}
+    %li= link_to ('<i class="fa fa-dashboard"> </i>Dashboard').html_safe, root_path
+    %li= link_to 'Evaluations', evaluations_path
+    %li.active Evaluation
+:javascript
+  var evaluation_id = ' @evaluation.id ';
+/ Main content
+%section.content.container-fluid
+  .row
+    .col-md-3
+      .box.box-primary
+        .box-header
+          %h3.box-title Evaluation Information
+        / /.box-header
+        .box-body
+          #show_info{:style => "display:block;"}
+            %p
+              %strong InSpec Version:
+              = @evaluation.version
+            - @evaluation.tags.each do |tag|
+              %p
+                %strong
+                  = tag.content['name']&.capitalize
+                  \:
+                = tag.content['value']
+            - if can? :edit, @evaluation
+              %p
+                %button#edit_btn.btn.btn-primary.margin-right{:type => "button"}
+                  %i.fa.fa-edit
+                  Add/Edit Tags
+          - if can? :edit, @evaluation
+            #edit_info{:style => "display:none;"}
+              = form_for @evaluation.tags.new, as: :tag, url: evaluation_tag_path(@evaluation) do |f|
+                .form-group
+                  = f.label :name
+                  = f.select :name, Tag.options_for_select, { :prompt => 'Select Tag' }, class: "form-control"
+                .form-group
+                  = f.label :value
+                  = f.text_field :value, id: :tag_value, class: "form-control"
+                .form-group
+                  %button#cancel_btn.btn.btn-primary.pull-right{:type => "button"} Cancel
+                  = button_tag(type: "submit", class: "btn btn-primary margin-right") do
+                    %i.fa.fa-edit
+                    Submit
+    .col-md-3
+      .box.box-primary
+        .box-header
+          %h3.box-title Profiles
+        / /.box-header
+        .box-body
+          %p
+            %strong Parent Profile:
+            - if @evaluation.base_profile.present?
+              = link_to @evaluation.base_profile&.name, profile_path(@evaluation.base_profile)
+        - prof_list = @evaluation.included_profiles
+        - unless prof_list.empty?
+          %p
+            %strong Included Profiles:
+            %ul.horizontal-list
+              - prof_list.each do |prof|
+                %li
+                  = check_box_tag(prof.id, prof.id, true, :onclick=exclude_profile('#{prof.id}');)
+                  = link_to prof.name, profile_path(prof)
+  .col-md-3
+    .box.box-primary
+      .box-header
+        %h3.box-title Platform
+      / /.box-header
+      .box-body
+        %p
+          %strong Name:
+          = @evaluation.platform.name
+        %p
+          %strong Release:
+          = @evaluation.platform.release
+    .box.box-primary
+      .box-header
+        %h3.box-title Statistics
+      / /.box-header
+      .box-body
+        %p
+          %strong Start Time:
+          = @evaluation.start_time
+        %p
+          %strong Duration:
+          = @evaluation.statistic.duration
+  .col-md-3
+    .box.box-primary
+      .box-header
+        %h3.box-title Formats
+      / /.box-header
+      .box-body
+        %p
+          %strong View SSP:
+          = link_to 'SSP', ssp_evaluation_path(@evaluation)
+        %p
+          %strong Export JSON:
+          = link_to 'JSON', evaluation_path(@evaluation, format: :json), :target = _blank
+        %p
+          %strong Export CKL:
+          = link_to 'CKL', evaluation_path(@evaluation, format: :ckl), :target = _blank
+        %p
+          %strong Export XCCDF:
+          = link_to 'XCCDF', evaluation_xccdf_path(@evaluation)
+        %p
+          %strong Export CSV:
+          = link_to 'CSV', evaluation_path(@evaluation, format: :csv), :target = _blank
+        %p
+          %strong Export CAAT:
+          = link_to 'CAAT', '#', :id = export-caat
+/ Small boxes (Stat box)
+.row
+  .col-lg-3
+    .box.box-primary
+      .box-header.with-border
+        %h3.box-title Compliance Level
+        .box-title
+          = image_tag(compliance_formula.png, :width = 196px, :height = 18px, :alt = [Pass / (Pass + Fail + Not Reviewed + Profile Error) * 100])
+      / /.box-header
+      .box-body
+        #profile_gauge
+  .col-xs-9
+    .box.box-primary
+      .box-header
+        %h3.box-title Testing Status Counts
+      / /.box-header
+      .box-body
+        .col-lg-2.col-xs-6
+          / small box
+          .small-box.bg-green
+            .inner
+              %ul.horizontal-list
+                %li
+                  %h3#passed_count
+                %li
+                  %h4 Passed
+              %p.small-font
+        / ./col
+        .col-lg-2.col-xs-6
+          / small box
+          .small-box.bg-red
+            .inner
+              %ul.horizontal-list
+                %li
+                  %h3#failed_count
+                %li
+                  %h4 Failed
+              %p.small-font
+        / ./col
+        .col-lg-2.col-xs-6
+          / small box
+          .small-box.bg-med-grey
+            .inner
+              %ul.horizontal-list
+                %li
+                  %h3#not_reviewed_count
+                %li
+                  %h4 Not Reviewed
+              %p.small-font (can only be tested manually or disabled test)
+        / ./col
+        .col-lg-2.col-xs-6
+          / small box
+          .small-box.bg-aqua
+            .inner
+              %ul.horizontal-list
+                %li
+                  %h3#not_applicable_count
+                %li
+                  %h4 Not Applicable
+              %p.small-font (zero impact: exception for this system and/or absent component)
+        / ./col
+        .col-lg-2.col-xs-6
+          / small box
+          .small-box.bg-med-grey
+            .inner
+              %ul.horizontal-list
+                %li
+                  %h3#profile_error_count
+                %li
+                  %h4 Profile Error
+              %p.small-font (profile error)
+        / ./col
+      / /.row
+#all_controls_row.row
+  .col-lg-4
+    .box.box-primary
+      .box-header.with-border
+        %h3.box-title Testing Status
+      / /.box-header
+      .box-body
+        #status_pie
+  .col-lg-4
+    .box.box-primary
+      .box-header.with-border
+        %h3.box-title Testing Impact
+      %button#clear_filters_button.btn.btn-primary.floating{:type => "button"} Clear Filters
+      / /.box-header
+      .box-body
+        #severity_pie
+  .col-lg-4
+    .box.box-primary
+      .box-header.with-border
+        %h3.box-title NIST SP 800-53 Security Control Filter
+        - if @filter_label
+          %span.span-title Active Filter:
+        %h4= @filter_label
+        %br
+          = link_to Clear Filter, clear_filter_evaluation_path(@evaluation), class: btn btn-primary
+      .box-body.no-top-padding
+        .col-md-4
+          = form_for :filter, url: filter_evaluation_path(@evaluation), remote: true do |form|
+            .row
+              .box-body
+                .col-md-2.padded-right
+                  - @nist_hash[children].first((@nist_hash[children].size/2).to_i).each do |family|
+                    .checkbox
+                      %label
+                        = form.check_box 'family', {:id= fam_cb_#{family['name']}, :checked=false, :multiple = true}, family['name'], nil
+                        = family['name']
+                .col-md-2.padded-right
+                  - @nist_hash[children].last((@nist_hash[children].size/2).to_i).each do |family|
+                    .checkbox
+                      %label
+                        = form.check_box 'family', {:id= fam_cb_#{family['name']}, :checked=false, :multiple = true}, family['name'], nil
+                        = family['name']
+            .row
+              .col-md-4
+                = button_tag(type: submit, class: btn btn-primary) do
+                  %i.fa.fa-edit
+                  Filter by Family
+        .col-md-6
+          = form_for :filter_group, url: filter_select_evaluation_path(@evaluation), remote: true do |form|
+            .box-body
+              %p
+                %h4 Select Filter Group
+                = form.select :id, FilterGroup.all.collect {|u| [u.name, u.id]}, { :prompt = 'Select' }
+                %h4 Or
+                %h4 Select Filter
+                = form.select :filter_ids, Filter.all.collect {|u| [u.to_s, u.id]}, { :prompt = 'Select' }
+                %br
+                = button_tag(type: submit, class: btn btn-primary) do
+                  %i.fa.fa-edit
+                  Filter by Selected
+                %h4 Or
+                %button#build_btn.btn.btn-block.btn-info{:type => "button"} Build Advanced Filter
+  = succeed "," do
+    .row
+  .col-md-12
+    .box.box-primary
+      .box-header.with-border
+        %h3.box-title NIST SP 800-53 Security Control Filters
+      / /.box-header
+      .box-body
+        = form_for :filter, url: filter_evaluation_path(@evaluation), remote: true do |form|
+          .row
+            .col-sm-1
+              .box-header
+                %h3.box-title Families
+              .form-group
+                .col-md-2.padded-right
+                  - @nist_hash[children].first((@nist_hash[children].size/2).to_i).each do |family|
+                    .checkbox
+                      %label
+                        = form.check_box 'family', {:id= fam_cb_#{family['name']}, :checked=false, :multiple = true, :onclick='filterNumbers()'}, family['name'], nil
+                        = family['name']
+                .col-md-2.padded-right
+                  - @nist_hash[children].last((@nist_hash[children].size/2).to_i).each do |family|
+                    .checkbox
+                      %label
+                        = form.check_box 'family', {:id= fam_cb_#{family['name']}, :checked=false, :multiple = true, :onclick='filterNumbers()'}, family['name'], nil
+                        = family['name']
+            .col-sm-2
+              .box-header
+                %h3.box-title Numbers
+              .form-group
+                .col-md-2.padded-right
+                  - (1..11).each do |num|
+                    .checkbox
+                      %label
+                        = form.check_box(number, {:id= num_cb_#{num}, :checked=false, :multiple = true}, num, nil)
+                        = num
+                .col-md-2.padded-right
+                  - (12..22).each do |num|
+                    .checkbox
+                      %label
+                        = form.check_box(number, {:id= num_cb_#{num}, :checked=false, :multiple = true}, num, nil)
+                        = num
+                .col-md-2.padded-right
+                  - (23..33).each do |num|
+                    .checkbox
+                      %label
+                        = form.check_box(number, {:id= num_cb_#{num}, :checked=false, :multiple = true}, num, nil)
+                        = num
+                .col-md-2.padded-right
+                  - (34..44).each do |num|
+                    .checkbox
+                      %label
+                        = form.check_box(number, {:id= num_cb_#{num}, :checked=false, :multiple = true}, num, nil)
+                        = num
+            .col-sm-1
+              .box-header
+                %h3.box-title Part
+              .form-group
+                .col-md-2
+                  - ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k'].each do |fam|
+                    .checkbox
+                      %label
+                        = form.check_box(sub_fam, {:id= sub_fam_cb_#{fam}, :checked=false, :multiple = true}, fam, nil)
+                        = fam
+            .col-sm-1
+              .box-header
+                %h3.box-title Sub-Part
+              .form-group
+                .col-md-2
+                  - (1..10).each do |num|
+                    .checkbox
+                      %label
+                        = form.check_box(sub_num, {:id= sub_num_cb_#{num}, :checked=false, :multiple = true}, num, nil)
+                        = num
+            .col-sm-1
+              .box-header
+                %h3.box-title Enhancement
+              .form-group
+                .col-md-2.padded-right
+                  - (1..12).each do |enhancement|
+                    .checkbox
+                      %label
+                        = form.check_box(enhancement, {:id= enhancement_cb_#{enhancement}, :checked=false, :multiple = true, :onclick='yesEnhancements()'}, enhancement, nil)
+                        = (#{enhancement})
+                .col-md-2.padded-right
+                  - (13..24).each do |enhancement|
+                    .checkbox
+                      %label
+                        = form.check_box(enhancement, {:id= enhancement_cb_#{enhancement}, :checked=false, :multiple = true, :onclick='yesEnhancements()'}, enhancement, nil)
+                        = (#{enhancement})
+                  .checkbox
+                    %label
+                      = form.check_box(enhancement, {:id= none_enhance_cb, :checked=false, :multiple = true, :onclick='noEnhancements()'}, none, nil)
+                      None
+            .col-sm-1
+              .box-header
+                %h3.box-title Part
+              .form-group
+                .col-md-2
+                  - ['a', 'b', 'c', 'd', 'e', 'f'].each do |fam|
+                    .checkbox
+                      %label
+                        = form.check_box(enh_sub_fam, {:id= enh_sub_fam_cb_#{fam}, :checked=false, :multiple = true, :disabled=true}, fam, nil)
+                        = fam
+            .col-sm-1
+              .box-header
+                %h3.box-title Sub-Part
+              .form-group
+                .col-md-2
+                  - (1..5).each do |num|
+                    .checkbox
+                      %label
+                        = form.check_box(enh_sub_num, {:id= enh_sub_num_cb_#{num}, :checked=false, :multiple = true, :disabled=true}, num, nil)
+                        = num
+          .row
+            .col-sm-1
+              .checkbox
+                %label
+                  = form.check_box(save_filter, {:id= save_filter_cb, :checked=false}, save, nil)
+                  Save Filter
+            .col-sm-1
+              = button_tag(type: submit, class: btn btn-primary pull-right margin-right) do
+                %i.fa.fa-edit
+                Filter by Selected
+            .col-sm-1
+              %button#close_build_btn.btn.btn-block.btn-info{:type => "button"} Close
+.row
+  .col-md-12
+    .box.box-primary
+      .box-header.with-border
+        %h3.box-title NIST SP 800-53 Security Control Coverage
+      / /.box-header
+      .box-body
+        %ul.nav.nav-tabs.tabs-bordered
+          %li#treemap_nav_item.nav-item
+            = link_to Treemap Chart, evaluation_path(@evaluation), class: nav-link, id: 'treemap'
+            /
+              a href="<haml_loud> evaluation_path(@evaluation) </haml_loud>" id='treemap' data-toggle="tab" aria-expanded="false" class="nav-link">
+              TreeMap Chart
+              </a
+          %li#partition_nav_item.nav-item
+            = link_to Partition Chart, evaluation_path(@evaluation), class: nav-link, id: 'partition'
+            /
+              a href="<haml_loud> evaluation_path(@evaluation) </haml_loud>" id='partition' data-toggle="tab" aria-expanded="false" class="nav-link">
+              Partition Chart
+              </a
+        .tab-content{:style => "display:none;"}
+          #treemap.tab-pane
+          #partition.tab-pane
+        #chart
+.row
+  .col-xs-12
+    .box.box-primary
+      .box-header
+        %h3.box-title Tests
+      / /.box-header
+      #controls_table.box-body{"data-turbolinks" => "false"}

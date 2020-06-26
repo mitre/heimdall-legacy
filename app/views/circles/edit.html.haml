@@ -1,0 +1,121 @@
+/ Content Header (Page header)
+%section.content-header
+  %h1
+    = link_to @circle.name, circle_path(@circle)
+  %ol.breadcrumb
+    %li= link_to ('<i class="fa fa-dashboard"> </i>Dashboard').html_safe, root_path
+    %li= link_to 'Circles', circles_path
+    %li.active Circle
+%section.content.container-fluid
+  .row
+    .col-md-6
+      #circle_info.box.box-primary.shown
+        .box-header.with-border
+          %h3.box-title Circle Information
+          - unless @circle.name == 'Public'
+            - if can?(:delete, @circle) && @circle.name != 'Public'
+              = link_to 'Destroy', @circle, method: :delete, class: "btn btn-danger pull-right", data: { confirm: 'Are you sure?' }
+            %button#edit_btn.btn.btn-primary.pull-right.margin-right{:type => "button"}
+              %i.fa.fa-edit
+              Edit
+        / /.box-header
+        #members.box-body
+          = render 'members', circle: @circle
+        / /.box-body
+      / /.box
+      = succeed "," do
+        #edit_form.box.box-primary
+      = render 'form', circle: @circle
+  / /.col 6
+  .col-md-6
+    - if current_user.has_role?(:owner, @circle)
+      .box.box-primary
+        .box-header.with-border
+          %h3.box-title Add Owners
+        / /.box-header
+        .box-body
+          = form_for :user, url: circle_owners_path(@circle), remote: true do |form|
+            .box-body
+              %p
+                %h4 Add Owner
+                = form.select :id, User.all.collect {|u| [u.email, u.id]}, { :prompt = 'Select' }
+                %br
+                = button_tag(type: submit, class: btn btn-primary) do
+                  %i.fa.fa-edit
+                  Add
+          / /.box-body
+      .box.box-primary
+        .box-header.with-border
+          %h3.box-title Add Members
+        / /.box-header
+        .box-body
+          = form_for :user, url: circle_members_path(@circle), remote: true do |form|
+            .box-body
+              %p
+                %h4 Add Member
+                = form.select :id, User.all.collect {|u| [u.email, u.id]}, { :prompt = 'Select' }
+                %br
+                = button_tag(type: submit, class: btn btn-primary) do
+                  %i.fa.fa-edit
+                  Add
+          / /.box-body
+        / /.box
+      / /.col 6
+    / /.row
+    .row
+      .col-md-6
+        .box.box-primary
+          .box-header.with-border
+            %h3.box-title Evaluations
+          / /.box-header
+          #evaluations.box-body
+            = render 'evaluations', circle: @circle
+      .col-md-6
+        .box.box-primary
+          .box-header.with-border
+            %h3.box-title Add Evaluations
+          / /.box-header
+          .box-body
+            = form_for :evaluation, url: circle_evals_path(@circle), remote: true do |form|
+              .box-body
+                %p
+                  %h4 Add Evaluation
+                  = form.select :id, current_user.my_evaluations.collect {|u| [#{u.profiles.map(:name).join(', ')}: #{u.start_time}, u.id]}, { :prompt = 'Select' }
+                  %br
+                  = button_tag(type: submit, class: btn btn-primary) do
+                    %i.fa.fa-edit
+                    Add
+            / /.box-body
+      .row
+        .col-md-6
+          .box.box-primary
+            .box-header.with-border
+              %h3.box-title Profiles
+            / /.box-header
+            #profiles.box-body
+              = render 'profiles', circle: @circle
+        .col-md-6
+          .box.box-primary
+            .box-header.with-border
+              %h3.box-title Add Profiles
+            / /.box-header
+            .box-body
+              = form_for :profile, url: circle_profiles_path(@circle), remote: true do |form|
+                .box-body
+                  %p
+                    %h4 Add Profile
+                    = form.select :id, current_user.my_profiles.collect {|u| [u.name, u.id]}, { :prompt = 'Select' }
+                    %br
+                    = button_tag(type: submit, class: btn btn-primary) do
+                      %i.fa.fa-edit
+                      Add
+              / /.box-body
+      :javascript
+        $(document).ready(function(){
+          $("#edit_btn").click(function(){
+            toggleSections("edit_form", "circle_info");
+          });
+          $("#cancel_btn").click(function(){
+            toggleSections("circle_info", "edit_form");
+          });
+        });

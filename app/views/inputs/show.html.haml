@@ -1,0 +1,24 @@
+/ Content Header (Page header)
+%section.content-header
+  %h1
+    Input
+  %ol.breadcrumb
+    %li= link_to ('<i class="fa fa-dashboard"> </i>Dashboard').html_safe, root_path
+    %li= link_to 'Profiles', profiles_path
+    %li= link_to 'Profile', details_profile_path(@profile.id)
+    %li.active Input
+/ Main content
+%section.content.container-fluid
+  .row
+    .col-xs-12
+      .box.box-primary
+        .box-header
+          %h3.box-title Input Information
+        / /.box-header
+        .box-body
+          %p
+            %strong Name:
+            = @input.name
+          %p
+            %strong Options:
+            = @input.options

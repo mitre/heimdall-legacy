@@ -1,0 +1,40 @@
+.tab-content
+  = form_for :evaluation, url: evaluations_compare_path do |form|
+    .tab-pane.fade.in.active{:id => "fdetails-#{@profile.id}"}
+      %table.table.table-bordered.table-striped
+        %thead
+          %tr
+            %th Filename
+            %th Start Time
+            %th Duration
+            %th InSpec Version
+            %th Platform
+            %th Passed
+            %th Failed
+            %th Profile Error
+            %th Not Applicable
+            %th Not Reviewed
+            %th Compare
+        %tbody
+          - @profile.evaluations.each do |evaluation|
+            %tr
+              %td= link_to evaluation.filename, evaluation
+              %td= evaluation.start_time
+              %td= evaluation.statistic&.duration
+              %td= evaluation.version
+              %td
+                = evaluation.platform&.name
+                = evaluation.platform&.release
+              %td= evaluation.finding&.passed
+              %td= evaluation.finding&.failed
+              %td= evaluation.finding&.profile_error
+              %td= evaluation.finding&.not_applicable
+              %td= evaluation.finding&.not_reviewed
+              %td
+                .checkbox
+                  %label
+                    = form.check_box 'eval_ids', {:checked=>false, :multiple => true}, evaluation.id, nil
+    %div
+      = button_tag(type: "submit", class: "btn btn-primary pull-right") do
+        %i.fa.fa-edit
+        Compare
