@@ -1,34 +1,26 @@
 !!!
-%html{:dir => "ltr", :lang => "en-US", :xmlns => "http://www.w3.org/1999/xhtml"}
+%html{dir: "ltr", lang: "en-US", xmlns: "http://www.w3.org/1999/xhtml"}
   %head
-    %meta{:content => "text/html; charset=UTF-8", "http-equiv" => "Content-Type"}/
+    %meta{content: "text/html; charset=UTF-8", "http-equiv" => "Content-Type"}/
     %title Dashboard
-    %meta{:charset => "utf-8"}/
-    %meta{:content => "IE=edge", "http-equiv" => "X-UA-Compatible"}/
-    %meta{:content => "notranslate", :name => "google"}/
-    %meta{:content => "en", "http-equiv" => "Content-Language"}/
-    %meta{:content => "width=device-width, initial-scale=1", :name => "viewport"}/
+    %meta{charset: "utf-8"}/
+    %meta{content: "IE=edge", "http-equiv" => "X-UA-Compatible"}/
+    %meta{content: "notranslate", name: "google"}/
+    %meta{content: "en", "http-equiv" => "Content-Language"}/
+    %meta{content: "width=device-width, initial-scale=1", name: "viewport"}/
     = csrf_meta_tags
-    = stylesheet_pack_tag 'application'
     = stylesheet_link_tag    'application', media: 'all', 'data-turbolinks-track': 'reload'
     = javascript_include_tag 'application', 'data-turbolinks-track': 'reload'
-
-
   %body.hold-transition.skin-blue.layout-top-nav
-    = yield :assets
     = favicon_link_tag asset_path('logo_yH1_icon.ico'), :rel => 'icon', :type => "image/x-icon"
     .wrapper
-
       / Main Header
       = render :partial => 'layouts/header'
-
-    - if notice
-      %p.alert.alert-success.alert-dismissable= notice
-    - if alert
-      %p.alert.alert-danger.alert-dismissable= alert
-    .pt-5.container{"data-behavior" => "vue"}
-      = yield
-
+      / Content Wrapper. Contains page content
+      .content-wrapper{"data-turbolinks" => "false"}
+        .pt-5.container{"data-behavior" => "vue"}
+          = yield
+      / /.content-wrapper
 
       / Main Footer
       %footer.main-footer
@@ -39,6 +31,6 @@
         %strong
           Copyright © 2020
           = succeed "." do
-            %a{:href => "#"} MITRE
+            %a{href: "#"} MITRE
         All rights reserved.
     / ./wrapper

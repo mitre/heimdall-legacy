@@ -24,10 +24,10 @@ defaults: &defaults
         password: <%= ENV['HEIMDALL_LDAP_ADMIN_PASS'] %>
         base: <%= ENV['HEIMDALL_LDAP_BASE'] %>
   providers:
-#     - { name: 'github',
-#         app_id: 'N/A',
-#         app_secret: 'N/A',
-#         args: { scope: 'user:email' } }
+    # - { name: 'github',
+    #     app_id: '<APP_ID>',
+    #     app_secret: '<APP_SECRET>',
+    #     args: { scope: 'user:email' } }
 
 development:
   <<: *defaults

@@ -40,6 +40,9 @@ gem 'bootsnap', '>= 1.1.0', require: false
 gem 'omniauth', '~>1.8'
 gem 'omniauth-github'
 gem 'omniauth-rails_csrf_protection', '~> 0.1'
+# GitLab fork with several improvements to original library. For full list of changes
+# see https://github.com/intridea/omniauth-ldap/compare/master...gitlabhq:master
+gem 'gitlab_omniauth-ldap', '~> 2.1.1', require: 'omniauth-ldap'
 
 gem 'settingslogic', '~> 2.0.9'
 

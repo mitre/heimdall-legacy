@@ -12,6 +12,10 @@
 #   policy.script_src  :self, :https
 #   policy.style_src   :self, :https
 
+Rails.application.config.content_security_policy do |policy|
+  policy.script_src :self, :unsafe_eval
+end
+
 #   # Specify URI for violation reports
 #   # policy.report_uri "/csp-violation-report-endpoint"
 # end

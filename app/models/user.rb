@@ -9,7 +9,7 @@ class User < ApplicationRecord
 
   devise :database_authenticatable, :registerable, :rememberable, :recoverable, :trackable, :validatable#, :confirmable
 
-  devise :omniauthable, omniauth_providers: %i[github] #Devise.omniauth_providers
+  devise :omniauthable, omniauth_providers: Devise.omniauth_providers
 
   #validates :name, :password, presence: true
 

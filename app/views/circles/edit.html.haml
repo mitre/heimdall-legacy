@@ -38,9 +38,9 @@
             .box-body
               %p
                 %h4 Add Owner
-                = form.select :id, User.all.collect {|u| [u.email, u.id]}, { :prompt = 'Select' }
+                = form.select :id, User.all.collect {|u| [u.email, u.id]}, { :prompt => 'Select' }
                 %br
-                = button_tag(type: submit, class: btn btn-primary) do
+                = button_tag(type: "submit", class: 'btn btn-primary') do
                   %i.fa.fa-edit
                   Add
           / /.box-body
@@ -53,9 +53,9 @@
             .box-body
               %p
                 %h4 Add Member
-                = form.select :id, User.all.collect {|u| [u.email, u.id]}, { :prompt = 'Select' }
+                = form.select :id, User.all.collect {|u| [u.email, u.id]}, { :prompt => 'Select' }
                 %br
-                = button_tag(type: submit, class: btn btn-primary) do
+                = button_tag(type: "submit", class: 'btn btn-primary') do
                   %i.fa.fa-edit
                   Add
           / /.box-body
@@ -80,9 +80,10 @@
               .box-body
                 %p
                   %h4 Add Evaluation
-                  = form.select :id, current_user.my_evaluations.collect {|u| [#{u.profiles.map(:name).join(', ')}: #{u.start_time}, u.id]}, { :prompt = 'Select' }
+                  -# Fix This!
+                  -# = form.select :id, current_user.my_evaluations.collect {|u| [#{u.profiles.map(:name).join(', ')}: #{u.start_time}, u.id]}, { :prompt = 'Select' }
                   %br
-                  = button_tag(type: submit, class: btn btn-primary) do
+                  = button_tag(type: "submit", class: 'btn btn-primary') do
                     %i.fa.fa-edit
                     Add
             / /.box-body
@@ -104,9 +105,10 @@
                 .box-body
                   %p
                     %h4 Add Profile
-                    = form.select :id, current_user.my_profiles.collect {|u| [u.name, u.id]}, { :prompt = 'Select' }
+                    -# Fix This!
+                    -# = form.select :id, current_user.my_profiles.collect {|u| [u.name, u.id]}, { :prompt = 'Select' }
                     %br
-                    = button_tag(type: submit, class: btn btn-primary) do
+                    = button_tag(type: "submit", class: 'btn btn-primary') do
                       %i.fa.fa-edit
                       Add
               / /.box-body

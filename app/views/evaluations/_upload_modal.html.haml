@@ -1,3 +1,4 @@
+
 / Modal
 #myModal.modal.fade{:role => "dialog"}
   .modal-dialog
@@ -13,21 +14,21 @@
           .inner
             %h4 Upload Evaluation
             .form-group
-              = file_field_tag :file, :class = menu-text
+              = file_field_tag :file #-, :class = menu-text
             .form-group
               - if current_user.my_circles.present?
                 = label_tag(:circle_id, 'Circle')
                 - if circle.present?
-                  = select_tag circle_id, options_from_collection_for_select(current_user.my_circles, 'id', 'name', circle.id), {:include_blank = 'Select Circle', :class = 'form-control'}
+                  = select_tag "circle_id", options_from_collection_for_select(current_user.my_circles, 'id', 'name', circle.id), {:include_blank => 'Select Circle'}
                 - else
-                  = select_tag circle_id, options_from_collection_for_select(current_user.my_circles, 'id', 'name'), {:include_blank = 'Select Circle', :class = 'form-control'}
+                  = select_tag "circle_id", options_from_collection_for_select(current_user.my_circles, 'id', 'name'), {:include_blank => 'Select Circle'}
             - (Constants::TAG_NAMES - ['Filename', 'Environment']).each do |tag|
               .form-group
-                = label_tag(tag, #{tag}:)
-                = text_field_tag tag.downcase, , class: 'form-control'
+                = label_tag(tag)
+                = text_field_tag tag.downcase, class: 'form-control'
             .form-group
               = label_tag(:environment, 'Environment:')
-              = select_tag :environment, options_for_select(Constants::ENV_TAG_NAMES), {:include_blank = 'Select Environment', :class = 'form-control'}
+              = select_tag :environment, options_for_select(Constants::ENV_TAG_NAMES), {:include_blank => 'Select Environment'}
       .modal-footer
         %button.btn.btn-primary{:type => "submit"} Submit
         %button.btn.btn-default{"data-dismiss" => "modal", :type => "button"} Close
