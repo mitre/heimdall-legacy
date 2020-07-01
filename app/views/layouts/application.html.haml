@@ -1,16 +1,13 @@
 !!!
-%html{dir: "ltr", lang: "en-US", xmlns: "http://www.w3.org/1999/xhtml"}
+%html
   %head
     %meta{content: "text/html; charset=UTF-8", "http-equiv" => "Content-Type"}/
     %title Dashboard
-    %meta{charset: "utf-8"}/
-    %meta{content: "IE=edge", "http-equiv" => "X-UA-Compatible"}/
-    %meta{content: "notranslate", name: "google"}/
-    %meta{content: "en", "http-equiv" => "Content-Language"}/
-    %meta{content: "width=device-width, initial-scale=1", name: "viewport"}/
     = csrf_meta_tags
-    = stylesheet_link_tag    'application', media: 'all', 'data-turbolinks-track': 'reload'
-    = javascript_include_tag 'application', 'data-turbolinks-track': 'reload'
+    = csp_meta_tag
+    = stylesheet_pack_tag 'application'
+    = javascript_pack_tag 'application', 'data-turbolinks-track': 'reload'
+    = yield :assets
   %body.hold-transition.skin-blue.layout-top-nav
     = favicon_link_tag asset_path('logo_yH1_icon.ico'), :rel => 'icon', :type => "image/x-icon"
     .wrapper
