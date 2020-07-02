@@ -1,23 +1,44 @@
 Rails.application.routes.draw do
   scope ENV['HEIMDALL_RELATIVE_URL_ROOT'] || '/' do
-    resources :users do
-      get :image, on: :member
-    end
+    #resources :users do
+    #  get :image, on: :member
+    #end
     resources :circles
     resources :filter_groups do
       resources :filters, only: [:update, :destroy]
     end
     resources :filters
-    devise_for :db_users, controllers: {
-      sessions: 'db_users/sessions',
-      registrations: 'db_users/registrations',
-      passwords: 'db_users/passwords'
+    #devise_for :db_users, controllers: {
+    #  sessions: 'db_users/sessions',
+    #  registrations: 'db_users/registrations',
+    #  passwords: 'db_users/passwords'
+    #}
+    #devise_for :ldap_users, controllers: {
+    #  sessions: 'ldap_users/sessions',
+    #  registrations: 'ldap_users/registrations',
+    #  passwords: 'ldap_users/passwords'
+    #}
+
+    devise_for :users, controllers: {
+      omniauth_callbacks: 'users/omniauth_callbacks',
+      registrations: 'users/registrations'
     }
-    devise_for :ldap_users, controllers: {
-      sessions: 'ldap_users/sessions',
-      registrations: 'ldap_users/registrations',
-      passwords: 'ldap_users/passwords'
-    }
+
+    resources :users do
+      get :image, on: :member
+    end
+
+    devise_scope :user do
+      authenticated :user do
+        root to: 'dashboard#index'
+      end
+
+      unauthenticated do
+        root to: 'users/registrations#new'
+      end
+
+    end
+
     resources :profiles, except: [:new] do
       resources :controls, except: [:index]
       resources :aspects, except: [:index]
@@ -25,6 +46,7 @@ Rails.application.routes.draw do
       get 'details', on: :member
       post 'upload', on: :collection
     end
+
     resources :evaluations, only: [:index, :show, :destroy] do
       resources :downloads, only: [:show]
       get 'ssp', on: :member
@@ -36,7 +58,7 @@ Rails.application.routes.draw do
       post 'upload_api', on: :collection
     end
 
-    match 'session/new_session' => 'users#new_session', as: :new_user_session, :via => :get
+    #match 'session/new_session' => 'users#new_session', as: :new_user_session, :via => :get
     match 'circles/:id/members' => 'circles#members', as: :circle_members, :via => :post
     match 'circles/:id/remove_member/:user_id' => 'circles#remove_member', as: :circle_member_remove, :via => :delete
     match 'circles/:id/owners' => 'circles#owners', as: :circle_owners, :via => :post
@@ -58,7 +80,11 @@ Rails.application.routes.draw do
     match 'evaluations/:id/chart' => 'evaluations#chart', as: :evaluation_chart, :via => :get
     match 'users/:id/add_role/:user_id/' => 'users#add_role', as: :user_add_role, :via => :post
     match 'users/:id/remove_role/:user_id/:role' => 'users#remove_role', as: :user_remove_role, :via => :delete
+    match 'users' => 'users#index', as: :all_users, :via => :get
+    #match 'users/:id' => 'users#show', as: :user, :via => :get
+    match 'users/:id/edit' => 'users#edit', as: :edit_users, :via => :get
+    match 'users/:id' => 'users#destroy', as: :admin_destroy_user, :via => :delete
 
-    root to: 'dashboard#index'
+    #root to: 'dashboard#index'
   end
 end

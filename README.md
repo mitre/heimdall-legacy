@@ -323,7 +323,7 @@ There are a set of tests developed using `rspec`. Run `rake spec` to run the tes
 
 ### NOTICE
 
-© 2018-2019 The MITRE Corporation.
+© 2018-2020 The MITRE Corporation.
 
 Approved for Public Release; Distribution Unlimited. Case Number 18-3678.
 

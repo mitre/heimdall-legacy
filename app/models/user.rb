@@ -7,9 +7,35 @@ class User < ApplicationRecord
 
   scope :recent, ->(num) { order(created_at: :desc).limit(num) }
 
+  devise :database_authenticatable, :registerable, :rememberable, :recoverable, :trackable, :validatable#, :confirmable
+
+  devise :omniauthable, omniauth_providers: %i[github] #Devise.omniauth_providers
+
+  #validates :name, :password, presence: true
+
+  #before_create :skip_confirmation!#, unless: -> { Settings.local_login.email_confirmation }
+
+  def self.from_omniauth(auth)
+    find_or_create_by(email: auth.info.email) do |user|
+      user.email = auth.info.email
+      user.password = Devise.friendly_token[0, 50]
+      #user.name = auth.info.name || "#{auth.provider} user"
+      user.provider = auth.provider
+      user.uid = auth.uid
+      user.api_key = SecureRandom.urlsafe_base64
+      #user.skip_confirmation!
+    end
+  end
+
+  #These look like user spcific functions
   # new users get assigned the :editor role by default
+  # first user gets assigned the :admin role by default
   def assign_default_role
-    add_role(:editor) if roles.blank?
+    if User.count != 1
+      add_role(:editor) if roles.blank?
+    else
+      add_role(:admin) if roles.blank?
+    end
   end
 
   # all users get added to the public circle
