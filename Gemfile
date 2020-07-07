@@ -45,7 +45,6 @@ gem 'cancancan', '~> 2.0'
 gem 'pdfkit'
 gem 'render_anywhere'
 gem 'wkhtmltopdf-binary', '0.12.3.1'
-gem 'rmagick'
 gem 'carrierwave'
 gem 'nokogiri-happymapper'
 gem "nokogiri", ">= 1.10.4"

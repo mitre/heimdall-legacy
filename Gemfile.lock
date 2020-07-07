@@ -522,7 +522,6 @@ GEM
       actionpack (>= 5.0)
       railties (>= 5.0)
     retriable (2.1.0)
-    rmagick (4.1.2)
     rolify (5.2.0)
     roo (2.8.2)
       nokogiri (~> 1)
@@ -796,7 +795,6 @@ DEPENDENCIES
   rails_best_practices
   rake-version (~> 1.0)
   render_anywhere
-  rmagick
   rolify
   roo
   rspec-rails (~> 3.6)
@@ -821,4 +819,4 @@ RUBY VERSION
    ruby 2.6.6p146
 
 BUNDLED WITH
-   1.17.2
+   1.17.3
