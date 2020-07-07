@@ -1,7 +1,6 @@
 class UsersController < ApplicationController
   authorize_resource only: [:index, :show, :edit, :destroy, :upload, :image]
   before_action :set_user, only: [:show, :edit, :update, :destroy, :add_role, :remove_role]
-  before_action :rotate, only: :update
   before_action :must_be_admin, only: [:index, :add_role, :remove_role]
 
   # GET /users
@@ -52,12 +51,6 @@ class UsersController < ApplicationController
     role = params[:role].to_sym
     role_user.remove_role(role)
     redirect_to users_url, notice: 'Role was deleted.'
-  end
-
-  def rotate
-    rotate = params[:user].delete(:rotate)
-    logger.debug "rotate = #{rotate}"
-    ImageUploader.rotation = rotate.to_f
   end
 
   # PATCH/PUT /users/1
@@ -112,6 +105,6 @@ class UsersController < ApplicationController
 
   # Never trust parameters from the scary internet, only allow the white list through.
   def user_params
-    params.require(:user).permit(:first_name, :last_name, :image, :api_key, :rotate)
+    params.require(:user).permit(:first_name, :last_name, :image, :api_key)
   end
 end

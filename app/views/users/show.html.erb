@@ -90,12 +90,6 @@
                       <%= f.file_field :image, class: "form-control" %>
                     </div>
                     <div class="form-group">
-                      <label>
-                        <%= f.check_box("rotate", {:id=> "rotate", :checked=>false}, 90.0, nil) %>
-                        Rotate Image 90 degrees on upload
-                      </label>
-                    </div>
-                    <div class="form-group">
                       <%= button_tag(type: "submit", class: "btn btn-primary margin-right") do %>
                         <i class="fa fa-edit"></i> Upload Image
                       <% end %>
