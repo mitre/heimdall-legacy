@@ -38,7 +38,7 @@ resource "aws_iam_role_policy_attachment" "RDSFullAccess-attach" {
 # SECRETS AND TOKENS #####################################
 
 resource "random_password" "db_master_pass" {
-  length            = 128
+  length            = 20
   special           = var.include_special_db_pass
   min_special       = 5
   override_special  = "!#$%^&*()-_=+[]{}<>:?"
