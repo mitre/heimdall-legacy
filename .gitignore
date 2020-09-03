@@ -61,3 +61,11 @@ build-iPhoneSimulator/
 
 # Hide docker secrets file from repository
 .env-prod
+
+# Terraform files and folders
+terraform/terraform.tfstate
+terraform/terraform.tfstate.backup
+terraform/.terraform
+terraform/profile.tf
+terraform/.terraform.tfstate.lock.info
+*.tfvars
