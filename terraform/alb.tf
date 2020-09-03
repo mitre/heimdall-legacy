@@ -25,6 +25,7 @@ resource "aws_alb_target_group" "app" {
   }
 
   tags = {
+    Name   = "${var.proj_name}-heimdall-alb"
     Owner   = "${var.your_name}"
     Project = "${var.proj_name}"
   }

@@ -19,6 +19,7 @@ resource "aws_iam_role" "ECS_execution_agent_1" {
 EOF
 
   tags = {
+    Name   = "${var.proj_name}-heimdall-ECS-role"
     Owner   = "${var.your_name}"
     Project = "${var.proj_name}"
   }
@@ -56,6 +57,7 @@ resource "aws_secretsmanager_secret" "db-pass" {
   name = "${var.proj_name}_db-pass-terraform-${random_id.build.hex}"
 
   tags = {
+    Name   = "${var.proj_name}-heimdall-db-pass"
     Owner   = "${var.your_name}"
     Project = "${var.proj_name}"
   }

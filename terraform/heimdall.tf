@@ -8,6 +8,7 @@ resource "aws_cloudwatch_log_group" "heimdall_cwatch" {
   name = "${var.proj_name}_heimdall-terraform-${random_id.build.hex}"
 
   tags = {
+    Name   = "${var.proj_name}-heimdall-cw-loggroup"
     Owner   = "${var.your_name}"
     Project = "${var.proj_name}"
     Application = "heimdall"
@@ -19,6 +20,7 @@ resource "aws_ecs_cluster" "heimdall_cluster" {
   name = "${var.proj_name}_heimdall-${random_id.build.hex}"
 
   tags = {
+    Name   = "${var.proj_name}-heimdall-ECS-cluster"
     Owner   = "${var.your_name}"
     Project = "${var.proj_name}"
   }
@@ -41,6 +43,7 @@ resource "aws_ecs_task_definition" "heimdall_task_definition" {
   execution_role_arn       = aws_iam_role.ECS_execution_agent_1.arn
 
   tags = {
+    Name   = "${var.proj_name}-heimdall-task-definition"
     Owner   = "${var.your_name}"
     Project = "${var.proj_name}"
   }
@@ -50,7 +53,7 @@ resource "aws_ecs_task_definition" "heimdall_task_definition" {
     "cpu": 1024,
     "image": "${var.heimdall_image}",
     "memory": 2048,
-    "name": "${var.proj_name}-heimdall",
+    "name": "${var.proj_name}-heimdall-container",
     "healthCheck": {
             "Command": [
                 "CMD-SHELL",
@@ -120,7 +123,7 @@ resource "aws_ecs_service" "main" {
 
   load_balancer {
     target_group_arn = aws_alb_target_group.app.id
-    container_name   = "${var.proj_name}-heimdall"
+    container_name   = "${var.proj_name}-heimdall-container"
     container_port   = "80"
   }
 

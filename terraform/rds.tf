@@ -4,6 +4,7 @@ resource "aws_db_parameter_group" "heimdall_pg" {
   family = "postgres12"
 
   tags = {
+    Name   = "${var.proj_name}-heimdall-db-param-group"
     Owner   = "${var.your_name}"
     Project = "${var.proj_name}"
   }
@@ -15,6 +16,7 @@ resource "aws_db_subnet_group" "heimdall_subg" {
   subnet_ids = ["${aws_subnet.heimdall_rds_subnet_a.id}", "${aws_subnet.heimdall_rds_subnet_b.id}"] 
 
   tags = {
+    Name   = "${var.proj_name}-heimdall-db-sn-group"
     Owner   = "${var.your_name}"
     Project = "${var.proj_name}"
   }
@@ -37,6 +39,7 @@ resource "aws_db_instance" "heimdall_db" {
   vpc_security_group_ids = ["${aws_security_group.mitre_web_sg.id}", "${aws_security_group.mitre_base_sg.id}", "${aws_default_security_group.default.id}"]
 
   tags = {
+    Name   = "${var.proj_name}-heimdall-rds-db"
     Owner   = "${var.your_name}"
     Project = "${var.proj_name}"
   }

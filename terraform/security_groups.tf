@@ -3,6 +3,7 @@ resource "aws_default_security_group" "default" {
   vpc_id = aws_vpc.heimdall_vpc.id
 
   tags = {
+    Name   = "${var.proj_name}-heimdall-default-sg"
     Owner   = "${var.your_name}"
     Project = "${var.proj_name}"
   }
@@ -29,6 +30,7 @@ resource "aws_security_group" "mitre_web_sg" {
   vpc_id      = aws_vpc.heimdall_vpc.id
 
   tags = {
+    Name   = "${var.proj_name}-heimdall-mitre-web-sg"
     Owner   = "${var.your_name}"
     Project = "${var.proj_name}"
   }
@@ -75,6 +77,7 @@ resource "aws_security_group" "mitre_base_sg" {
   vpc_id      = aws_vpc.heimdall_vpc.id
 
   tags = {
+    Name   = "${var.proj_name}-heimdall-mitre-base-sg"
     Owner   = "${var.your_name}"
     Project = "${var.proj_name}"
   }
