@@ -324,6 +324,8 @@ GEM
     hashdiff (1.0.0)
     hashery (2.1.2)
     hashie (3.6.0)
+    health_check (3.0.0)
+      railties (>= 5.0)
     htmlentities (4.3.4)
     http-cookie (1.0.3)
       domain_name (~> 0.5)
@@ -778,6 +780,7 @@ DEPENDENCIES
   fuzzy-string-match
   gibberish
   github_changelog_generator
+  health_check
   inspec_tools (>= 1.4.2)
   jbuilder (~> 2.5)
   json
