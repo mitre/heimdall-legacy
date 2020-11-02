@@ -1,4 +1,4 @@
-# MUST READ: THIS PACKAGE HAS BEEN SUPERSEEDED
+# MUST READ: THIS PACKAGE HAS BEEN SUPERSEDED
 
 This repository has been replaced by https://github.com/mitre/heimdall2, please update any links accordingly.
 
