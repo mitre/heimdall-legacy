@@ -1,3 +1,7 @@
+# MUST READ: THIS PACKAGE HAS BEEN SUPERSEEDED
+
+This repository has been replaced by https://github.com/mitre/heimdall2, please update any links accordingly.
+
 ![Docker Pulls](https://img.shields.io/docker/pulls/mitre/heimdall?label=Docker%20Hub%20Pulls)
 ![Docker Cloud Build Status](https://img.shields.io/docker/cloud/build/mitre/heimdall)
 # Heimdall
